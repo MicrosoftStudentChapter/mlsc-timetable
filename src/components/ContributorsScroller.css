@@ -1,0 +1,113 @@
+.scroller-wrapper {
+  position: relative;
+  width: 80%;
+  padding: 0.5rem 0;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+.scroller-track {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: auto;
+  padding: 0.5rem 1.25rem;
+  scrollbar-width: none;
+}
+
+.scroller-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* fade edges */
+.scroller-wrapper::before,
+.scroller-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.scroller-wrapper::before {
+  left: 0;
+  background: linear-gradient(to right, var(--bg), transparent);
+}
+
+.scroller-wrapper::after {
+  right: 0;
+  background: linear-gradient(to left, var(--bg), transparent);
+}
+
+/* arrow buttons */
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  padding: 0;
+}
+
+.scroll-arrow:hover {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: var(--accent-border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.scroll-arrow--left  { left:  8px; }
+.scroll-arrow--right { right: 8px; }
+
+/* chips */
+.contributor-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  text-decoration: none;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.contributor-chip img {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  transition: transform 0.2s;
+}
+
+.contributor-chip:hover img {
+  transform: scale(1.12);
+  border-color: var(--accent);
+}
+
+.contributor-chip span {
+  font-size: 0.78rem;
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.no-contributors {
+  font-size: 0.85rem;
+  color: var(--text);
+  margin: 0;
+}

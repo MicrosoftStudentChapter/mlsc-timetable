@@ -1,0 +1,62 @@
+/* floating wrapper — sits above content, centered */
+.navbar {
+  position: fixed;
+  bottom: 16px;
+  top: unset;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: max-content;
+}
+
+/* pill */
+.navbar-pill {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #202060;
+  box-shadow:
+    0 4px 24px rgba(0, 32, 96, 0.45),
+    0 1px 0 rgba(64, 224, 224, 0.15) inset;
+  border: 1px solid rgba(0, 96, 192, 0.5);
+}
+
+.navbar-logo-img {
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.navbar-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 96, 192, 0.4);
+  background: rgba(0, 96, 192, 0.2);
+  color: #c8e0ff;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.navbar-icon-btn:hover {
+  background: rgba(64, 224, 224, 0.2);
+  border-color: #40e0e0;
+  color: #40e0e0;
+}
+
+/* push page content above the floating bottom bar */
+body {
+  padding-top: 0;
+}

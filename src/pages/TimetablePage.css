@@ -1,0 +1,181 @@
+.tt-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 2rem 2rem;
+  min-height: 100svh;
+  box-sizing: border-box;
+}
+
+/* top bar: logo pinned left, heading centered */
+.tt-topbar {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tt-logo-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.tt-logo {
+  height: 72px;
+  width: auto;
+  object-fit: contain;
+}
+
+.tt-heading {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.tt-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tt-placeholder {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+/* ── Timetable Navbar ── */
+.tt-navbar-wrap {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+}
+
+.tt-navbar-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: #202060;
+  box-shadow:
+    0 4px 24px rgba(0, 32, 96, 0.45),
+    0 1px 0 rgba(64, 224, 224, 0.15) inset;
+  border: 1px solid rgba(0, 96, 192, 0.5);
+}
+
+/* batch dropdown in navbar */
+.tt-batch-select {
+  padding: 5px 28px 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 96, 192, 0.5);
+  background: rgba(0, 96, 192, 0.2);
+  color: #c8e0ff;
+  font-size: 0.82rem;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2340e0e0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  min-width: 90px;
+  transition: border-color 0.2s;
+}
+
+.tt-batch-select:focus {
+  outline: none;
+  border-color: #40e0e0;
+}
+
+.tt-batch-select option,
+.tt-batch-select optgroup {
+  background: #202060;
+  color: #c8e0ff;
+}
+
+/* divider between center and actions */
+.tt-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 1px solid rgba(0, 96, 192, 0.4);
+}
+
+.tt-action-group {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.tt-action-group + .tt-action-group {
+  padding-left: 0.5rem;
+  border-left: 1px solid rgba(64, 224, 224, 0.25);
+}
+
+.tt-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 96, 192, 0.4);
+  background: rgba(0, 96, 192, 0.2);
+  color: #c8e0ff;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.tt-icon-btn:hover {
+  background: rgba(64, 224, 224, 0.2);
+  border-color: #40e0e0;
+  color: #40e0e0;
+}
+
+/* tooltip wrapper */
+.tt-tip-wrap {
+  position: relative;
+}
+
+.tt-tip-wrap::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: #0f1535;
+  color: #c8e0ff;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 96, 192, 0.4);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.tt-tip-wrap:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
