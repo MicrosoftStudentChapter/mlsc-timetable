@@ -35,24 +35,6 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 768px) {
-  .page-header-logo {
-    display: block;
-  }
-  /* keep tagline visually centered by counter-balancing the logo on the right */
-  .page-header::after {
-    content: '';
-    width: 32px;
-    flex-shrink: 0;
-  }
-  .left-panel {
-    display: none;
-  }
-  .center-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* ── Two-column grid ── */
 .center-grid {
   display: grid;
@@ -137,4 +119,23 @@
 
 .repo-link:hover {
   text-decoration: underline;
+}
+
+/* ── Mobile/tablet: stack vertically and move logo into header ── */
+@media (max-width: 768px) {
+  .page-header-logo {
+    display: block;
+  }
+  /* keep tagline visually centered by counter-balancing the logo on the right */
+  .page-header::after {
+    content: '';
+    width: 32px;
+    flex-shrink: 0;
+  }
+  .center-grid {
+    grid-template-columns: 1fr;
+  }
+  .left-panel {
+    display: none;
+  }
 }
