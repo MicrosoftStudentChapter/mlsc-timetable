@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loadBatches } from '../lib/batches'
+import Combobox from './Combobox'
 import './BatchSelector.css'
 
 export default function BatchSelector() {
@@ -25,6 +26,19 @@ export default function BatchSelector() {
   const streams = selectedYear?.streams ?? []
   const selectedStream = streams.find((s) => s.name === streamInput) ?? null
   const batches = selectedStream?.batches ?? []
+
+  const yearOptions = useMemo(
+    () => years.map((y) => ({ value: y.label })),
+    [years]
+  )
+  const streamOptions = useMemo(
+    () => streams.map((s) => ({ value: s.name })),
+    [streams]
+  )
+  const batchOptions = useMemo(
+    () => batches.map((b) => ({ value: b })),
+    [batches]
+  )
 
   // Clear lower fields when an upper selection stops resolving.
   useEffect(() => {
@@ -56,52 +70,32 @@ export default function BatchSelector() {
       <p className="batch-label">Select your batch</p>
 
       <div className="batch-fields">
-        <input
+        <Combobox
           className="batch-dropdown"
-          list="year-list"
           value={yearInput}
-          onChange={(e) => setYearInput(e.target.value)}
+          onChange={setYearInput}
+          options={yearOptions}
           placeholder="Year"
-          aria-label="Year"
-          autoComplete="off"
+          ariaLabel="Year"
         />
-        <datalist id="year-list">
-          {years.map((y) => (
-            <option key={y.year} value={y.label} />
-          ))}
-        </datalist>
-
-        <input
+        <Combobox
           className="batch-dropdown"
-          list="stream-list"
           value={streamInput}
-          onChange={(e) => setStreamInput(e.target.value)}
+          onChange={setStreamInput}
+          options={streamOptions}
           placeholder="Stream"
-          aria-label="Stream"
-          autoComplete="off"
+          ariaLabel="Stream"
           disabled={!selectedYear}
         />
-        <datalist id="stream-list">
-          {streams.map((s) => (
-            <option key={s.code} value={s.name} />
-          ))}
-        </datalist>
-
-        <input
+        <Combobox
           className="batch-dropdown"
-          list="batch-list"
           value={batchInput}
-          onChange={(e) => setBatchInput(e.target.value.toUpperCase())}
+          onChange={(v) => setBatchInput(v.toUpperCase())}
+          options={batchOptions}
           placeholder="Batch"
-          aria-label="Batch"
-          autoComplete="off"
+          ariaLabel="Batch"
           disabled={!selectedStream}
         />
-        <datalist id="batch-list">
-          {batches.map((b) => (
-            <option key={b} value={b} />
-          ))}
-        </datalist>
       </div>
     </div>
   )
