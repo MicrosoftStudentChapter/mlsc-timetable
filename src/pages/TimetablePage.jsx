@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Footer from '../components/Footer'
 import Combobox from '../components/Combobox'
-import { useNavbarPadding } from '../hooks/useNavbarPadding'
 import { loadBatches } from '../lib/batches'
 import './TimetablePage.css'
 
@@ -11,7 +10,6 @@ export default function TimetablePage() {
   const navigate  = useNavigate()
   const [years, setYears] = useState([])
   const [batchInput, setBatchInput] = useState(batch ?? '')
-  useNavbarPadding()
 
   useEffect(() => {
     let cancelled = false

@@ -3,12 +3,10 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ContributorsScroller from './components/ContributorsScroller'
 import BatchSelector from './components/BatchSelector'
-import { useNavbarPadding } from './hooks/useNavbarPadding'
 import './App.css'
 
 function App() {
   const [contributors, setContributors] = useState([])
-  useNavbarPadding()
 
   useEffect(() => {
     fetch('/api/contributors')
