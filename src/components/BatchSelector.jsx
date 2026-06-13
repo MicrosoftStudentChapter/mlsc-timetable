@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { loadBatches } from '../lib/batches'
 import './BatchSelector.css'
 
 export default function BatchSelector() {
@@ -10,10 +11,13 @@ export default function BatchSelector() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    fetch('/api/batches')
-      .then((r) => r.json())
-      .then((d) => Array.isArray(d?.years) && setYears(d.years))
-      .catch(() => {})
+    let cancelled = false
+    loadBatches().then((y) => {
+      if (!cancelled) setYears(y)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const selectedYear = yearIdx === '' ? null : years[Number(yearIdx)]
@@ -22,12 +26,7 @@ export default function BatchSelector() {
   const batches = selectedStream?.batches ?? []
 
   const yearOptions = useMemo(
-    () =>
-      years.map((y, i) => ({
-        value: String(i),
-        label: y.label,
-        disabled: !y.streams?.length,
-      })),
+    () => years.map((y, i) => ({ value: String(i), label: y.label })),
     [years]
   )
 
@@ -59,8 +58,8 @@ export default function BatchSelector() {
         >
           <option value="" disabled>-- Year --</option>
           {yearOptions.map((y) => (
-            <option key={y.value} value={y.value} disabled={y.disabled}>
-              {y.label}{y.disabled ? ' (coming soon)' : ''}
+            <option key={y.value} value={y.value}>
+              {y.label}
             </option>
           ))}
         </select>

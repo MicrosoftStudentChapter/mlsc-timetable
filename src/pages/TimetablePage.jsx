@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Footer from '../components/Footer'
 import { useNavbarPadding } from '../hooks/useNavbarPadding'
+import { loadBatches } from '../lib/batches'
 import './TimetablePage.css'
 
 export default function TimetablePage() {
@@ -11,10 +12,13 @@ export default function TimetablePage() {
   useNavbarPadding()
 
   useEffect(() => {
-    fetch('/api/batches')
-      .then((r) => r.json())
-      .then((d) => Array.isArray(d?.years) && setYears(d.years))
-      .catch(() => {})
+    let cancelled = false
+    loadBatches().then((y) => {
+      if (!cancelled) setYears(y)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const handleBatchChange = (e) => {

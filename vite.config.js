@@ -1,10 +1,5 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
-import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import { dirname, resolve } from 'node:path'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -61,27 +56,6 @@ export default defineConfig(({ mode }) => {
 
               res.writeHead(200, { 'Content-Type': 'application/json' })
               res.end(JSON.stringify(contributors))
-            } catch (err) {
-              res.writeHead(500, { 'Content-Type': 'application/json' })
-              res.end(JSON.stringify({ error: err.message }))
-            }
-          })
-        },
-      },
-      {
-        name: 'batches-api',
-        configureServer(server) {
-          server.middlewares.use('/api/batches', (req, res) => {
-            if (req.method !== 'GET') {
-              res.writeHead(405, { 'Content-Type': 'application/json' })
-              res.end(JSON.stringify({ error: 'Method not allowed' }))
-              return
-            }
-            try {
-              const file = resolve(__dirname, 'src/data/batches.json')
-              const data = readFileSync(file, 'utf8')
-              res.writeHead(200, { 'Content-Type': 'application/json' })
-              res.end(data)
             } catch (err) {
               res.writeHead(500, { 'Content-Type': 'application/json' })
               res.end(JSON.stringify({ error: err.message }))
