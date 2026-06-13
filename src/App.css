@@ -35,7 +35,7 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .page-header-logo {
     display: block;
   }
@@ -48,6 +48,9 @@
   .left-panel {
     display: none;
   }
+  .center-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── Two-column grid ── */
@@ -58,12 +61,6 @@
   width: 100%;
   max-width: 860px;
   align-items: stretch;
-}
-
-@media (max-width: 640px) {
-  .center-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* LEFT */
