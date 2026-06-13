@@ -1,0 +1,215 @@
+{
+  "streamNames": {
+    "1": {
+      "A": "Pool A",
+      "B": "Pool B",
+      "X": "Data Science and Artificial Intelligence",
+      "G": "Biotechnology Engineering",
+      "J": "Biomedical Engineering",
+      "R": "Computer Science and Business Systems"
+    },
+    "default": {
+      "A": "Chemical Engineering",
+      "B": "Civil Engineering",
+      "C": "Computer Engineering",
+      "D": "Electrical Engineering",
+      "E": "Electronics and Instrumentation Engineering",
+      "F": "Electronics and Communication Engineering",
+      "G": "Biotechnology Engineering",
+      "H": "Mechanical Engineering",
+      "I": "Mechatronics Engineering",
+      "J": "Biomedical Engineering",
+      "O": "Electronics and Computer Engineering",
+      "Q": "Computer Science and Engineering",
+      "R": "Computer Science and Business Systems",
+      "S": "Electrical and Computer Engineering",
+      "U": "Civil with Computer Application",
+      "V": "Electronics Engineering (VLSI Design)",
+      "W": "Robotics and Artificial Intelligence",
+      "X": "Computer Science and Engineering"
+    }
+  },
+  "years": [
+    {
+      "year": 1,
+      "label": "1st Year",
+      "streams": [
+        {
+          "code": "A",
+          "name": "Pool A",
+          "batches": [
+            "1A11",
+            "1A12",
+            "1A13",
+            "1A14",
+            "1A15",
+            "1A16",
+            "1A17",
+            "1A18",
+            "1A21",
+            "1A22",
+            "1A23",
+            "1A24",
+            "1A25",
+            "1A26",
+            "1A27",
+            "1A28",
+            "1A31",
+            "1A32",
+            "1A33",
+            "1A34",
+            "1A35",
+            "1A36",
+            "1A37",
+            "1A38",
+            "1A41",
+            "1A42",
+            "1A43",
+            "1A44",
+            "1A45",
+            "1A51",
+            "1A52",
+            "1A53",
+            "1A54",
+            "1A55",
+            "1A61",
+            "1A62",
+            "1A63",
+            "1A64",
+            "1A65",
+            "1A71",
+            "1A72",
+            "1A73",
+            "1A74",
+            "1A75",
+            "1A81",
+            "1A82",
+            "1A83",
+            "1A84",
+            "1A85",
+            "1A91",
+            "1A92",
+            "1A93",
+            "1A94",
+            "1A95"
+          ]
+        },
+        {
+          "code": "X",
+          "name": "Data Science and Artificial Intelligence",
+          "batches": [
+            "1X11",
+            "1X12",
+            "1X13",
+            "1X14",
+            "1X21",
+            "1X22",
+            "1X23",
+            "1X24"
+          ]
+        },
+        {
+          "code": "B",
+          "name": "Pool B",
+          "batches": [
+            "1B11",
+            "1B12",
+            "1B13",
+            "1B14",
+            "1B15",
+            "1B16",
+            "1B17",
+            "1B18",
+            "1B21",
+            "1B22",
+            "1B23",
+            "1B24",
+            "1B25",
+            "1B26",
+            "1B27",
+            "1B28",
+            "1B31",
+            "1B32",
+            "1B33",
+            "1B34",
+            "1B35",
+            "1B36",
+            "1B37",
+            "1B38",
+            "1B41",
+            "1B42",
+            "1B43",
+            "1B44",
+            "1B45",
+            "1B51",
+            "1B52",
+            "1B53",
+            "1B54",
+            "1B55",
+            "1B61",
+            "1B62",
+            "1B63",
+            "1B64",
+            "1B65",
+            "1B71",
+            "1B72",
+            "1B73",
+            "1B74",
+            "1B75",
+            "1B81",
+            "1B82",
+            "1B83",
+            "1B84",
+            "1B85",
+            "1B91",
+            "1B92",
+            "1B93",
+            "1B94",
+            "1B95"
+          ]
+        },
+        {
+          "code": "G",
+          "name": "Biotechnology Engineering",
+          "batches": [
+            "1G11",
+            "1G12",
+            "1G13",
+            "1G14"
+          ]
+        },
+        {
+          "code": "J",
+          "name": "Biomedical Engineering",
+          "batches": [
+            "1J11"
+          ]
+        },
+        {
+          "code": "R",
+          "name": "Computer Science and Business Systems",
+          "batches": [
+            "1R11",
+            "1R12",
+            "1R13"
+          ]
+        }
+      ]
+    },
+    {
+      "year": 2,
+      "label": "2nd Year",
+      "streams": []
+    },
+    {
+      "year": 3,
+      "label": "3rd Year",
+      "streams": []
+    },
+    {
+      "year": 4,
+      "label": "4th Year",
+      "streams": []
+    }
+  ]
+}

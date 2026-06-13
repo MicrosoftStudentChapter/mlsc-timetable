@@ -1,5 +1,10 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { dirname, resolve } from 'node:path'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -72,14 +77,15 @@ export default defineConfig(({ mode }) => {
               res.end(JSON.stringify({ error: 'Method not allowed' }))
               return
             }
-            const batches = [
-              { pool: '1st Year Pool A', groups: ['1A11', '1A12', '1A13', '1A14', '1A15'] },
-              { pool: '1st Year Pool B', groups: ['1B11', '1B12', '1B13', '1B14', '1B15'] },
-              { pool: '2nd Year Pool A', groups: ['2A21', '2A22', '2A23', '2A24'] },
-              { pool: '2nd Year Pool B', groups: ['2B21', '2B22', '2B23', '2B24'] },
-            ]
-            res.writeHead(200, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify(batches))
+            try {
+              const file = resolve(__dirname, 'src/data/batches.json')
+              const data = readFileSync(file, 'utf8')
+              res.writeHead(200, { 'Content-Type': 'application/json' })
+              res.end(data)
+            } catch (err) {
+              res.writeHead(500, { 'Content-Type': 'application/json' })
+              res.end(JSON.stringify({ error: err.message }))
+            }
           })
         },
       },

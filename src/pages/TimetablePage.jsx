@@ -7,13 +7,13 @@ import './TimetablePage.css'
 export default function TimetablePage() {
   const { batch } = useParams()
   const navigate  = useNavigate()
-  const [batches, setBatches] = useState([])
+  const [years, setYears] = useState([])
   useNavbarPadding()
 
   useEffect(() => {
     fetch('/api/batches')
       .then((r) => r.json())
-      .then((d) => Array.isArray(d) && setBatches(d))
+      .then((d) => Array.isArray(d?.years) && setYears(d.years))
       .catch(() => {})
   }, [])
 
@@ -52,13 +52,15 @@ export default function TimetablePage() {
             value={batch}
             onChange={handleBatchChange}
           >
-            {batches.map(({ pool, groups }) => (
-              <optgroup key={pool} label={pool}>
-                {groups.map((g) => (
-                  <option key={g} value={g}>{g}</option>
-                ))}
-              </optgroup>
-            ))}
+            {years.flatMap(({ year, label, streams }) =>
+              streams.map(({ code, name, batches }) => (
+                <optgroup key={`${year}-${code}`} label={`${label} — ${name}`}>
+                  {batches.map((g) => (
+                    <option key={g} value={g}>{g}</option>
+                  ))}
+                </optgroup>
+              ))
+            )}
           </select>
 
           {/* Actions */}
