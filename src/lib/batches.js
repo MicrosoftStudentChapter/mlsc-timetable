@@ -9,6 +9,20 @@ const YEAR_LABELS = {
 
 const BATCH_RE = /^(\d)([A-Z])\d+$/
 
+// Year 1 sorts Pool A, Pool B first, then the rest alphabetically.
+// Years 2+ are always alphabetical by stream code.
+function streamSorter(year) {
+  if (year === 1) {
+    const rank = (c) => (c === 'A' ? 0 : c === 'B' ? 1 : 2)
+    return (a, b) => {
+      const ra = rank(a.code)
+      const rb = rank(b.code)
+      return ra !== rb ? ra - rb : a.code.localeCompare(b.code)
+    }
+  }
+  return (a, b) => a.code.localeCompare(b.code)
+}
+
 export function groupBatches(list, streamNames = {}) {
   const byYear = new Map()
   for (const code of list) {
@@ -38,7 +52,7 @@ export function groupBatches(list, streamNames = {}) {
       })
     }
     if (!streams.length) continue
-    streams.sort((a, b) => a.code.localeCompare(b.code))
+    streams.sort(streamSorter(year))
     out.push({ year, label: YEAR_LABELS[year] ?? `Year ${year}`, streams })
   }
   return out

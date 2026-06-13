@@ -91,24 +91,23 @@
   background: rgba(0, 96, 192, 0.2);
   color: #c8e0ff;
   font-size: 0.82rem;
-  cursor: pointer;
+  cursor: text;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2340e0e0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
   min-width: 90px;
+  width: 110px;
   transition: border-color 0.2s;
+}
+
+.tt-batch-select::placeholder {
+  color: rgba(200, 224, 255, 0.55);
 }
 
 .tt-batch-select:focus {
   outline: none;
   border-color: #40e0e0;
-}
-
-.tt-batch-select option,
-.tt-batch-select optgroup {
-  background: #202060;
-  color: #c8e0ff;
 }
 
 /* divider between center and actions */

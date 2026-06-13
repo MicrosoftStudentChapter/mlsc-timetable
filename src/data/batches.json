@@ -50,14 +50,6 @@
           ]
         },
         {
-          "code": "X",
-          "name": "Data Science and Artificial Intelligence",
-          "batches": [
-            "1X11", "1X12", "1X13", "1X14",
-            "1X21", "1X22", "1X23", "1X24"
-          ]
-        },
-        {
           "code": "B",
           "name": "Pool B",
           "batches": [
@@ -86,6 +78,14 @@
           "code": "R",
           "name": "Computer Science and Business Systems",
           "batches": ["1R11", "1R12", "1R13"]
+        },
+        {
+          "code": "X",
+          "name": "Data Science and Artificial Intelligence",
+          "batches": [
+            "1X11", "1X12", "1X13", "1X14",
+            "1X21", "1X22", "1X23", "1X24"
+          ]
         }
       ]
     }

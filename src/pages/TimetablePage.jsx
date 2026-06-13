@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Footer from '../components/Footer'
 import { useNavbarPadding } from '../hooks/useNavbarPadding'
@@ -9,6 +9,7 @@ export default function TimetablePage() {
   const { batch } = useParams()
   const navigate  = useNavigate()
   const [years, setYears] = useState([])
+  const [batchInput, setBatchInput] = useState(batch ?? '')
   useNavbarPadding()
 
   useEffect(() => {
@@ -21,8 +22,28 @@ export default function TimetablePage() {
     }
   }, [])
 
+  useEffect(() => {
+    setBatchInput(batch ?? '')
+  }, [batch])
+
+  const flatBatches = useMemo(() => {
+    const out = []
+    for (const { label, streams } of years) {
+      for (const { name, batches } of streams) {
+        for (const code of batches) {
+          out.push({ code, hint: `${label} — ${name}` })
+        }
+      }
+    }
+    return out
+  }, [years])
+
+  const allCodes = useMemo(() => new Set(flatBatches.map((b) => b.code)), [flatBatches])
+
   const handleBatchChange = (e) => {
-    if (e.target.value) navigate(`/timetable/${e.target.value}`)
+    const v = e.target.value.toUpperCase()
+    setBatchInput(v)
+    if (allCodes.has(v) && v !== batch) navigate(`/timetable/${v}`)
   }
 
   const handleShare = () => {
@@ -51,21 +72,21 @@ export default function TimetablePage() {
       <div className="tt-navbar-wrap">
         <nav className="tt-navbar-pill">
           {/* Batch selector — center */}
-          <select
+          <input
             className="tt-batch-select"
-            value={batch}
+            list="tt-batch-list"
+            value={batchInput}
             onChange={handleBatchChange}
-          >
-            {years.flatMap(({ year, label, streams }) =>
-              streams.map(({ code, name, batches }) => (
-                <optgroup key={`${year}-${code}`} label={`${label} — ${name}`}>
-                  {batches.map((g) => (
-                    <option key={g} value={g}>{g}</option>
-                  ))}
-                </optgroup>
-              ))
-            )}
-          </select>
+            placeholder="Batch"
+            aria-label="Switch batch"
+            autoComplete="off"
+            spellCheck="false"
+          />
+          <datalist id="tt-batch-list">
+            {flatBatches.map(({ code, hint }) => (
+              <option key={code} value={code} label={hint} />
+            ))}
+          </datalist>
 
           {/* Actions */}
           <div className="tt-actions">
