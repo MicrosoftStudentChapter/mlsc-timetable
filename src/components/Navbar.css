@@ -60,3 +60,9 @@
 body {
   padding-top: 0;
 }
+
+@media (max-width: 440px) {
+  .navbar-logo-img {
+    display: none;
+  }
+}
