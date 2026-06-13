@@ -14,9 +14,32 @@
   text-transform: uppercase;
   color: var(--text);
   margin: 0;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   width: 100%;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border);
+}
+
+.page-header-logo {
+  display: none;
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .page-header-logo {
+    display: block;
+  }
+  .left-panel {
+    display: none;
+  }
 }
 
 /* ── Two-column grid ── */

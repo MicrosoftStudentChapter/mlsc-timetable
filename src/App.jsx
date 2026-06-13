@@ -20,7 +20,10 @@ function App() {
   return (
     <>
       <main className="main">
-        <p className="page-tagline">MLSC TIMETABLE</p>
+        <header className="page-header">
+          <img src="/MLSC-logo.png" alt="MLSC" className="page-header-logo" />
+          <p className="page-tagline">MLSC TIMETABLE</p>
+        </header>
 
         <div className="center-grid">
           {/* LEFT — logo only, no container */}
