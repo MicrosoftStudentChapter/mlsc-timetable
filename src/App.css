@@ -125,11 +125,12 @@
 @media (max-width: 720px) {
   .page-header-logo {
     display: block;
+    height: 56px;
   }
   /* keep tagline visually centered by counter-balancing the logo on the right */
   .page-header::after {
     content: '';
-    width: 32px;
+    width: 56px;
     flex-shrink: 0;
   }
   .center-grid {
