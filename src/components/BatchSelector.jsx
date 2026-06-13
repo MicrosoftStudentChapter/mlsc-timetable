@@ -9,6 +9,7 @@ export default function BatchSelector() {
   const [yearInput, setYearInput] = useState('')
   const [streamInput, setStreamInput] = useState('')
   const [batchInput, setBatchInput] = useState('')
+  const [loadingBatch, setLoadingBatch] = useState('')
   const navigate = useNavigate()
   const lastNavigated = useRef('')
 
@@ -53,7 +54,7 @@ export default function BatchSelector() {
   }, [selectedStream, batchInput])
 
   // Navigate when batch input resolves to a real batch in the current stream.
-  // Holds for ~1s so the user sees their final selection before the page switches.
+  // Holds for ~1s with a loading indicator so the user sees their pick land.
   useEffect(() => {
     if (
       !selectedStream ||
@@ -61,18 +62,20 @@ export default function BatchSelector() {
       !batches.includes(batchInput) ||
       batchInput === lastNavigated.current
     ) {
+      if (loadingBatch) setLoadingBatch('')
       return
     }
     const target = batchInput
+    setLoadingBatch(target)
     const timer = setTimeout(() => {
       lastNavigated.current = target
       navigate(`/timetable/${target}`)
     }, 1000)
     return () => clearTimeout(timer)
-  }, [batchInput, selectedStream, batches, navigate])
+  }, [batchInput, selectedStream, batches, navigate, loadingBatch])
 
   return (
-    <div className="batch-selector">
+    <div className={`batch-selector ${loadingBatch ? 'is-loading' : ''}`}>
       <p className="batch-label">Select your batch</p>
 
       <div className="batch-fields">
@@ -100,9 +103,16 @@ export default function BatchSelector() {
           options={batchOptions}
           placeholder="Batch"
           ariaLabel="Batch"
-          disabled={!selectedStream}
+          disabled={!selectedStream || !!loadingBatch}
         />
       </div>
+
+      {loadingBatch && (
+        <div className="batch-loading" role="status" aria-live="polite">
+          <span className="batch-spinner" aria-hidden="true" />
+          <span>Loading {loadingBatch}…</span>
+        </div>
+      )}
     </div>
   )
 }
