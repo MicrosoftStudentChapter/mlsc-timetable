@@ -123,6 +123,10 @@
 
 /* ── Mobile/tablet: stack vertically and move logo into header ── */
 @media (max-width: 720px) {
+  .main {
+    padding: 1rem 1rem;
+    gap: 1.25rem;
+  }
   .page-header-logo {
     display: block;
     height: 56px;
