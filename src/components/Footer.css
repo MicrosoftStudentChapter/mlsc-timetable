@@ -20,6 +20,7 @@
 }
 
 .footer-socials a {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -31,4 +32,34 @@
 
 .footer-socials a:hover {
   color: var(--accent);
+}
+
+@media (max-width: 628px) {
+  .footer-socials {
+    gap: 0.85rem;
+  }
+  .footer-socials a span {
+    display: none;
+  }
+  .footer-socials a::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--text-h);
+    color: var(--bg);
+    font-size: 0.7rem;
+    white-space: nowrap;
+    padding: 4px 8px;
+    border-radius: 6px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+  .footer-socials a:hover::after,
+  .footer-socials a:focus-visible::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
