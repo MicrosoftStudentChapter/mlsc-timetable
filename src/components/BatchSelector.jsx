@@ -53,16 +53,22 @@ export default function BatchSelector() {
   }, [selectedStream, batchInput])
 
   // Navigate when batch input resolves to a real batch in the current stream.
+  // Holds for ~1s so the user sees their final selection before the page switches.
   useEffect(() => {
     if (
-      selectedStream &&
-      batchInput &&
-      batches.includes(batchInput) &&
-      batchInput !== lastNavigated.current
+      !selectedStream ||
+      !batchInput ||
+      !batches.includes(batchInput) ||
+      batchInput === lastNavigated.current
     ) {
-      lastNavigated.current = batchInput
-      navigate(`/timetable/${batchInput}`)
+      return
     }
+    const target = batchInput
+    const timer = setTimeout(() => {
+      lastNavigated.current = target
+      navigate(`/timetable/${target}`)
+    }, 1000)
+    return () => clearTimeout(timer)
   }, [batchInput, selectedStream, batches, navigate])
 
   return (
