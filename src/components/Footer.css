@@ -1,6 +1,6 @@
 .footer {
   border-top: 1px solid var(--border);
-  padding: 1.25rem 2rem 0;
+  padding: 1.75rem 2rem;
   display: flex;
   flex-direction: row;
   align-items: center;
