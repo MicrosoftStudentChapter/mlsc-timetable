@@ -122,7 +122,7 @@
 }
 
 /* ── Mobile/tablet: stack vertically and move logo into header ── */
-@media (max-width: 768px) {
+@media (max-width: 720px) {
   .page-header-logo {
     display: block;
   }
