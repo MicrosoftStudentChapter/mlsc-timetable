@@ -75,13 +75,6 @@
   max-width: calc(100vw - 32px);
   transform: translateX(-50%);
   transform-origin: bottom center;
-  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* slow the closing transition (popping back into the arrow) */
-.tt-navbar-wrap.is-compact.is-collapsed .tt-navbar-pill,
-.tt-navbar-wrap.is-compact.is-collapsed .tt-navbar-toggle {
   transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
