@@ -19,6 +19,7 @@ export default function TimetablePage() {
   const [navExpanded, setNavExpanded] = useState(false)
   const closeTimerRef = useRef(null)
   const isMouseHoveringRef = useRef(false)
+  const pillRef = useRef(null)
 
   useEffect(() => {
     const mq = window.matchMedia(NAV_COLLAPSE_QUERY)
@@ -72,6 +73,18 @@ export default function TimetablePage() {
     setNavExpanded(true)
     if (!isMouseHoveringRef.current) armClose()
   }
+
+  // close when the user taps/clicks anywhere outside the open pill
+  useEffect(() => {
+    if (!isCompact || !navExpanded) return
+    const onDocPointerDown = (e) => {
+      if (pillRef.current && pillRef.current.contains(e.target)) return
+      cancelClose()
+      setNavExpanded(false)
+    }
+    document.addEventListener('pointerdown', onDocPointerDown)
+    return () => document.removeEventListener('pointerdown', onDocPointerDown)
+  }, [isCompact, navExpanded])
 
   useEffect(() => {
     let cancelled = false
@@ -153,6 +166,7 @@ export default function TimetablePage() {
           </button>
         )}
         <nav
+          ref={pillRef}
           className="tt-navbar-pill"
           aria-hidden={isCompact && !navExpanded ? 'true' : undefined}
           {...(isCompact && !navExpanded ? { inert: '' } : {})}
