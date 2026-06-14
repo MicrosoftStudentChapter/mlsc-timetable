@@ -1,15 +1,49 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Footer from '../components/Footer'
 import Combobox from '../components/Combobox'
 import { loadBatches } from '../lib/batches'
 import './TimetablePage.css'
 
+const NAV_AUTO_CLOSE_MS = 3000
+
 export default function TimetablePage() {
   const { batch } = useParams()
   const navigate  = useNavigate()
   const [years, setYears] = useState([])
   const [batchInput, setBatchInput] = useState(batch ?? '')
+  const [navExpanded, setNavExpanded] = useState(false)
+  const closeTimerRef = useRef(null)
+  const isHoveredRef = useRef(false)
+
+  const cancelClose = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+  }
+  const armClose = () => {
+    cancelClose()
+    closeTimerRef.current = setTimeout(() => setNavExpanded(false), NAV_AUTO_CLOSE_MS)
+  }
+
+  useEffect(() => () => cancelClose(), [])
+
+  const handleNavEnter = () => {
+    isHoveredRef.current = true
+    cancelClose()
+  }
+  const handleNavLeave = () => {
+    isHoveredRef.current = false
+    if (navExpanded) armClose()
+  }
+  const handleNavInteract = () => {
+    if (navExpanded && !isHoveredRef.current) armClose()
+  }
+  const openNav = () => {
+    setNavExpanded(true)
+    if (!isHoveredRef.current) armClose()
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -68,7 +102,27 @@ export default function TimetablePage() {
       </main>
 
       {/* Timetable Navbar */}
-      <div className="tt-navbar-wrap">
+      <div
+        className={`tt-navbar-wrap ${navExpanded ? 'is-open' : 'is-collapsed'}`}
+        onMouseEnter={handleNavEnter}
+        onMouseLeave={handleNavLeave}
+        onPointerDown={handleNavInteract}
+        onKeyDown={handleNavInteract}
+      >
+        {!navExpanded && (
+          <button
+            type="button"
+            className="tt-navbar-toggle"
+            onClick={openNav}
+            aria-label="Show toolbar"
+            aria-expanded="false"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="18 15 12 9 6 15"/>
+            </svg>
+          </button>
+        )}
+        {navExpanded && (
         <nav className="tt-navbar-pill">
           {/* Batch selector — center */}
           <Combobox
@@ -149,6 +203,7 @@ export default function TimetablePage() {
             </div>
           </div>
         </nav>
+        )}
       </div>
 
       <Footer />

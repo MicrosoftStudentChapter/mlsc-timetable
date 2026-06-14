@@ -1,7 +1,7 @@
 /* floating wrapper — sits above content, centered */
 .navbar {
   position: fixed;
-  bottom: 13px;
+  bottom: 16px;
   top: unset;
   left: 50%;
   transform: translateX(-50%);

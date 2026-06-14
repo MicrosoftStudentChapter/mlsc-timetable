@@ -198,3 +198,41 @@
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+/* collapsed state: small expand pill */
+.tt-navbar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 26px;
+  padding: 0;
+  border-radius: 999px;
+  background: #202060;
+  color: #c8e0ff;
+  border: 1px solid rgba(0, 96, 192, 0.5);
+  box-shadow:
+    0 4px 16px rgba(0, 32, 96, 0.45),
+    0 1px 0 rgba(64, 224, 224, 0.15) inset;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.tt-navbar-toggle:hover {
+  background: rgba(64, 224, 224, 0.18);
+  color: #40e0e0;
+  border-color: #40e0e0;
+}
+
+/* responsive header: shrink logo, push heading to the right when overlap risk */
+@media (max-width: 600px) {
+  .tt-logo {
+    height: 48px;
+  }
+  .tt-heading {
+    position: static;
+    left: auto;
+    transform: none;
+    margin-left: auto;
+  }
+}
