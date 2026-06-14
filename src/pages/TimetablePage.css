@@ -222,23 +222,25 @@
   transform: translateX(-50%) translateY(0);
 }
 
-/* collapsed state: small expand pill */
+/* collapsed state: circular FAB-style toggle */
 .tt-navbar-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 26px;
+  width: 52px;
+  height: 52px;
   padding: 0;
-  border-radius: 999px;
+  border-radius: 50%;
   background: #202060;
   color: #c8e0ff;
   border: 1px solid rgba(0, 96, 192, 0.5);
   box-shadow:
-    0 4px 16px rgba(0, 32, 96, 0.45),
+    0 6px 20px rgba(0, 32, 96, 0.5),
     0 1px 0 rgba(64, 224, 224, 0.15) inset;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .tt-navbar-toggle:hover {
