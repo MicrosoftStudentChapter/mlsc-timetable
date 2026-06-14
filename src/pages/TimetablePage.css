@@ -61,37 +61,34 @@
 
 /* ── Timetable Navbar ── */
 .tt-navbar-wrap {
-  position: fixed;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 200;
-  width: max-content;
-  max-width: calc(100vw - 32px);
+  /* Wrap is just a state container; both children are fixed-positioned at
+     the same anchor so they can slide vertically without the wrap snapping
+     between toggle-width and pill-width. */
 }
 
 .tt-navbar-pill,
 .tt-navbar-toggle {
-  transition: opacity 0.22s ease, transform 0.22s ease;
-  transform-origin: center bottom;
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  z-index: 200;
+  max-width: calc(100vw - 32px);
+  transform: translateX(-50%);
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Stack the inactive element absolutely so it fades out over the active one
-   without forcing the wrap to be pill-wide when collapsed. */
+/* collapsed: pill slides down out of view */
 .tt-navbar-wrap.is-compact.is-collapsed .tt-navbar-pill {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%) translateY(6px) scale(0.92);
   opacity: 0;
+  transform: translateX(-50%) translateY(28px);
   pointer-events: none;
 }
+
+/* open: toggle slides up out of view */
 .tt-navbar-wrap.is-compact.is-open .tt-navbar-toggle {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%) translateY(8px) scale(0.7);
   opacity: 0;
+  transform: translateX(-50%) translateY(-28px);
   pointer-events: none;
 }
 
