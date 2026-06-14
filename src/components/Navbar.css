@@ -47,13 +47,51 @@
   background: rgba(0, 96, 192, 0.2);
   color: #c8e0ff;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  transition: background 0.18s ease, color 0.18s ease,
+              border-color 0.18s ease, transform 0.18s ease,
+              box-shadow 0.18s ease;
 }
 
 .navbar-icon-btn:hover {
-  background: rgba(64, 224, 224, 0.2);
-  border-color: #40e0e0;
-  color: #40e0e0;
+  background: rgba(64, 224, 224, 0.12);
+  border-color: rgba(64, 224, 224, 0.45);
+  color: #e6f6ff;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(0, 32, 96, 0.35);
+}
+
+.navbar-icon-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* tooltip wrapper */
+.navbar-tip-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.navbar-tip-wrap::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: #0f1535;
+  color: #c8e0ff;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 96, 192, 0.4);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.navbar-tip-wrap:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* push page content above the floating bottom bar */
