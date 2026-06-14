@@ -64,7 +64,7 @@ function App() {
           <p className="short-tagline">Built by the community</p>
           <ContributorsScroller contributors={contributors} />
           <a
-            href="https://github.com/MicrosoftStudentChapter/mlsc-timetable"
+            href={`https://github.com/${import.meta.env.VITE_GITHUB_REPO || 'MicrosoftStudentChapter/mlsc-timetable'}`}
             target="_blank"
             rel="noreferrer"
             className="repo-link"

@@ -6,6 +6,9 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
   return {
+    define: {
+      'import.meta.env.VITE_GITHUB_REPO': JSON.stringify(env.GITHUB_REPO || ''),
+    },
     plugins: [
       react(),
       {
