@@ -68,6 +68,38 @@
   z-index: 200;
   width: max-content;
   max-width: calc(100vw - 32px);
+  display: grid;
+  grid-template-areas: "stack";
+  place-items: center;
+}
+
+.tt-navbar-wrap > .tt-navbar-toggle,
+.tt-navbar-wrap > .tt-navbar-pill {
+  grid-area: stack;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  will-change: opacity, transform;
+}
+
+/* compact + collapsed: show toggle, fade pill out */
+.tt-navbar-wrap.is-compact.is-collapsed .tt-navbar-pill {
+  opacity: 0;
+  transform: translateY(6px) scale(0.92);
+  pointer-events: none;
+}
+.tt-navbar-wrap.is-compact.is-collapsed .tt-navbar-toggle {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* compact + open: show pill, fade toggle out */
+.tt-navbar-wrap.is-compact.is-open .tt-navbar-toggle {
+  opacity: 0;
+  transform: translateY(8px) scale(0.7);
+  pointer-events: none;
+}
+.tt-navbar-wrap.is-compact.is-open .tt-navbar-pill {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .tt-navbar-pill {

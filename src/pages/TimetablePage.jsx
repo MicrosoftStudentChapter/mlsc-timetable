@@ -131,27 +131,32 @@ export default function TimetablePage() {
 
       {/* Timetable Navbar */}
       <div
-        className={`tt-navbar-wrap ${isCompact && !navExpanded ? 'is-collapsed' : 'is-open'}`}
+        className={`tt-navbar-wrap ${!isCompact ? 'is-wide is-open' : (navExpanded ? 'is-compact is-open' : 'is-compact is-collapsed')}`}
         onPointerEnter={isCompact ? handleNavEnter : undefined}
         onPointerLeave={isCompact ? handleNavLeave : undefined}
         onPointerDown={isCompact ? handleNavInteract : undefined}
         onKeyDown={isCompact ? handleNavInteract : undefined}
       >
-        {isCompact && !navExpanded && (
+        {isCompact && (
           <button
             type="button"
             className="tt-navbar-toggle"
             onClick={openNav}
             aria-label="Show toolbar"
-            aria-expanded="false"
+            aria-expanded={navExpanded ? 'true' : 'false'}
+            aria-hidden={navExpanded ? 'true' : undefined}
+            tabIndex={navExpanded ? -1 : 0}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="18 15 12 9 6 15"/>
             </svg>
           </button>
         )}
-        {(!isCompact || navExpanded) && (
-        <nav className="tt-navbar-pill">
+        <nav
+          className="tt-navbar-pill"
+          aria-hidden={isCompact && !navExpanded ? 'true' : undefined}
+          {...(isCompact && !navExpanded ? { inert: '' } : {})}
+        >
           {/* Batch selector — center */}
           <Combobox
             className="tt-batch-select"
@@ -231,7 +236,6 @@ export default function TimetablePage() {
             </div>
           </div>
         </nav>
-        )}
       </div>
 
       <Footer />
