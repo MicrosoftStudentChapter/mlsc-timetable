@@ -6,15 +6,27 @@ import { loadBatches } from '../lib/batches'
 import './TimetablePage.css'
 
 const NAV_AUTO_CLOSE_MS = 3000
+const NAV_COLLAPSE_QUERY = '(max-width: 848px)'
 
 export default function TimetablePage() {
   const { batch } = useParams()
   const navigate  = useNavigate()
   const [years, setYears] = useState([])
   const [batchInput, setBatchInput] = useState(batch ?? '')
+  const [isCompact, setIsCompact] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(NAV_COLLAPSE_QUERY).matches
+  )
   const [navExpanded, setNavExpanded] = useState(false)
   const closeTimerRef = useRef(null)
-  const isHoveredRef = useRef(false)
+  const isMouseHoveringRef = useRef(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia(NAV_COLLAPSE_QUERY)
+    const apply = () => setIsCompact(mq.matches)
+    apply()
+    mq.addEventListener('change', apply)
+    return () => mq.removeEventListener('change', apply)
+  }, [])
 
   const cancelClose = () => {
     if (closeTimerRef.current) {
@@ -29,20 +41,36 @@ export default function TimetablePage() {
 
   useEffect(() => () => cancelClose(), [])
 
-  const handleNavEnter = () => {
-    isHoveredRef.current = true
+  // when leaving compact mode, drop any pending timer + collapsed flag so the
+  // nav renders cleanly on desktop
+  useEffect(() => {
+    if (!isCompact) {
+      cancelClose()
+      setNavExpanded(false)
+      isMouseHoveringRef.current = false
+    }
+  }, [isCompact])
+
+  // mouse hover keeps the nav open; touch is ignored here so taps don't get
+  // mistaken for a permanent hover
+  const handleNavEnter = (e) => {
+    if (e.pointerType !== 'mouse') return
+    isMouseHoveringRef.current = true
     cancelClose()
   }
-  const handleNavLeave = () => {
-    isHoveredRef.current = false
+  const handleNavLeave = (e) => {
+    if (e.pointerType !== 'mouse') return
+    isMouseHoveringRef.current = false
     if (navExpanded) armClose()
   }
+  // any pointer/key activity inside the expanded nav resets the auto-close timer
+  // (this is what makes auto-close work on touch devices)
   const handleNavInteract = () => {
-    if (navExpanded && !isHoveredRef.current) armClose()
+    if (navExpanded && !isMouseHoveringRef.current) armClose()
   }
   const openNav = () => {
     setNavExpanded(true)
-    if (!isHoveredRef.current) armClose()
+    if (!isMouseHoveringRef.current) armClose()
   }
 
   useEffect(() => {
@@ -103,13 +131,13 @@ export default function TimetablePage() {
 
       {/* Timetable Navbar */}
       <div
-        className={`tt-navbar-wrap ${navExpanded ? 'is-open' : 'is-collapsed'}`}
-        onMouseEnter={handleNavEnter}
-        onMouseLeave={handleNavLeave}
-        onPointerDown={handleNavInteract}
-        onKeyDown={handleNavInteract}
+        className={`tt-navbar-wrap ${isCompact && !navExpanded ? 'is-collapsed' : 'is-open'}`}
+        onPointerEnter={isCompact ? handleNavEnter : undefined}
+        onPointerLeave={isCompact ? handleNavLeave : undefined}
+        onPointerDown={isCompact ? handleNavInteract : undefined}
+        onKeyDown={isCompact ? handleNavInteract : undefined}
       >
-        {!navExpanded && (
+        {isCompact && !navExpanded && (
           <button
             type="button"
             className="tt-navbar-toggle"
@@ -122,7 +150,7 @@ export default function TimetablePage() {
             </svg>
           </button>
         )}
-        {navExpanded && (
+        {(!isCompact || navExpanded) && (
         <nav className="tt-navbar-pill">
           {/* Batch selector — center */}
           <Combobox
