@@ -82,18 +82,16 @@
   margin: 0;
 }
 
+.brand-sem {
+  margin-left: 0.4rem;
+  color: var(--text);
+  opacity: 0.85;
+}
+
 .brand-heading {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
-}
-
-.brand-subtitle {
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--text-h);
-  margin: 0;
 }
 
 .brand-affiliation {

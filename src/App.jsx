@@ -48,8 +48,9 @@ function App() {
           <div className="right-panel">
             <div className="brand-card">
               <div className="brand-heading">
-                <p className="brand-title">MLSC TIMETABLE</p>
-                <p className="brand-subtitle">{semLabel}</p>
+                <p className="brand-title">
+                  MLSC TIMETABLE <span className="brand-sem">{semLabel}</span>
+                </p>
                 <p className="brand-affiliation">Thapar Institute of Engineering &amp; Tech.</p>
               </div>
               <div className="brand-logo-box">
