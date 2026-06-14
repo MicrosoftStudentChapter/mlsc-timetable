@@ -7,11 +7,26 @@ import './App.css'
 
 function App() {
   const [contributors, setContributors] = useState([])
+  const [semLabel, setSemLabel] = useState('ODD SEM 26-27')
 
   useEffect(() => {
     fetch('/api/contributors')
       .then((r) => r.json())
       .then((d) => Array.isArray(d) && setContributors(d))
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    const baseUrl = import.meta.env.VITE_BACKEND_URL
+    if (!baseUrl) return
+    const url = `${baseUrl.replace(/\/$/, '')}/current`
+    fetch(url)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!d) return
+        if (typeof d.label === 'string' && d.label) setSemLabel(d.label)
+        else if (d.season && d.year) setSemLabel(`${d.season} SEM ${d.year}`)
+      })
       .catch(() => {})
   }, [])
 
@@ -32,7 +47,11 @@ function App() {
           {/* RIGHT — titled card with selection inside */}
           <div className="right-panel">
             <div className="brand-card">
-              <p className="brand-title">MLSC TIMETABLE ODD-SEM</p>
+              <div className="brand-heading">
+                <p className="brand-title">MLSC TIMETABLE</p>
+                <p className="brand-subtitle">{semLabel}</p>
+                <p className="brand-affiliation">Thapar Institute of Engineering &amp; Tech.</p>
+              </div>
               <div className="brand-logo-box">
                 <BatchSelector />
               </div>

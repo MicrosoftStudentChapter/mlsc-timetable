@@ -82,6 +82,28 @@
   margin: 0;
 }
 
+.brand-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.brand-subtitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-h);
+  margin: 0;
+}
+
+.brand-affiliation {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--text);
+  opacity: 0.7;
+  margin: 0;
+}
+
 .brand-logo-box {
   flex: 1;
   border: 1px solid var(--border);
