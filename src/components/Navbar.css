@@ -1,0 +1,13 @@
+/* TODO: navbar styles */
+.navbar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+}
+
+.navbar-pill {
+  min-height: 40px;
+  min-width: 40px;
+}

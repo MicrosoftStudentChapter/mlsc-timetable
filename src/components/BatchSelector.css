@@ -1,0 +1,86 @@
+.batch-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.batch-label {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+.batch-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.batch-dropdown {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 0.95rem;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  padding-right: 2.5rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.batch-dropdown:focus {
+  outline: none;
+  border-color: #0060c0;
+  box-shadow: 0 0 0 3px rgba(0, 96, 192, 0.15);
+}
+
+.batch-dropdown:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.batch-selected {
+  font-size: 0.82rem;
+  color: var(--text);
+  margin: 0;
+}
+
+.batch-selected strong {
+  color: #0060c0;
+}
+
+.batch-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.85rem;
+  color: var(--text);
+  margin-top: 0.15rem;
+}
+
+.batch-spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 96, 192, 0.2);
+  border-top-color: #0060c0;
+  animation: batch-spin 0.7s linear infinite;
+}
+
+.batch-selector.is-loading .batch-fields {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+@keyframes batch-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
