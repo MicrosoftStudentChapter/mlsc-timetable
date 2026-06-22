@@ -49,10 +49,21 @@
 
 .tt-content {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 0;
 }
+
+@media (max-width: 768px) {
+  .tt-content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 
 .tt-placeholder {
   color: var(--text);
@@ -99,11 +110,11 @@
   gap: 0.75rem;
   padding: 8px 20px;
   border-radius: 999px;
-  background: #202060;
+  background: #ffffff;
   box-shadow:
-    0 4px 24px rgba(0, 32, 96, 0.45),
-    0 1px 0 rgba(64, 224, 224, 0.15) inset;
-  border: 1px solid rgba(0, 96, 192, 0.5);
+    0 10px 30px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 /* batch combobox in navbar */
@@ -114,43 +125,45 @@
 .tt-batch-select {
   padding: 5px 28px 5px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(0, 96, 192, 0.5);
-  background: rgba(0, 96, 192, 0.2);
-  color: #c8e0ff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #f3f4f6;
+  color: #111827;
   font-size: 0.82rem;
   cursor: text;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2340e0e0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background-color 0.2s;
 }
 
 .tt-batch-select::placeholder {
-  color: rgba(200, 224, 255, 0.55);
+  color: #9CA3AF;
 }
 
 .tt-batch-select:focus {
   outline: none;
-  border-color: #40e0e0;
+  border-color: #6366F1;
+  background: #ffffff;
 }
 
-/* dark-theme popup for the navbar combobox */
+/* light-theme popup for the navbar combobox */
 .tt-batch-popup {
-  background: #0f1535;
-  color: #c8e0ff;
-  border-color: rgba(0, 96, 192, 0.6);
+  background: #ffffff;
+  color: #111827;
+  border-color: rgba(0, 0, 0, 0.08);
   min-width: 220px;
   right: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
 .tt-batch-popup .combobox-option.is-active {
-  background: rgba(64, 224, 224, 0.18);
-  color: #ffffff;
+  background: rgba(99, 102, 241, 0.08);
+  color: #6366F1;
 }
 
 .tt-batch-popup .combobox-option-hint {
-  color: rgba(200, 224, 255, 0.55);
+  color: #6B7280;
 }
 
 /* divider between center and actions */
@@ -159,7 +172,7 @@
   align-items: center;
   gap: 0.5rem;
   padding-left: 0.5rem;
-  border-left: 1px solid rgba(0, 96, 192, 0.4);
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .tt-action-group {
@@ -170,7 +183,7 @@
 
 .tt-action-group + .tt-action-group {
   padding-left: 0.5rem;
-  border-left: 1px solid rgba(64, 224, 224, 0.25);
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .tt-icon-btn {
@@ -180,9 +193,9 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1px solid rgba(0, 96, 192, 0.4);
-  background: rgba(0, 96, 192, 0.2);
-  color: #c8e0ff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  color: #6B7280;
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease,
               border-color 0.18s ease, transform 0.18s ease,
@@ -191,11 +204,11 @@
 }
 
 .tt-icon-btn:hover {
-  background: rgba(64, 224, 224, 0.12);
-  border-color: rgba(64, 224, 224, 0.45);
-  color: #e6f6ff;
+  background: #f9fafb;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #111827;
   transform: translateY(-1.5px);
-  box-shadow: 0 4px 12px rgba(0, 32, 96, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 .tt-icon-btn:active {
@@ -214,13 +227,13 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%) translateY(4px);
-  background: #0f1535;
-  color: #c8e0ff;
+  background: #111827;
+  color: #ffffff;
   font-size: 0.7rem;
   white-space: nowrap;
   padding: 4px 8px;
   border-radius: 6px;
-  border: 1px solid rgba(0, 96, 192, 0.4);
+  border: none;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.15s ease, transform 0.15s ease;
@@ -240,12 +253,12 @@
   height: 52px;
   padding: 0;
   border-radius: 50%;
-  background: #202060;
-  color: #c8e0ff;
-  border: 1px solid rgba(0, 96, 192, 0.5);
+  background: #ffffff;
+  color: #6B7280;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow:
-    0 6px 20px rgba(0, 32, 96, 0.5),
-    0 1px 0 rgba(64, 224, 224, 0.15) inset;
+    0 6px 20px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.02);
   cursor: pointer;
   transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
@@ -253,9 +266,9 @@
 }
 
 .tt-navbar-toggle:hover {
-  background: rgba(64, 224, 224, 0.18);
-  color: #40e0e0;
-  border-color: #40e0e0;
+  background: #f9fafb;
+  color: #111827;
+  border-color: rgba(0, 0, 0, 0.12);
 }
 
 /* responsive header: shrink logo, push heading to the right when overlap risk */
@@ -269,4 +282,107 @@
     transform: none;
     margin-left: auto;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DARK MODE OVERRIDES — TimetablePage
+   ═══════════════════════════════════════════════════════════════ */
+[data-theme="dark"] .tt-navbar-pill {
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.40),
+    0 1px 3px rgba(0, 0, 0, 0.20);
+}
+
+[data-theme="dark"] .tt-navbar-toggle {
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.75);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.35),
+    0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] .tt-navbar-toggle:hover {
+  background: rgba(255, 255, 255, 0.10);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+[data-theme="dark"] .tt-icon-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+[data-theme="dark"] .tt-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.30);
+}
+
+/* Theme toggle button: glow in dark mode to feel active */
+[data-theme="dark"] .tt-theme-btn.is-dark {
+  color: #3B82F6;
+  border-color: rgba(59, 130, 246, 0.30);
+}
+
+[data-theme="dark"] .tt-theme-btn.is-dark:hover {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.50);
+}
+
+[data-theme="dark"] .tt-actions {
+  border-left-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .tt-action-group + .tt-action-group {
+  border-left-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Batch combobox */
+[data-theme="dark"] .tt-batch-select {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.10);
+  color: #FFFFFF;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+
+[data-theme="dark"] .tt-batch-select::placeholder {
+  color: rgba(255, 255, 255, 0.38);
+}
+
+[data-theme="dark"] .tt-batch-select:focus {
+  background-color: rgba(255, 255, 255, 0.10);
+  border-color: #3B82F6;
+}
+
+/* Batch popup dropdown */
+[data-theme="dark"] .tt-batch-popup {
+  background: #111111;
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .tt-batch-popup .combobox-option.is-active {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3B82F6;
+}
+
+[data-theme="dark"] .tt-batch-popup .combobox-option-hint {
+  color: rgba(255, 255, 255, 0.50);
+}
+
+/* Tooltip */
+[data-theme="dark"] .tt-tip-wrap::after {
+  background: #151515;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
