@@ -2,10 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Footer from '../components/Footer'
 import Combobox from '../components/Combobox'
-import TimetableGrid from '../components/TimetableGrid'
+import Navbar from '../components/Navbar'
 import { loadBatches } from '../lib/batches'
-import { DashboardLayout } from '../components/side_columns'
-import { useTheme } from '../hooks/useTheme'
 import './TimetablePage.css'
 
 const NAV_AUTO_CLOSE_MS = 3000
@@ -14,8 +12,6 @@ const NAV_COLLAPSE_QUERY = '(max-width: 848px)'
 export default function TimetablePage() {
   const { batch } = useParams()
   const navigate  = useNavigate()
-  const { theme, toggleTheme } = useTheme()
-  const isDark = theme === 'dark'
   const [years, setYears] = useState([])
   const [batchInput, setBatchInput] = useState(batch ?? '')
   const [isCompact, setIsCompact] = useState(
@@ -25,8 +21,6 @@ export default function TimetablePage() {
   const closeTimerRef = useRef(null)
   const isMouseHoveringRef = useRef(false)
   const pillRef = useRef(null)
-
-
 
   useEffect(() => {
     const mq = window.matchMedia(NAV_COLLAPSE_QUERY)
@@ -134,12 +128,20 @@ export default function TimetablePage() {
   }
 
   return (
-    <DashboardLayout
-      batch={batch}
-    >
-      <div className="tt-content">
-        <TimetableGrid isDarkMode={isDark} />
-      </div>
+    <>
+      <main className="tt-main">
+        {/* Top bar: logo left + centered heading */}
+        <div className="tt-topbar">
+          <button className="tt-logo-btn" onClick={() => navigate('/')} aria-label="Home">
+            <img src="/MLSC-logo.png" alt="MLSC" className="tt-logo" />
+          </button>
+          <h1 className="tt-heading">Timetable for {batch}</h1>
+        </div>
+
+        <div className="tt-content">
+          <p className="tt-placeholder">Content for <strong>{batch}</strong> will appear here.</p>
+        </div>
+      </main>
 
       {/* Timetable Navbar */}
       <div
@@ -231,27 +233,15 @@ export default function TimetablePage() {
             {/* Group 2: user settings */}
             <div className="tt-action-group">
               {/* Theme */}
-              <div className="tt-tip-wrap" data-tip={isDark ? 'Light mode' : 'Dark mode'}>
-                <button
-                  className={`tt-icon-btn tt-theme-btn${isDark ? ' is-dark' : ''}`}
-                  aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-                  onClick={toggleTheme}
-                >
-                  {isDark ? (
-                    /* Sun icon — click to go light */
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="5"/>
-                      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                    </svg>
-                  ) : (
-                    /* Moon icon — click to go dark */
-                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                    </svg>
-                  )}
+              <div className="tt-tip-wrap" data-tip="Toggle theme">
+                <button className="tt-icon-btn" aria-label="Toggle theme">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                  </svg>
                 </button>
               </div>
 
@@ -270,6 +260,7 @@ export default function TimetablePage() {
       </div>
 
       <Footer />
-    </DashboardLayout>
+      
+    </>
   )
 }

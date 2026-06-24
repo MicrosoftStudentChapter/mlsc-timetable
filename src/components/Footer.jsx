@@ -3,7 +3,7 @@ import './Footer.css'
 export default function Footer() {
   return (
     <footer className="footer">
-      {/* TODO: footer contents */}
+       <p>&copy; 2026 MLSC TIET. All Rights Reserved.</p>
     </footer>
   )
 }
