@@ -469,7 +469,6 @@ body:has(.dashboard-layout) {
 :root {
   --sb-ease: cubic-bezier(0.4, 0, 0.2, 1);
   --sb-phase: 0.2s;
-  --sb-body-expand: 0.35s;
 }
 
 /* ── Container resize (sidebar + card paddings) ──────────────
@@ -509,7 +508,7 @@ body:has(.dashboard-layout) {
 
 /* ── Body content: MLSC TIMETABLE logo + card body fillings ──
    COLLAPSE: Phase 1 (immediate fade out).
-   EXPAND:   Phase 2 (eases in slightly slower for a softer reveal). */
+   EXPAND:   Phase 2 (fade in after container finishes resizing). */
 .sidebar-logo-text,
 .card-placeholder-text,
 .mini-calendar,
@@ -517,8 +516,8 @@ body:has(.dashboard-layout) {
   opacity: 1;
   max-height: 300px;
   overflow: hidden;
-  transition: opacity var(--sb-body-expand) var(--sb-ease) var(--sb-phase),
-              max-height var(--sb-body-expand) var(--sb-ease) var(--sb-phase);
+  transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase),
+              max-height var(--sb-phase) var(--sb-ease) var(--sb-phase);
 }
 .dashboard-sidebar--collapsed .sidebar-logo-text,
 .dashboard-sidebar--collapsed .card-placeholder-text,

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import Footer from '../components/Footer'
 import Combobox from '../components/Combobox'
 import TimetableGrid from '../components/TimetableGrid'
 import { loadBatches } from '../lib/batches'
@@ -292,8 +291,6 @@ export default function TimetablePage() {
           </div>
         </nav>
       </div>
-
-      <Footer />
     </DashboardLayout>
   )
 }
