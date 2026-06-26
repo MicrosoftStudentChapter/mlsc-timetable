@@ -56,6 +56,71 @@
   flex-direction: column;
 }
 
+/* ── Card theme picker (lives in dashboard header) ── */
+.tt-card-theme-picker {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 6px;
+  font-size: 0.85rem;
+  color: var(--muted, #555);
+}
+
+.tt-card-theme-label {
+  white-space: nowrap;
+}
+
+.tt-card-theme-select {
+  appearance: none;
+  -webkit-appearance: none;
+  color-scheme: light;
+  background-color: var(--surface, #fff);
+  color: var(--text, #111);
+  border: 1px solid rgba(120, 120, 130, 0.35);
+  border-radius: 8px;
+  padding: 5px 28px 5px 10px;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tt-card-theme-select:hover {
+  border-color: rgba(120, 120, 130, 0.6);
+}
+
+.tt-card-theme-select:focus-visible {
+  outline: none;
+  border-color: rgba(0, 96, 192, 0.6);
+  box-shadow: 0 0 0 3px rgba(0, 96, 192, 0.15);
+}
+
+.tt-card-theme-select option {
+  background-color: #ffffff;
+  color: #111111;
+}
+
+[data-theme="dark"] .tt-card-theme-select {
+  color-scheme: dark;
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--text, #eee);
+  border-color: rgba(180, 180, 190, 0.3);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23bbb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+}
+
+[data-theme="dark"] .tt-card-theme-select option {
+  background-color: #151515;
+  color: #f0f0f0;
+}
+
+[data-theme="dark"] .tt-card-theme-select:hover {
+  border-color: rgba(180, 180, 190, 0.55);
+}
+
 @media (max-width: 768px) {
   .tt-content {
     overflow: hidden;

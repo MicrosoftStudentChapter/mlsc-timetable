@@ -10,12 +10,27 @@ import './TimetablePage.css'
 
 const NAV_AUTO_CLOSE_MS = 3000
 const NAV_COLLAPSE_QUERY = '(max-width: 848px)'
+const CARD_THEME_KEY = 'mlsc-card-theme'
+const CARD_THEMES = [
+  { value: 'default', label: 'Default' },
+  { value: 'aurora', label: 'Aurora' },
+  { value: 'paper', label: 'Paper' },
+]
+
+function getInitialCardTheme() {
+  try {
+    const saved = localStorage.getItem(CARD_THEME_KEY)
+    if (CARD_THEMES.some((t) => t.value === saved)) return saved
+  } catch (_) {}
+  return 'default'
+}
 
 export default function TimetablePage() {
   const { batch } = useParams()
   const navigate  = useNavigate()
   const { theme, toggleTheme } = useTheme()
   const isDark = theme === 'dark'
+  const [cardTheme, setCardTheme] = useState(getInitialCardTheme)
   const [years, setYears] = useState([])
   const [batchInput, setBatchInput] = useState(batch ?? '')
   const [timetableState, setTimetableState] = useState({ status: 'loading' })
@@ -53,6 +68,10 @@ export default function TimetablePage() {
   }
 
   useEffect(() => () => cancelClose(), [])
+
+  useEffect(() => {
+    try { localStorage.setItem(CARD_THEME_KEY, cardTheme) } catch (_) {}
+  }, [cardTheme])
 
   // when leaving compact mode, drop any pending timer + collapsed flag so the
   // nav renders cleanly on desktop
@@ -159,9 +178,24 @@ export default function TimetablePage() {
     <DashboardLayout
       batch={batch}
       onActiveWeekdayChange={setActiveWeekdayIdx}
+      headerActions={
+        <label className="tt-card-theme-picker">
+          <span className="tt-card-theme-label">Card style</span>
+          <select
+            className="tt-card-theme-select"
+            value={cardTheme}
+            onChange={(e) => setCardTheme(e.target.value)}
+            aria-label="Card style"
+          >
+            {CARD_THEMES.map((t) => (
+              <option key={t.value} value={t.value}>{t.label}</option>
+            ))}
+          </select>
+        </label>
+      }
     >
       <div className="tt-content">
-        <TimetableContent state={timetableState} batch={batch} isDark={isDark} activeWeekdayIdx={activeWeekdayIdx} />
+        <TimetableContent state={timetableState} batch={batch} isDark={isDark} cardTheme={cardTheme} activeWeekdayIdx={activeWeekdayIdx} />
       </div>
 
       {/* Timetable Navbar */}
@@ -297,7 +331,7 @@ export default function TimetablePage() {
 
 // Renders the right thing for each fetch state. Falls back to the grid's
 // hard-coded fixture when no backend is configured (dev convenience).
-function TimetableContent({ state, batch, isDark, activeWeekdayIdx }) {
+function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx }) {
   if (state.status === 'loading' || state.status === 'idle') {
     return <div className="tt-status tt-status--loading">Loading {batch ?? 'timetable'}…</div>
   }
@@ -307,7 +341,7 @@ function TimetableContent({ state, batch, isDark, activeWeekdayIdx }) {
         <div className="tt-status tt-status--warning">
           Backend not configured — showing sample data. Set <code>VITE_BACKEND_URL</code> in <code>.env</code> to load <code>{batch}</code>.
         </div>
-        <TimetableGrid isDarkMode={isDark} activeWeekdayIdx={activeWeekdayIdx} />
+        <TimetableGrid isDarkMode={isDark} cardTheme={cardTheme} activeWeekdayIdx={activeWeekdayIdx} />
       </>
     )
   }
@@ -332,5 +366,5 @@ function TimetableContent({ state, batch, isDark, activeWeekdayIdx }) {
       </div>
     )
   }
-  return <TimetableGrid isDarkMode={isDark} classes={state.classes} activeWeekdayIdx={activeWeekdayIdx} />
+  return <TimetableGrid isDarkMode={isDark} classes={state.classes} cardTheme={cardTheme} activeWeekdayIdx={activeWeekdayIdx} />
 }

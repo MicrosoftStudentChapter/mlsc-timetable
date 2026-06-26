@@ -187,7 +187,7 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange }) {
   );
 }
 
-export function DashboardLayout({ children, onActiveWeekdayChange }) {
+export function DashboardLayout({ children, onActiveWeekdayChange, headerActions }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
@@ -251,6 +251,9 @@ export function DashboardLayout({ children, onActiveWeekdayChange }) {
             </button>
             <h1 className="welcome-heading">Welcome, Student</h1>
           </div>
+          {headerActions && (
+            <div className="header-actions">{headerActions}</div>
+          )}
         </header>
 
         {/* Existing Timetable Page Content */}
