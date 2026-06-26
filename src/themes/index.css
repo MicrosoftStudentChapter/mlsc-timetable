@@ -1,0 +1,11 @@
+/* ═══════════════════════════════════════════════════════════════
+   Card Themes — single import point.
+   Each theme is self-contained and scoped under
+   `[data-card-theme="<name>"]`. To add a theme: drop a CSS file
+   in this folder and add an @import below.
+   ═══════════════════════════════════════════════════════════════ */
+
+@import './default.css';
+@import './aurora.css';
+@import './paper.css';
+@import './custom.css';

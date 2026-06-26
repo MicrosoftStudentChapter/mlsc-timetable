@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, useEffect } from 'react'
+import { useState, useRef, useMemo, useEffect, useLayoutEffect } from 'react'
 import { createPortal } from 'react-dom'
 import './TimetableGrid.css'
 
@@ -421,27 +421,70 @@ function ClassCard({ entry, onEdit, isDarkMode }) {
         </svg>
       </button>
       <span className="tt-type-badge" style={badgeStyle}>{meta.label}</span>
-      <p className="tt-card-subject">{entry.subject}</p>
-      <p className="tt-card-code">{entry.code}</p>
+      <div className="tt-card-text">
+        <p className="tt-card-subject">{entry.subject}</p>
+        <p className="tt-card-code">{entry.code}</p>
+      </div>
       <span className="tt-card-room">{entry.room}</span>
     </div>
   )
 }
 
 // ─── TimetableGrid ────────────────────────────────────────────────────────────
-export default function TimetableGrid({ currentDay, isDarkMode }) {
+export default function TimetableGrid({ currentDay, isDarkMode, classes, cardTheme = 'default', activeWeekdayIdx }) {
   const resolvedIsDark = isDarkMode ?? (typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark')
-  const [entries,    setEntries]    = useState(INITIAL_DATA)
+  const [entries,    setEntries]    = useState(() => classes ?? INITIAL_DATA)
   const [editTarget, setEditTarget] = useState(null)   // { entry, rect }
   const [addTarget,  setAddTarget]  = useState(null)   // { day, startTime, rect }
 
+  // When the caller swaps in a new `classes` array (e.g. user switches batch),
+  // reset the editable in-memory grid to match.
+  useEffect(() => {
+    if (classes !== undefined) {
+      setEntries(classes)
+      setEditTarget(null)
+      setAddTarget(null)
+    }
+  }, [classes])
+
   // Resolve today's highlight day
   const highlightDay = useMemo(() => {
+    // Sidebar's mini-calendar drives this when present (0..4 = Mon..Fri).
+    if (activeWeekdayIdx != null && activeWeekdayIdx >= 0 && activeWeekdayIdx <= 4) {
+      return DAYS[activeWeekdayIdx]
+    }
     if (currentDay && DAYS.includes(currentDay)) return currentDay
     const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
     const today = names[new Date().getDay()]
     return DAYS.includes(today) ? today : 'Monday'
-  }, [currentDay])
+  }, [currentDay, activeWeekdayIdx])
+
+  // Sliding pill: index into DAYS (0..4) of the column to highlight, or null
+  // to hide the pill entirely (e.g. Saturday with no mapping, or Sunday).
+  const pillIdx = useMemo(() => {
+    if (activeWeekdayIdx === null) return null
+    if (activeWeekdayIdx != null && activeWeekdayIdx >= 0 && activeWeekdayIdx <= 4) {
+      return activeWeekdayIdx
+    }
+    return DAYS.indexOf(highlightDay)
+  }, [activeWeekdayIdx, highlightDay])
+
+  // Measure the day-column width so the pill can be translated in pixels
+  // (percentage-based transforms don't reliably interpolate across renders).
+  const headerRowRef = useRef(null)
+  const [colWidth, setColWidth] = useState(0)
+  useLayoutEffect(() => {
+    const row = headerRowRef.current
+    if (!row) return
+    const measure = () => {
+      const dayCell = row.querySelector('.tt-day-header-cell')
+      if (dayCell) setColWidth(dayCell.getBoundingClientRect().width)
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(row)
+    return () => ro.disconnect()
+  }, [])
 
   // Build day → slot → entries lookup from live state
   const dataMap = useMemo(() => {
@@ -525,7 +568,7 @@ export default function TimetableGrid({ currentDay, isDarkMode }) {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="tt-grid-frame">
+    <div className="tt-grid-frame" data-card-theme={cardTheme}>
       <div className="tt-grid-watermark" aria-hidden="true">
         <img
           src="/MLSC-logo.png"
@@ -538,15 +581,22 @@ export default function TimetableGrid({ currentDay, isDarkMode }) {
         <div className="tt-grid-table">
 
           {/* ── Header row ─────────────────────────────────────────────── */}
-          <div className="tt-grid-header-row">
+          <div className="tt-grid-header-row" ref={headerRowRef}>
+            {/* Sliding highlight pill: rides behind the day cells, snaps to
+                the active column via a transform animation. Hidden when
+                pillIdx is null (Saturday with no mapping, Sunday, etc.). */}
+            <div
+              className={`tt-day-active-pill ${pillIdx == null ? 'tt-day-active-pill--hidden' : ''}`}
+              style={{ transform: `translateX(${(pillIdx ?? 0) * colWidth}px)` }}
+              aria-hidden="true"
+            />
             <div className="tt-time-header-cell" />
-            {DAYS.map((day) => (
+            {DAYS.map((day, idx) => (
               <div
                 key={day}
-                className={`tt-day-header-cell ${day === highlightDay ? 'tt-day-active' : ''}`}
+                className={`tt-day-header-cell ${idx === pillIdx ? 'tt-day-active' : ''}`}
               >
                 <span className="tt-day-header-label">{day}</span>
-                {day === highlightDay && <span className="tt-active-dot" />}
               </div>
             ))}
           </div>
@@ -571,31 +621,33 @@ export default function TimetableGrid({ currentDay, isDarkMode }) {
                     key={day}
                     className={`tt-slot-cell ${isActive ? 'tt-col-active' : ''}`}
                   >
-                    {/* Existing class cards */}
-                    {slotEntries.map((entry) => (
-                      <ClassCard
-                        key={entry.id}
-                        entry={entry}
-                        isDarkMode={resolvedIsDark}
-                        onEdit={(rect) => setEditTarget({ entry, rect })}
-                      />
-                    ))}
+                    <div className="tt-slot-stack">
+                      {/* Existing class cards */}
+                      {slotEntries.map((entry) => (
+                        <ClassCard
+                          key={entry.id}
+                          entry={entry}
+                          isDarkMode={resolvedIsDark}
+                          onEdit={(rect) => setEditTarget({ entry, rect })}
+                        />
+                      ))}
 
-                    {/* Add button — only in empty slots */}
-                    {slotEntries.length === 0 && (
-                      <button
-                        className="tt-add-btn"
-                        aria-label={`Add class for ${day} at ${formatHour(slot)}`}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setAddTarget({ day, startTime: slot, rect: e.currentTarget.getBoundingClientRect() })
-                        }}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                          <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                        </svg>
-                      </button>
-                    )}
+                      {/* Add button — only in empty slots */}
+                      {slotEntries.length === 0 && (
+                        <button
+                          className="tt-add-btn"
+                          aria-label={`Add class for ${day} at ${formatHour(slot)}`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setAddTarget({ day, startTime: slot, rect: e.currentTarget.getBoundingClientRect() })
+                          }}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 )
               })}

@@ -1,0 +1,79 @@
+/* ─── Paper theme ───────────────────────────────────────────────
+   Off-white "notebook page" with a faint dotted SVG background,
+   handwritten-feel serif subject, monospace meta.
+   Demonstrates: inline SVG bg (data-URI), font swap, dashed border.
+   ───────────────────────────────────────────────────────────── */
+
+[data-card-theme="paper"] .tt-class-card {
+  background-color: #fbfaf6;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12'><circle cx='1.5' cy='1.5' r='1' fill='%23d6d3c3'/></svg>");
+  background-size: 12px 12px;
+  border: 1px dashed rgba(120, 113, 88, 0.4);
+  border-left: 4px solid #78716c;
+  border-radius: 4px;
+  box-shadow: 0 1px 0 rgba(120, 113, 88, 0.1);
+  font-family: 'Georgia', serif;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-card-theme="paper"] .tt-class-card::before {
+  /* Let the dotted bg show through */
+  background-color: transparent;
+}
+
+[data-card-theme="paper"] .tt-class-card:hover {
+  transform: rotate(-0.4deg);
+  box-shadow: 0 4px 12px rgba(120, 113, 88, 0.18);
+}
+
+[data-card-theme="paper"] .tt-type-badge {
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+[data-card-theme="paper"] .tt-card-subject {
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  font-style: italic;
+  color: #3f3a2a;
+}
+
+[data-card-theme="paper"] .tt-card-code {
+  font-family: 'Courier New', monospace;
+  font-weight: 400;
+  color: #78716c;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+[data-card-theme="paper"] .tt-card-room {
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  color: #44403c;
+  background: rgba(120, 113, 88, 0.15);
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+[data-theme="dark"] [data-card-theme="paper"] .tt-class-card {
+  background-color: #1c1a16;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12'><circle cx='1.5' cy='1.5' r='1' fill='%23454039'/></svg>");
+  border-color: rgba(168, 162, 137, 0.25);
+  border-left-color: #a8a289;
+}
+
+[data-theme="dark"] [data-card-theme="paper"] .tt-card-subject {
+  color: #e7e2cf;
+}
+
+[data-theme="dark"] [data-card-theme="paper"] .tt-card-code {
+  color: rgba(231, 226, 207, 0.55);
+}
+
+[data-theme="dark"] [data-card-theme="paper"] .tt-card-room {
+  color: #f5f3e6;
+  background: rgba(231, 226, 207, 0.1);
+}

@@ -6,11 +6,19 @@ body:has(.dashboard-layout) #root {
   margin: 0 !important;
   padding: 0 !important;
   text-align: left !important;
+  /* Lock to viewport so children can flex-fill without forcing body scroll. */
+  height: 100vh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
 }
 
 body:has(.dashboard-layout) {
   background: #ffffff !important;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+  /* No body scroll while there's no footer; the timetable grid handles its
+     own vertical scroll internally. */
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* Dark mode body override — must beat the !important above */
@@ -21,7 +29,8 @@ body:has(.dashboard-layout) {
 /* Base Layout */
 .dashboard-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 0;
   width: 100%;
   box-sizing: border-box;
   background: transparent;
@@ -40,7 +49,9 @@ body:has(.dashboard-layout) {
   height: 100vh;
   position: sticky;
   top: 0;
-  overflow-y: auto;
+  /* Visible so the edge-toggle handle can poke out past the right border.
+     Scroll is delegated to .sidebar-inner. */
+  overflow: visible;
 }
 
 .sidebar-inner {
@@ -48,6 +59,7 @@ body:has(.dashboard-layout) {
   flex-direction: column;
   height: 100%;
   width: 100%;
+  overflow-y: auto;
 }
 
 /* Logo Section */
@@ -61,6 +73,8 @@ body:has(.dashboard-layout) {
   padding: 8px 0 28px 0;
   text-align: center;
   width: 100%;
+  text-decoration: none;
+  color: inherit;
 }
 
 .logo-img-wrapper {
@@ -89,6 +103,7 @@ body:has(.dashboard-layout) {
 
 /* Cards System */
 .dashboard-card {
+  position: relative;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 20px;
@@ -164,6 +179,11 @@ body:has(.dashboard-layout) {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.calendar-weekday.active {
+  color: #6366F1;
 }
 
 .calendar-grid {
@@ -182,14 +202,30 @@ body:has(.dashboard-layout) {
   justify-content: center;
   height: 22px;
   border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.calendar-day--blank {
   cursor: default;
-  transition: background 0.15s ease;
+  pointer-events: none;
+}
+
+.calendar-day:hover,
+.calendar-day.hovered {
+  background: rgba(99, 102, 241, 0.12);
+  color: #4338CA;
 }
 
 .calendar-day.today {
   background: #6366F1;
   color: #ffffff !important;
   font-weight: 700;
+}
+
+.calendar-day.today:hover,
+.calendar-day.today.hovered {
+  background: #4F46E5;
 }
 
 /* Profile Card - Bottom Aligned */
@@ -240,9 +276,10 @@ body:has(.dashboard-layout) {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
   box-sizing: border-box;
   padding: 24px; /* Reduced from 32px to maximize viewport usage */
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 /* Header Section styling */
@@ -404,6 +441,300 @@ body:has(.dashboard-layout) {
 .dashboard-content {
   flex: 1;
   width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Sidebar Collapse (desktop / tablet)
+
+   Two-phase choreography (~0.4s total per direction):
+
+     COLLAPSE                              EXPAND
+   ─────────────────────────────────    ─────────────────────────────────
+   Ph1 (0–0.2s):  body content fades   Ph1 (0–0.2s):  container resizes
+                  out; cards shrink                    + title↔icon swap
+                  to "title-only"
+   Ph2 (0.2–0.4s): container resizes   Ph2 (0.2–0.4s): body content
+                  + title↔icon swap                    fades in
+
+   Implemented via asymmetric transition delays: each rule (base vs
+   --collapsed) describes the transition that plays when the element is
+   moving TO that state. So the base rule owns "expand" timing and the
+   --collapsed rule owns "collapse" timing.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --sb-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --sb-phase: 0.2s;
+  --sb-body-expand: 0.35s;
+}
+
+/* ── Container resize (sidebar + card paddings) ──────────────
+   COLLAPSE: Phase 2 (delayed). EXPAND: Phase 1 (immediate). */
+.dashboard-sidebar {
+  position: sticky;
+  transition: width var(--sb-phase) var(--sb-ease),
+              padding var(--sb-phase) var(--sb-ease);
+}
+.dashboard-sidebar--collapsed {
+  width: 72px;
+  padding: 24px 10px;
+  transition: width var(--sb-phase) var(--sb-ease) var(--sb-phase),
+              padding var(--sb-phase) var(--sb-ease) var(--sb-phase);
+}
+
+.sidebar-logo-container,
+.logo-img-wrapper,
+.dashboard-card {
+  transition: padding var(--sb-phase) var(--sb-ease),
+              margin var(--sb-phase) var(--sb-ease),
+              border-radius var(--sb-phase) var(--sb-ease),
+              width var(--sb-phase) var(--sb-ease),
+              height var(--sb-phase) var(--sb-ease),
+              gap var(--sb-phase) var(--sb-ease);
+}
+.dashboard-sidebar--collapsed .sidebar-logo-container,
+.dashboard-sidebar--collapsed .logo-img-wrapper,
+.dashboard-sidebar--collapsed .dashboard-card {
+  transition: padding var(--sb-phase) var(--sb-ease) var(--sb-phase),
+              margin var(--sb-phase) var(--sb-ease) var(--sb-phase),
+              border-radius var(--sb-phase) var(--sb-ease) var(--sb-phase),
+              width var(--sb-phase) var(--sb-ease) var(--sb-phase),
+              height var(--sb-phase) var(--sb-ease) var(--sb-phase),
+              gap var(--sb-phase) var(--sb-ease) var(--sb-phase);
+}
+
+/* ── Body content: MLSC TIMETABLE logo + card body fillings ──
+   COLLAPSE: Phase 1 (immediate fade out).
+   EXPAND:   Phase 2 (eases in slightly slower for a softer reveal). */
+.sidebar-logo-text,
+.card-placeholder-text,
+.mini-calendar,
+.profile-info {
+  opacity: 1;
+  max-height: 300px;
+  overflow: hidden;
+  transition: opacity var(--sb-body-expand) var(--sb-ease) var(--sb-phase),
+              max-height var(--sb-body-expand) var(--sb-ease) var(--sb-phase);
+}
+.dashboard-sidebar--collapsed .sidebar-logo-text,
+.dashboard-sidebar--collapsed .card-placeholder-text,
+.dashboard-sidebar--collapsed .mini-calendar,
+.dashboard-sidebar--collapsed .profile-info {
+  opacity: 0;
+  max-height: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  pointer-events: none;
+  transition: opacity var(--sb-phase) var(--sb-ease),
+              max-height var(--sb-phase) var(--sb-ease),
+              margin var(--sb-phase) var(--sb-ease);
+}
+
+/* ── Profile avatar: cross-fades with the profile icon at the
+   same position. Kept at fixed 36×36 throughout so the profile
+   card never "shrinks to min-height" during expand.
+   COLLAPSE: Phase 2 (delayed fade out). EXPAND: Phase 1 (immediate fade in). */
+.profile-avatar {
+  opacity: 1;
+  transition: opacity var(--sb-phase) var(--sb-ease);
+}
+.dashboard-sidebar--collapsed .profile-avatar {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase);
+}
+
+/* ── Card titles + calendar header row: fade in/out alongside
+   container resize. Kept in their natural top-left position throughout.
+   The calendar's heading row (title + "June 2026") is grouped here so
+   it transitions identically to "Announcements" / "Exam Dates".
+   COLLAPSE: Phase 2 (delayed fade out). EXPAND: Phase 1 (immediate fade in). */
+.card-title,
+.calendar-header {
+  opacity: 1;
+  max-height: 40px;
+  overflow: hidden;
+  transition: opacity var(--sb-phase) var(--sb-ease),
+              max-height var(--sb-phase) var(--sb-ease),
+              margin var(--sb-phase) var(--sb-ease);
+}
+.dashboard-sidebar--collapsed .card-title,
+.dashboard-sidebar--collapsed .calendar-header {
+  opacity: 0;
+  max-height: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  pointer-events: none;
+  transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase),
+              max-height var(--sb-phase) var(--sb-ease) var(--sb-phase),
+              margin var(--sb-phase) var(--sb-ease) var(--sb-phase);
+}
+
+/* Edge collapse trigger — invisible full-height strip on the right edge.
+   On sidebar hover, a small handle fades in centered vertically. */
+.sidebar-edge-toggle {
+  position: absolute;
+  top: 0;
+  right: -8px;
+  width: 16px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-edge-toggle:focus { outline: none; }
+
+.sidebar-edge-toggle__rail {
+  position: absolute;
+  top: 0;
+  left: 7px;
+  width: 2px;
+  height: 100%;
+  background: transparent;
+  border-radius: 2px;
+  transition: background 0.18s ease;
+  pointer-events: none;
+}
+
+.sidebar-edge-toggle__handle {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateX(-4px) scale(0.9);
+  transition: opacity 0.18s ease, transform 0.18s ease, color 0.18s ease;
+  pointer-events: none;
+}
+
+.dashboard-sidebar:hover .sidebar-edge-toggle__rail,
+.sidebar-edge-toggle:focus-visible .sidebar-edge-toggle__rail {
+  background: rgba(99, 102, 241, 0.35);
+}
+
+.dashboard-sidebar:hover .sidebar-edge-toggle__handle,
+.sidebar-edge-toggle:focus-visible .sidebar-edge-toggle__handle {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+.sidebar-edge-toggle:hover .sidebar-edge-toggle__handle {
+  color: #111827;
+  border-color: rgba(99, 102, 241, 0.6);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-edge-toggle:hover .sidebar-edge-toggle__rail {
+  background: rgba(99, 102, 241, 0.6);
+}
+
+/* Chevron points left when expanded (click to collapse leftward),
+   flips to right when collapsed (click to expand rightward). */
+.sidebar-edge-toggle__handle svg {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dashboard-sidebar--collapsed .sidebar-edge-toggle__handle svg {
+  transform: rotate(180deg);
+}
+
+/* ── Card icons: cross-fade with titles WITHOUT pushing them.
+   Absolutely positioned to fill the card and self-center, so the
+   title remains anchored to its natural top-left position throughout.
+   COLLAPSE: Phase 2 (delayed fade in). EXPAND: Phase 1 (immediate fade out). */
+.card-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  color: #4b5563;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity var(--sb-phase) var(--sb-ease);
+}
+
+/* ── Collapsed-only layout overrides ─────────────────────────
+   Final dims; timing is owned by the rules above. */
+
+.dashboard-sidebar--collapsed .logo-img-wrapper {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 16px;
+}
+
+.dashboard-sidebar--collapsed .sidebar-logo-container {
+  padding: 8px 0 12px 0;
+}
+
+.dashboard-sidebar--collapsed .dashboard-card {
+  padding: 12px 0;
+  margin-bottom: 8px;
+  gap: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  min-height: 60px;
+}
+
+.dashboard-sidebar--collapsed .card-icon {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase);
+}
+
+/* ── Profile card icon: anchored to the avatar's position so the
+   icon ↔ avatar cross-fade happens in place (no empty min-height
+   gap during expand). In collapsed state it slides to the center
+   of the 72px-wide pill. */
+.profile-card .card-icon {
+  inset: auto;
+  top: 50%;
+  left: 18px;
+  width: 36px;
+  height: 36px;
+  transform: translateY(-50%);
+  transition: opacity var(--sb-phase) var(--sb-ease),
+              left var(--sb-phase) var(--sb-ease),
+              transform var(--sb-phase) var(--sb-ease);
+}
+.dashboard-sidebar--collapsed .profile-card .card-icon {
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase),
+              left var(--sb-phase) var(--sb-ease) var(--sb-phase),
+              transform var(--sb-phase) var(--sb-ease) var(--sb-phase);
+}
+
+/* Dark-mode pairing */
+[data-theme="dark"] .sidebar-edge-toggle__handle {
+  background: #1a1d24;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+}
+[data-theme="dark"] .sidebar-edge-toggle:hover .sidebar-edge-toggle__handle {
+  color: #ffffff;
+  border-color: rgba(99, 102, 241, 0.7);
+}
+[data-theme="dark"] .card-icon {
+  color: rgba(255, 255, 255, 0.75);
 }
 
 /* Mobile Drawer Overlay styles */
@@ -473,11 +804,6 @@ body:has(.dashboard-layout) {
 
 /* Tablet mode */
 @media (min-width: 769px) and (max-width: 1024px) {
-  .dashboard-sidebar {
-    width: 230px;
-    padding: 20px;
-  }
-  
   .welcome-heading {
     font-size: 34px;
   }
@@ -680,14 +1006,29 @@ body:has(.dashboard-layout) {
   color: rgba(255, 255, 255, 0.35);
 }
 
+[data-theme="dark"] .calendar-weekday.active {
+  color: #93C5FD;
+}
+
 [data-theme="dark"] .calendar-day {
   color: rgba(255, 255, 255, 0.65);
+}
+
+[data-theme="dark"] .calendar-day:hover,
+[data-theme="dark"] .calendar-day.hovered {
+  background: rgba(59, 130, 246, 0.18);
+  color: #BFDBFE;
 }
 
 [data-theme="dark"] .calendar-day.today {
   background: #3B82F6;
   color: #FFFFFF !important;
   font-weight: 700;
+}
+
+[data-theme="dark"] .calendar-day.today:hover,
+[data-theme="dark"] .calendar-day.today.hovered {
+  background: #2563EB;
 }
 
 /* ─── Profile card ───────────────────────────────────────────── */

@@ -16,6 +16,11 @@
   scrollbar-width: none;
 }
 
+.scroller-track--centered {
+  justify-content: center;
+  overflow-x: hidden;
+}
+
 .scroller-track::-webkit-scrollbar {
   display: none;
 }
@@ -40,6 +45,13 @@
 .scroller-wrapper::after {
   right: 0;
   background: linear-gradient(to left, var(--bg), transparent);
+}
+
+/* When the list fits, the strip is centered with no scrolling — hide the
+   edge fades so they don't dim the chips near the viewport edges. */
+.scroller-wrapper--centered::before,
+.scroller-wrapper--centered::after {
+  display: none;
 }
 
 /* arrow buttons */
@@ -100,10 +112,12 @@
 
 .contributor-chip span {
   font-size: 0.78rem;
-  max-width: 72px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  max-width: 84px;
+  text-align: center;
+  line-height: 1.2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .no-contributors {

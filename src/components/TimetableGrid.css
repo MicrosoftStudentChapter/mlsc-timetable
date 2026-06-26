@@ -14,10 +14,8 @@
   height: calc(100vh - 120px);
   overflow: hidden;
   border-radius: 16px;
-  border: 1px solid rgba(51, 51, 51, 0.07);
-  border-left: none;
+  border: none;
   background: #ffffff;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
 
   /* ─── Responsive Design Tokens (Desktop default) ─── */
   --col-width: 140px;
@@ -33,6 +31,29 @@
   --time-font-size: 15px;
   --grid-line-top: 9px;        /* Proportional to row height */
   --active-dot-size: 5px;
+}
+
+/* Corner-only accent: a full ring drawn by ::before, then masked so only the
+   four rounded corners are visible. Straight edges stay clean. */
+.tt-grid-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1.5px solid rgba(120, 120, 130, 0.45);
+  pointer-events: none;
+  z-index: 10;
+  --corner-reveal: 26px;
+  -webkit-mask:
+    radial-gradient(circle var(--corner-reveal) at top left,    #000 99%, transparent 100%),
+    radial-gradient(circle var(--corner-reveal) at top right,   #000 99%, transparent 100%),
+    radial-gradient(circle var(--corner-reveal) at bottom left, #000 99%, transparent 100%),
+    radial-gradient(circle var(--corner-reveal) at bottom right,#000 99%, transparent 100%);
+  mask:
+    radial-gradient(circle var(--corner-reveal) at top left,    #000 99%, transparent 100%),
+    radial-gradient(circle var(--corner-reveal) at top right,   #000 99%, transparent 100%),
+    radial-gradient(circle var(--corner-reveal) at bottom left, #000 99%, transparent 100%),
+    radial-gradient(circle var(--corner-reveal) at bottom right,#000 99%, transparent 100%);
 }
 
 /* ─── Scroll Wrapper ─────────────────────────────────────────────────────── */
@@ -76,57 +97,102 @@
 }
 
 /* ─── Grid Table ─────────────────────────────────────────────────────────── */
+/* Block container; header + body rows are CSS Grid rows with shared template
+   columns so widths line up. CSS Grid (not display: table) is what makes
+   `height: 100%` propagate from a cell to its child reliably in Chrome. */
 .tt-grid-table {
-  display: table;
+  display: block;
   position: relative;
   width: 100%;
-  min-width: calc(var(--time-col-width) + 6 * var(--col-width));
-  border-collapse: collapse;
-  border-spacing: 0;
-  table-layout: fixed;
+  min-width: calc(var(--time-col-width) + 5 * var(--col-width));
   /* transform applied by JS */
   transform-origin: top left;
   will-change: transform;
+}
+
+/* Shared row template — every row uses the same column tracks, so the
+   header and every body row stay perfectly aligned. */
+.tt-grid-header-row,
+.tt-grid-body-row {
+  display: grid;
+  grid-template-columns: var(--time-col-width) repeat(5, minmax(var(--col-width), 1fr));
+  min-width: calc(var(--time-col-width) + 5 * var(--col-width));
 }
 
 /* ═══════════════════════════════════════════════════════════════
    HEADER ROW
    ═══════════════════════════════════════════════════════════════ */
 .tt-grid-header-row {
-  display: table-row;
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
+/* Sliding accent bar beneath the active day column. Sits at the bottom
+   of the header row (above the cells' bottom border) and snaps between
+   columns via a transform animation — Material-style tabs underline.
+   The transform value is set inline from JS (translateX of N * 100% where
+   N is the active column index); inline transforms interpolate reliably
+   whereas var()-based ones don't without @property. */
+.tt-day-active-pill {
+  position: absolute;
+  left: var(--time-col-width);
+  bottom: 0;
+  /* Width = one day column (excludes the leading time column). */
+  width: calc((100% - var(--time-col-width)) / 5);
+  height: 3px;
+  background: #004F9E;
+  border-radius: 3px 3px 0 0;
+  pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease;
+  opacity: 1;
+  z-index: 12;
+}
+
+.tt-day-active-pill--hidden {
+  opacity: 0;
+}
+
 .tt-time-header-cell {
-  display: table-cell;
-  width: var(--time-col-width);
-  min-width: var(--time-col-width);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: var(--header-padding);
   background: #ffffff;
   border-bottom: 2px solid rgba(51, 51, 51, 0.08);
   border-right: 1px solid rgba(51, 51, 51, 0.07);
   box-sizing: border-box;
+  /* Stick to both axes: corner cell stays pinned while scrolling. */
   position: sticky;
+  top: 0;
   left: 0;
-  z-index: 12;
+  z-index: 13;
 }
 
 .tt-day-header-cell {
-  display: table-cell;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  vertical-align: middle;
   padding: var(--header-padding);
   background: #ffffff;
   border-bottom: 2px solid rgba(51, 51, 51, 0.08);
   transition: background 0.25s ease;
-  min-width: var(--col-width);
   box-sizing: border-box;
+  /* Cells must be sticky themselves; sticky on table-row alone doesn't
+     establish a stacking context, so cards (z-index: 2) bleed through. */
+  position: sticky;
+  top: 0;
+  z-index: 11;
 }
 
 .tt-day-header-cell.tt-day-active {
-  background: rgba(0, 79, 158, 0.04);
+  /* Tint layered ON TOP of the solid base color so the cell stays opaque
+     while sticky — otherwise cards from row 1 bleed through on scroll. */
+  background-color: #ffffff;
+  background-image: linear-gradient(rgba(0, 79, 158, 0.04), rgba(0, 79, 158, 0.04));
 }
 
 .tt-day-header-label {
@@ -154,20 +220,16 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   BODY ROWS
+   BODY ROWS  — CSS Grid; cells in a row auto-equalize height (the default
+   `align-items: stretch` on grid items). This is what enables a single
+   `.tt-class-card` to stretch to the tallest sibling in its row.
    ═══════════════════════════════════════════════════════════════ */
-.tt-grid-body-row {
-  display: table-row;
-}
 
 /* ─── Time cell — floating label style ────────────────────────────────────── */
 .tt-time-cell {
-  display: table-cell;
-  width: var(--time-col-width);
-  min-width: var(--time-col-width);
-  height: var(--row-height);
-  padding: 8px 16px 0 8px;
-  vertical-align: top;
+  display: block;
+  min-height: var(--row-height);
+  padding: 3px 16px 0 8px;
   position: sticky;
   left: 0;
   z-index: 5;
@@ -190,12 +252,13 @@
 }
 
 /* ─── Slot cells — horizontal lines only ─────────────────────────────────── */
+/* Flex column so the .tt-slot-stack inside stretches to fill the cell's
+   grid-row height (which itself stretches to the tallest sibling). */
 .tt-slot-cell {
-  display: table-cell;
-  vertical-align: middle;
+  display: flex;
+  flex-direction: column;
   padding: var(--card-padding);
-  min-width: var(--col-width);
-  height: var(--row-height);
+  min-height: var(--row-height);
   transition: background 0.25s ease;
   box-sizing: border-box;
   position: relative;
@@ -205,25 +268,14 @@
   background: rgba(0, 79, 158, 0.03);
 }
 
-/* ─── First row padding to prevent clipping under sticky header ─────────── */
-.tt-grid-body-row:first-of-type .tt-time-cell,
-.tt-grid-body-row:first-of-type .tt-slot-cell {
+.tt-grid-header-row + .tt-grid-body-row .tt-slot-cell {
   padding-top: calc(var(--row-height) * 0.4);
-  height: calc(var(--row-height) * 1.3);
+  min-height: calc(var(--row-height) * 1.3);
 }
 
 /* ─── Horizontal Grid Lines ──────────────────────────────────────────────── */
-.tt-time-cell::before {
-  content: '';
-  position: absolute;
-  left: calc(var(--time-col-width) - 32px);
-  right: 0;
-  top: var(--grid-line-top);
-  height: 1px;
-  background: rgba(51, 51, 51, 0.07);
-  pointer-events: none;
-}
-
+/* Line starts at the circle (which sits at the time-cell / slot-cell boundary)
+   and runs through the slot cells — no segment inside the time cell. */
 .tt-slot-cell::before {
   content: '';
   position: absolute;
@@ -237,9 +289,13 @@
 }
 
 /* Adjust line positions for the first row */
-.tt-grid-body-row:first-of-type .tt-time-cell::before,
-.tt-grid-body-row:first-of-type .tt-slot-cell::before {
+.tt-grid-header-row + .tt-grid-body-row .tt-slot-cell::before {
   top: calc(var(--grid-line-top) + var(--row-height) * 0.3);
+}
+
+/* Push the first-row time label down so it aligns with the lowered grid line */
+.tt-grid-header-row + .tt-grid-body-row .tt-time-cell {
+  padding-top: calc(3px + var(--row-height) * 0.3);
 }
 
 /* Blue start circle for horizontal grid lines */
@@ -259,8 +315,30 @@
 }
 
 /* Adjust circle position for the first row */
-.tt-grid-body-row:first-of-type .tt-time-cell::after {
+.tt-grid-header-row + .tt-grid-body-row .tt-time-cell::after {
   top: calc(var(--grid-line-top) + var(--row-height) * 0.3 - 4px);
+}
+
+/* ─── Slot stack: flex column inside each cell. The cell itself is a flex
+   column too, so the stack just `flex: 1 1 auto` to fill the cell's grown
+   height. Then the only-child card flex-grows to fill the stack. ───────── */
+.tt-slot-stack {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  gap: calc(var(--row-height) * 0.06);
+}
+
+/* Single card: stretch its bottom edge to the row's tallest sibling. */
+.tt-slot-stack > .tt-class-card:only-child {
+  flex: 1 1 auto;
+}
+
+/* Multi-card stacks: keep cards at natural size, stack from top. */
+.tt-slot-stack > .tt-class-card {
+  flex: 0 0 auto;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -271,9 +349,7 @@
   border-left: 3px solid #004F9E;  /* color overridden by inline style */
   border-radius: var(--card-border-radius);
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
-  padding: 0px 3px 2px 3px;
-  padding-right: 20px; /* Prevent text overlap with edit button */
-  margin-bottom: calc(var(--row-height) * 0.03);
+  padding: 4px 22px 4px 8px; /* balanced vertical padding + room for edit btn */
   cursor: default;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-sizing: border-box;
@@ -281,7 +357,13 @@
   position: relative;
   z-index: 2; /* Sit on top of horizontal grid lines */
   min-height: 28px;  /* Reduced: ~20% smaller than previous 38px */
-  min-width: 70px;   /* Safety limit: Card width >= 70px — unchanged */
+  min-width: 70px;
+  /* Top stack (badge → subject → code) keeps fixed spacing so course names
+     stay aligned across the row; the location badge is pinned to the bottom
+     via `margin-top: auto`. */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 /* Opaque backing to block out grid lines behind translucent cards */
@@ -302,10 +384,6 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-.tt-class-card:last-child {
-  margin-bottom: 0;
-}
-
 /* ─── Type badge ──────────────────────────────────────────────────────────── */
 .tt-type-badge {
   font-family: 'Montserrat', sans-serif;
@@ -316,8 +394,17 @@
   text-transform: uppercase;
   border-radius: calc(var(--badge-font-size) * 0.6);
   padding: 1px calc(var(--badge-font-size) * 0.75);
-  margin-bottom: calc(var(--row-height) * 0.03);
+  margin-top: 2px;
   line-height: 1.4;
+}
+
+/* ─── Card text group (subject + code stay together) ─────────────────────── */
+.tt-card-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 8px 0 8px 0;
+  padding-left: calc(var(--badge-font-size) * 0.375);
 }
 
 /* ─── Card text ───────────────────────────────────────────────────────────── */
@@ -338,8 +425,8 @@
   color: rgba(51, 51, 51, 0.68);
   background: rgba(51, 51, 51, 0.12);
   border-radius: 999px;
-  padding: 1px 3px;
-  margin: 0;
+  padding: 1px calc(var(--card-meta-size) * 0.75);
+  margin: auto 0 2px 0; /* margin-top: auto pins to bottom */
   line-height: 1.4;
   text-transform: uppercase;
 }
@@ -406,7 +493,7 @@
     max-height: none;
     overflow: hidden;
     border-radius: 10px;
-    border-left: 1px solid rgba(51, 51, 51, 0.07);
+    border: none;
 
     /* Mobile Sizing variables conforming to safety rules:
        Grid column width >= 80px  — unchanged
@@ -482,9 +569,6 @@
     color: rgba(255, 255, 255, 0.4);
   }
 
-  .tt-time-cell::before {
-    left: calc(var(--time-col-width) - 10px);
-  }
   .tt-time-cell::after {
     left: calc(var(--time-col-width) - 4px);
   }
@@ -555,16 +639,14 @@
   }
 
   /* Adjust first row height / padding */
-  .tt-grid-body-row:first-of-type .tt-time-cell,
-  .tt-grid-body-row:first-of-type .tt-slot-cell {
+  .tt-grid-header-row + .tt-grid-body-row .tt-slot-cell {
     padding-top: calc(var(--row-height) * 0.2) !important;
-    height: calc(var(--row-height) * 1.1) !important;
+    min-height: calc(var(--row-height) * 1.1) !important;
   }
-  .tt-grid-body-row:first-of-type .tt-time-cell::before,
-  .tt-grid-body-row:first-of-type .tt-slot-cell::before {
+  .tt-grid-header-row + .tt-grid-body-row .tt-slot-cell::before {
     top: calc(var(--grid-line-top) + var(--row-height) * 0.1) !important;
   }
-  .tt-grid-body-row:first-of-type .tt-time-cell::after {
+  .tt-grid-header-row + .tt-grid-body-row .tt-time-cell::after {
     top: calc(var(--grid-line-top) + var(--row-height) * 0.1 - 4px) !important;
   }
 
@@ -1122,10 +1204,12 @@ select.tt-editor-input {
 /* ─── Frame & scroll wrapper ─────────────────────────────────── */
 [data-theme="dark"] .tt-grid-frame {
   background: #050505;
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.05),
-    0 20px 60px rgba(0, 0, 0, 0.65);
+  border: none;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .tt-grid-frame::before {
+  border-color: rgba(180, 180, 190, 0.35);
 }
 
 /* Radial depth glow behind the timetable — adds premium depth */
@@ -1147,7 +1231,9 @@ select.tt-editor-input {
 }
 
 [data-theme="dark"] .tt-day-header-cell.tt-day-active {
-  background: rgba(59, 130, 246, 0.03); /* Blue active day accent highlight */
+  /* Same opacity guard as the light variant. */
+  background-color: #080808;
+  background-image: linear-gradient(rgba(59, 130, 246, 0.03), rgba(59, 130, 246, 0.03));
 }
 
 [data-theme="dark"] .tt-day-header-label {
@@ -1159,6 +1245,10 @@ select.tt-editor-input {
 }
 
 [data-theme="dark"] .tt-active-dot {
+  background: #3B82F6;
+}
+
+[data-theme="dark"] .tt-day-active-pill {
   background: #3B82F6;
 }
 
@@ -1184,7 +1274,6 @@ select.tt-editor-input {
 
 /* ─── Grid lines — minimal noise ─────────────────────────────── */
 /* Horizontal lines */
-[data-theme="dark"] .tt-time-cell::before,
 [data-theme="dark"] .tt-slot-cell::before {
   background: rgba(255, 255, 255, 0.06); /* Grid Lines / Time Row Separator */
 }
@@ -1248,11 +1337,11 @@ select.tt-editor-input {
 
 /* ─── Add button ─────────────────────────────────────────────── */
 [data-theme="dark"] .tt-add-btn {
-  color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.45);
 }
 
 [data-theme="dark"] .tt-slot-cell:hover .tt-add-btn {
-  opacity: 0.60;
+  opacity: 0.85;
 }
 
 [data-theme="dark"] .tt-add-btn:hover,

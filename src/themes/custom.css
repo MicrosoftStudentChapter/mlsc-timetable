@@ -1,0 +1,65 @@
+/* ─── Custom theme ──────────────────────────────────────────────
+   User-driven theme. Reads CSS variables that React injects inline
+   on `.tt-grid-frame` from the settings page / theme picker.
+
+   Set on `<div className="tt-grid-frame" data-card-theme="custom"
+       style={{ '--ct-bg': ..., '--ct-bg-image': ..., '--ct-border': ...,
+                '--ct-radius': ..., '--ct-shadow': ...,
+                '--ct-font': ..., '--ct-subject-color': ...,
+                '--ct-code-color': ..., '--ct-room-bg': ...,
+                '--ct-room-color': ..., '--ct-badge-font': ... }}>`
+
+   Every value falls back so a partially-configured custom theme
+   stays usable.
+   ───────────────────────────────────────────────────────────── */
+
+[data-card-theme="custom"] .tt-class-card {
+  background-color: var(--ct-bg, #ffffff);
+  background-image: var(--ct-bg-image, none);
+  background-size: cover;
+  background-position: center;
+  border-left: 3px solid var(--ct-border, #004F9E);
+  border-radius: var(--ct-radius, var(--card-border-radius));
+  box-shadow: var(--ct-shadow, 0 1px 6px rgba(0, 0, 0, 0.05));
+  font-family: var(--ct-font, 'Montserrat', sans-serif);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-card-theme="custom"] .tt-class-card::before {
+  background-color: var(--ct-bg, var(--card-bg));
+}
+
+[data-card-theme="custom"] .tt-class-card:hover {
+  transform: var(--ct-hover-transform, translateY(-2px));
+  box-shadow: var(--ct-hover-shadow, 0 4px 14px rgba(0, 0, 0, 0.09));
+}
+
+[data-card-theme="custom"] .tt-type-badge {
+  font-family: var(--ct-badge-font, var(--ct-font, 'Montserrat', sans-serif));
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+[data-card-theme="custom"] .tt-card-subject {
+  font-family: var(--ct-subject-font, var(--ct-font, 'Montserrat', sans-serif));
+  font-weight: 700;
+  color: var(--ct-subject-color, #1a1a2e);
+}
+
+[data-card-theme="custom"] .tt-card-code {
+  font-family: var(--ct-code-font, var(--ct-font, 'Montserrat', sans-serif));
+  font-weight: 600;
+  color: var(--ct-code-color, rgba(51, 51, 51, 0.56));
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+[data-card-theme="custom"] .tt-card-room {
+  font-family: var(--ct-room-font, var(--ct-font, 'Montserrat', sans-serif));
+  font-weight: 600;
+  color: var(--ct-room-color, rgba(51, 51, 51, 0.68));
+  background: var(--ct-room-bg, rgba(51, 51, 51, 0.12));
+  border-radius: var(--ct-room-radius, 999px);
+  text-transform: uppercase;
+}

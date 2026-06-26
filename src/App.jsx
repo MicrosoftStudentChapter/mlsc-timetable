@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ContributorsScroller from './components/ContributorsScroller'
 import BatchSelector from './components/BatchSelector'
+import { loadContributors } from './lib/contributors'
 import './App.css'
 
 function App() {
@@ -10,10 +11,15 @@ function App() {
   const [semLabel, setSemLabel] = useState('ODD SEM 26-27')
 
   useEffect(() => {
-    fetch('/api/contributors')
-      .then((r) => r.json())
-      .then((d) => Array.isArray(d) && setContributors(d))
+    let cancelled = false
+    loadContributors()
+      .then((list) => {
+        if (!cancelled && Array.isArray(list)) setContributors(list)
+      })
       .catch(() => {})
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   useEffect(() => {

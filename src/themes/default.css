@@ -1,0 +1,75 @@
+/* ─── Default theme ─────────────────────────────────────────────
+   Clean white card with type-tinted left border and a soft drop
+   shadow. Mirrors the look the grid has always had.
+   ───────────────────────────────────────────────────────────── */
+
+[data-card-theme="default"] .tt-class-card {
+  background-color: #ffffff;
+  border-left: 3px solid #004F9E; /* inline style overrides per type */
+  border-radius: var(--card-border-radius);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  font-family: 'Montserrat', sans-serif;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-card-theme="default"] .tt-class-card::before {
+  background-color: var(--card-bg);
+}
+
+[data-card-theme="default"] .tt-class-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.09);
+}
+
+[data-card-theme="default"] .tt-type-badge {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+[data-card-theme="default"] .tt-card-subject {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+[data-card-theme="default"] .tt-card-code {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  color: rgba(51, 51, 51, 0.56);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+[data-card-theme="default"] .tt-card-room {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  color: rgba(51, 51, 51, 0.68);
+  background: rgba(51, 51, 51, 0.12);
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+/* Dark-mode pairing */
+[data-theme="dark"] [data-card-theme="default"] .tt-class-card {
+  background-color: #0f1419;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] [data-card-theme="default"] .tt-class-card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+}
+
+[data-theme="dark"] [data-card-theme="default"] .tt-card-subject {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+[data-theme="dark"] [data-card-theme="default"] .tt-card-code {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="dark"] [data-card-theme="default"] .tt-card-room {
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.08);
+}

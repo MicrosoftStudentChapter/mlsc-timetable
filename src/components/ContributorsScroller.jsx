@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react'
 import './ContributorsScroller.css'
 
 const SCROLL_SPEED = 0.6
@@ -9,20 +9,60 @@ export default function ContributorsScroller({ contributors }) {
   const rafRef    = useRef(null)
   const pausedRef = useRef(false)
 
-  const [showLeft,  setShowLeft]  = useState(false)
-  const [showRight, setShowRight] = useState(true)
+  // Whether a single copy of the list overflows the track. Drives doubling +
+  // auto-scroll; when false we render once and center it.
+  const [overflowing, setOverflowing] = useState(false)
+  const [showLeft,    setShowLeft]    = useState(false)
+  const [showRight,   setShowRight]   = useState(false)
 
   const updateArrows = useCallback(() => {
     const el = trackRef.current
-    if (!el) return
-    // in infinite mode always show both once scrollable, except true edges
+    if (!el || !overflowing) {
+      setShowLeft(false)
+      setShowRight(false)
+      return
+    }
     setShowLeft(el.scrollLeft > 1)
     setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1)
-  }, [])
+  }, [overflowing])
+
+  // Measure whether a single copy of the list overflows the track. We always
+  // measure the first `contributors.length` children — those are the original
+  // items regardless of whether the doubled copy is currently rendered.
+  useLayoutEffect(() => {
+    const el = trackRef.current
+    if (!el || contributors.length === 0) {
+      setOverflowing(false)
+      return
+    }
+
+    const measure = () => {
+      const n = contributors.length
+      const children = el.children
+      const max = Math.min(n, children.length)
+      if (max === 0) return
+      let contentWidth = 0
+      for (let i = 0; i < max; i++) {
+        contentWidth += children[i].getBoundingClientRect().width
+      }
+      const cs = window.getComputedStyle(el)
+      const gap = parseFloat(cs.columnGap || cs.gap || '0') || 0
+      contentWidth += gap * (max - 1)
+      contentWidth += parseFloat(cs.paddingLeft || '0') + parseFloat(cs.paddingRight || '0')
+      const needs = contentWidth > el.clientWidth + 1
+      setOverflowing((prev) => (prev === needs ? prev : needs))
+    }
+
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    if (el.parentElement) ro.observe(el.parentElement)
+    return () => ro.disconnect()
+  }, [contributors])
 
   useEffect(() => {
     const el = trackRef.current
-    if (!el || contributors.length === 0) return
+    if (!el || !overflowing || contributors.length === 0) return
 
     const step = () => {
       if (!pausedRef.current) {
@@ -39,14 +79,14 @@ export default function ContributorsScroller({ contributors }) {
 
     rafRef.current = requestAnimationFrame(step)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [contributors, updateArrows])
+  }, [contributors, overflowing, updateArrows])
 
   const pause  = () => { pausedRef.current = true }
   const resume = () => { pausedRef.current = false }
 
   const scrollBy = (dir) => {
     const el = trackRef.current
-    if (!el) return
+    if (!el || !overflowing) return
     pause()
     el.scrollLeft += dir * SCROLL_STEP
     // wrap within first copy
@@ -59,18 +99,26 @@ export default function ContributorsScroller({ contributors }) {
 
   if (!contributors.length) return <p className="no-contributors">Github Profiles</p>
 
-  // render items twice for seamless loop
-  const items = [...contributors, ...contributors]
+  // Only duplicate when we actually need the seamless loop.
+  const items = overflowing ? [...contributors, ...contributors] : contributors
 
   return (
-    <div className="scroller-wrapper" onMouseEnter={pause} onMouseLeave={resume}>
+    <div
+      className={`scroller-wrapper${overflowing ? '' : ' scroller-wrapper--centered'}`}
+      onMouseEnter={pause}
+      onMouseLeave={resume}
+    >
       {showLeft && (
         <button className="scroll-arrow scroll-arrow--left" onClick={() => scrollBy(-1)} aria-label="Scroll left">
           ‹
         </button>
       )}
 
-      <div ref={trackRef} className="scroller-track" onScroll={updateArrows}>
+      <div
+        ref={trackRef}
+        className={`scroller-track${overflowing ? '' : ' scroller-track--centered'}`}
+        onScroll={updateArrows}
+      >
         {items.map(({ id, login, avatar_url, html_url }, i) => (
           <a key={`${id}-${i}`} href={html_url} target="_blank" rel="noreferrer" className="contributor-chip" title={login}>
             <img src={avatar_url} alt={login} />

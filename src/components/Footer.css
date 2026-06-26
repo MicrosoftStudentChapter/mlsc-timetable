@@ -4,6 +4,13 @@
   padding: 1.5rem 2rem;
 }
 
+/* Hide the footer (and its top border) while it has no rendered children.
+   Once real content is added inside <footer>, `:empty` no longer matches
+   and the border + padding come back automatically. */
+.footer:empty {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .footer {
     display: none;

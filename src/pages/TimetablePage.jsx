@@ -4,6 +4,7 @@ import Footer from '../components/Footer'
 import Combobox from '../components/Combobox'
 import TimetableGrid from '../components/TimetableGrid'
 import { loadBatches } from '../lib/batches'
+import { loadTimetable } from '../lib/timetable'
 import { DashboardLayout } from '../components/side_columns'
 import { useTheme } from '../hooks/useTheme'
 import './TimetablePage.css'
@@ -18,10 +19,15 @@ export default function TimetablePage() {
   const isDark = theme === 'dark'
   const [years, setYears] = useState([])
   const [batchInput, setBatchInput] = useState(batch ?? '')
+  const [timetableState, setTimetableState] = useState({ status: 'loading' })
   const [isCompact, setIsCompact] = useState(
     () => typeof window !== 'undefined' && window.matchMedia(NAV_COLLAPSE_QUERY).matches
   )
   const [navExpanded, setNavExpanded] = useState(false)
+  // 0..4 = Mon–Fri column to highlight in the grid header; null = none
+  // (Sat/Sun by default, or any date explicitly mapped to null). Driven by
+  // sidebar mini-calendar hover; falls back to today's mapping.
+  const [activeWeekdayIdx, setActiveWeekdayIdx] = useState(null)
   const closeTimerRef = useRef(null)
   const isMouseHoveringRef = useRef(false)
   const pillRef = useRef(null)
@@ -107,6 +113,23 @@ export default function TimetablePage() {
     setBatchInput(batch ?? '')
   }, [batch])
 
+  // Fetch this batch's timetable from the backend whenever the URL batch changes.
+  useEffect(() => {
+    if (!batch) {
+      setTimetableState({ status: 'idle' })
+      return
+    }
+    let cancelled = false
+    setTimetableState({ status: 'loading' })
+    loadTimetable(batch).then((result) => {
+      if (cancelled) return
+      setTimetableState(result)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [batch])
+
   const batchOptions = useMemo(() => {
     const out = []
     for (const { label, streams } of years) {
@@ -136,9 +159,10 @@ export default function TimetablePage() {
   return (
     <DashboardLayout
       batch={batch}
+      onActiveWeekdayChange={setActiveWeekdayIdx}
     >
       <div className="tt-content">
-        <TimetableGrid isDarkMode={isDark} />
+        <TimetableContent state={timetableState} batch={batch} isDark={isDark} activeWeekdayIdx={activeWeekdayIdx} />
       </div>
 
       {/* Timetable Navbar */}
@@ -272,4 +296,44 @@ export default function TimetablePage() {
       <Footer />
     </DashboardLayout>
   )
+}
+
+// Renders the right thing for each fetch state. Falls back to the grid's
+// hard-coded fixture when no backend is configured (dev convenience).
+function TimetableContent({ state, batch, isDark, activeWeekdayIdx }) {
+  if (state.status === 'loading' || state.status === 'idle') {
+    return <div className="tt-status tt-status--loading">Loading {batch ?? 'timetable'}…</div>
+  }
+  if (state.status === 'no_backend') {
+    return (
+      <>
+        <div className="tt-status tt-status--warning">
+          Backend not configured — showing sample data. Set <code>VITE_BACKEND_URL</code> in <code>.env</code> to load <code>{batch}</code>.
+        </div>
+        <TimetableGrid isDarkMode={isDark} activeWeekdayIdx={activeWeekdayIdx} />
+      </>
+    )
+  }
+  if (state.status === 'not_found') {
+    return (
+      <div className="tt-status tt-status--error">
+        Batch <strong>{batch}</strong> not found. Pick a different batch from the toolbar.
+      </div>
+    )
+  }
+  if (state.status === 'error') {
+    return (
+      <div className="tt-status tt-status--error">
+        Couldn’t load <strong>{batch}</strong>: {state.message}
+      </div>
+    )
+  }
+  if (state.classes.length === 0) {
+    return (
+      <div className="tt-status tt-status--empty">
+        No classes scheduled for <strong>{batch}</strong>.
+      </div>
+    )
+  }
+  return <TimetableGrid isDarkMode={isDark} classes={state.classes} activeWeekdayIdx={activeWeekdayIdx} />
 }
