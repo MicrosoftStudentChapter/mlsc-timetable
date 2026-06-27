@@ -1,0 +1,173 @@
+.login-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #0b0b0f !important;
+  box-sizing: border-box;
+  overflow: hidden;
+  z-index: 99999;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 380px;
+  border-radius: 12px;
+  padding: 3rem 2rem 2rem 2rem;
+  background: #16171e;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.back-home-btn {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.back-home-btn:hover {
+  opacity: 1;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-logo-img {
+  max-height: 54px;
+  width: auto;
+  object-fit: contain;
+}
+
+.header {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-h);
+  margin-bottom: 0.25rem;
+  text-align: center;
+}
+
+.input {
+  width: 100%;
+  height: 42px;
+  border: 1px solid var(--border);
+  outline: none;
+  border-radius: 6px;
+  padding: 0 12px;
+  background: transparent;
+  color: var(--text-h);
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.input::placeholder {
+  color: var(--text);
+  opacity: 0.4;
+}
+
+.input:focus {
+  border-color: var(--text);
+}
+
+.button {
+  width: 100%;
+  height: 42px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.sign-in {
+  background: #0060c0;
+  color: #ffffff;
+  border-color: #0060c0;
+}
+
+.sign-in:hover {
+  opacity: 0.9;
+}
+
+.google-sign-in {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  color: var(--text);
+}
+
+.google-sign-in:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.footer {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.footer-prompt {
+  margin: 0;
+  color: var(--text);
+  opacity: 0.6;
+}
+
+.footer .link {
+  color: #0060c0;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer .link:hover {
+  text-decoration: underline;
+}
+
+.forgot-link {
+  opacity: 0.7;
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    padding: 3rem 1rem 1.5rem 1rem;
+    background: transparent;
+  }
+}

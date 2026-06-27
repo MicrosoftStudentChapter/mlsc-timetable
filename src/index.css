@@ -25,10 +25,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  @media (min-width: 769px) and (max-width: 1024px) {
-    font-size: 16px;
-  }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 16px;
   }
 }
@@ -52,73 +49,6 @@
     filter: invert(1) brightness(2);
   }
 }
-
-/* ─── Manual dark mode ───────────────────────────────────────────────────────
-   Written onto <html data-theme="dark"> by useTheme hook.
-   Always overrides the OS @media block above.                               */
-[data-theme="dark"] {
-  color-scheme: dark;
-
-  /* Layered surfaces - Premium OLED True Black refinement */
-  --bg:           #050505;   /* Page background */
-  --bg-secondary: #0A0A0A;   /* Sidebar background */
-  --bg-surface:   #111111;   /* Timetable container background */
-  --bg-card:      #151515;   /* Sidebar cards background */
-  --bg-hover:     #1B1B1B;   /* Card hovers background */
-
-  /* Text */
-  --text:       rgba(255, 255, 255, 0.75);
-  --text-h:     #FFFFFF;
-  --text-muted: rgba(255, 255, 255, 0.50);
-
-  /* Borders */
-  --border:        rgba(255, 255, 255, 0.08);
-  --border-subtle: rgba(255, 255, 255, 0.04);
-
-  /* Accent (day highlights, interactive) */
-  --accent:        #3B82F6;
-  --accent-bg:     rgba(59, 130, 246, 0.10);
-  --accent-border: rgba(59, 130, 246, 0.30);
-
-  /* Misc */
-  --code-bg: #151515;
-  --shadow:
-    rgba(0, 0, 0, 0.85) 0 10px 25px -5px,
-    rgba(0, 0, 0, 0.65) 0 5px 10px -5px;
-}
-
-/* ─── Manual light mode ──────────────────────────────────────────────────── */
-[data-theme="light"] {
-  color-scheme: light;
-
-  --bg:           #ffffff;
-  --bg-secondary: #f8fafc;
-  --bg-surface:   #ffffff;
-  --text:         #6b6375;
-  --text-h:       #08060d;
-  --text-muted:   rgba(11, 6, 13, 0.50);
-  --border:        #e5e4e7;
-  --border-subtle: rgba(0, 0, 0, 0.05);
-  --accent:        #004F9E;
-  --accent-bg:     rgba(0, 79, 158, 0.10);
-  --accent-border: rgba(0, 79, 158, 0.40);
-  --code-bg:       #f4f3ec;
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px,
-    rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-}
-
-/* ─── Smooth colour transitions (220 ms) ─────────────────────────────────── */
-*, *::before, *::after {
-  transition:
-    background-color 0.22s ease,
-    border-color     0.22s ease,
-    color            0.22s ease,
-    box-shadow       0.22s ease;
-}
-/* Opt-out: no extra transitions on media/animation elements */
-img, video, svg, canvas { transition: none; }
-
 
 body {
   margin: 0;
@@ -147,11 +77,7 @@ h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
-  @media (min-width: 769px) and (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 36px;
     margin: 20px 0;
   }
@@ -161,10 +87,7 @@ h2 {
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
-  @media (min-width: 769px) and (max-width: 1024px) {
-    font-size: 20px;
-  }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 20px;
   }
 }
