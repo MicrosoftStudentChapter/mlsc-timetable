@@ -59,7 +59,32 @@ body:has(.dashboard-layout) {
   flex-direction: column;
   height: 100%;
   width: 100%;
+  /* Scroll is delegated to .sidebar-scroll so header + footer stay pinned. */
+  overflow: hidden;
+}
+
+.sidebar-header {
+  flex-shrink: 0;
+}
+
+.sidebar-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  /* Tiny right padding keeps cards clear of the scrollbar. */
+  padding-right: 2px;
+}
+
+.sidebar-footer {
+  flex-shrink: 0;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.sidebar-footer .profile-card {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 /* Logo Section */
@@ -228,14 +253,31 @@ body:has(.dashboard-layout) {
   background: #4F46E5;
 }
 
-/* Profile Card - Bottom Aligned */
+/* Profile Card - Bottom Aligned (lives inside .sidebar-footer) */
 .profile-card {
-  margin-top: auto;
+  margin-top: 0;
   margin-bottom: 0;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 14px 18px;
+}
+
+/* When the card is wrapped in a <Link>, strip default anchor styling
+   and add a subtle hover state so it reads as interactive. */
+.profile-card--link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.profile-card--link:hover {
+  background-color: var(--bg-hover, rgba(255, 255, 255, 0.04));
+}
+
+[data-theme="light"] .profile-card--link:hover {
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .profile-avatar {
@@ -249,11 +291,19 @@ body:has(.dashboard-layout) {
   justify-content: center;
   font-weight: 700;
   font-size: 14px;
+  flex-shrink: 0;
+}
+
+.profile-avatar--img {
+  object-fit: cover;
+  background: transparent;
+  border: 1px solid var(--border);
 }
 
 .profile-info {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .profile-name {
@@ -261,6 +311,9 @@ body:has(.dashboard-layout) {
   font-weight: 600;
   color: #111827;
   line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .profile-subtitle {
@@ -268,6 +321,9 @@ body:has(.dashboard-layout) {
   color: #9CA3AF;
   line-height: 1.2;
   margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Main Dashboard Panel */
@@ -810,6 +866,17 @@ body:has(.dashboard-layout) {
 
 /* Mobile mode */
 @media (max-width: 768px) {
+  /* Release the viewport lock so the page can scroll vertically. The grid's
+     scroll-wrapper keeps horizontal scrolling; vertical is delegated to the
+     browser. */
+  body:has(.dashboard-layout),
+  body:has(.dashboard-layout) #root {
+    height: auto !important;
+    min-height: 100svh !important;
+    overflow: visible !important;
+    overflow-x: hidden !important;
+  }
+
   .dashboard-sidebar {
     display: none;
   }
@@ -818,39 +885,53 @@ body:has(.dashboard-layout) {
     display: flex;
   }
   
-  /* Lock the main panel to viewport height so timetable fills remainder */
+  /* Let the main panel grow with content so the page scrolls naturally. */
   .dashboard-main {
     padding: 6px 10px 4px; /* Reduced padding on mobile */
-    height: 100svh;
-    max-height: 100svh;
-    overflow: hidden;
+    height: auto;
+    min-height: 100svh;
+    max-height: none;
+    overflow: visible;
+    overflow-x: hidden;     /* never let the wide grid push the page sideways */
+    max-width: 100vw;
     display: flex;
     flex-direction: column;
   }
   
   .dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 8px;
     margin-bottom: 4px; /* Reduced from 6px */
     flex-shrink: 0;
   }
   
   .header-left {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     justify-content: flex-start;
     gap: 8px;
   }
   
   .header-right {
-    width: 100%;
-    justify-content: flex-start;
+    width: auto;
+    justify-content: flex-end;
     gap: 6px;
+  }
+
+  .header-actions {
+    flex-shrink: 0;
   }
 
   .welcome-heading {
     font-size: 20px;
     line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
   }
 
   .hamburger-btn {
@@ -892,7 +973,7 @@ body:has(.dashboard-layout) {
   .dashboard-content {
     flex: 1;
     min-height: 0;
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     flex-direction: column;
   }
@@ -907,13 +988,14 @@ body:has(.dashboard-layout) {
   .header-right {
     flex-direction: row;
     align-items: center;
-    width: 100%;
+    width: auto;
   }
 
   .dashboard-main {
     padding: 6px 8px 4px;
-    height: 100svh;
-    max-height: 100svh;
+    height: auto;
+    min-height: 100svh;
+    max-height: none;
   }
 
   .dashboard-header {
@@ -1109,3 +1191,341 @@ body:has(.dashboard-layout) {
   border-color: rgba(255, 255, 255, 0.14);
 }
 
+
+/* ─── Sidebar feed cards (announcements + exam dates) ───────── */
+
+/* The whole card collapses; header (title row) is the trigger,
+   body holds an internally-scrollable list. */
+.section-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Section cards live inside the scroller and have a sticky header — drop
+   the lift-on-hover so the top edge doesn't get clipped by .sidebar-scroll
+   on a quick hover. */
+.section-card:hover {
+  transform: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+[data-theme="dark"] .section-card:hover {
+  background: #131313;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px 18px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+
+.section-header .card-title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.section-count {
+  flex-shrink: 0;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.10);
+  color: #2563EB;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-chevron {
+  color: #9CA3AF;
+}
+
+/* Chevron points down when section is open. */
+.section-card.is-open .section-chevron {
+  transform: rotate(-270deg);
+}
+
+.section-body {
+  padding: 0 14px 14px 14px;
+  animation: feedExpand 0.18s ease;
+}
+
+.section-scroll {
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.feed-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feed-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.feed-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feed-severity {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #3B82F6;
+}
+.feed-severity--info { background: #3B82F6; }
+.feed-severity--warn { background: #F59E0B; }
+.feed-severity--critical { background: #EF4444; }
+
+.feed-title {
+  font-size: 13px;
+  font-weight: 650;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.feed-body {
+  font-size: 12px;
+  color: #4B5563;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.feed-meta {
+  font-size: 11px;
+  font-weight: 500;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.feed-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #9CA3AF;
+  transform: rotate(-90deg);
+  transition: transform 0.2s ease;
+}
+
+@keyframes feedExpand {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.feed-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.feed-link-inline {
+  font-size: 11px;
+  font-weight: 600;
+  color: #2563EB;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.feed-link-inline:hover { text-decoration: underline; }
+
+/* ─── Exam rows (redesigned: color-stripe + calendar-page date + tags) ─ */
+.exam-row {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  padding: 10px 12px 10px 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Left color stripe — varies by exam type. */
+.exam-row-stripe {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: #3B82F6;
+  border-radius: 3px 0 0 3px;
+}
+.exam-row--mid   .exam-row-stripe { background: #3B82F6; }
+.exam-row--end   .exam-row-stripe { background: #EF4444; }
+.exam-row--quiz  .exam-row-stripe { background: #F59E0B; }
+.exam-row--lab   .exam-row-stripe { background: #8B5CF6; }
+
+/* Calendar-page style date: small month label over big day number. */
+.exam-row-date {
+  flex-shrink: 0;
+  width: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.04);
+  line-height: 1;
+}
+
+.exam-row-month {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6B7280;
+  margin-bottom: 2px;
+}
+
+.exam-row-day {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1;
+}
+
+.exam-row-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.exam-row-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.exam-row-subject {
+  font-size: 13px;
+  font-weight: 650;
+  color: #111827;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  flex: 1;
+  min-width: 0;
+}
+
+.exam-row-code {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.exam-row-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.exam-tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.05);
+  color: #4B5563;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.exam-tag--type {
+  font-weight: 700;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 1px;
+}
+.exam-tag--mid  { background: rgba(59, 130, 246, 0.10); color: #2563EB; }
+.exam-tag--end  { background: rgba(239, 68, 68, 0.10);  color: #DC2626; }
+.exam-tag--quiz { background: rgba(245, 158, 11, 0.12); color: #B45309; }
+.exam-tag--lab  { background: rgba(139, 92, 246, 0.10); color: #7C3AED; }
+
+.exam-tag--room {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  color: #4B5563;
+}
+
+.dashboard-sidebar--collapsed .section-card .section-body,
+.dashboard-sidebar--collapsed .feed-list {
+  display: none;
+}
+
+/* Dark theme */
+[data-theme="dark"] .feed-item {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+[data-theme="dark"] .feed-title { color: rgba(255, 255, 255, 0.88); }
+[data-theme="dark"] .feed-body { color: rgba(255, 255, 255, 0.60); }
+[data-theme="dark"] .feed-meta { color: rgba(255, 255, 255, 0.40); }
+[data-theme="dark"] .feed-chevron { color: rgba(255, 255, 255, 0.45); }
+[data-theme="dark"] .feed-link-inline { color: #93C5FD; }
+[data-theme="dark"] .section-count {
+  background: rgba(96, 165, 250, 0.14);
+  color: #93C5FD;
+}
+[data-theme="dark"] .section-chevron { color: rgba(255, 255, 255, 0.50); }
+[data-theme="dark"] .sidebar-footer {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .exam-row {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+[data-theme="dark"] .exam-row-date {
+  background: rgba(255, 255, 255, 0.05);
+}
+[data-theme="dark"] .exam-row-month { color: rgba(255, 255, 255, 0.55); }
+[data-theme="dark"] .exam-row-day { color: rgba(255, 255, 255, 0.92); }
+[data-theme="dark"] .exam-row-subject { color: rgba(255, 255, 255, 0.90); }
+[data-theme="dark"] .exam-row-code { color: rgba(255, 255, 255, 0.55); }
+[data-theme="dark"] .exam-tag {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.70);
+}
+[data-theme="dark"] .exam-tag--mid  { background: rgba(96, 165, 250, 0.14); color: #93C5FD; }
+[data-theme="dark"] .exam-tag--end  { background: rgba(239, 68, 68, 0.16);  color: #FCA5A5; }
+[data-theme="dark"] .exam-tag--quiz { background: rgba(245, 158, 11, 0.16); color: #FCD34D; }
+[data-theme="dark"] .exam-tag--lab  { background: rgba(167, 139, 250, 0.16); color: #C4B5FD; }
+[data-theme="dark"] .exam-tag--room {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.65);
+}

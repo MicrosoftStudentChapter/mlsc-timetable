@@ -54,76 +54,98 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
+  /* Reserve room at the bottom so the fixed navbar pill doesn't sit on top
+     of the last row / sidebar feed sections. */
+  padding-bottom: 84px;
 }
 
 /* ── Card theme picker (lives in dashboard header) ── */
 .tt-card-theme-picker {
   display: inline-flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   column-gap: 8px;
-  row-gap: 6px;
   font-size: 0.85rem;
   color: var(--muted, #555);
+  white-space: nowrap;
 }
 
 .tt-card-theme-label {
   white-space: nowrap;
+  color: #6B7280;
 }
 
+/* Pill styled to mirror the navbar batch combobox (.tt-batch-select). */
 .tt-card-theme-select {
   appearance: none;
   -webkit-appearance: none;
   color-scheme: light;
-  background-color: var(--surface, #fff);
-  color: var(--text, #111);
-  border: 1px solid rgba(120, 120, 130, 0.35);
-  border-radius: 8px;
-  padding: 5px 28px 5px 10px;
-  font-size: 0.85rem;
+  background-color: #f3f4f6;
+  color: #111827;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  padding: 5px 28px 5px 12px;
+  font-size: 0.82rem;
   line-height: 1.2;
   cursor: pointer;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 8px center;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  background-position: right 10px center;
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
 }
 
 .tt-card-theme-select:hover {
-  border-color: rgba(120, 120, 130, 0.6);
+  background-color: #ffffff;
+  border-color: rgba(0, 0, 0, 0.16);
 }
 
-.tt-card-theme-select:focus-visible {
+.tt-card-theme-select:focus-visible,
+.tt-card-theme-select:focus {
   outline: none;
-  border-color: rgba(0, 96, 192, 0.6);
-  box-shadow: 0 0 0 3px rgba(0, 96, 192, 0.15);
+  background-color: #ffffff;
+  border-color: #6366F1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
 .tt-card-theme-select option {
   background-color: #ffffff;
-  color: #111111;
+  color: #111827;
+}
+
+[data-theme="dark"] .tt-card-theme-label {
+  color: rgba(255, 255, 255, 0.55);
 }
 
 [data-theme="dark"] .tt-card-theme-select {
   color-scheme: dark;
-  background-color: rgba(255, 255, 255, 0.04);
-  color: var(--text, #eee);
-  border-color: rgba(180, 180, 190, 0.3);
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23bbb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-}
-
-[data-theme="dark"] .tt-card-theme-select option {
-  background-color: #151515;
-  color: #f0f0f0;
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.10);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
 }
 
 [data-theme="dark"] .tt-card-theme-select:hover {
-  border-color: rgba(180, 180, 190, 0.55);
+  background-color: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.20);
+}
+
+[data-theme="dark"] .tt-card-theme-select:focus-visible,
+[data-theme="dark"] .tt-card-theme-select:focus {
+  background-color: rgba(255, 255, 255, 0.10);
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.20);
+}
+
+[data-theme="dark"] .tt-card-theme-select option {
+  background-color: #111111;
+  color: #FFFFFF;
 }
 
 @media (max-width: 768px) {
   .tt-content {
-    overflow: hidden;
+    overflow: visible;
+    overflow-x: hidden;     /* horizontal scroll is the grid's job, not the page's */
+    max-width: 100%;
   }
 }
 
@@ -143,7 +165,7 @@
 .tt-navbar-pill,
 .tt-navbar-toggle {
   position: fixed;
-  bottom: 16px;
+  bottom: 10px;
   left: 50%;
   z-index: 200;
   max-width: calc(100vw - 32px);
@@ -173,16 +195,18 @@
   gap: 0.75rem;
   padding: 8px 20px;
   border-radius: 999px;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.08),
     0 1px 3px rgba(0, 0, 0, 0.02);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 /* batch combobox in navbar */
 .tt-navbar-pill .combobox {
-  width: 120px;
+  width: 96px;
 }
 
 .tt-batch-select {
@@ -215,7 +239,7 @@
   background: #ffffff;
   color: #111827;
   border-color: rgba(0, 0, 0, 0.08);
-  min-width: 220px;
+  min-width: 180px;
   right: auto;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
@@ -316,9 +340,11 @@
   height: 52px;
   padding: 0;
   border-radius: 50%;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
   color: #6B7280;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow:
     0 6px 20px rgba(0, 0, 0, 0.06),
     0 1px 3px rgba(0, 0, 0, 0.02);
@@ -469,3 +495,341 @@
 .tt-status--empty   { color: var(--muted, #555); }
 [data-theme="dark"] .tt-status--warning { color: #ffd07b; }
 [data-theme="dark"] .tt-status--error   { color: #ff8e8e; }
+
+/* ── Save menu (PNG / PDF export popover) ─────────────────────────────────── */
+.tt-save-wrap {
+  position: relative;
+}
+
+/* Hide the tooltip while the menu is open so they don't fight. */
+.tt-save-wrap:has(.tt-save-menu)::after { opacity: 0; }
+
+.tt-icon-btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.tt-save-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  min-width: 168px;
+  padding: 6px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18), 0 2px 6px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 60;
+  animation: tt-save-menu-in 140ms ease-out;
+}
+
+@keyframes tt-save-menu-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tt-save-menu-item {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: #111827;
+  text-align: left;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tt-save-menu-item:hover:not(:disabled),
+.tt-save-menu-item:focus-visible {
+  background: #f3f4f6;
+  outline: none;
+}
+
+.tt-save-menu-item:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tt-save-menu-error {
+  margin: 4px 8px 2px;
+  font-size: 0.72rem;
+  color: #B91C1C;
+}
+
+/* Header strip shown on the aspect-picker step. */
+.tt-save-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px 6px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 4px;
+}
+
+.tt-save-menu-back {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: #6B7280;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tt-save-menu-back:hover:not(:disabled),
+.tt-save-menu-back:focus-visible {
+  background: #f3f4f6;
+  color: #111827;
+  outline: none;
+}
+
+.tt-save-menu-back:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tt-save-menu-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6B7280;
+}
+
+/* Aspect list — cap height so the popover stays compact and the user can
+   scroll through preset options. */
+.tt-save-menu-aspects {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+[data-theme="dark"] .tt-save-menu {
+  background: #161616;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .tt-save-menu-item {
+  color: #f5f5f5;
+}
+
+[data-theme="dark"] .tt-save-menu-item:hover:not(:disabled),
+[data-theme="dark"] .tt-save-menu-item:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .tt-save-menu-error {
+  color: #F87171;
+}
+
+[data-theme="dark"] .tt-save-menu-header {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .tt-save-menu-back {
+  color: #9CA3AF;
+}
+
+[data-theme="dark"] .tt-save-menu-back:hover:not(:disabled),
+[data-theme="dark"] .tt-save-menu-back:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  color: #F9FAFB;
+}
+
+[data-theme="dark"] .tt-save-menu-title {
+  color: #9CA3AF;
+}
+
+/* ── Export capture mode ──────────────────────────────────────────────────────
+   Applied to the grid wrapper while html-to-image rasterises it. Two jobs:
+   1. Hide interactive-only chrome (add buttons, hover tooltips).
+   2. Force the grid to render at full desktop dimensions so the snapshot
+      contains the whole week — not the mobile scroll viewport. The grid
+      expands in place for a frame; the user may see a brief flash. */
+.tt-export-target.tt-exporting .tt-add-btn { visibility: hidden; }
+.tt-export-target.tt-exporting .tt-edit-btn,
+.tt-export-target.tt-exporting .tt-drag-btn { display: none !important; }
+.tt-export-target.tt-exporting .tt-tip-wrap::after,
+.tt-export-target.tt-exporting [data-tip]::after { display: none !important; }
+.tt-export-target.tt-exporting .tt-day-active-pill { display: none !important; }
+
+/* Drop any "today/active-day" highlight from the export — the header pill,
+   the column tint, the label colour, and the dot. The captured snapshot
+   should read as a neutral timetable, not as of-today. */
+.tt-export-target.tt-exporting .tt-day-header-cell.tt-day-active,
+.tt-export-target.tt-exporting .tt-slot-cell.tt-col-active {
+  background-image: none !important;
+}
+[data-theme="dark"] .tt-export-target.tt-exporting .tt-day-header-cell.tt-day-active,
+[data-theme="dark"] .tt-export-target.tt-exporting .tt-slot-cell.tt-col-active {
+  background-image: none !important;
+  background-color: inherit !important;
+}
+.tt-export-target.tt-exporting .tt-day-header-cell.tt-day-active .tt-day-header-label {
+  color: rgba(51, 51, 51, 0.45) !important;
+}
+[data-theme="dark"] .tt-export-target.tt-exporting .tt-day-header-cell.tt-day-active .tt-day-header-label {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+.tt-export-target.tt-exporting .tt-active-dot { display: none !important; }
+
+/* On-screen the frame draws only the 4 rounded corner accents via a
+   radial-gradient mask on ::before. Drop the accent entirely for the
+   export — the grid reads cleaner without any frame border. */
+.tt-export-target.tt-exporting .tt-grid-frame::before {
+  display: none !important;
+}
+
+/* Collapse all wrapping containers down to the grid's natural width so the
+   captured canvas has no dark gutter on the right. */
+.tt-export-target.tt-exporting {
+  display: inline-block !important;
+  width: max-content !important;
+  max-width: none !important;
+}
+
+/* Force desktop CSS variables regardless of viewport (the mobile @media
+   rules would otherwise win when capturing on a phone). Column width is
+   bumped above the on-screen default so the export reads as a landscape
+   timetable (~1.4:1) rather than a near-square. */
+.tt-export-target.tt-exporting .tt-grid-frame {
+  display: inline-block !important;
+  width: max-content !important;
+  max-width: none !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  --col-width: 200px !important;
+  --time-col-width: 84px !important;
+  --row-height: 56px !important;
+  --card-padding: 6px 10px !important;
+  --card-border-radius: 12px !important;
+  --card-font-size: 13px !important;
+  --card-meta-size: 11px !important;
+  --badge-font-size: 9.5px !important;
+  --header-padding: 10px 12px !important;
+  --header-font-size: 13px !important;
+  --time-font-size: 14px !important;
+  --grid-line-top: 10px !important;
+  --active-dot-size: 5px !important;
+}
+
+.tt-export-target.tt-exporting .tt-grid-scroll-wrapper {
+  overflow: visible !important;
+  height: auto !important;
+  width: max-content !important;
+  max-width: none !important;
+}
+
+.tt-export-target.tt-exporting .tt-grid-table {
+  width: max-content !important;
+  min-width: 0 !important;
+  transform: none !important;
+}
+
+.tt-export-target.tt-exporting .tt-day-header-cell,
+.tt-export-target.tt-exporting .tt-slot-cell {
+  width: var(--col-width) !important;
+  min-width: var(--col-width) !important;
+  max-width: none !important;
+}
+
+.tt-export-target.tt-exporting .tt-time-header-cell,
+.tt-export-target.tt-exporting .tt-time-cell {
+  width: var(--time-col-width) !important;
+  min-width: var(--time-col-width) !important;
+  max-width: var(--time-col-width) !important;
+}
+
+/* ── Card-text overrides for export ────────────────────────────────────────
+   The (max-width: 480px) mobile cascade pins card text to 6 px with
+   `word-break: break-all` style rules, all !important. Those win over the
+   `.tt-exporting` CSS-variable overrides on the same screen because they
+   target the leaf elements directly. Re-assert desktop card typography
+   here so phone exports wrap text the same way laptop exports do. */
+.tt-export-target.tt-exporting .tt-class-card {
+  padding: var(--card-padding) !important;
+  border-radius: var(--card-border-radius) !important;
+  padding-right: 10px !important;
+  margin-bottom: 0 !important;
+  min-height: auto !important;
+  border-left-width: 3px !important;
+}
+/* Card must stretch to fill the slot stack so the room badge's
+   `margin-top: auto` has vertical slack to push it to the cell bottom.
+   Base rule pins the card to `flex: 0 0 auto`, which collapses it to
+   content height and the badge ends up directly under the code line. */
+.tt-export-target.tt-exporting .tt-slot-stack > .tt-class-card {
+  flex: 1 1 auto !important;
+}
+.tt-export-target.tt-exporting .tt-type-badge {
+  font-size: var(--badge-font-size) !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  margin-bottom: 4px !important;
+  margin-top: 0 !important;
+  line-height: 1.1 !important;
+}
+.tt-export-target.tt-exporting .tt-card-subject {
+  font-size: var(--card-font-size) !important;
+  font-weight: 700 !important;
+  margin: 0 0 3px 0 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+.tt-export-target.tt-exporting .tt-card-code {
+  font-size: var(--card-meta-size) !important;
+  font-weight: 600 !important;
+  margin: 0 0 2px 0 !important;
+  margin-right: 0 !important;
+  line-height: 1.2 !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+.tt-export-target.tt-exporting .tt-card-room {
+  font-size: var(--card-meta-size) !important;
+  font-weight: 600 !important;
+  padding: 1px 5px !important;
+  border-radius: 3px !important;
+  /* `margin-top: auto` pins the room badge to the bottom of the (now
+     stretched) card — same as on-screen. A plain `margin: 0` collapses
+     it onto the line right after the course code. */
+  margin: auto 0 0 0 !important;
+  line-height: 1.25 !important;
+}
+.tt-export-target.tt-exporting .tt-day-header-label {
+  font-size: var(--header-font-size) !important;
+  letter-spacing: 0.1em !important;
+}
+.tt-export-target.tt-exporting .tt-time-label {
+  font-size: var(--time-font-size) !important;
+  white-space: nowrap !important;
+}
+.tt-export-target.tt-exporting .tt-time-period {
+  font-size: calc(var(--time-font-size) * 0.7) !important;
+}
+.tt-export-target.tt-exporting .tt-batch-header-label {
+  font-size: var(--header-font-size) !important;
+  letter-spacing: 0.04em !important;
+}

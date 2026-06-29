@@ -1,5 +1,15 @@
 import { useState, useRef, useMemo, useEffect, useLayoutEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { submitChangeRequest, classPrefixOf } from '../lib/change_requests'
+import {
+  loadOverrides,
+  saveOverrides,
+  clearOverrides,
+  applyOverrides,
+  mergeOverride,
+  reconcileOverrides,
+} from '../lib/local_overrides'
+import { syncOverridesToBackend } from '../lib/me_overrides'
 import './TimetableGrid.css'
 
 // ─── Initial timetable data (IDs injected for stable React keys) ──────────────
@@ -222,6 +232,7 @@ function computeEditorPos(rect) {
 // ─── CardEditor — floating portal panel ──────────────────────────────────────
 function CardEditor({ mode, entry, slot, rect, onSave, onDelete, onClose }) {
   const isEdit = mode === 'edit'
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const [form, setForm] = useState(() =>
     isEdit
@@ -366,22 +377,50 @@ function CardEditor({ mode, entry, slot, rect, onSave, onDelete, onClose }) {
 
       {/* ── Actions ───────────────────────────────────────────── */}
       <div className="tt-editor-actions">
-        <button className="tt-editor-save-btn" onClick={handleSave}>
-          {isEdit ? 'Save Changes' : 'Add Class'}
-        </button>
-        <div className="tt-editor-actions-right">
-          {isEdit && onDelete && (
-            <button className="tt-editor-delete-btn" onClick={onDelete} aria-label="Delete class">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6l-1 14H6L5 6" />
-                <path d="M10 11v6" /><path d="M14 11v6" />
-                <path d="M9 6V4h6v2" />
-              </svg>
+        {confirmDelete ? (
+          <>
+            <span className="tt-editor-confirm-text">Delete this class?</span>
+            <div className="tt-editor-actions-right">
+              <button
+                type="button"
+                className="tt-editor-cancel-btn"
+                onClick={() => setConfirmDelete(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="tt-editor-delete-confirm-btn"
+                onClick={() => { setConfirmDelete(false); onDelete?.() }}
+              >
+                Delete
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <button className="tt-editor-save-btn" onClick={handleSave}>
+              {isEdit ? 'Save Changes' : 'Add Class'}
             </button>
-          )}
-          <button className="tt-editor-cancel-btn" onClick={onClose}>Cancel</button>
-        </div>
+            <div className="tt-editor-actions-right">
+              {isEdit && onDelete && (
+                <button
+                  className="tt-editor-delete-btn"
+                  onClick={() => setConfirmDelete(true)}
+                  aria-label="Delete class"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14H6L5 6" />
+                    <path d="M10 11v6" /><path d="M14 11v6" />
+                    <path d="M9 6V4h6v2" />
+                  </svg>
+                </button>
+              )}
+              <button className="tt-editor-cancel-btn" onClick={onClose}>Cancel</button>
+            </div>
+          </>
+        )}
       </div>
     </div>,
     document.body
@@ -389,7 +428,7 @@ function CardEditor({ mode, entry, slot, rect, onSave, onDelete, onClose }) {
 }
 
 // ─── ClassCard ────────────────────────────────────────────────────────────────
-function ClassCard({ entry, onEdit, isDarkMode }) {
+function ClassCard({ entry, onEdit, onDragStart, isDarkMode, isDragging }) {
   const TYPE_META = isDarkMode ? DARK_TYPE_META : LIGHT_TYPE_META
   const meta      = TYPE_META[entry.type] || TYPE_META.Lecture
   const cardStyle = {
@@ -406,11 +445,32 @@ function ClassCard({ entry, onEdit, isDarkMode }) {
     onEdit(rect)
   }
 
+  const handlePointerDown = (e) => {
+    if (e.button != null && e.button !== 0) return
+    if (e.target.closest('.tt-edit-btn')) return
+    onDragStart?.(entry, e)
+  }
+
+  const handleDragHandlePointerDown = (e) => {
+    if (e.button != null && e.button !== 0) return
+    e.stopPropagation()
+    // Force-start a drag immediately (skip threshold so touch users don't have
+    // to slide before the lift; threshold is for accidental card-body taps).
+    onDragStart?.(entry, e, { immediate: true })
+  }
+
   return (
-    <div className="tt-class-card" style={cardStyle} data-type={entry.type}>
+    <div
+      className="tt-class-card"
+      style={cardStyle}
+      data-type={entry.type}
+      data-dragging={isDragging || undefined}
+      onPointerDown={handlePointerDown}
+    >
       <button
         className="tt-edit-btn"
         onClick={handleEditClick}
+        onPointerDown={(e) => e.stopPropagation()}
         aria-label={`Edit ${entry.subject}`}
         title="Edit class"
       >
@@ -420,32 +480,109 @@ function ClassCard({ entry, onEdit, isDarkMode }) {
           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
         </svg>
       </button>
+      <button
+        type="button"
+        className="tt-drag-btn"
+        onPointerDown={handleDragHandlePointerDown}
+        onClick={(e) => e.stopPropagation()}
+        aria-label={`Drag ${entry.subject} to move or swap`}
+        title="Drag to move or swap"
+      >
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <circle cx="9" cy="5" r="1.7" /><circle cx="15" cy="5" r="1.7" />
+          <circle cx="9" cy="12" r="1.7" /><circle cx="15" cy="12" r="1.7" />
+          <circle cx="9" cy="19" r="1.7" /><circle cx="15" cy="19" r="1.7" />
+        </svg>
+      </button>
       <span className="tt-type-badge" style={badgeStyle}>{meta.label}</span>
       <div className="tt-card-text">
         <p className="tt-card-subject">{entry.subject}</p>
         <p className="tt-card-code">{entry.code}</p>
       </div>
-      <span className="tt-card-room">{entry.room}</span>
+      {entry.room && String(entry.room).trim() && (
+        <span className="tt-card-room">{entry.room}</span>
+      )}
     </div>
   )
 }
 
 // ─── TimetableGrid ────────────────────────────────────────────────────────────
-export default function TimetableGrid({ currentDay, isDarkMode, classes, cardTheme = 'default', activeWeekdayIdx }) {
+export default function TimetableGrid({ currentDay, isDarkMode, classes, cardTheme = 'default', activeWeekdayIdx, batch }) {
   const resolvedIsDark = isDarkMode ?? (typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark')
-  const [entries,    setEntries]    = useState(() => classes ?? INITIAL_DATA)
+  // The canonical schedule from the backend (or the bundled fallback). We
+  // never mutate this — user changes live in `overrides` below.
+  const baseClasses = classes ?? INITIAL_DATA
+  // Per-slot user overrides (one entry per edited/added/deleted cell), loaded
+  // from localStorage so they survive a reload. Submission to the backend is
+  // a separate concern (see ChangeRequestPrompt).
+  const [overrides, setOverrides] = useState(() =>
+    reconcileOverrides(baseClasses, loadOverrides(batch)),
+  )
   const [editTarget, setEditTarget] = useState(null)   // { entry, rect }
   const [addTarget,  setAddTarget]  = useState(null)   // { day, startTime, rect }
+  const [saveOpen, setSaveOpen] = useState(false)
+  const [resetOpen, setResetOpen] = useState(false)
+  const [drag, setDrag] = useState(null) // { entry, originX, originY, x, y, started, rect, dropTargetKey }
+  const [peekBaseline, setPeekBaseline] = useState(false)
+  // Flips true on user-initiated override changes so the persist effect knows
+  // to write to storage; backend-driven reloads leave it false.
+  const dirtyRef = useRef(false)
 
-  // When the caller swaps in a new `classes` array (e.g. user switches batch),
-  // reset the editable in-memory grid to match.
+  // Derived view: canonical classes with the user's overrides folded in.
+  const entries = useMemo(
+    () => applyOverrides(baseClasses, overrides),
+    [baseClasses, overrides],
+  )
+
+  // Net diff vs canonical: round-trip edits (A→B→A) collapse to "no change"
+  // so the Save FAB stays hidden when the view matches the baseline.
+  const hasNetChange = useMemo(() => {
+    const sig = (arr) => arr
+      .map(e => `${e.day}|${e.startTime}|${e.subject}|${e.code}|${e.type}|${e.room ?? ''}`)
+      .sort()
+      .join('\n')
+    return sig(baseClasses) !== sig(entries)
+  }, [baseClasses, entries])
+
+  // What the grid actually shows. While the user holds the peek button we
+  // render the canonical baseline so they can compare against their edits.
+  const visibleEntries = peekBaseline ? baseClasses : entries
+
+  // When the caller swaps in new `classes` (e.g. batch switch), reload the
+  // override list for that batch, prune any that conflict with the fresh
+  // canonical (this is how an approved batch-wide change reaches the user),
+  // and drop any open editors.
   useEffect(() => {
-    if (classes !== undefined) {
-      setEntries(classes)
-      setEditTarget(null)
-      setAddTarget(null)
+    if (classes === undefined) return
+    dirtyRef.current = false
+    const stored = loadOverrides(batch)
+    const reconciled = reconcileOverrides(classes, stored)
+    if (reconciled.length !== stored.length) {
+      saveOverrides(batch, reconciled)
     }
-  }, [classes])
+    setOverrides(reconciled)
+    setEditTarget(null)
+    setAddTarget(null)
+  }, [classes, batch])
+
+  // Persist user-initiated override changes. Skips backend-driven reloads.
+  useEffect(() => {
+    if (!batch) return
+    if (!dirtyRef.current) return
+    saveOverrides(batch, overrides)
+    dirtyRef.current = false
+  }, [overrides, batch])
+
+  // Append a new override (or several) with the merge/collapse rules.
+  const pushOverrides = (incoming) => {
+    const arr = Array.isArray(incoming) ? incoming : [incoming]
+    if (arr.length === 0) return
+    dirtyRef.current = true
+    setOverrides(prev => arr.reduce((acc, ov) => mergeOverride(acc, ov), prev))
+    // Fire-and-forget sync to the user's backend overrides; local storage
+    // remains the render source so a slow/failed sync never blocks the UI.
+    syncOverridesToBackend(arr)
+  }
 
   // Resolve today's highlight day
   const highlightDay = useMemo(() => {
@@ -493,44 +630,76 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
       map[day] = {}
       for (const slot of TIME_SLOTS) map[day][slot] = []
     }
-    for (const e of entries) {
+    for (const e of visibleEntries) {
       if (map[e.day]?.[e.startTime] !== undefined) {
         map[e.day][e.startTime].push(e)
       }
     }
     return map
-  }, [entries])
+  }, [visibleEntries])
 
   // ── Handlers ──────────────────────────────────────────────────────────────
   const handleEditSave = (form) => {
-    setEntries(prev => {
-      const target = editTarget.entry
-      // Update the edited entry
-      const updated = prev.map(e =>
-        e.id === target.id ? { ...e, ...form } : e
-      )
-      // If it belongs to a pair, sync the partner (keep its slot times, update content)
-      if (target.pairId && form.type === 'Practical') {
-        return updated.map(e =>
-          e.pairId === target.pairId && e.id !== target.id
-            ? { ...e, subject: form.subject, code: form.code, room: form.room, type: form.type }
-            : e
-        )
+    const target = editTarget.entry
+    const newOverrides = [{
+      kind: 'edit',
+      targetId: target.id,
+      day: form.day,
+      startTime: form.startTime,
+      // Snapshot of the canonical entry we edited; reconcileOverrides uses
+      // this to detect when the official timetable has moved on.
+      baseEntry: { ...target },
+      entry: { ...target, ...form },
+    }]
+    // Practical pair: sync the partner row so both halves stay in lockstep.
+    if (target.pairId && form.type === 'Practical') {
+      const partner = entries.find(e => e.pairId === target.pairId && e.id !== target.id)
+      if (partner) {
+        newOverrides.push({
+          kind: 'edit',
+          targetId: partner.id,
+          day: partner.day,
+          startTime: partner.startTime,
+          baseEntry: { ...partner },
+          entry: {
+            ...partner,
+            subject: form.subject,
+            code: form.code,
+            room: form.room,
+            type: form.type,
+          },
+        })
       }
-      return updated
-    })
+    }
+    pushOverrides(newOverrides)
     setEditTarget(null)
   }
 
   const handleEditDelete = () => {
-    setEntries(prev => {
-      const target = editTarget.entry
-      // Remove both members of the pair when a pairId exists, otherwise just the one entry
-      if (target.pairId) {
-        return prev.filter(e => e.pairId !== target.pairId)
+    const target = editTarget.entry
+    const newOverrides = []
+    if (target.pairId) {
+      for (const e of entries) {
+        if (e.pairId === target.pairId) {
+          newOverrides.push({
+            kind: 'delete',
+            targetId: e.id,
+            day: e.day,
+            startTime: e.startTime,
+            baseEntry: { ...e },
+          })
+        }
       }
-      return prev.filter(e => e.id !== target.id)
-    })
+    } else {
+      newOverrides.push({
+        kind: 'delete',
+        targetId: target.id,
+        day: target.day,
+        startTime: target.startTime,
+        baseEntry: { ...target },
+      })
+    }
+    pushOverrides(newOverrides)
     setEditTarget(null)
   }
 
@@ -539,31 +708,163 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
       const slotIdx  = TIME_SLOTS.indexOf(form.startTime)
       const nextSlot = TIME_SLOTS[slotIdx + 1]
 
-      // Validation: next slot must exist
       if (!nextSlot) {
         alert('Practicals require two consecutive slots.')
         return
       }
-
-      // Validation: next slot must be empty for this day
       const nextOccupied = entries.some(
-        (e) => e.day === form.day && e.startTime === nextSlot
+        (e) => e.day === form.day && e.startTime === nextSlot,
       )
       if (nextOccupied) {
         alert('The next slot is occupied. Practicals require two consecutive empty slots.')
         return
       }
 
-      // Stamp both new entries with the same pairId
-      const pid    = genRuntimePairId()
-      const first  = { ...form, startTime: form.startTime, endTime: nextSlot,        id: genId(), pairId: pid }
-      const second = { ...form, startTime: nextSlot,        endTime: getEndTime(nextSlot), id: genId(), pairId: pid }
-      setEntries(prev => [...prev, first, second])
+      const pid       = genRuntimePairId()
+      const firstId   = genId()
+      const secondId  = genId()
+      const first  = { ...form, startTime: form.startTime, endTime: nextSlot,            id: firstId,  pairId: pid }
+      const second = { ...form, startTime: nextSlot,        endTime: getEndTime(nextSlot), id: secondId, pairId: pid }
+      pushOverrides([
+        { kind: 'add', addId: firstId,  day: first.day,  startTime: first.startTime,  entry: first  },
+        { kind: 'add', addId: secondId, day: second.day, startTime: second.startTime, entry: second },
+      ])
     } else {
-      const newEntry = { ...form, id: genId() }
-      setEntries(prev => [...prev, newEntry])
+      const newId    = genId()
+      const newEntry = { ...form, id: newId }
+      pushOverrides({
+        kind: 'add',
+        addId: newId,
+        day: form.day,
+        startTime: form.startTime,
+        entry: newEntry,
+      })
     }
     setAddTarget(null)
+  }
+
+  // ── Drag-and-drop (move + swap) ──────────────────────────────────────────
+  // Pointer-based drag. Threshold of 6px before activation so taps still pass
+  // through to the card body. Paired practicals refuse drag for v1.
+  const DRAG_THRESHOLD = 6
+  const dragRef = useRef(null)
+  useEffect(() => { dragRef.current = drag }, [drag])
+
+  // Live snapshot of the rendered entries so applyDrop never reads a stale
+  // closure value after rapid back-to-back drags. The effect that owns the
+  // pointer listeners only re-runs when drag.pointerId changes, so without
+  // this ref applyDrop could see entries from two drags ago.
+  const entriesRef = useRef(entries)
+  useEffect(() => { entriesRef.current = entries }, [entries])
+
+  const handleCardDragStart = (entry, e, opts = {}) => {
+    if (e.target.closest('.tt-edit-btn')) return
+    const cardEl = e.currentTarget.closest?.('.tt-class-card') || e.currentTarget
+    const rect = cardEl.getBoundingClientRect()
+    try { cardEl.setPointerCapture?.(e.pointerId) } catch { /* ignore */ }
+    setDrag({
+      entry,
+      pointerId: e.pointerId,
+      originX: e.clientX,
+      originY: e.clientY,
+      x: e.clientX,
+      y: e.clientY,
+      started: !!opts.immediate,
+      rect: { width: rect.width, height: rect.height, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top },
+      dropTargetKey: null,
+    })
+  }
+
+  useEffect(() => {
+    if (!drag) return
+
+    const findSlotAt = (x, y) => {
+      const el = document.elementFromPoint(x, y)
+      if (!el) return null
+      const slotEl = el.closest?.('.tt-slot-cell[data-day]')
+      if (!slotEl) return null
+      return { day: slotEl.dataset.day, startTime: slotEl.dataset.startTime, key: `${slotEl.dataset.day}|${slotEl.dataset.startTime}` }
+    }
+
+    const onMove = (e) => {
+      setDrag((prev) => {
+        if (!prev) return prev
+        const dx = e.clientX - prev.originX
+        const dy = e.clientY - prev.originY
+        const started = prev.started || Math.hypot(dx, dy) > DRAG_THRESHOLD
+        let dropTargetKey = prev.dropTargetKey
+        if (started) {
+          const hit = findSlotAt(e.clientX, e.clientY)
+          dropTargetKey = hit?.key ?? null
+        }
+        return { ...prev, x: e.clientX, y: e.clientY, started, dropTargetKey }
+      })
+    }
+
+    const onUp = (e) => {
+      const cur = dragRef.current
+      if (cur?.started) {
+        const hit = findSlotAt(e.clientX, e.clientY)
+        if (hit) {
+          applyDrop(cur.entry, hit.day, hit.startTime)
+        }
+      }
+      setDrag(null)
+    }
+
+    const onCancel = () => setDrag(null)
+
+    window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('pointerup', onUp)
+    window.addEventListener('pointercancel', onCancel)
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerup', onUp)
+      window.removeEventListener('pointercancel', onCancel)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [drag?.pointerId])
+
+  const applyDrop = (sourceEntry, day, startTime) => {
+    // Always read the latest rendered entries via ref — `entries` from
+    // closure can lag if the user fires a new drag before React has flushed
+    // the previous drop's state update.
+    const liveEntries = entriesRef.current
+    const source = liveEntries.find(e => e.id === sourceEntry.id) ?? sourceEntry
+    if (source.day === day && source.startTime === startTime) return
+
+    // Anything else currently rendered in the target slot.
+    const targets = liveEntries.filter(
+      (e) => e.id !== source.id && e.day === day && e.startTime === startTime,
+    )
+
+    const moveOv = {
+      kind: 'edit',
+      targetId: source.id,
+      day,
+      startTime,
+      baseEntry: { ...source },
+      entry: { ...source, day, startTime, endTime: getEndTime(startTime) },
+    }
+    if (targets.length === 0) {
+      pushOverrides([moveOv])
+      return
+    }
+    const occupant = targets[0]
+    // Defensive: if the occupant somehow is the source (id collision), bail.
+    if (occupant.id === source.id) {
+      pushOverrides([moveOv])
+      return
+    }
+    const swapOv = {
+      kind: 'edit',
+      targetId: occupant.id,
+      day: source.day,
+      startTime: source.startTime,
+      baseEntry: { ...occupant },
+      entry: { ...occupant, day: source.day, startTime: source.startTime, endTime: getEndTime(source.startTime) },
+    }
+    pushOverrides([moveOv, swapOv])
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -590,7 +891,9 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
               style={{ transform: `translateX(${(pillIdx ?? 0) * colWidth}px)` }}
               aria-hidden="true"
             />
-            <div className="tt-time-header-cell" />
+            <div className="tt-time-header-cell">
+              {batch && <span className="tt-batch-header-label">{batch}</span>}
+            </div>
             {DAYS.map((day, idx) => (
               <div
                 key={day}
@@ -616,10 +919,15 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
               {DAYS.map((day) => {
                 const slotEntries = dataMap[day]?.[slot] || []
                 const isActive    = day === highlightDay
+                const slotKey     = `${day}|${slot}`
+                const isDropTarget = drag?.started && drag.dropTargetKey === slotKey && !(drag.entry.day === day && drag.entry.startTime === slot)
                 return (
                   <div
                     key={day}
                     className={`tt-slot-cell ${isActive ? 'tt-col-active' : ''}`}
+                    data-day={day}
+                    data-start-time={slot}
+                    data-drop-target={isDropTarget || undefined}
                   >
                     <div className="tt-slot-stack">
                       {/* Existing class cards */}
@@ -629,6 +937,8 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
                           entry={entry}
                           isDarkMode={resolvedIsDark}
                           onEdit={(rect) => setEditTarget({ entry, rect })}
+                          onDragStart={handleCardDragStart}
+                          isDragging={drag?.started && drag.entry.id === entry.id}
                         />
                       ))}
 
@@ -677,6 +987,254 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
           onClose={() => setAddTarget(null)}
         />
       )}
+
+      {/* Floating save controls — visible only when current view differs from baseline */}
+      {hasNetChange && (
+        <div className="tt-save-fab-group">
+          <button
+            type="button"
+            className="tt-peek-fab"
+            onPointerDown={(e) => { e.preventDefault(); setPeekBaseline(true) }}
+            onPointerUp={() => setPeekBaseline(false)}
+            onPointerLeave={() => setPeekBaseline(false)}
+            onPointerCancel={() => setPeekBaseline(false)}
+            onContextMenu={(e) => e.preventDefault()}
+            aria-label="Hold to preview the original timetable"
+            title="Hold to see original"
+            data-active={peekBaseline || undefined}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <span>{peekBaseline ? 'Original' : 'Hold to compare'}</span>
+          </button>
+          <button
+            type="button"
+            className="tt-reset-fab"
+            onClick={() => setResetOpen(true)}
+            disabled={peekBaseline}
+            aria-label="Reset all changes"
+            title="Discard local changes"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="1 4 1 10 7 10" />
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+            </svg>
+            <span>Reset</span>
+          </button>
+          <button
+            type="button"
+            className="tt-save-fab"
+            onClick={() => setSaveOpen(true)}
+            disabled={peekBaseline}
+            aria-label={`Save ${overrides.length} change${overrides.length === 1 ? '' : 's'}`}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
+            </svg>
+            <span>Save</span>
+          </button>
+        </div>
+      )}
+
+      {saveOpen && (
+        <SaveChangesDialog
+          overrides={overrides}
+          batch={batch}
+          onClose={() => setSaveOpen(false)}
+        />
+      )}
+
+      {resetOpen && createPortal(
+        <div
+          className="tt-cr-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Reset local changes"
+          onClick={(e) => { if (e.target === e.currentTarget) setResetOpen(false) }}
+        >
+          <div className="tt-cr-card tt-cr-card--compact">
+            <h3 className="tt-cr-title">Reset changes?</h3>
+            <p className="tt-cr-sub">
+              This discards all your local edits for batch <strong>{batch}</strong> and
+              restores the original timetable. This action can&apos;t be undone.
+            </p>
+            <div className="tt-cr-actions tt-cr-actions--end">
+              <button
+                type="button"
+                className="tt-cr-btn tt-cr-btn--ghost"
+                onClick={() => setResetOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="tt-cr-btn tt-cr-btn--danger"
+                onClick={() => {
+                  clearOverrides(batch)
+                  dirtyRef.current = false
+                  setOverrides([])
+                  setPeekBaseline(false)
+                  setResetOpen(false)
+                }}
+              >
+                Discard changes
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body,
+      )}
+
+      {/* Floating drag ghost — follows pointer while dragging */}
+      {drag?.started && createPortal(
+        <div
+          className="tt-card-drag-ghost"
+          style={{
+            position: 'fixed',
+            left: drag.x - drag.rect.offsetX,
+            top: drag.y - drag.rect.offsetY,
+            width: drag.rect.width,
+            height: drag.rect.height,
+            pointerEvents: 'none',
+            zIndex: 9999,
+          }}
+        >
+          <div className="tt-class-card tt-class-card--ghost" data-type={drag.entry.type}>
+            <span className="tt-type-badge">{drag.entry.type}</span>
+            <div className="tt-card-text">
+              <p className="tt-card-subject">{drag.entry.subject}</p>
+              <p className="tt-card-code">{drag.entry.code}</p>
+            </div>
+            {drag.entry.room && <span className="tt-card-room">{drag.entry.room}</span>}
+          </div>
+        </div>,
+        document.body,
+      )}
     </div>
   )
 }
+
+// ─── SaveChangesDialog ────────────────────────────────────────────────────────
+// Deferred save UI. The grid stages every edit/add/delete/move into local
+// overrides immediately. This dialog asks the user what to do with the
+// accumulated changes: keep them just for themselves, or propose them to the
+// batch / class as change requests for admin review. Each override is
+// submitted as its own request — server-side rate limits and duplicate
+// detection apply per change.
+function SaveChangesDialog({ overrides, batch, onClose }) {
+  const [status, setStatus] = useState({ kind: 'idle' })
+  // 'idle' | 'submitting' | 'done' | 'error'
+  const classPrefix = classPrefixOf(batch)
+
+  const hasLecture = useMemo(() => overrides.some(ov => {
+    const t = ov.entry?.type ?? ov.baseEntry?.type
+    return t === 'Lecture'
+  }), [overrides])
+
+  const submitAll = async (scope) => {
+    if (!batch) return
+    setStatus({ kind: 'submitting', scope, sent: 0, total: overrides.length, errors: [] })
+    let sent = 0
+    const errors = []
+    for (const ov of overrides) {
+      if (scope === 'class') {
+        // Class scope only carries Lecture changes
+        const t = ov.entry?.type ?? ov.baseEntry?.type
+        if (t !== 'Lecture') continue
+      }
+      try {
+        await submitChangeRequest({
+          requesterBatch: batch,
+          scope,
+          kind: ov.kind,
+          day: ov.day,
+          startTime: ov.startTime,
+          entry: ov.kind === 'delete' ? null : ov.entry,
+        })
+        sent++
+        setStatus(s => s.kind === 'submitting' ? { ...s, sent } : s)
+      } catch (err) {
+        errors.push({ ov, code: err.code, message: err.message })
+      }
+    }
+    if (errors.length === 0) {
+      setStatus({ kind: 'done', scope, sent })
+      setTimeout(onClose, 1400)
+    } else {
+      setStatus({ kind: 'error', scope, sent, errors })
+    }
+  }
+
+  const isSubmitting = status.kind === 'submitting'
+  const lectureCount = overrides.filter(ov => (ov.entry?.type ?? ov.baseEntry?.type) === 'Lecture').length
+
+  return createPortal(
+    <div className="tt-cr-backdrop" role="dialog" aria-modal="true" aria-label="Save changes">
+      <div className="tt-cr-card">
+        <h3 className="tt-cr-title">Save {overrides.length} change{overrides.length === 1 ? '' : 's'}</h3>
+        <p className="tt-cr-sub">
+          Your edits are already saved locally for batch <strong>{batch}</strong>. Choose how to share them:
+        </p>
+
+        {status.kind === 'done' ? (
+          <p className="tt-cr-success">Submitted {status.sent} change{status.sent === 1 ? '' : 's'} for review — thanks!</p>
+        ) : (
+          <>
+            <div className="tt-cr-actions">
+              <button
+                type="button"
+                className="tt-cr-btn tt-cr-btn--ghost"
+                disabled={isSubmitting}
+                onClick={onClose}
+              >
+                Save just for me
+              </button>
+              <button
+                type="button"
+                className="tt-cr-btn tt-cr-btn--primary"
+                disabled={isSubmitting || !batch}
+                onClick={() => submitAll('batch')}
+              >
+                {isSubmitting && status.scope === 'batch'
+                  ? `Submitting ${status.sent}/${status.total}…`
+                  : `Save for batch ${batch}`}
+              </button>
+              {hasLecture && classPrefix && (
+                <button
+                  type="button"
+                  className="tt-cr-btn tt-cr-btn--primary"
+                  disabled={isSubmitting}
+                  onClick={() => submitAll('class')}
+                  title={`Applies to every batch starting with ${classPrefix} (Lecture changes only)`}
+                >
+                  {isSubmitting && status.scope === 'class'
+                    ? `Submitting ${status.sent}/${lectureCount}…`
+                    : `Save for class ${classPrefix}`}
+                </button>
+              )}
+            </div>
+            <p className="tt-cr-note">
+              {hasLecture
+                ? 'Batch sends every change. Class only sends Lecture changes — Practical/Tutorial stay personal.'
+                : 'An admin will review batch submissions before they go live.'}
+            </p>
+            {status.kind === 'error' && (
+              <p className="tt-cr-error">
+                Submitted {status.sent}/{overrides.length}. {status.errors.length} failed
+                {status.errors[0]?.code === 'rate_limited' && ' — rate limit hit, try again later.'}
+                {status.errors[0]?.code === 'duplicate' && ' — some were duplicates of pending requests.'}
+                {!['rate_limited', 'duplicate'].includes(status.errors[0]?.code) && '.'}
+              </p>
+            )}
+          </>
+        )}
+      </div>
+    </div>,
+    document.body
+  )
+}
+

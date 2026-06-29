@@ -1,0 +1,228 @@
+{
+  "batch": "1B94",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Electrical & Electronic Engineering",
+      "code": "UES013L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Programming For Problem Solving",
+      "code": "UES103P",
+      "type": "Practical",
+      "room": "PL-1",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Programming For Problem Solving",
+      "code": "UES103P",
+      "type": "Practical",
+      "room": "PL-1",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Electrical & Electronic Engineering",
+      "code": "UES013L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Energy And Environment",
+      "code": "UEN008L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Programming For Problem Solving",
+      "code": "UES103L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Energy And Environment",
+      "code": "UEN008L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Calculus For Engineers",
+      "code": "UMA022L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Electrical & Electronic Engineering",
+      "code": "UES013P",
+      "type": "Practical",
+      "room": "H205/C201",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Electrical & Electronic Engineering",
+      "code": "UES013P",
+      "type": "Practical",
+      "room": "H205/C201",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Chemistry",
+      "code": "UCB009P",
+      "type": "Practical",
+      "room": "CBAL-G253A",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Chemistry",
+      "code": "UCB009P",
+      "type": "Practical",
+      "room": "CBAL-G253A",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Calculus For Engineers",
+      "code": "UMA022L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Chemistry",
+      "code": "UCB009L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Calculus For Engineers",
+      "code": "UMA022T",
+      "type": "Tutorial",
+      "room": "F305",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Electrical & Electronic Engineering",
+      "code": "UES013T",
+      "type": "Tutorial",
+      "room": "F305",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Calculus For Engineers",
+      "code": "UMA022L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Chemistry",
+      "code": "UCB009L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Electrical & Electronic Engineering",
+      "code": "UES013L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Programming For Problem Solving",
+      "code": "UES103L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Electrical & Electronic Engineering",
+      "code": "UES013L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Chemistry",
+      "code": "UCB009L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": []
+    }
+  ]
+}

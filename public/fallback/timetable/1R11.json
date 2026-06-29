@@ -1,0 +1,308 @@
+{
+  "batch": "1R11",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Linear Algebra",
+      "code": "UCT201L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Object Oriented Programming",
+      "code": "UCT303L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Statistical Modeling",
+      "code": "UCT202L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Fundamentals Of Economics",
+      "code": "UHU007L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Object Oriented Programming",
+      "code": "UCT303P",
+      "type": "Practical",
+      "room": "PL-4",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Object Oriented Programming",
+      "code": "UCT303P",
+      "type": "Practical",
+      "room": "PL-4",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Linear Algebra",
+      "code": "UCT201L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCT204L",
+      "code": "UCT204L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Statistical Modeling",
+      "code": "UCT202L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Principles Of Electronics",
+      "code": "UEC002L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Principles Of Electronics",
+      "code": "UEC002P",
+      "type": "Practical",
+      "room": "C212",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Principles Of Electronics",
+      "code": "UEC002P",
+      "type": "Practical",
+      "room": "C212",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Principles Of Electronics",
+      "code": "UEC002L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCT204L",
+      "code": "UCT204L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCT204P",
+      "code": "UCT204P",
+      "type": "Practical",
+      "room": "E304",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UCT204P",
+      "code": "UCT204P",
+      "type": "Practical",
+      "room": "E304",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Object Oriented Programming",
+      "code": "UCT303L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UCT205L",
+      "code": "UCT205L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Statistical Modeling",
+      "code": "UCT202P",
+      "type": "Practical",
+      "room": "PL-3",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Statistical Modeling",
+      "code": "UCT202P",
+      "type": "Practical",
+      "room": "PL-3",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UCT205L",
+      "code": "UCT205L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Principles Of Electronics",
+      "code": "UEC002L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Linear Algebra",
+      "code": "UCT201L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Object Oriented Programming",
+      "code": "UCT303L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Statistical Modeling",
+      "code": "UCT202L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Fundamentals Of Economics",
+      "code": "UHU007L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    }
+  ]
+}

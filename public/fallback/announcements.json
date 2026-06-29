@@ -1,0 +1,23 @@
+[
+  {
+    "id": "ann-fallback-welcome",
+    "title": "Backend offline — sample data",
+    "body": "You're viewing bundled fallback announcements. Live updates will appear once the backend is reachable.",
+    "severity": "info",
+    "posted_at": "2026-06-20T10:00:00Z"
+  },
+  {
+    "id": "ann-fallback-room-change",
+    "title": "Room change — UCS027",
+    "body": "Wednesday's UCS027 lecture moves from G312 to G407 until further notice.",
+    "severity": "warn",
+    "posted_at": "2026-06-22T16:30:00Z"
+  },
+  {
+    "id": "ann-fallback-mid-sem",
+    "title": "Mid-Sem schedule released",
+    "body": "Tentative schedule is up on the academic portal. Check the Exam Dates card for highlights.",
+    "severity": "info",
+    "posted_at": "2026-06-26T09:00:00Z"
+  }
+]

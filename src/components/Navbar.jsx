@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useTheme } from '../hooks/useTheme'
+import { useAuthUser } from '../lib/auth'
 import './Navbar.css'
 
 function SunIcon() {
@@ -26,9 +27,21 @@ function MoonIcon() {
   )
 }
 
+function PersonIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+    </svg>
+  )
+}
+
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme()
   const isDark = theme === 'dark'
+  const { isSignedIn } = useAuthUser()
+  const profileHref = isSignedIn ? '/profile' : '/login'
+  const profileLabel = isSignedIn ? 'Open profile' : 'Sign in'
 
   return (
     <header className="navbar">
@@ -38,7 +51,6 @@ export default function Navbar() {
         </Link>
 
         <div className="navbar-actions">
-          {/* Theme */}
           <span className="navbar-tip-wrap" data-tip={isDark ? 'Switch to light' : 'Switch to dark'}>
             <button
               type="button"
@@ -51,14 +63,10 @@ export default function Navbar() {
             </button>
           </span>
 
-          {/* Profile */}
           <span className="navbar-tip-wrap" data-tip="Profile">
-            <button type="button" className="navbar-icon-btn" aria-label="Profile">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-              </svg>
-            </button>
+            <Link to={profileHref} className="navbar-icon-btn" aria-label={profileLabel}>
+              <PersonIcon />
+            </Link>
           </span>
         </div>
       </nav>

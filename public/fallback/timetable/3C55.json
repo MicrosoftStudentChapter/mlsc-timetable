@@ -1,0 +1,1004 @@
+{
+  "batch": "3C55",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Optimization Techniques",
+      "code": "UMA035L",
+      "type": "Lecture",
+      "room": "LT301",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Theory Of Computation",
+      "code": "UCS701L",
+      "type": "Lecture",
+      "room": "LT301",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Microprocessor-Based Systems Design",
+      "code": "UCS617P",
+      "type": "Practical",
+      "room": "ES-2",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Microprocessor-Based Systems Design",
+      "code": "UCS617P",
+      "type": "Practical",
+      "room": "ES-2",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Theory Of Computation",
+      "code": "UCS701T",
+      "type": "Tutorial",
+      "room": "E312",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Microprocessor-Based Systems Design",
+      "code": "UCS617L",
+      "type": "Lecture",
+      "room": "LT401",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UCSXX2P",
+      "code": "UCSXX2P",
+      "type": "Practical",
+      "room": "GC-1",
+      "options": [
+        {
+          "subject_code": "UCSXX2P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "GC-1",
+          "teacher": "SD"
+        },
+        {
+          "subject_code": "UCS635P",
+          "subject_name": "Gpu Computing",
+          "type": "Practical",
+          "place": "LT101",
+          "teacher": "VJY"
+        },
+        {
+          "subject_code": "UCS658L",
+          "subject_name": "Derivatives Pricing, Trading And Strategies",
+          "type": "Lecture",
+          "place": null,
+          "teacher": "VPS"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCSXX2P",
+      "code": "UCSXX2P",
+      "type": "Practical",
+      "room": "GC-1",
+      "options": [
+        {
+          "subject_code": "UCSXX2P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "GC-1",
+          "teacher": "SD"
+        },
+        {
+          "subject_code": "UCS635P",
+          "subject_name": "Gpu Computing",
+          "type": "Practical",
+          "place": "LT101",
+          "teacher": "VJY"
+        },
+        {
+          "subject_code": "UCS658L",
+          "subject_name": "Derivatives Pricing, Trading And Strategies",
+          "type": "Lecture",
+          "place": null,
+          "teacher": "VPS"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCSXX1P",
+      "code": "UCSXX1P",
+      "type": "Practical",
+      "room": "GC-1",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UCSXX1P",
+      "code": "UCSXX1P",
+      "type": "Practical",
+      "room": "GC-1",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "UCS675P",
+      "code": "UCS675P",
+      "type": "Practical",
+      "room": "PL-4",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "18:00",
+      "end_time": "18:50",
+      "subject": "UCS675P",
+      "code": "UCS675P",
+      "type": "Practical",
+      "room": "PL-4",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Microprocessor-Based Systems Design",
+      "code": "UCS617L",
+      "type": "Lecture",
+      "room": "LT401",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Innovation And Entrepreneurship",
+      "code": "UTA025L",
+      "type": "Lecture",
+      "room": "LT401",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Parallel & Distributed Computing",
+      "code": "UCS645L",
+      "type": "Lecture",
+      "room": "LT302",
+      "options": [
+        {
+          "subject_code": "UCS645L",
+          "subject_name": "Parallel & Distributed Computing",
+          "type": "Lecture",
+          "place": "LT302",
+          "teacher": "SND"
+        },
+        {
+          "subject_code": "UCS646L",
+          "subject_name": "Game Design And Development",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS648L",
+          "subject_name": "Cyber Forensics",
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "JAS"
+        },
+        {
+          "subject_code": "UCS660L",
+          "subject_name": "Continuous Integration And Continuous Deployment",
+          "type": "Lecture",
+          "place": "F303",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS662L",
+          "subject_name": "Test Automation",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "JDN"
+        },
+        {
+          "subject_code": "UCS749L",
+          "subject_name": "Conversational Ai: Speech Processing And Synthesis",
+          "type": "Lecture",
+          "place": "LT401",
+          "teacher": "SMR"
+        },
+        {
+          "subject_code": "UCS671L",
+          "subject_name": "Edge Ai And Robotics: Embedded Vision",
+          "type": "Lecture",
+          "place": "PGAS2",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS673L",
+          "subject_name": "Ethical Hacking-I",
+          "type": "Lecture",
+          "place": "F302",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UCS761L",
+          "subject_name": "Deep Learning",
+          "type": "Lecture",
+          "place": "LT303",
+          "teacher": "STT"
+        },
+        {
+          "subject_code": "UCSXX1L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F301",
+          "teacher": "RVK"
+        },
+        {
+          "subject_code": "UCS675L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "LT103",
+          "teacher": "ROS"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Parallel & Distributed Computing",
+      "code": "UCS645L",
+      "type": "Lecture",
+      "room": "LT302",
+      "options": [
+        {
+          "subject_code": "UCS645L",
+          "subject_name": "Parallel & Distributed Computing",
+          "type": "Lecture",
+          "place": "LT302",
+          "teacher": "SND"
+        },
+        {
+          "subject_code": "UCS646L",
+          "subject_name": "Game Design And Development",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS648L",
+          "subject_name": "Cyber Forensics",
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "JAS"
+        },
+        {
+          "subject_code": "UCS660L",
+          "subject_name": "Continuous Integration And Continuous Deployment",
+          "type": "Lecture",
+          "place": "F303",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS662L",
+          "subject_name": "Test Automation",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "JDN"
+        },
+        {
+          "subject_code": "UCS749L",
+          "subject_name": "Conversational Ai: Speech Processing And Synthesis",
+          "type": "Lecture",
+          "place": "LT401",
+          "teacher": "SMR"
+        },
+        {
+          "subject_code": "UCS671L",
+          "subject_name": "Edge Ai And Robotics: Embedded Vision",
+          "type": "Lecture",
+          "place": "PGAS2",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS673L",
+          "subject_name": "Ethical Hacking-I",
+          "type": "Lecture",
+          "place": "F302",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UCS761L",
+          "subject_name": "Deep Learning",
+          "type": "Lecture",
+          "place": "LT303",
+          "teacher": "STT"
+        },
+        {
+          "subject_code": "UCSXX1L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F301",
+          "teacher": "RVK"
+        },
+        {
+          "subject_code": "UCS675L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "LT103",
+          "teacher": "ROS"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Theory Of Computation",
+      "code": "UCS701L",
+      "type": "Lecture",
+      "room": "LT303",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Optimization Techniques",
+      "code": "UMA035L",
+      "type": "Lecture",
+      "room": "LT303",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "Derivatives Pricing, Trading And Strategies",
+      "code": "UCS658P",
+      "type": "Practical",
+      "room": "PL-4",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "18:00",
+      "end_time": "18:50",
+      "subject": "Derivatives Pricing, Trading And Strategies",
+      "code": "UCS658P",
+      "type": "Practical",
+      "room": "PL-4",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Ethical Hacking-I",
+      "code": "UCS673P",
+      "type": "Practical",
+      "room": "GC-2",
+      "options": [
+        {
+          "subject_code": "UCS673P",
+          "subject_name": "Ethical Hacking-I",
+          "type": "Practical",
+          "place": "GC-2",
+          "teacher": "IOT"
+        },
+        {
+          "subject_code": "UCS660P",
+          "subject_name": "Continuous Integration And Continuous Deployment",
+          "type": "Practical",
+          "place": "IS-1",
+          "teacher": "GA"
+        },
+        {
+          "subject_code": "UCS648P",
+          "subject_name": "Cyber Forensics",
+          "type": "Practical",
+          "place": null,
+          "teacher": "SD"
+        },
+        {
+          "subject_code": "UCS646P",
+          "subject_name": "Game Design And Development",
+          "type": "Practical",
+          "place": null,
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UCS547P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "GS"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Ethical Hacking-I",
+      "code": "UCS673P",
+      "type": "Practical",
+      "room": "GC-2",
+      "options": [
+        {
+          "subject_code": "UCS673P",
+          "subject_name": "Ethical Hacking-I",
+          "type": "Practical",
+          "place": "GC-2",
+          "teacher": "IOT"
+        },
+        {
+          "subject_code": "UCS660P",
+          "subject_name": "Continuous Integration And Continuous Deployment",
+          "type": "Practical",
+          "place": "IS-1",
+          "teacher": "GA"
+        },
+        {
+          "subject_code": "UCS648P",
+          "subject_name": "Cyber Forensics",
+          "type": "Practical",
+          "place": null,
+          "teacher": "SD"
+        },
+        {
+          "subject_code": "UCS646P",
+          "subject_name": "Game Design And Development",
+          "type": "Practical",
+          "place": null,
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UCS547P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "GS"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Ethical Hacking-Ii",
+      "code": "UCS674P",
+      "type": "Practical",
+      "room": "GC-2",
+      "options": [
+        {
+          "subject_code": "UCS674P",
+          "subject_name": "Ethical Hacking-Ii",
+          "type": "Practical",
+          "place": "GC-2",
+          "teacher": "IOT"
+        },
+        {
+          "subject_code": "UCS659P",
+          "subject_name": "Build And Release Management",
+          "type": "Practical",
+          "place": "IS-1",
+          "teacher": "GA"
+        },
+        {
+          "subject_code": "UCS638P",
+          "subject_name": "Secure Coding",
+          "type": "Practical",
+          "place": "PGAS-2",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS636P",
+          "subject_name": "3D Modelling And Animation",
+          "type": "Practical",
+          "place": null,
+          "teacher": "MNK"
+        },
+        {
+          "subject_code": "UCS671P",
+          "subject_name": "Edge Ai And Robotics: Embedded Vision",
+          "type": "Practical",
+          "place": null,
+          "teacher": "ASA"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Ethical Hacking-Ii",
+      "code": "UCS674P",
+      "type": "Practical",
+      "room": "GC-2",
+      "options": [
+        {
+          "subject_code": "UCS674P",
+          "subject_name": "Ethical Hacking-Ii",
+          "type": "Practical",
+          "place": "GC-2",
+          "teacher": "IOT"
+        },
+        {
+          "subject_code": "UCS659P",
+          "subject_name": "Build And Release Management",
+          "type": "Practical",
+          "place": "IS-1",
+          "teacher": "GA"
+        },
+        {
+          "subject_code": "UCS638P",
+          "subject_name": "Secure Coding",
+          "type": "Practical",
+          "place": "PGAS-2",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS636P",
+          "subject_name": "3D Modelling And Animation",
+          "type": "Practical",
+          "place": null,
+          "teacher": "MNK"
+        },
+        {
+          "subject_code": "UCS671P",
+          "subject_name": "Edge Ai And Robotics: Embedded Vision",
+          "type": "Practical",
+          "place": null,
+          "teacher": "ASA"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Microprocessor-Based Systems Design",
+      "code": "UCS617L",
+      "type": "Lecture",
+      "room": "LT402",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Theory Of Computation",
+      "code": "UCS701L",
+      "type": "Lecture",
+      "room": "LT401",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Innovation And Entrepreneurship",
+      "code": "UTA025T",
+      "type": "Tutorial",
+      "room": "F302",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Innovation And Entrepreneurship",
+      "code": "UTA025T",
+      "type": "Tutorial",
+      "room": "F302",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "Derivatives Pricing, Trading And Strategies",
+      "code": "UCS658L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Optimization Techniques",
+      "code": "UMA035L",
+      "type": "Lecture",
+      "room": "LT402",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Gpu Computing",
+      "code": "UCS635L",
+      "type": "Lecture",
+      "room": "LT301",
+      "options": [
+        {
+          "subject_code": "UCS635L",
+          "subject_name": "Gpu Computing",
+          "type": "Lecture",
+          "place": "LT301",
+          "teacher": "VPS"
+        },
+        {
+          "subject_code": "UCS636L",
+          "subject_name": "3D Modelling And Animation",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "ST"
+        },
+        {
+          "subject_code": "UCS638L",
+          "subject_name": "Secure Coding",
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "ASA"
+        },
+        {
+          "subject_code": "UCS659L",
+          "subject_name": "Build And Release Management",
+          "type": "Lecture",
+          "place": "F303",
+          "teacher": "MNK"
+        },
+        {
+          "subject_code": "UCS677L",
+          "subject_name": "Data Engineering",
+          "type": "Lecture",
+          "place": "LP101",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS664L",
+          "subject_name": "Conversational Ai: Natural Language Processing",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS547L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "PGAS2",
+          "teacher": "MMK"
+        },
+        {
+          "subject_code": "UCS654L",
+          "subject_name": "Predictive Analytics Using Statistics",
+          "type": "Lecture",
+          "place": "LT402",
+          "teacher": "SRR"
+        },
+        {
+          "subject_code": "UCS674L",
+          "subject_name": "Ethical Hacking-Ii",
+          "type": "Lecture",
+          "place": "F302",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCSXX2L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F301",
+          "teacher": "VJY"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Gpu Computing",
+      "code": "UCS635L",
+      "type": "Lecture",
+      "room": "LT301",
+      "options": [
+        {
+          "subject_code": "UCS635L",
+          "subject_name": "Gpu Computing",
+          "type": "Lecture",
+          "place": "LT301",
+          "teacher": "VPS"
+        },
+        {
+          "subject_code": "UCS636L",
+          "subject_name": "3D Modelling And Animation",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "ST"
+        },
+        {
+          "subject_code": "UCS638L",
+          "subject_name": "Secure Coding",
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "ASA"
+        },
+        {
+          "subject_code": "UCS659L",
+          "subject_name": "Build And Release Management",
+          "type": "Lecture",
+          "place": "F303",
+          "teacher": "MNK"
+        },
+        {
+          "subject_code": "UCS677L",
+          "subject_name": "Data Engineering",
+          "type": "Lecture",
+          "place": "LP101",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS664L",
+          "subject_name": "Conversational Ai: Natural Language Processing",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS547L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "PGAS2",
+          "teacher": "MMK"
+        },
+        {
+          "subject_code": "UCS654L",
+          "subject_name": "Predictive Analytics Using Statistics",
+          "type": "Lecture",
+          "place": "LT402",
+          "teacher": "SRR"
+        },
+        {
+          "subject_code": "UCS674L",
+          "subject_name": "Ethical Hacking-Ii",
+          "type": "Lecture",
+          "place": "F302",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCSXX2L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F301",
+          "teacher": "VJY"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Test Automation",
+      "code": "UCS662P",
+      "type": "Practical",
+      "room": "SS-2",
+      "options": [
+        {
+          "subject_code": "UCS662P",
+          "subject_name": "Test Automation",
+          "type": "Practical",
+          "place": "SS-2",
+          "teacher": "HPC"
+        },
+        {
+          "subject_code": "UCS664P",
+          "subject_name": "Conversational Ai: Natural Language Processing",
+          "type": "Practical",
+          "place": "LP109",
+          "teacher": "AI"
+        },
+        {
+          "subject_code": "UCS645P",
+          "subject_name": "Parallel & Distributed Computing",
+          "type": "Practical",
+          "place": "IS-1",
+          "teacher": "JDN"
+        },
+        {
+          "subject_code": "UCS638P",
+          "subject_name": "Secure Coding",
+          "type": "Practical",
+          "place": null,
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS761P",
+          "subject_name": "Deep Learning",
+          "type": "Practical",
+          "place": null,
+          "teacher": "SND"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Test Automation",
+      "code": "UCS662P",
+      "type": "Practical",
+      "room": "SS-2",
+      "options": [
+        {
+          "subject_code": "UCS662P",
+          "subject_name": "Test Automation",
+          "type": "Practical",
+          "place": "SS-2",
+          "teacher": "HPC"
+        },
+        {
+          "subject_code": "UCS664P",
+          "subject_name": "Conversational Ai: Natural Language Processing",
+          "type": "Practical",
+          "place": "LP109",
+          "teacher": "AI"
+        },
+        {
+          "subject_code": "UCS645P",
+          "subject_name": "Parallel & Distributed Computing",
+          "type": "Practical",
+          "place": "IS-1",
+          "teacher": "JDN"
+        },
+        {
+          "subject_code": "UCS638P",
+          "subject_name": "Secure Coding",
+          "type": "Practical",
+          "place": null,
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS761P",
+          "subject_name": "Deep Learning",
+          "type": "Practical",
+          "place": null,
+          "teacher": "SND"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Data Engineering",
+      "code": "UCS677P",
+      "type": "Practical",
+      "room": "SS-2",
+      "options": [
+        {
+          "subject_code": "UCS677P",
+          "subject_name": "Data Engineering",
+          "type": "Practical",
+          "place": "SS-2",
+          "teacher": "AI"
+        },
+        {
+          "subject_code": "UCS749P",
+          "subject_name": "Conversational Ai: Speech Processing And Synthesis",
+          "type": "Practical",
+          "place": "PL-3",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS648P",
+          "subject_name": "Cyber Forensics",
+          "type": "Practical",
+          "place": "IS-1",
+          "teacher": "SMR"
+        },
+        {
+          "subject_code": "UCS654P",
+          "subject_name": "Predictive Analytics Using Statistics",
+          "type": "Practical",
+          "place": null,
+          "teacher": "JAS"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Data Engineering",
+      "code": "UCS677P",
+      "type": "Practical",
+      "room": "SS-2",
+      "options": [
+        {
+          "subject_code": "UCS677P",
+          "subject_name": "Data Engineering",
+          "type": "Practical",
+          "place": "SS-2",
+          "teacher": "AI"
+        },
+        {
+          "subject_code": "UCS749P",
+          "subject_name": "Conversational Ai: Speech Processing And Synthesis",
+          "type": "Practical",
+          "place": "PL-3",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS648P",
+          "subject_name": "Cyber Forensics",
+          "type": "Practical",
+          "place": "IS-1",
+          "teacher": "SMR"
+        },
+        {
+          "subject_code": "UCS654P",
+          "subject_name": "Predictive Analytics Using Statistics",
+          "type": "Practical",
+          "place": null,
+          "teacher": "JAS"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Optimization Techniques",
+      "code": "UMA035P",
+      "type": "Practical",
+      "room": "CG-2",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Optimization Techniques",
+      "code": "UMA035P",
+      "type": "Practical",
+      "room": "CG-2",
+      "options": []
+    }
+  ]
+}

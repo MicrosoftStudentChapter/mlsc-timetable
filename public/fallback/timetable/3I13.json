@@ -1,0 +1,495 @@
+{
+  "batch": "3I13",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Microcontroller And Embedded Systems",
+      "code": "UEC702P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Microcontroller And Embedded Systems",
+      "code": "UEC702P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "F315",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "F315",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UMT602T",
+      "code": "UMT602T",
+      "type": "Tutorial",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005L",
+      "type": "Lecture",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Microcontroller And Embedded Systems",
+      "code": "UEC702L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "F105/F106",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Microcontroller And Embedded Systems",
+      "code": "UEC702L",
+      "type": "Lecture",
+      "room": "B304",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Industrial Automation",
+      "code": "UMT802L",
+      "type": "Lecture",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005L",
+      "type": "Lecture",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Machine Learning And Image Processing",
+      "code": "UCS713L",
+      "type": "Lecture",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Microcontroller And Embedded Systems",
+      "code": "UEC702P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Microcontroller And Embedded Systems",
+      "code": "UEC702P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "URA624P",
+      "code": "URA624P",
+      "type": "Practical",
+      "room": "ATI/DMA/NF-2",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "URA624P",
+      "code": "URA624P",
+      "type": "Practical",
+      "room": "ATI/DMA/NF-2",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "UME625L",
+      "code": "UME625L",
+      "type": "Lecture",
+      "room": "F301",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Industrial Automation",
+      "code": "UMT802P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Industrial Automation",
+      "code": "UMT802P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UMT602T",
+      "code": "UMT602T",
+      "type": "Tutorial",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Conversational Ai: Accelerated Data Science [Advan",
+      "code": "UCS622L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": [
+        {
+          "subject_code": "UCS622L",
+          "subject_name": "Conversational Ai: Accelerated Data Science [Advan",
+          "type": "Lecture",
+          "place": "F105",
+          "teacher": "ATI"
+        },
+        {
+          "subject_code": "URA621L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F314",
+          "teacher": "DMA"
+        },
+        {
+          "subject_code": "URA743L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F302",
+          "teacher": "DK"
+        },
+        {
+          "subject_code": "URA624L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F315",
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UMT602T",
+      "code": "UMT602T",
+      "type": "Tutorial",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Machine Learning And Image Processing",
+      "code": "UCS713P",
+      "type": "Practical",
+      "room": "NF-2",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Machine Learning And Image Processing",
+      "code": "UCS713P",
+      "type": "Practical",
+      "room": "NF-2",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UMT602P",
+      "code": "UMT602P",
+      "type": "Practical",
+      "room": "C326",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UMT602P",
+      "code": "UMT602P",
+      "type": "Practical",
+      "room": "C326",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UMT602L",
+      "code": "UMT602L",
+      "type": "Lecture",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Industrial Automation",
+      "code": "UMT802L",
+      "type": "Lecture",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Machine Learning And Image Processing",
+      "code": "UCS713L",
+      "type": "Lecture",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Microcontroller And Embedded Systems",
+      "code": "UEC702L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UME625L",
+      "code": "UME625L",
+      "type": "Lecture",
+      "room": "F301",
+      "options": [
+        {
+          "subject_code": "UME625L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F301",
+          "teacher": "ASO"
+        },
+        {
+          "subject_code": "UCS622L",
+          "subject_name": "Conversational Ai: Accelerated Data Science [Advan",
+          "type": "Lecture",
+          "place": "F105",
+          "teacher": "ATI"
+        },
+        {
+          "subject_code": "URA743L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F302",
+          "teacher": "DK"
+        },
+        {
+          "subject_code": "URA624L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F315",
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UME625L",
+      "code": "UME625L",
+      "type": "Lecture",
+      "room": "F301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Industrial Automation",
+      "code": "UMT802L",
+      "type": "Lecture",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Machine Learning And Image Processing",
+      "code": "UCS713L",
+      "type": "Lecture",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Conversational Ai: Accelerated Data Science [Advan",
+      "code": "UCS622L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": [
+        {
+          "subject_code": "UCS622L",
+          "subject_name": "Conversational Ai: Accelerated Data Science [Advan",
+          "type": "Lecture",
+          "place": "F105",
+          "teacher": "ATI"
+        },
+        {
+          "subject_code": "URA621L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F314",
+          "teacher": "DMA"
+        },
+        {
+          "subject_code": "URA743L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F302",
+          "teacher": "DK"
+        },
+        {
+          "subject_code": "URA624L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F315",
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UMT602L",
+      "code": "UMT602L",
+      "type": "Lecture",
+      "room": "F314",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UMT602P",
+      "code": "UMT602P",
+      "type": "Practical",
+      "room": "C326",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UMT602P",
+      "code": "UMT602P",
+      "type": "Practical",
+      "room": "C326",
+      "options": []
+    }
+  ]
+}

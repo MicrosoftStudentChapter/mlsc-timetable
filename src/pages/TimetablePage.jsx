@@ -4,8 +4,10 @@ import Combobox from '../components/Combobox'
 import TimetableGrid from '../components/TimetableGrid'
 import { loadBatches } from '../lib/batches'
 import { loadTimetable } from '../lib/timetable'
+import { exportGridAsPng, exportGridAsPdf, ASPECT_PRESETS } from '../lib/export_timetable'
 import { DashboardLayout } from '../components/side_columns'
 import { useTheme } from '../hooks/useTheme'
+import { useAuthUser } from '../lib/auth'
 import './TimetablePage.css'
 
 const NAV_AUTO_CLOSE_MS = 3000
@@ -28,6 +30,7 @@ function getInitialCardTheme() {
 export default function TimetablePage() {
   const { batch } = useParams()
   const navigate  = useNavigate()
+  const { isSignedIn } = useAuthUser()
   const { theme, toggleTheme } = useTheme()
   const isDark = theme === 'dark'
   const [cardTheme, setCardTheme] = useState(getInitialCardTheme)
@@ -45,6 +48,7 @@ export default function TimetablePage() {
   const closeTimerRef = useRef(null)
   const isMouseHoveringRef = useRef(false)
   const pillRef = useRef(null)
+  const exportRef = useRef(null)
 
 
 
@@ -195,7 +199,9 @@ export default function TimetablePage() {
       }
     >
       <div className="tt-content">
-        <TimetableContent state={timetableState} batch={batch} isDark={isDark} cardTheme={cardTheme} activeWeekdayIdx={activeWeekdayIdx} />
+        <div className="tt-export-target" ref={exportRef}>
+          <TimetableContent state={timetableState} batch={batch} isDark={isDark} cardTheme={cardTheme} activeWeekdayIdx={activeWeekdayIdx} />
+        </div>
       </div>
 
       {/* Timetable Navbar */}
@@ -263,15 +269,11 @@ export default function TimetablePage() {
               </div>
 
               {/* Download */}
-              <div className="tt-tip-wrap" data-tip="Save">
-                <button className="tt-icon-btn" aria-label="Save as PDF or image">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="7 10 12 15 17 10"/>
-                    <line x1="12" y1="15" x2="12" y2="3"/>
-                  </svg>
-                </button>
-              </div>
+              <SaveMenu
+                exportRef={exportRef}
+                batch={batch}
+                disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
+              />
 
               {/* Share */}
               <div className="tt-tip-wrap" data-tip="Share Link">
@@ -312,9 +314,13 @@ export default function TimetablePage() {
                 </button>
               </div>
 
-              {/* Profile */}
+              {/* Profile — route based on Clerk sign-in state. */}
               <div className="tt-tip-wrap" data-tip="Profile">
-                <button className="tt-icon-btn" aria-label="Profile">
+                <button
+                  className="tt-icon-btn"
+                  aria-label="Profile"
+                  onClick={() => navigate(isSignedIn ? '/profile' : '/login')}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="8" r="4"/>
                     <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -341,7 +347,7 @@ function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx })
         <div className="tt-status tt-status--warning">
           Backend not configured — showing sample data. Set <code>VITE_BACKEND_URL</code> in <code>.env</code> to load <code>{batch}</code>.
         </div>
-        <TimetableGrid isDarkMode={isDark} cardTheme={cardTheme} activeWeekdayIdx={activeWeekdayIdx} />
+        <TimetableGrid isDarkMode={isDark} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} />
       </>
     )
   }
@@ -366,5 +372,138 @@ function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx })
       </div>
     )
   }
-  return <TimetableGrid isDarkMode={isDark} classes={state.classes} cardTheme={cardTheme} activeWeekdayIdx={activeWeekdayIdx} />
+  return <TimetableGrid isDarkMode={isDark} classes={state.classes} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} />
+}
+
+// ─── SaveMenu ────────────────────────────────────────────────────────────────
+// Two-step popover: choose format (PNG / PDF), then aspect ratio. Captures
+// whatever's inside `exportRef` (the rendered timetable). Closes on
+// outside-click and Escape.
+function SaveMenu({ exportRef, batch, disabled }) {
+  const [open, setOpen] = useState(false)
+  const [step, setStep] = useState('format')   // 'format' | 'aspect'
+  const [format, setFormat] = useState(null)   // 'png' | 'pdf' | null
+  const [busy, setBusy] = useState(null)       // aspect id while running
+  const [error, setError] = useState(null)
+  const wrapRef = useRef(null)
+
+  // Reset the wizard whenever the menu closes so reopening starts fresh.
+  useEffect(() => {
+    if (open) return
+    setStep('format')
+    setFormat(null)
+    setError(null)
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false)
+    }
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('pointerdown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  const pickFormat = (kind) => {
+    setFormat(kind)
+    setError(null)
+    setStep('aspect')
+  }
+
+  const runWithAspect = async (preset) => {
+    if (busy || !format) return
+    const fn = format === 'png' ? exportGridAsPng : exportGridAsPdf
+    setBusy(preset.id); setError(null)
+    try {
+      await fn({ node: exportRef.current, batch, aspect: preset.ratio })
+      setOpen(false)
+    } catch (e) {
+      setError(e?.message || 'Export failed')
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  return (
+    <div className="tt-tip-wrap tt-save-wrap" data-tip="Save" ref={wrapRef}>
+      <button
+        type="button"
+        className="tt-icon-btn"
+        aria-label="Save as PDF or image"
+        aria-haspopup="menu"
+        aria-expanded={open ? 'true' : 'false'}
+        disabled={disabled}
+        onClick={() => !disabled && setOpen((v) => !v)}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+      </button>
+      {open && (
+        <div className="tt-save-menu" role="menu">
+          {step === 'format' ? (
+            <>
+              <button
+                type="button"
+                role="menuitem"
+                className="tt-save-menu-item"
+                onClick={() => pickFormat('png')}
+              >
+                PNG image
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                className="tt-save-menu-item"
+                onClick={() => pickFormat('pdf')}
+              >
+                PDF document
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="tt-save-menu-header">
+                <button
+                  type="button"
+                  className="tt-save-menu-back"
+                  onClick={() => { if (!busy) { setStep('format'); setFormat(null); setError(null) } }}
+                  disabled={!!busy}
+                  aria-label="Back to format"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                </button>
+                <span className="tt-save-menu-title">
+                  {format === 'png' ? 'PNG' : 'PDF'} · aspect
+                </span>
+              </div>
+              <div className="tt-save-menu-aspects">
+                {ASPECT_PRESETS.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    role="menuitem"
+                    className="tt-save-menu-item"
+                    disabled={!!busy}
+                    onClick={() => runWithAspect(p)}
+                  >
+                    {busy === p.id ? 'Saving…' : p.label}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+          {error && <p className="tt-save-menu-error">{error}</p>}
+        </div>
+      )}
+    </div>
+  )
 }

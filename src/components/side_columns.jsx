@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import './side_columns.css';
+import { loadAnnouncements, loadExamDates } from '../lib/sidebar_feeds';
+import { useAuthUser } from '../lib/auth';
 
 const IconBell = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -80,6 +82,63 @@ const MONTH_NAMES = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
+// ─── Formatters for sidebar feed items ─────────────────────────────────
+const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function formatRelativeDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const now = new Date();
+  const diffMs = now - d;
+  const diffMin = Math.round(diffMs / 60000);
+  if (diffMin < 1) return 'just now';
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.round(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDay = Math.round(diffHr / 24);
+  if (diffDay < 7) return `${diffDay}d ago`;
+  return `${MONTH_SHORT[d.getMonth()]} ${d.getDate()}`;
+}
+
+function formatExamDate(ymd) {
+  if (!ymd) return '';
+  const [y, m, d] = ymd.split('-').map(Number);
+  if (!y || !m || !d) return ymd;
+  return `${MONTH_SHORT[m - 1]} ${d}`;
+}
+
+function splitExamDate(ymd) {
+  if (!ymd) return { month: '', day: '' };
+  const [y, m, d] = ymd.split('-').map(Number);
+  if (!y || !m || !d) return { month: '', day: ymd };
+  return { month: MONTH_SHORT[m - 1], day: String(d) };
+}
+
+function examTypeKey(type) {
+  if (!type) return 'default';
+  const t = type.toLowerCase();
+  if (t.includes('end')) return 'end';
+  if (t.includes('mid')) return 'mid';
+  if (t.includes('quiz')) return 'quiz';
+  if (t.includes('lab')) return 'lab';
+  return 'default';
+}
+
+function useFeed(loader) {
+  const [state, setState] = useState({ status: 'loading', items: [] });
+  useEffect(() => {
+    let alive = true;
+    loader().then((result) => {
+      if (alive) setState(result);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [loader]);
+  return state;
+}
+
 export function SidebarContent({ collapsed = false, onActiveWeekdayChange }) {
   // ─── Mini calendar: real current month, real today ─────
   const today = useMemo(() => new Date(), []);
@@ -97,6 +156,15 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange }) {
   const activeDay = hoveredDay ?? todayDate;
   const activeWeekdayIdx = weekdayIdxFor(year, month, activeDay);
 
+  // Sidebar feeds — backend with bundled fallback.
+  const announcements = useFeed(loadAnnouncements);
+  const examDates = useFeed(loadExamDates);
+
+  // Whole-section dropdowns: collapsed by default so the sidebar feels calm
+  // on arrival; users opt in by clicking the section header.
+  const [announcementsOpen, setAnnouncementsOpen] = useState(false);
+  const [examDatesOpen, setExamDatesOpen] = useState(false);
+
   // Broadcast the active weekday index so the main timetable grid can
   // sync its sliding column highlight with the calendar.
   useEffect(() => {
@@ -110,85 +178,231 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange }) {
 
   return (
     <div className={`sidebar-inner ${collapsed ? 'sidebar-inner--collapsed' : ''}`}>
-      {/* 1. Logo Section */}
-      <Link to="/" className="sidebar-logo-container" aria-label="Go to home">
-        <div className="logo-img-wrapper">
-          <img src="/MLSC-logo.png" alt="MLSC Logo" className="sidebar-logo-img" />
-        </div>
-        <h2 className="sidebar-logo-text">MLSC TIMETABLE</h2>
-      </Link>
-
-      {/* 2. Announcement Card */}
-      <div className="dashboard-card announcement-card">
-        <span className="card-icon"><IconBell /></span>
-        <h3 className="card-title">Announcements</h3>
-        <p className="card-placeholder-text">No announcements yet</p>
-      </div>
-
-      {/* 3. Exam Dates Card */}
-      <div className="dashboard-card exam-card">
-        <span className="card-icon"><IconExam /></span>
-        <h3 className="card-title">Exam Dates</h3>
-        <p className="card-placeholder-text">No dates scheduled</p>
-      </div>
-
-      {/* 4. Calendar Card */}
-      <div className="dashboard-card calendar-card">
-        <span className="card-icon"><IconCalendar /></span>
-        <div className="calendar-header">
-          <h3 className="card-title">Calendar</h3>
-          <span className="calendar-month-year">{`${MONTH_NAMES[month]} ${year}`}</span>
-        </div>
-        <div className="mini-calendar">
-          <div className="calendar-weekdays">
-            {MON_SUN.map((label, idx) => (
-              <span
-                key={idx}
-                className={`calendar-weekday ${idx === activeWeekdayIdx ? 'active' : ''}`}
-              >
-                {label}
-              </span>
-            ))}
+      {/* Fixed header */}
+      <div className="sidebar-header">
+        <Link to="/" className="sidebar-logo-container" aria-label="Go to home">
+          <div className="logo-img-wrapper">
+            <img src="/MLSC-logo.png" alt="MLSC Logo" className="sidebar-logo-img" />
           </div>
-          <div
-            className="calendar-grid"
-            onMouseLeave={() => setHoveredDay(null)}
+          <h2 className="sidebar-logo-text">MLSC TIMETABLE</h2>
+        </Link>
+      </div>
+
+      {/* Scrollable middle */}
+      <div className="sidebar-scroll">
+        {/* Announcement Card — whole section is the dropdown */}
+        <div className={`dashboard-card announcement-card section-card ${announcementsOpen ? 'is-open' : ''}`}>
+          <button
+            type="button"
+            className="section-header"
+            onClick={() => setAnnouncementsOpen((v) => !v)}
+            aria-expanded={announcementsOpen}
           >
-            {cells.map((cell) => {
-              if (cell.blank) {
-                return <span key={cell.key} className="calendar-day calendar-day--blank" />;
-              }
-              const isToday = cell.day === todayDate;
-              const isHovered = cell.day === hoveredDay;
-              return (
+            <span className="card-icon"><IconBell /></span>
+            <h3 className="card-title">Announcements</h3>
+            {announcements.items.length > 0 && (
+              <span className="section-count">{announcements.items.length}</span>
+            )}
+            <span className="feed-chevron section-chevron" aria-hidden="true">
+              <IconChevron />
+            </span>
+          </button>
+          {announcementsOpen && (
+            <div className="section-body">
+              {announcements.status === 'loading' ? (
+                <p className="card-placeholder-text">Loading…</p>
+              ) : announcements.items.length === 0 ? (
+                <p className="card-placeholder-text">No announcements yet</p>
+              ) : (
+                <ul className="feed-list section-scroll">
+                  {announcements.items.map((a) => {
+                    const sev = a.severity || 'info';
+                    return (
+                      <li key={a.id} className="feed-item">
+                        <div className="feed-item-head">
+                          <span className={`feed-severity feed-severity--${sev}`} aria-hidden="true" />
+                          <span className="feed-title">{a.title}</span>
+                        </div>
+                        {a.body && <p className="feed-body">{a.body}</p>}
+                        <div className="feed-item-footer">
+                          <span className="feed-meta">{formatRelativeDate(a.posted_at)}</span>
+                          {a.link && (
+                            <a
+                              href={a.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="feed-link-inline"
+                            >
+                              Open ↗
+                            </a>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Exam Dates Card — whole section is the dropdown */}
+        <div className={`dashboard-card exam-card section-card ${examDatesOpen ? 'is-open' : ''}`}>
+          <button
+            type="button"
+            className="section-header"
+            onClick={() => setExamDatesOpen((v) => !v)}
+            aria-expanded={examDatesOpen}
+          >
+            <span className="card-icon"><IconExam /></span>
+            <h3 className="card-title">Exam Dates</h3>
+            {examDates.items.length > 0 && (
+              <span className="section-count">{examDates.items.length}</span>
+            )}
+            <span className="feed-chevron section-chevron" aria-hidden="true">
+              <IconChevron />
+            </span>
+          </button>
+          {examDatesOpen && (
+            <div className="section-body">
+              {examDates.status === 'loading' ? (
+                <p className="card-placeholder-text">Loading…</p>
+              ) : examDates.items.length === 0 ? (
+                <p className="card-placeholder-text">No dates scheduled</p>
+              ) : (
+                <ul className="feed-list section-scroll">
+                  {examDates.items.map((e) => {
+                    const typeKey = examTypeKey(e.type);
+                    const { month: mLabel, day: dLabel } = splitExamDate(e.date);
+                    return (
+                      <li key={e.id} className={`exam-row exam-row--${typeKey}`}>
+                        <span className="exam-row-stripe" aria-hidden="true" />
+                        <span className="exam-row-date">
+                          <span className="exam-row-month">{mLabel}</span>
+                          <span className="exam-row-day">{dLabel}</span>
+                        </span>
+                        <div className="exam-row-body">
+                          <div className="exam-row-head">
+                            <span className="exam-row-subject">{e.subject}</span>
+                            {e.type && (
+                              <span className={`exam-tag exam-tag--type exam-tag--${typeKey}`}>
+                                {e.type}
+                              </span>
+                            )}
+                          </div>
+                          <span className="exam-row-code">{e.code}</span>
+                          {(e.slot || e.room) && (
+                            <div className="exam-row-tags">
+                              {e.slot && <span className="exam-tag">{e.slot}</span>}
+                              {e.room && <span className="exam-tag exam-tag--room">{e.room}</span>}
+                            </div>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Calendar Card */}
+        <div className="dashboard-card calendar-card">
+          <span className="card-icon"><IconCalendar /></span>
+          <div className="calendar-header">
+            <h3 className="card-title">Calendar</h3>
+            <span className="calendar-month-year">{`${MONTH_NAMES[month]} ${year}`}</span>
+          </div>
+          <div className="mini-calendar">
+            <div className="calendar-weekdays">
+              {MON_SUN.map((label, idx) => (
                 <span
-                  key={cell.key}
-                  className={`calendar-day ${isToday ? 'today' : ''} ${isHovered ? 'hovered' : ''}`}
-                  onMouseEnter={() => setHoveredDay(cell.day)}
+                  key={idx}
+                  className={`calendar-weekday ${idx === activeWeekdayIdx ? 'active' : ''}`}
                 >
-                  {cell.day}
+                  {label}
                 </span>
-              );
-            })}
+              ))}
+            </div>
+            <div
+              className="calendar-grid"
+              onMouseLeave={() => setHoveredDay(null)}
+            >
+              {cells.map((cell) => {
+                if (cell.blank) {
+                  return <span key={cell.key} className="calendar-day calendar-day--blank" />;
+                }
+                const isToday = cell.day === todayDate;
+                const isHovered = cell.day === hoveredDay;
+                return (
+                  <span
+                    key={cell.key}
+                    className={`calendar-day ${isToday ? 'today' : ''} ${isHovered ? 'hovered' : ''}`}
+                    onMouseEnter={() => setHoveredDay(cell.day)}
+                  >
+                    {cell.day}
+                  </span>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 5. Profile Card */}
-      <div className="dashboard-card profile-card" title="Profile">
-        <span className="card-icon"><IconUser /></span>
-        <div className="profile-avatar">S</div>
-        <div className="profile-info">
-          <span className="profile-name">Student</span>
-          <span className="profile-subtitle">Profile placeholder</span>
-        </div>
+      {/* Fixed footer */}
+      <div className="sidebar-footer">
+        <SidebarProfileCard />
       </div>
     </div>
   );
 }
 
+// Bottom-of-sidebar card that pulls from Clerk when signed in, or falls back
+// to the placeholder student card so the layout still works without auth.
+function SidebarProfileCard() {
+  const { isSignedIn, user } = useAuthUser();
+
+  const fullName = user?.fullName
+    || [user?.firstName, user?.lastName].filter(Boolean).join(' ')
+    || '';
+  const displayName = isSignedIn ? (fullName || 'Your profile') : 'Student';
+  const savedBatch = user?.unsafeMetadata?.batch;
+  const email = user?.primaryEmailAddress?.emailAddress;
+  const subtitle = isSignedIn
+    ? (savedBatch ? `Batch ${savedBatch}` : (email || 'Set your batch'))
+    : 'Sign in to personalise';
+  const initial = (displayName || email || 'S').trim().charAt(0).toUpperCase();
+  const to = isSignedIn ? '/profile' : '/login';
+  const title = isSignedIn ? 'Open profile' : 'Sign in';
+
+  return (
+    <Link to={to} className="dashboard-card profile-card profile-card--link" title={title}>
+      <span className="card-icon"><IconUser /></span>
+      {user?.imageUrl ? (
+        <img
+          src={user.imageUrl}
+          alt=""
+          className="profile-avatar profile-avatar--img"
+          referrerPolicy="no-referrer"
+        />
+      ) : (
+        <div className="profile-avatar">{initial}</div>
+      )}
+      <div className="profile-info">
+        <span className="profile-name">{displayName}</span>
+        <span className="profile-subtitle">{subtitle}</span>
+      </div>
+    </Link>
+  );
+}
+
 export function DashboardLayout({ children, onActiveWeekdayChange, headerActions }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { isSignedIn, user } = useAuthUser();
+  const welcomeName = isSignedIn
+    ? (user?.firstName || user?.fullName?.split(/\s+/)[0] || 'there')
+    : 'Student';
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
     return window.localStorage.getItem('mlsc.sidebarCollapsed') === '1';
@@ -249,7 +463,7 @@ export function DashboardLayout({ children, onActiveWeekdayChange, headerActions
                 <line x1="3" y1="18" x2="21" y2="18"></line>
               </svg>
             </button>
-            <h1 className="welcome-heading">Welcome, Student</h1>
+            <h1 className="welcome-heading">Welcome, {welcomeName}</h1>
           </div>
           {headerActions && (
             <div className="header-actions">{headerActions}</div>

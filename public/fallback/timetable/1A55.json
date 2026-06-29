@@ -1,0 +1,248 @@
+{
+  "batch": "1A55",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Differential Equations And Linear Algebra",
+      "code": "UMA023L",
+      "type": "Lecture",
+      "room": "LP102",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Physics",
+      "code": "UPH013L",
+      "type": "Lecture",
+      "room": "LP102",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Physics",
+      "code": "UPH013T",
+      "type": "Tutorial",
+      "room": "F309",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Differential Equations And Linear Algebra",
+      "code": "UMA023T",
+      "type": "Tutorial",
+      "room": "F309",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Engineering Drawing",
+      "code": "UES101P",
+      "type": "Practical",
+      "room": "CAD-1",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Engineering Drawing",
+      "code": "UES101P",
+      "type": "Practical",
+      "room": "CAD-1",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Manufacturing Processes",
+      "code": "UES102P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Manufacturing Processes",
+      "code": "UES102P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Differential Equations And Linear Algebra",
+      "code": "UMA023L",
+      "type": "Lecture",
+      "room": "LP102",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Manufacturing Processes",
+      "code": "UES102L",
+      "type": "Lecture",
+      "room": "LP102",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Physics",
+      "code": "UPH013L",
+      "type": "Lecture",
+      "room": "LP102",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Physics",
+      "code": "UPH013L",
+      "type": "Lecture",
+      "room": "LP102",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Professional Communication",
+      "code": "UHU003L",
+      "type": "Lecture",
+      "room": "LP102",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Differential Equations And Linear Algebra",
+      "code": "UMA023L",
+      "type": "Lecture",
+      "room": "LP102",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Professional Communication",
+      "code": "UHU003P",
+      "type": "Practical",
+      "room": "B109",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Professional Communication",
+      "code": "UHU003P",
+      "type": "Practical",
+      "room": "B109",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Professional Communication",
+      "code": "UHU003L",
+      "type": "Lecture",
+      "room": "LP102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Engineering Drawing",
+      "code": "UES101L",
+      "type": "Lecture",
+      "room": "LP102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Physics",
+      "code": "UPH013P",
+      "type": "Practical",
+      "room": "G325",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Physics",
+      "code": "UPH013P",
+      "type": "Practical",
+      "room": "G325",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Manufacturing Processes",
+      "code": "UES102L",
+      "type": "Lecture",
+      "room": "LP102",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Engineering Drawing",
+      "code": "UES101L",
+      "type": "Lecture",
+      "room": "LP102",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Engineering Drawing",
+      "code": "UES101T",
+      "type": "Tutorial",
+      "room": "F310",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Engineering Drawing",
+      "code": "UES101T",
+      "type": "Tutorial",
+      "room": "F310",
+      "options": []
+    }
+  ]
+}

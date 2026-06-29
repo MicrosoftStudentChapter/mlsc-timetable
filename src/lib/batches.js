@@ -58,23 +58,28 @@ export function groupBatches(list, streamNames = {}) {
   return out
 }
 
+async function fetchBatchList(url) {
+  try {
+    const res = await fetch(url)
+    if (!res.ok) return null
+    const data = await res.json()
+    const list = Array.isArray(data) ? data : data?.batches
+    return Array.isArray(list) && list.length ? list : null
+  } catch {
+    return null
+  }
+}
+
 export async function loadBatches() {
   const baseUrl = import.meta.env.VITE_BACKEND_URL
   if (baseUrl) {
-    try {
-      const url = `${baseUrl.replace(/\/$/, '')}/batch`
-      const res = await fetch(url)
-      if (res.ok) {
-        const data = await res.json()
-        const list = Array.isArray(data) ? data : data?.batches
-        if (Array.isArray(list) && list.length) {
-          return groupBatches(list, fallback.streamNames)
-        }
-      }
-    } catch {
-      // fall through to local fallback
-    }
+    const list = await fetchBatchList(`${baseUrl.replace(/\/$/, '')}/batch`)
+    if (list) return groupBatches(list, fallback.streamNames)
   }
-  // Local fallback is already pre-grouped — use it directly.
+  // Bundled snapshot mirrors the backend's GET /batch response shape.
+  const snapshotUrl = `${import.meta.env.BASE_URL || '/'}fallback/batch.json`
+  const list = await fetchBatchList(snapshotUrl)
+  if (list) return groupBatches(list, fallback.streamNames)
+  // Last-ditch: the pre-grouped JSON committed to src/data/.
   return fallback.years ?? []
 }

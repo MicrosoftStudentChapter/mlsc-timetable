@@ -1,0 +1,298 @@
+{
+  "batch": "2A11",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Heat Transfer",
+      "code": "UCH402L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Mass Transfer-I",
+      "code": "UCH502L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCH409P",
+      "code": "UCH409P",
+      "type": "Practical",
+      "room": "B112",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCH409P",
+      "code": "UCH409P",
+      "type": "Practical",
+      "room": "B112",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCH409L",
+      "code": "UCH409L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Heat Transfer",
+      "code": "UCH402T",
+      "type": "Tutorial",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Mass Transfer-I",
+      "code": "UCH502T",
+      "type": "Tutorial",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Chemical Engineering Thermodynamics-Ii",
+      "code": "UCH408T",
+      "type": "Tutorial",
+      "room": "F209",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "UTA016L",
+      "code": "UTA016L",
+      "type": "Lecture",
+      "room": "LT301/LT103",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UCH410L",
+      "code": "UCH410L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Heat Transfer",
+      "code": "UCH402L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Chemical Engineering Thermodynamics-Ii",
+      "code": "UCH408L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Mass Transfer-I",
+      "code": "UCH502L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Heat Transfer",
+      "code": "UCH402P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Heat Transfer",
+      "code": "UCH402P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UCH410L",
+      "code": "UCH410L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCH409L",
+      "code": "UCH409L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Chemical Engineering Thermodynamics-Ii",
+      "code": "UCH408L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UTA016P",
+      "code": "UTA016P",
+      "type": "Practical",
+      "room": "B214/E305",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UTA016P",
+      "code": "UTA016P",
+      "type": "Practical",
+      "room": "B214/E305",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCH410P",
+      "code": "UCH410P",
+      "type": "Practical",
+      "room": "B112",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UCH410P",
+      "code": "UCH410P",
+      "type": "Practical",
+      "room": "B112",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UCH410L",
+      "code": "UCH410L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Chemical Engineering Thermodynamics-Ii",
+      "code": "UCH408L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Heat Transfer",
+      "code": "UCH402L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Mass Transfer-I",
+      "code": "UCH502L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    }
+  ]
+}

@@ -1,0 +1,378 @@
+{
+  "batch": "2O11",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Engineering Design Project - 2",
+      "code": "UTA024P",
+      "type": "Practical",
+      "room": "L101/B204",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Engineering Design Project - 2",
+      "code": "UTA024P",
+      "type": "Practical",
+      "room": "L101/B204",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Digital System Design",
+      "code": "UEC612T",
+      "type": "Tutorial",
+      "room": "E305",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Numerical And Statistical Methods",
+      "code": "UMA033L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Embedded Systems",
+      "code": "UEC513L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Object Oriented Programming Practices",
+      "code": "UNC302L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Numerical And Statistical Methods",
+      "code": "UMA033P",
+      "type": "Practical",
+      "room": "G204(NA-2)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Numerical And Statistical Methods",
+      "code": "UMA033P",
+      "type": "Practical",
+      "room": "G204(NA-2)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Data Structures And Algorithms",
+      "code": "UNC401L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Digital System Design",
+      "code": "UEC612L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Signals & Systems",
+      "code": "UEC404L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Embedded Systems",
+      "code": "UEC513L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Signals & Systems",
+      "code": "UEC404T",
+      "type": "Tutorial",
+      "room": "E304",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Signals & Systems",
+      "code": "UEC404P",
+      "type": "Practical",
+      "room": "C203",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Signals & Systems",
+      "code": "UEC404P",
+      "type": "Practical",
+      "room": "C203",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Digital System Design",
+      "code": "UEC612P",
+      "type": "Practical",
+      "room": "C325",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Digital System Design",
+      "code": "UEC612P",
+      "type": "Practical",
+      "room": "C325",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Data Structures And Algorithms",
+      "code": "UNC401L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Signals & Systems",
+      "code": "UEC404L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Digital System Design",
+      "code": "UEC612L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Numerical And Statistical Methods",
+      "code": "UMA033L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Object Oriented Programming Practices",
+      "code": "UNC302P",
+      "type": "Practical",
+      "room": "C328",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Object Oriented Programming Practices",
+      "code": "UNC302P",
+      "type": "Practical",
+      "room": "C328",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Embedded Systems",
+      "code": "UEC513L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Object Oriented Programming Practices",
+      "code": "UNC302L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Signals & Systems",
+      "code": "UEC404L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Data Structures And Algorithms",
+      "code": "UNC401L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Digital System Design",
+      "code": "UEC612L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Data Structures And Algorithms",
+      "code": "UNC401P",
+      "type": "Practical",
+      "room": "C332",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Data Structures And Algorithms",
+      "code": "UNC401P",
+      "type": "Practical",
+      "room": "C332",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Engineering Design Project - 2",
+      "code": "UTA024L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Numerical And Statistical Methods",
+      "code": "UMA033L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Embedded Systems",
+      "code": "UEC513P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Embedded Systems",
+      "code": "UEC513P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
+    }
+  ]
+}

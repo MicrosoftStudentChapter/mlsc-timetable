@@ -1,0 +1,88 @@
+{
+  "batch": "4S11",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCS813L",
+      "code": "UCS813L",
+      "type": "Lecture",
+      "room": "F201",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UCS813L",
+      "code": "UCS813L",
+      "type": "Lecture",
+      "room": "F201",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCS806L",
+      "code": "UCS806L",
+      "type": "Lecture",
+      "room": "F201",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UCS806L",
+      "code": "UCS806L",
+      "type": "Lecture",
+      "room": "F201",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UCS813P",
+      "code": "UCS813P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UCS813P",
+      "code": "UCS813P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCS806P",
+      "code": "UCS806P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCS806P",
+      "code": "UCS806P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    }
+  ]
+}

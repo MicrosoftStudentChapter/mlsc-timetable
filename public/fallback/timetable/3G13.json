@@ -1,0 +1,238 @@
+{
+  "batch": "3G13",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UBT618L",
+      "code": "UBT618L",
+      "type": "Lecture",
+      "room": "B304",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UBT407L",
+      "code": "UBT407L",
+      "type": "Lecture",
+      "room": "B304",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UBT619L",
+      "code": "UBT619L",
+      "type": "Lecture",
+      "room": "B304",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UBT614L",
+      "code": "UBT614L",
+      "type": "Lecture",
+      "room": "B304",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "UBT502/624/616L",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UBT618L",
+      "code": "UBT618L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UBT407L",
+      "code": "UBT407L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UBT619L",
+      "code": "UBT619L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "UBT502/624/616L",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UBT614L",
+      "code": "UBT614L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UBT619L",
+      "code": "UBT619L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UBT407P",
+      "code": "UBT407P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UBT407P",
+      "code": "UBT407P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "UBT502/624/616L",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UBT407L",
+      "code": "UBT407L",
+      "type": "Lecture",
+      "room": "B304",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UBT618L",
+      "code": "UBT618L",
+      "type": "Lecture",
+      "room": "B304",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005L",
+      "type": "Lecture",
+      "room": "B304",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "E307",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "E307",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Process Lab",
+      "code": "UBT620P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Process Lab",
+      "code": "UBT620P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Process Lab",
+      "code": "UBT620P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    }
+  ]
+}

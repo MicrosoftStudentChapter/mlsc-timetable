@@ -1,0 +1,78 @@
+{
+  "batch": "4C11",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "F101",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCS806P",
+      "code": "UCS806P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "F101",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "LT402",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "LT402",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "F101",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UCS813P",
+      "code": "UCS813P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    }
+  ]
+}

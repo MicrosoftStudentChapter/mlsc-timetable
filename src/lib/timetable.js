@@ -69,28 +69,39 @@ function assignPairIds(entries) {
   return entries
 }
 
+// Bundled snapshot lives in /public/fallback/timetable/<BATCH>.json. Resolved
+// relative to Vite's base URL so it keeps working under a sub-path deploy.
+const FALLBACK_BASE = `${import.meta.env.BASE_URL || '/'}fallback`.replace(/\/+$/, '')
+const fallbackTimetableUrl = (batch) =>
+  `${FALLBACK_BASE}/timetable/${encodeURIComponent(batch)}.json`
+
 // status: 'ok' | 'not_found' | 'error' | 'no_backend'
 export async function loadTimetable(batch) {
   const baseUrl = import.meta.env.VITE_BACKEND_URL
-  if (!baseUrl) {
-    return { status: 'no_backend' }
+  if (baseUrl) {
+    const url = `${baseUrl.replace(/\/$/, '')}/timetable/${encodeURIComponent(batch)}`
+    const result = await fetchTimetable(url)
+    if (result.status === 'ok' || result.status === 'not_found') return result
+    // Network/5xx → try the bundled snapshot before giving up.
   }
-  const url = `${baseUrl.replace(/\/$/, '')}/timetable/${encodeURIComponent(batch)}`
-  return fetchTimetable(url)
+  return fetchTimetable(fallbackTimetableUrl(batch))
 }
 
 // Same shape as loadTimetable, but applies the current user's overrides
-// server-side.
+// server-side. Falls back to the canonical bundled snapshot when the backend
+// is unreachable (overrides are then necessarily empty).
 export async function loadMyTimetable(batch) {
   const baseUrl = import.meta.env.VITE_BACKEND_URL
-  if (!baseUrl) {
-    return { status: 'no_backend' }
+  if (baseUrl) {
+    const root = baseUrl.replace(/\/$/, '')
+    const url = batch
+      ? `${root}/me/timetable?batch=${encodeURIComponent(batch)}`
+      : `${root}/me/timetable`
+    const result = await fetchTimetable(url, { headers: authHeaders() })
+    if (result.status === 'ok' || result.status === 'not_found') return result
   }
-  const root = baseUrl.replace(/\/$/, '')
-  const url = batch
-    ? `${root}/me/timetable?batch=${encodeURIComponent(batch)}`
-    : `${root}/me/timetable`
-  return fetchTimetable(url, { headers: authHeaders() })
+  if (!batch) return { status: 'error', message: 'No batch supplied' }
+  return fetchTimetable(fallbackTimetableUrl(batch))
 }
 
 async function fetchTimetable(url, init = {}) {

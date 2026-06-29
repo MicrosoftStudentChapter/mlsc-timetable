@@ -1,0 +1,348 @@
+{
+  "batch": "3J11",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UBM608L",
+      "code": "UBM608L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UBM609P",
+      "code": "UBM609P",
+      "type": "Practical",
+      "room": "BMI(B213)",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UBM609P",
+      "code": "UBM609P",
+      "type": "Practical",
+      "room": "BMI(B213)",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UBM607L",
+      "code": "UBM607L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UBM607L",
+      "code": "UBM607L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Database Management Systems",
+      "code": "UCS312L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Introduction To Digital  Electronics",
+      "code": "UBM602P",
+      "type": "Practical",
+      "room": "ANALOG SIGNAL(B211)",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Introduction To Digital  Electronics",
+      "code": "UBM602P",
+      "type": "Practical",
+      "room": "ANALOG SIGNAL(B211)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Database Management Systems",
+      "code": "UCS312P",
+      "type": "Practical",
+      "room": "BMC(C323)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Database Management Systems",
+      "code": "UCS312P",
+      "type": "Practical",
+      "room": "BMC(C323)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Introduction To Digital  Electronics",
+      "code": "UBM602L",
+      "type": "Lecture",
+      "room": "F209",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Biosignal Processing",
+      "code": "UBM604L",
+      "type": "Lecture",
+      "room": "F209",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UBM632T",
+      "code": "UBM632T",
+      "type": "Tutorial",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Biosignal Processing",
+      "code": "UBM604L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UBM609L",
+      "code": "UBM609L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UBM632L",
+      "code": "UBM632L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Biosignal Processing",
+      "code": "UBM604L",
+      "type": "Lecture",
+      "room": "F209",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Introduction To Digital  Electronics",
+      "code": "UBM602L",
+      "type": "Lecture",
+      "room": "F209",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Biosignal Processing",
+      "code": "UBM604T",
+      "type": "Tutorial",
+      "room": "F209",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UBM608P",
+      "code": "UBM608P",
+      "type": "Practical",
+      "room": "C217(I&C)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UBM608P",
+      "code": "UBM608P",
+      "type": "Practical",
+      "room": "C217(I&C)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UBM607L",
+      "code": "UBM607L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UBM632L",
+      "code": "UBM632L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UBM609L",
+      "code": "UBM609L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UBM608L",
+      "code": "UBM608L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Introduction To Digital  Electronics",
+      "code": "UBM602L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UBM607P",
+      "code": "UBM607P",
+      "type": "Practical",
+      "room": "BMC(C323)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UBM607P",
+      "code": "UBM607P",
+      "type": "Practical",
+      "room": "BMC(C323)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UBM608L",
+      "code": "UBM608L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Database Management Systems",
+      "code": "UCS312L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UBM607L",
+      "code": "UBM607L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Introduction To Digital  Electronics",
+      "code": "UBM602L",
+      "type": "Lecture",
+      "room": "F209",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UBM609L",
+      "code": "UBM609L",
+      "type": "Lecture",
+      "room": "F212",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UBM608T",
+      "code": "UBM608T",
+      "type": "Tutorial",
+      "room": "F203",
+      "options": []
+    }
+  ]
+}

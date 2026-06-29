@@ -1,0 +1,153 @@
+{
+  "batch": "4Q24",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCT801L",
+      "code": "UCT801L",
+      "type": "Lecture",
+      "room": null,
+      "options": [
+        {
+          "subject_code": "UCT801L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        },
+        {
+          "subject_code": "UCS806L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCT801L",
+      "code": "UCT801L",
+      "type": "Lecture",
+      "room": null,
+      "options": [
+        {
+          "subject_code": "UCT801L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        },
+        {
+          "subject_code": "UCS806L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCT802L",
+      "code": "UCT802L",
+      "type": "Lecture",
+      "room": null,
+      "options": [
+        {
+          "subject_code": "UCT802L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        },
+        {
+          "subject_code": "UCS813L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UCT802L",
+      "code": "UCT802L",
+      "type": "Lecture",
+      "room": null,
+      "options": [
+        {
+          "subject_code": "UCT802L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        },
+        {
+          "subject_code": "UCS813L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCT801L",
+      "code": "UCT801L",
+      "type": "Lecture",
+      "room": null,
+      "options": [
+        {
+          "subject_code": "UCT801L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        },
+        {
+          "subject_code": "UCS806L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCS806P",
+      "code": "UCS806P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCS813P",
+      "code": "UCS813P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    }
+  ]
+}
