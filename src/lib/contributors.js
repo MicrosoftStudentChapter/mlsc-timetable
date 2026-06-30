@@ -1,10 +1,12 @@
 /**
- * Load the contributor list according to VITE_CONTRIBUTORS_SOURCE:
- *   - "repo"  (default): GitHub repo(s) only — uses the dev /api/contributors
- *     middleware in development, or hits the GitHub REST API directly from
- *     the browser in production. Multiple repos are unioned by username.
- *   - "db":  backend collection only — GET ${VITE_BACKEND_URL}/contributors
- *   - "union": union of repo + db, deduplicated by username
+ * Load the contributor list — always the union of:
+ *   - GitHub repo contributors (uses the dev /api/contributors middleware
+ *     so a configured GITHUB_TOKEN is honoured; falls back to direct browser
+ *     calls in production). Multiple repos are unioned by username.
+ *   - Backend DB contributors (GET ${VITE_BACKEND_URL}/contributors). The
+ *     backend resolves each stored username against GitHub on every request
+ *     and drops anyone who 404s, so renamed/deleted accounts disappear
+ *     automatically.
  *
  * Resulting items: { id?, login, avatar_url, html_url }
  */
@@ -88,12 +90,6 @@ async function fetchFromBackend() {
 }
 
 export async function loadContributors() {
-  const source = (import.meta.env.VITE_CONTRIBUTORS_SOURCE || 'repo').toLowerCase()
-
-  if (source === 'db') return fetchFromBackend()
-  if (source === 'union') {
-    const [a, b] = await Promise.all([fetchFromRepos(), fetchFromBackend()])
-    return unionByLogin(a, b)
-  }
-  return fetchFromRepos()
+  const [repo, db] = await Promise.all([fetchFromRepos(), fetchFromBackend()])
+  return unionByLogin(repo, db)
 }

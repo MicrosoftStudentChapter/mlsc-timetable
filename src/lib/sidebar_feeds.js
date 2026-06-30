@@ -45,6 +45,8 @@ export function loadAnnouncements() {
   return loadList({ apiPath: '/announcements', fallbackName: 'announcements.json' })
 }
 
-export function loadExamDates() {
-  return loadList({ apiPath: '/exam-dates', fallbackName: 'exam_dates.json' })
+export function loadExamDates(batch) {
+  const cleaned = String(batch || '').trim()
+  const qs = cleaned ? `?batch=${encodeURIComponent(cleaned)}` : ''
+  return loadList({ apiPath: `/exam-dates${qs}`, fallbackName: 'exam_dates.json' })
 }

@@ -3,6 +3,14 @@ import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
 import TimetablePage from './pages/TimetablePage'
+import AdminLayout from './pages/admin/AdminLayout'
+import Dashboard from './pages/admin/Dashboard'
+import UploadsPage from './pages/admin/UploadsPage'
+import UploadDetailPage from './pages/admin/UploadDetailPage'
+import AdminUsersPage from './pages/admin/AdminUsersPage'
+import BaselinesPage from './pages/admin/BaselinesPage'
+import ContributorsPage from './pages/admin/ContributorsPage'
+import ChangeRequestsPage from './pages/admin/ChangeRequestsPage'
 
 export default function App() {
   return (
@@ -13,6 +21,15 @@ export default function App() {
       <Route path="/login/*" element={<LoginPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/timetable/:batch" element={<TimetablePage />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="uploads" element={<UploadsPage />} />
+        <Route path="uploads/:id" element={<UploadDetailPage />} />
+        <Route path="change-requests" element={<ChangeRequestsPage />} />
+        <Route path="baselines" element={<BaselinesPage />} />
+        <Route path="contributors" element={<ContributorsPage />} />
+        <Route path="users" element={<AdminUsersPage />} />
+      </Route>
     </Routes>
   )
 }

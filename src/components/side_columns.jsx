@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import './side_columns.css';
 import { loadAnnouncements, loadExamDates } from '../lib/sidebar_feeds';
@@ -139,7 +139,7 @@ function useFeed(loader) {
   return state;
 }
 
-export function SidebarContent({ collapsed = false, onActiveWeekdayChange }) {
+export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch }) {
   // ─── Mini calendar: real current month, real today ─────
   const today = useMemo(() => new Date(), []);
   const year = today.getFullYear();
@@ -156,9 +156,11 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange }) {
   const activeDay = hoveredDay ?? todayDate;
   const activeWeekdayIdx = weekdayIdxFor(year, month, activeDay);
 
-  // Sidebar feeds — backend with bundled fallback.
+  // Sidebar feeds — backend with bundled fallback. Exam dates are filtered
+  // server-side by the currently-viewed batch (year scope + subject codes).
   const announcements = useFeed(loadAnnouncements);
-  const examDates = useFeed(loadExamDates);
+  const examDatesLoader = useCallback(() => loadExamDates(batch), [batch]);
+  const examDates = useFeed(examDatesLoader);
 
   // Whole-section dropdowns: collapsed by default so the sidebar feels calm
   // on arrival; users opt in by clicking the section header.
@@ -397,7 +399,7 @@ function SidebarProfileCard() {
   );
 }
 
-export function DashboardLayout({ children, onActiveWeekdayChange, headerActions }) {
+export function DashboardLayout({ children, onActiveWeekdayChange, headerActions, batch }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { isSignedIn, user } = useAuthUser();
   const welcomeName = isSignedIn
@@ -421,7 +423,7 @@ export function DashboardLayout({ children, onActiveWeekdayChange, headerActions
     <div className="dashboard-layout">
       {/* Desktop & Tablet Sidebar (fixed/static) */}
       <aside className={`dashboard-sidebar ${collapsed ? 'dashboard-sidebar--collapsed' : ''}`}>
-        <SidebarContent collapsed={collapsed} onActiveWeekdayChange={onActiveWeekdayChange} />
+        <SidebarContent collapsed={collapsed} onActiveWeekdayChange={onActiveWeekdayChange} batch={batch} />
         <button
           type="button"
           className="sidebar-edge-toggle"
@@ -446,7 +448,7 @@ export function DashboardLayout({ children, onActiveWeekdayChange, headerActions
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
-          <SidebarContent />
+          <SidebarContent batch={batch} />
         </div>
       </div>
 
