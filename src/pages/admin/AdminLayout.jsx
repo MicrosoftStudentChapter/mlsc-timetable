@@ -34,6 +34,7 @@ function MoonIcon() {
 
 const NAV_ITEMS = [
   { to: '/admin', label: 'Dashboard', end: true },
+  { to: '/admin/fix', label: 'Fix' },
   { to: '/admin/uploads', label: 'Uploads' },
   { to: '/admin/change-requests', label: 'Change requests' },
   { to: '/admin/baselines', label: 'Baselines' },

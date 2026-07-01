@@ -11,6 +11,8 @@ import AdminUsersPage from './pages/admin/AdminUsersPage'
 import BaselinesPage from './pages/admin/BaselinesPage'
 import ContributorsPage from './pages/admin/ContributorsPage'
 import ChangeRequestsPage from './pages/admin/ChangeRequestsPage'
+import FixPage from './pages/admin/FixPage'
+import FixTimetablePage from './pages/admin/FixTimetablePage'
 
 export default function App() {
   return (
@@ -29,6 +31,8 @@ export default function App() {
         <Route path="baselines" element={<BaselinesPage />} />
         <Route path="contributors" element={<ContributorsPage />} />
         <Route path="users" element={<AdminUsersPage />} />
+        <Route path="fix" element={<FixPage />} />
+        <Route path="fix/timetable/:batch" element={<FixTimetablePage />} />
       </Route>
     </Routes>
   )

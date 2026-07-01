@@ -507,7 +507,21 @@ function ClassCard({ entry, onEdit, onDragStart, isDarkMode, isDragging }) {
 }
 
 // ─── TimetableGrid ────────────────────────────────────────────────────────────
-export default function TimetableGrid({ currentDay, isDarkMode, classes, cardTheme = 'default', activeWeekdayIdx, batch }) {
+export default function TimetableGrid({
+  currentDay,
+  isDarkMode,
+  classes,
+  cardTheme = 'default',
+  activeWeekdayIdx,
+  batch,
+  // Admin-mode props: when true the grid renders the entries verbatim
+  // (no overrides, no localStorage, no change-request flow) and forwards
+  // every mutation to `onAdminChange(nextEntries)` so the parent owns
+  // the save lifecycle. `errorCellKey` ("Day|HH:MM") flashes one cell red.
+  adminMode = false,
+  onAdminChange,
+  errorCellKey,
+}) {
   const resolvedIsDark = isDarkMode ?? (typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark')
   // The canonical schedule from the backend (or the bundled fallback). We
   // never mutate this — user changes live in `overrides` below.
@@ -516,7 +530,7 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
   // from localStorage so they survive a reload. Submission to the backend is
   // a separate concern (see ChangeRequestPrompt).
   const [overrides, setOverrides] = useState(() =>
-    reconcileOverrides(baseClasses, loadOverrides(batch)),
+    adminMode ? [] : reconcileOverrides(baseClasses, loadOverrides(batch)),
   )
   const [editTarget, setEditTarget] = useState(null)   // { entry, rect }
   const [addTarget,  setAddTarget]  = useState(null)   // { day, startTime, rect }
@@ -529,9 +543,11 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
   const dirtyRef = useRef(false)
 
   // Derived view: canonical classes with the user's overrides folded in.
+  // In adminMode the parent fully owns the entries, so we skip the overlay
+  // and render `baseClasses` directly.
   const entries = useMemo(
-    () => applyOverrides(baseClasses, overrides),
-    [baseClasses, overrides],
+    () => (adminMode ? baseClasses : applyOverrides(baseClasses, overrides)),
+    [baseClasses, overrides, adminMode],
   )
 
   // Net diff vs canonical: round-trip edits (A→B→A) collapse to "no change"
@@ -555,6 +571,11 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
   useEffect(() => {
     if (classes === undefined) return
     dirtyRef.current = false
+    if (adminMode) {
+      setEditTarget(null)
+      setAddTarget(null)
+      return
+    }
     const stored = loadOverrides(batch)
     const reconciled = reconcileOverrides(classes, stored)
     if (reconciled.length !== stored.length) {
@@ -563,20 +584,29 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
     setOverrides(reconciled)
     setEditTarget(null)
     setAddTarget(null)
-  }, [classes, batch])
+  }, [classes, batch, adminMode])
 
   // Persist user-initiated override changes. Skips backend-driven reloads.
   useEffect(() => {
+    if (adminMode) return
     if (!batch) return
     if (!dirtyRef.current) return
     saveOverrides(batch, overrides)
     dirtyRef.current = false
-  }, [overrides, batch])
+  }, [overrides, batch, adminMode])
 
   // Append a new override (or several) with the merge/collapse rules.
+  // In adminMode we instead apply each override directly to the entries
+  // list and forward the new array up; the parent is responsible for the
+  // eventual PATCH.
   const pushOverrides = (incoming) => {
     const arr = Array.isArray(incoming) ? incoming : [incoming]
     if (arr.length === 0) return
+    if (adminMode) {
+      const next = applyOverrides(entries, arr)
+      onAdminChange?.(next)
+      return
+    }
     dirtyRef.current = true
     setOverrides(prev => arr.reduce((acc, ov) => mergeOverride(acc, ov), prev))
     // Fire-and-forget sync to the user's backend overrides; local storage
@@ -921,6 +951,7 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
                 const isActive    = day === highlightDay
                 const slotKey     = `${day}|${slot}`
                 const isDropTarget = drag?.started && drag.dropTargetKey === slotKey && !(drag.entry.day === day && drag.entry.startTime === slot)
+                const isErrorCell = adminMode && errorCellKey && errorCellKey === slotKey
                 return (
                   <div
                     key={day}
@@ -928,6 +959,7 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
                     data-day={day}
                     data-start-time={slot}
                     data-drop-target={isDropTarget || undefined}
+                    data-error-cell={isErrorCell || undefined}
                   >
                     <div className="tt-slot-stack">
                       {/* Existing class cards */}
@@ -989,7 +1021,7 @@ export default function TimetableGrid({ currentDay, isDarkMode, classes, cardThe
       )}
 
       {/* Floating save controls — visible only when current view differs from baseline */}
-      {hasNetChange && (
+      {!adminMode && hasNetChange && (
         <div className="tt-save-fab-group">
           <button
             type="button"

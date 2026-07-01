@@ -109,10 +109,6 @@ export function getUpload(id) {
   return adminFetch(`/admin/uploads/${encodeURIComponent(id)}`)
 }
 
-export function getLatestUpload() {
-  return adminFetch('/admin/uploads/latest')
-}
-
 export function listAdminUsers() {
   return adminFetch('/admin/users')
 }
@@ -240,7 +236,7 @@ export function rejectChangeRequest(id, note) {
   })
 }
 
-export async function uploadTimetable({ file, semester, sheet = 'all', onProgress } = {}) {
+export async function uploadTimetable({ file, semester, sheet = 'all', force = false, onProgress } = {}) {
   if (!file) throw new Error('file required')
   if (!semester) throw new Error('semester required')
   if (!BACKEND_URL) {
@@ -256,6 +252,7 @@ export async function uploadTimetable({ file, semester, sheet = 'all', onProgres
     fd.append('file', file)
     fd.append('semester', semester)
     fd.append('sheet', sheet)
+    if (force) fd.append('force', 'true')
     xhr.open('POST', `${BACKEND_URL}/admin/ingest`)
     Object.entries(auth).forEach(([k, v]) => xhr.setRequestHeader(k, v))
     xhr.setRequestHeader('Accept', 'application/json')
@@ -282,4 +279,118 @@ export async function uploadTimetable({ file, semester, sheet = 'all', onProgres
     xhr.onerror = () => reject(new AdminAuthError(0, { error: 'Network error', code: 'network_error' }))
     xhr.send(fd)
   })
+}
+
+// ── Ingest cooldown + rollback ───────────────────────────────────────────
+export function getIngestCooldown() {
+  return adminFetch('/admin/ingest/cooldown')
+}
+
+export function getRollbackMeta() {
+  return adminFetch('/admin/ingest/rollback')
+}
+
+export function performRollback() {
+  return adminFetch('/admin/ingest/rollback', { method: 'POST' })
+}
+
+// ── Parsing errors / Fix tab ─────────────────────────────────────────────
+export function listErrors({ status, uploadId, errorType, batchCode, limit } = {}) {
+  const params = new URLSearchParams()
+  if (status) params.set('status', status)
+  if (uploadId) params.set('upload_id', uploadId)
+  if (errorType) params.set('error_type', errorType)
+  if (batchCode) params.set('batch_code', batchCode)
+  if (limit) params.set('limit', String(limit))
+  const qs = params.toString()
+  return adminFetch(`/admin/errors${qs ? `?${qs}` : ''}`)
+}
+
+export function getErrorsSummary({ uploadId } = {}) {
+  const qs = uploadId ? `?upload_id=${encodeURIComponent(uploadId)}` : ''
+  return adminFetch(`/admin/errors/summary${qs}`)
+}
+
+export function resolveError(id, note) {
+  return adminFetch(`/admin/errors/${encodeURIComponent(id)}/resolve`, {
+    method: 'POST',
+    body: JSON.stringify(note ? { note } : {}),
+  })
+}
+
+export function ignoreError(id, note) {
+  return adminFetch(`/admin/errors/${encodeURIComponent(id)}/ignore`, {
+    method: 'POST',
+    body: JSON.stringify(note ? { note } : {}),
+  })
+}
+
+export function reopenError(id) {
+  return adminFetch(`/admin/errors/${encodeURIComponent(id)}/reopen`, {
+    method: 'POST',
+  })
+}
+
+export function bulkErrors({ ids, action }) {
+  return adminFetch('/admin/errors/bulk', {
+    method: 'POST',
+    body: JSON.stringify({ ids, action }),
+  })
+}
+
+export function backfillBaselineErrors() {
+  return adminFetch('/admin/errors/backfill-baselines', { method: 'POST' })
+}
+
+// ── Timetable editor (Fix grid) ──────────────────────────────────────────
+export function getAdminTimetable(batch) {
+  return adminFetch(`/admin/timetables/${encodeURIComponent(batch)}`)
+}
+
+export function patchAdminTimetable(batch, payload) {
+  return adminFetch(`/admin/timetables/${encodeURIComponent(batch)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  })
+}
+
+// ── Subject catalog (DB-backed) ──────────────────────────────────────────
+export function listSubjects({ q, source, limit = 500 } = {}) {
+  const qs = new URLSearchParams()
+  if (q) qs.set('q', q)
+  if (source) qs.set('source', source)
+  if (limit) qs.set('limit', String(limit))
+  const s = qs.toString()
+  return adminFetch(`/admin/subjects${s ? `?${s}` : ''}`)
+}
+
+export function addSubject({ code, name, aliases, note } = {}) {
+  return adminFetch('/admin/subjects', {
+    method: 'POST',
+    body: JSON.stringify({ code, name, aliases, note }),
+  })
+}
+
+export function patchSubject(code, { name, aliases, note } = {}) {
+  return adminFetch(`/admin/subjects/${encodeURIComponent(code)}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ name, aliases, note }),
+  })
+}
+
+export function deleteSubject(code, { force = false } = {}) {
+  return adminFetch(`/admin/subjects/${encodeURIComponent(code)}${force ? '?force=true' : ''}`, {
+    method: 'DELETE',
+  })
+}
+
+export function bulkSubjects(items) {
+  return adminFetch('/admin/subjects/bulk', {
+    method: 'POST',
+    body: JSON.stringify({ items }),
+  })
+}
+
+export function backfillTimetablesAgainstCatalog() {
+  return adminFetch('/admin/subjects/backfill-timetables', { method: 'POST' })
 }

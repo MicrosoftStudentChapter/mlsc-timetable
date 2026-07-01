@@ -1,13 +1,13 @@
-// Admin dashboard — matches the screenshot.
+// Admin dashboard.
 //
 // Top: 4 stat cards (batches, uploads, failed/partial, total errors).
-// Middle: Upload dropzone | Parsing error log (most recent ingest).
+// Middle: Upload dropzone | live open-errors log.
 // Bottom: Parsing accuracy donut.
 
 import { useCallback, useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   getStats,
-  getLatestUpload,
   uploadTimetable,
   getCurrent,
   setCurrent,
@@ -17,9 +17,19 @@ import {
   listExamDates,
   addExamDate,
   deleteExamDate,
+  getIngestCooldown,
+  getErrorsSummary,
   AdminAuthError,
 } from '../../lib/admin'
 import './admin.css'
+
+function fmtCooldown(seconds) {
+  if (!seconds || seconds <= 0) return 'a moment'
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  if (h > 0) return `${h}h ${m}m`
+  return `${m}m`
+}
 
 function StatCard({ label, value, accent, sub }) {
   return (
@@ -31,11 +41,17 @@ function StatCard({ label, value, accent, sub }) {
   )
 }
 
-function ErrorLog({ entries, status, onRefresh, refreshing }) {
+function ErrorLog({ summary, status, onRefresh, refreshing }) {
+  const totals = summary?.totals || { open: 0, resolved: 0, ignored: 0 }
+  const byType = (summary?.by_type || []).filter((t) => (t.open || 0) > 0)
+  const grandOpen = totals.open || 0
   return (
     <div className="admin-card">
       <div className="admin-card-header" style={{ alignItems: 'center' }}>
-        <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Parsing error log</h2>
+        <h2 className="admin-card-title" style={{ textAlign: 'left' }}>
+          Open parsing errors
+          {grandOpen > 0 && <span className="dash-err-count">{grandOpen}</span>}
+        </h2>
         <button
           type="button"
           className="admin-card-action"
@@ -46,31 +62,47 @@ function ErrorLog({ entries, status, onRefresh, refreshing }) {
         </button>
       </div>
       <p className="admin-card-sub" style={{ textAlign: 'left', marginBottom: 14 }}>
-        Every upload attempt across all batches, most recent first.
+        {grandOpen > 0
+          ? `${byType.length} error type${byType.length === 1 ? '' : 's'} across your timetables. Click a row to triage on the Fix tab.`
+          : 'Live view — rows disappear as you resolve or ignore them from the Fix tab.'}
       </p>
 
-      <div className="error-log">
+      <div className="dash-err-log">
         {status === 'loading' && (
           <div className="error-log-empty">Loading…</div>
         )}
-        {status === 'empty' && (
+        {status === 'ready' && byType.length === 0 && (
           <div className="error-log-empty">
-            No parsing errors recorded yet.
+            No open parsing errors. 🎉
           </div>
         )}
-        {status === 'ready' && entries.length === 0 && (
-          <div className="error-log-empty">
-            Latest ingest had no parser warnings. Nice.
-          </div>
-        )}
-        {status === 'ready' && entries.map((row, idx) => (
-          <div className="error-row" key={`${row.batch}-${row.day}-${row.start_time}-${row.code}-${idx}`}>
-            <span className="error-row-batch">{row.batch || '—'}</span>
-            <span className="error-row-slot">{row.day?.slice(0, 3)} {row.start_time}</span>
-            <span className="error-row-msg">{row.message || row.code}</span>
-            <span className={`error-row-sev sev-${row.severity}`}>{row.severity}</span>
-          </div>
-        ))}
+        {status === 'ready' && byType.map((t) => {
+          const total = t.total || (t.open + t.resolved + t.ignored)
+          const resolvedPct = total > 0 ? Math.round((t.resolved / total) * 100) : 0
+          return (
+            <Link
+              key={t.error_type}
+              to={`/admin/fix?type=${encodeURIComponent(t.error_type)}`}
+              className="dash-err-type-row"
+            >
+              <span className="dash-err-type-count">{t.open}</span>
+              <code className="dash-err-type" title={t.error_type}>{t.error_type}</code>
+              <span className="dash-err-type-meta">
+                {resolvedPct > 0 && (
+                  <span className="dash-err-type-resolved" title={`${t.resolved} already resolved`}>
+                    {resolvedPct}% done
+                  </span>
+                )}
+                {t.ignored > 0 && (
+                  <span className="dash-err-type-ignored" title={`${t.ignored} ignored`}>
+                    · {t.ignored} ignored
+                  </span>
+                )}
+              </span>
+              <span className="dash-err-type-arrow">→</span>
+            </Link>
+          )
+        })}
       </div>
     </div>
   )
@@ -120,13 +152,26 @@ function AccuracyDonut({ pct }) {
 }
 
 function UploadCard({ onUploaded }) {
+  const navigate = useNavigate()
   const [file, setFile] = useState(null)
   const [semester, setSemester] = useState('')
   const [sheet, setSheet] = useState('all')
+  const [force, setForce] = useState(false)
   const [progress, setProgress] = useState(0)
   const [uploading, setUploading] = useState(false)
   const [result, setResult] = useState(null)
   const [dragging, setDragging] = useState(false)
+  const [cooldown, setCooldown] = useState(null)
+
+  useEffect(() => {
+    let alive = true
+    getIngestCooldown()
+      .then((d) => { if (alive) setCooldown(d) })
+      .catch(() => { if (alive) setCooldown(null) })
+    return () => { alive = false }
+  }, [])
+
+  const cooldownActive = !force && cooldown?.active === true
 
   function onPick(evt) {
     const f = evt.target.files?.[0] || null
@@ -155,15 +200,31 @@ function UploadCard({ onUploaded }) {
         file,
         semester: semester.trim(),
         sheet: sheet.trim() || 'all',
+        force,
         onProgress: setProgress,
       })
       setResult({ kind: data?.status || 'ok', data })
       if (onUploaded) onUploaded()
+      // If the ingest produced parser warnings or doctor mismatches,
+      // offer a one-click jump to the Fix tab so the admin can triage.
+      try {
+        const summary = await getErrorsSummary()
+        const openCount = summary?.totals?.open || 0
+        if (openCount > 0) {
+          if (confirm(`Ingest complete — ${openCount} issue${openCount === 1 ? '' : 's'} to review. Open the Fix tab now?`)) {
+            navigate('/admin/fix')
+          }
+        }
+      } catch {
+        // ignore summary fetch failures
+      }
     } catch (err) {
       const detail = err instanceof AdminAuthError ? err.detail : null
       setResult({
         kind: 'failed',
         message: detail?.error || err.message || 'Upload failed',
+        code: detail?.code,
+        retry_after_seconds: detail?.retry_after_seconds,
       })
     } finally {
       setUploading(false)
@@ -224,10 +285,28 @@ function UploadCard({ onUploaded }) {
         <button
           type="submit"
           className="upload-btn"
-          disabled={!file || !semester.trim() || uploading}
+          disabled={!file || !semester.trim() || uploading || cooldownActive}
         >
-          {uploading ? 'Uploading…' : 'Upload semester timetable'}
+          {uploading ? 'Uploading…' : cooldownActive ? 'On cooldown' : 'Upload semester timetable'}
         </button>
+
+        {cooldown?.active && (
+          <div className="upload-cooldown">
+            <span>
+              ⏱️ Cooldown active. Next ingest available in{' '}
+              <strong>{fmtCooldown(cooldown.retry_after_seconds)}</strong>{' '}
+              (last ingest: {cooldown.last_ingest_at ? new Date(cooldown.last_ingest_at).toLocaleString() : '—'}).
+            </span>
+            <label className="upload-force">
+              <input
+                type="checkbox"
+                checked={force}
+                onChange={(e) => setForce(e.target.checked)}
+              />
+              <span>Force (bypass cooldown)</span>
+            </label>
+          </div>
+        )}
 
         {uploading && (
           <div className="upload-progress">
@@ -716,7 +795,7 @@ function ExamDatesCard() {
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null)
-  const [latest, setLatest] = useState(null)
+  const [errSummary, setErrSummary] = useState(null)
   const [logStatus, setLogStatus] = useState('loading')
   const [refreshing, setRefreshing] = useState(false)
   const [activeSection, setActiveSection] = useState('overview')
@@ -724,20 +803,17 @@ export default function Dashboard() {
   const refresh = useCallback(async () => {
     setRefreshing(true)
     try {
-      const [s, latestUpload] = await Promise.allSettled([
+      const [s, sum] = await Promise.allSettled([
         getStats(),
-        getLatestUpload(),
+        getErrorsSummary(),
       ])
       if (s.status === 'fulfilled') setStats(s.value)
-      if (latestUpload.status === 'fulfilled') {
-        setLatest(latestUpload.value)
-        setLogStatus('ready')
-      } else if (latestUpload.reason?.status === 404) {
-        setLatest(null)
-        setLogStatus('empty')
+      if (sum.status === 'fulfilled') {
+        setErrSummary(sum.value || null)
       } else {
-        setLogStatus('empty')
+        setErrSummary(null)
       }
+      setLogStatus('ready')
     } finally {
       setRefreshing(false)
     }
@@ -775,7 +851,6 @@ export default function Dashboard() {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const errors = latest?.errors || []
   const pct = stats?.parsing_accuracy_pct
 
   const NAV = [
@@ -829,7 +904,7 @@ export default function Dashboard() {
         <div className="admin-grid-2">
           <UploadCard onUploaded={refresh} />
           <ErrorLog
-            entries={errors}
+            summary={errSummary}
             status={logStatus}
             onRefresh={refresh}
             refreshing={refreshing}

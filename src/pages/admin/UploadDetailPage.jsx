@@ -1,8 +1,10 @@
-// Single UploadAttemptDoc — all per-error rows + doctor summary.
+// Single UploadAttemptDoc — summary stats + live per-type triage of the
+// parsing errors this ingest produced. Errors come from the ParsingErrorDoc
+// collection (not the embedded snapshot), so counts reflect current triage.
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { getUpload } from '../../lib/admin'
+import { getUpload, getErrorsSummary, listErrors } from '../../lib/admin'
 import './admin.css'
 
 function fmtDate(iso) {
@@ -10,21 +12,143 @@ function fmtDate(iso) {
   try { return new Date(iso).toLocaleString() } catch { return iso }
 }
 
+const SEV_RANK = { error: 3, warn: 2, warning: 2, info: 1 }
+
+function TypeGroupRow({ group, uploadId, samples, onLoadSamples, expanded, onToggle }) {
+  const total = group.total || (group.open + group.resolved + group.ignored)
+  const openPct = total > 0 ? (group.open / total) * 100 : 0
+  const resolvedPct = total > 0 ? (group.resolved / total) * 100 : 0
+  const ignoredPct = total > 0 ? (group.ignored / total) * 100 : 0
+
+  return (
+    <div className={`ud-group${expanded ? ' is-open' : ''}`}>
+      <button
+        type="button"
+        className="ud-group-head"
+        onClick={() => {
+          onToggle(group.error_type)
+          if (!expanded && !samples) onLoadSamples(group.error_type)
+        }}
+        aria-expanded={expanded}
+      >
+        <span className={`ud-caret${expanded ? ' is-open' : ''}`}>▸</span>
+        <code className="ud-group-code">{group.error_type}</code>
+        <span className="ud-group-bar" aria-hidden="true">
+          {resolvedPct > 0 && <span className="ud-bar-seg ud-bar-resolved" style={{ width: `${resolvedPct}%` }} />}
+          {ignoredPct > 0 && <span className="ud-bar-seg ud-bar-ignored" style={{ width: `${ignoredPct}%` }} />}
+          {openPct > 0 && <span className="ud-bar-seg ud-bar-open" style={{ width: `${openPct}%` }} />}
+        </span>
+        <span className="ud-group-counts">
+          {group.open > 0 && (
+            <span className="ud-count ud-count-open" title="Open">
+              <span className="ud-count-dot" /> {group.open}
+            </span>
+          )}
+          {group.resolved > 0 && (
+            <span className="ud-count ud-count-resolved" title="Resolved">
+              <span className="ud-count-dot" /> {group.resolved}
+            </span>
+          )}
+          {group.ignored > 0 && (
+            <span className="ud-count ud-count-ignored" title="Ignored">
+              <span className="ud-count-dot" /> {group.ignored}
+            </span>
+          )}
+        </span>
+        <Link
+          to={`/admin/fix?upload=${encodeURIComponent(uploadId)}&type=${encodeURIComponent(group.error_type)}`}
+          className="ud-group-jump"
+          onClick={(e) => e.stopPropagation()}
+        >
+          Fix →
+        </Link>
+      </button>
+
+      {expanded && (
+        <div className="ud-group-body">
+          {!samples && <div className="ud-samples-loading">Loading samples…</div>}
+          {samples && samples.length === 0 && (
+            <div className="ud-samples-empty">No open rows — all resolved or ignored.</div>
+          )}
+          {samples && samples.length > 0 && (
+            <div className="ud-samples">
+              {samples.map((row) => (
+                <div key={row.id} className="ud-sample">
+                  <span className={`ud-sample-sev sev-${row.severity || 'warn'}`} title={row.severity} />
+                  <span className="ud-sample-batch">
+                    {row.batch_code ? <code>{row.batch_code}</code> : <span className="ud-dim">—</span>}
+                  </span>
+                  <span className="ud-sample-where">
+                    {row.day ? row.day.slice(0, 3) : ''}{row.start_time ? ` ${row.start_time}` : ''}
+                  </span>
+                  <span className="ud-sample-msg" title={row.message}>{row.message}</span>
+                </div>
+              ))}
+              {samples.length >= 10 && (
+                <Link
+                  to={`/admin/fix?upload=${encodeURIComponent(uploadId)}&type=${encodeURIComponent(group.error_type)}`}
+                  className="ud-samples-more"
+                >
+                  See all {group.open} open →
+                </Link>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function UploadDetailPage() {
   const { id } = useParams()
   const [doc, setDoc] = useState(null)
+  const [summary, setSummary] = useState(null)
+  const [samplesByType, setSamplesByType] = useState({}) // type -> row[]
+  const [expanded, setExpanded] = useState(() => new Set())
+  const [statusFilter, setStatusFilter] = useState('all') // all|open|resolved|ignored
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [refreshing, setRefreshing] = useState(false)
 
-  useEffect(() => {
-    let cancelled = false
-    setLoading(true)
-    getUpload(id)
-      .then((data) => { if (!cancelled) setDoc(data) })
-      .catch((err) => { if (!cancelled) setError(err) })
-      .finally(() => { if (!cancelled) setLoading(false) })
-    return () => { cancelled = true }
+  const load = useCallback(async () => {
+    setRefreshing(true)
+    try {
+      const [d, s] = await Promise.all([
+        getUpload(id),
+        getErrorsSummary({ uploadId: id }),
+      ])
+      setDoc(d)
+      setSummary(s)
+      setError(null)
+    } catch (err) {
+      setError(err)
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
+    }
   }, [id])
+
+  useEffect(() => { load() }, [load])
+
+  const loadSamples = useCallback(async (errorType) => {
+    try {
+      const res = await listErrors({ uploadId: id, errorType, status: 'open', limit: 10 })
+      setSamplesByType((prev) => ({ ...prev, [errorType]: res.items || [] }))
+    } catch {
+      setSamplesByType((prev) => ({ ...prev, [errorType]: [] }))
+    }
+  }, [id])
+
+  const filteredGroups = useMemo(() => {
+    const groups = summary?.by_type || []
+    const withCount = groups.filter((g) => {
+      if (statusFilter === 'all') return (g.total || 0) > 0
+      return (g[statusFilter] || 0) > 0
+    })
+    // Severity-ish sort: highest OPEN count first, then resolved.
+    return withCount.slice().sort((a, b) => (b.open - a.open) || (b.total - a.total))
+  }, [summary, statusFilter])
 
   if (loading) return <div className="admin-loading">Loading…</div>
   if (error) {
@@ -38,6 +162,9 @@ export default function UploadDetailPage() {
 
   const conf = doc.confidence_summary || {}
   const doctor = doc.doctor || {}
+  const totals = summary?.totals || { open: 0, resolved: 0, ignored: 0 }
+  const grand = summary?.grand_total || 0
+  const resolvedPct = grand > 0 ? Math.round((totals.resolved / grand) * 100) : 0
 
   return (
     <>
@@ -69,12 +196,11 @@ export default function UploadDetailPage() {
             </span>
           </div>
           <div className="stat-card stat-card--blue">
-            <span className="stat-card-label">Errors / mismatches</span>
-            <span className="stat-card-value">{doc.error_count}</span>
+            <span className="stat-card-label">Errors</span>
+            <span className="stat-card-value">{grand}</span>
             <span className="stat-card-sub">
-              {doctor.mismatched_groups != null && (
-                <>{doctor.consistent_groups}/{doctor.total_groups} groups consistent</>
-              )}
+              {totals.open} open · {totals.resolved} resolved · {totals.ignored} ignored
+              {doctor.mismatched_groups != null && <> · {doctor.consistent_groups}/{doctor.total_groups} groups OK</>}
             </span>
           </div>
         </div>
@@ -87,23 +213,72 @@ export default function UploadDetailPage() {
       </div>
 
       <div className="admin-card">
-        <h2 className="admin-card-title" style={{ textAlign: 'left', marginBottom: 12 }}>
-          Parsing errors ({doc.errors?.length || 0})
-        </h2>
-        <div className="error-log" style={{ maxHeight: 'none' }}>
-          {(doc.errors || []).map((row, idx) => (
-            <div className="error-row" key={`${row.batch}-${row.day}-${row.start_time}-${row.code}-${idx}`}>
-              <span className="error-row-batch">{row.batch || '—'}</span>
-              <span className="error-row-slot">{row.day?.slice(0, 3)} {row.start_time}</span>
-              <span className="error-row-msg">{row.message || row.code}</span>
-              <span className={`error-row-sev sev-${row.severity}`}>{row.severity}</span>
+        <div className="ud-panel-head">
+          <div>
+            <h2 className="admin-card-title" style={{ textAlign: 'left', margin: 0 }}>
+              Parsing errors
+            </h2>
+            <p className="admin-card-sub" style={{ textAlign: 'left', margin: '4px 0 0' }}>
+              {resolvedPct}% resolved · {totals.open} still open across {filteredGroups.length} type{filteredGroups.length === 1 ? '' : 's'}
+            </p>
+          </div>
+          <div className="ud-panel-toolbar">
+            <div className="ud-filter-group" role="group" aria-label="Filter by status">
+              {['all', 'open', 'resolved', 'ignored'].map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  className={`ud-filter${statusFilter === s ? ' is-active' : ''}`}
+                  onClick={() => setStatusFilter(s)}
+                >
+                  {s === 'all' ? 'All' : s[0].toUpperCase() + s.slice(1)}
+                  <span className="ud-filter-count">
+                    {s === 'all' ? grand : (totals[s] || 0)}
+                  </span>
+                </button>
+              ))}
             </div>
-          ))}
-          {(!doc.errors || doc.errors.length === 0) && (
-            <div className="error-log-empty">No parser warnings on this run.</div>
-          )}
+            <button
+              type="button"
+              className="uploads-refresh"
+              onClick={load}
+              disabled={refreshing}
+            >
+              {refreshing ? 'Refreshing…' : 'Refresh'}
+            </button>
+          </div>
         </div>
+
+        {grand === 0 ? (
+          <div className="error-log-empty" style={{ marginTop: 16 }}>
+            No errors on this run. 🎉
+          </div>
+        ) : filteredGroups.length === 0 ? (
+          <div className="error-log-empty" style={{ marginTop: 16 }}>
+            No errors match this filter.
+          </div>
+        ) : (
+          <div className="ud-groups">
+            {filteredGroups.map((g) => (
+              <TypeGroupRow
+                key={g.error_type}
+                group={g}
+                uploadId={id}
+                samples={samplesByType[g.error_type]}
+                onLoadSamples={loadSamples}
+                expanded={expanded.has(g.error_type)}
+                onToggle={(t) => setExpanded((prev) => {
+                  const next = new Set(prev)
+                  if (next.has(t)) next.delete(t)
+                  else next.add(t)
+                  return next
+                })}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </>
   )
 }
+
