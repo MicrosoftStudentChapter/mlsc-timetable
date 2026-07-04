@@ -141,14 +141,6 @@
   color: #FFFFFF;
 }
 
-@media (max-width: 768px) {
-  .tt-content {
-    overflow: visible;
-    overflow-x: hidden;     /* horizontal scroll is the grid's job, not the page's */
-    max-width: 100%;
-  }
-}
-
 
 .tt-placeholder {
   color: var(--text);
@@ -358,19 +350,6 @@
   background: #f9fafb;
   color: #111827;
   border-color: rgba(0, 0, 0, 0.12);
-}
-
-/* responsive header: shrink logo, push heading to the right when overlap risk */
-@media (max-width: 600px) {
-  .tt-logo {
-    height: 48px;
-  }
-  .tt-heading {
-    position: static;
-    left: auto;
-    transform: none;
-    margin-left: auto;
-  }
 }
 
 /* ═══════════════════════════════════════════════════════════════

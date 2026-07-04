@@ -755,6 +755,31 @@ body:has(.dashboard-layout) {
   transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase);
 }
 
+/* Collapsed cards should not show the expand chevron (nothing to expand
+   inline), and the section count becomes a small pip anchored to the top-
+   right of the card so it hovers over the centered icon instead of pushing
+   layout around. */
+.dashboard-sidebar--collapsed .section-chevron {
+  display: none;
+}
+
+.dashboard-sidebar--collapsed .section-count {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  box-shadow: 0 0 0 2px var(--bg-card, #151515), 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
 /* ── Profile card icon: anchored to the avatar's position so the
    icon ↔ avatar cross-fade happens in place (no empty min-height
    gap during expand). In collapsed state it slides to the center
@@ -857,171 +882,15 @@ body:has(.dashboard-layout) {
    RESPONSIVENESS MEDIA QUERIES
    ────────────────────────────────────────────────── */
 
-/* Tablet mode */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .welcome-heading {
-    font-size: 34px;
-  }
-}
-
-/* Mobile mode */
+/* Mobile: swap the sidebar for a hamburger. All other layout scaling is
+   intentionally left to the grid/page to be re-planned. */
 @media (max-width: 768px) {
-  /* Release the viewport lock so the page can scroll vertically. The grid's
-     scroll-wrapper keeps horizontal scrolling; vertical is delegated to the
-     browser. */
-  body:has(.dashboard-layout),
-  body:has(.dashboard-layout) #root {
-    height: auto !important;
-    min-height: 100svh !important;
-    overflow: visible !important;
-    overflow-x: hidden !important;
-  }
-
   .dashboard-sidebar {
     display: none;
   }
-  
-  .hamburger-btn {
-    display: flex;
-  }
-  
-  /* Let the main panel grow with content so the page scrolls naturally. */
-  .dashboard-main {
-    padding: 6px 10px 4px; /* Reduced padding on mobile */
-    height: auto;
-    min-height: 100svh;
-    max-height: none;
-    overflow: visible;
-    overflow-x: hidden;     /* never let the wide grid push the page sideways */
-    max-width: 100vw;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .dashboard-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    gap: 8px;
-    margin-bottom: 4px; /* Reduced from 6px */
-    flex-shrink: 0;
-  }
-  
-  .header-left {
-    flex: 1;
-    min-width: 0;
-    justify-content: flex-start;
-    gap: 8px;
-  }
-  
-  .header-right {
-    width: auto;
-    justify-content: flex-end;
-    gap: 6px;
-  }
-
-  .header-actions {
-    flex-shrink: 0;
-  }
-
-  .welcome-heading {
-    font-size: 20px;
-    line-height: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-  }
 
   .hamburger-btn {
-    padding: 5px;
-    border-radius: 8px;
-  }
-
-  .hamburger-btn svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .nav-controls-group,
-  .view-controls-group {
-    padding: 2px;
-    border-radius: 9px;
-  }
-
-  .nav-btn {
-    width: 27px;
-    height: 27px;
-    border-radius: 5px;
-  }
-
-  .nav-btn svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  .day-label-btn {
-    height: 27px;
-    min-width: 88px;
-    padding: 0 10px;
-    border-radius: 5px;
-    font-size: 12px;
-  }
-  
-  /* dashboard-content must flex:1 and overflow:hidden to pass height to timetable */
-  .dashboard-content {
-    flex: 1;
-    min-height: 0;
-    overflow: visible;
     display: flex;
-    flex-direction: column;
-  }
-
-  /* Make button groups responsive without breaking flow */
-  .add-task-btn {
-    margin-left: auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-right {
-    flex-direction: row;
-    align-items: center;
-    width: auto;
-  }
-
-  .dashboard-main {
-    padding: 6px 8px 4px;
-    height: auto;
-    min-height: 100svh;
-    max-height: none;
-  }
-
-  .dashboard-header {
-    gap: 3px;
-    margin-bottom: 4px;
-  }
-
-  .welcome-heading {
-    font-size: 17px;
-  }
-  
-  .nav-controls-group,
-  .view-controls-group {
-    justify-content: center;
-    width: auto;
-  }
-
-  .day-label-btn {
-    min-width: 72px;
-    font-size: 11px;
-    height: 25px;
-  }
-  
-  .add-task-btn {
-    width: 100%;
-    margin-left: 0;
   }
 }
 

@@ -2476,3 +2476,227 @@
   .dash-err-type-meta { grid-area: meta; }
   .dash-err-type-arrow { grid-area: arrow; }
 }
+
+/* ── Ingest result modal ────────────────────────────────────────────────
+   Opens after an upload finishes. Reuses .fix-modal-backdrop for the
+   overlay + .fix-modal-x for the close button so animation/focus rings
+   match the rest of the admin surface. */
+.ingest-modal {
+  background: var(--surface, #1a1a22);
+  color: var(--text, #eee);
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 14px;
+  width: min(520px, 94vw);
+  padding: 22px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  animation: ingest-modal-in 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-theme='light'] .ingest-modal { background: #fff; }
+
+@keyframes ingest-modal-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+.ingest-modal--ok      { border-top: 3px solid #10b981; }
+.ingest-modal--partial { border-top: 3px solid #f59e0b; }
+.ingest-modal--failed  { border-top: 3px solid #ef4444; }
+
+.ingest-modal-head {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 14px;
+  align-items: center;
+}
+.ingest-modal-head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.ingest-modal-sub {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  color: var(--text-muted, rgba(255,255,255,0.55));
+}
+
+.ingest-modal-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+.ingest-modal-icon--ok      { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.ingest-modal-icon--partial { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.ingest-modal-icon--failed  { background: rgba(239, 68, 68, 0.15);  color: #ef4444; }
+
+/* Stats grid — auto-fit so 3-vs-4 tiles both look centred */
+.ingest-modal-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 8px;
+}
+.ingest-stat {
+  padding: 12px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border, rgba(255,255,255,0.06));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+[data-theme='light'] .ingest-stat {
+  background: rgba(0, 0, 0, 0.025);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+.ingest-stat--warn {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.28);
+}
+.ingest-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text, #fff);
+}
+.ingest-stat--warn .ingest-stat-value { color: #f87171; }
+.ingest-stat-denom {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted, rgba(255,255,255,0.4));
+}
+.ingest-stat-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted, rgba(255,255,255,0.55));
+  font-weight: 600;
+}
+
+/* Top error types list */
+.ingest-modal-types {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border, rgba(255,255,255,0.06));
+  padding: 12px 14px;
+}
+[data-theme='light'] .ingest-modal-types {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+.ingest-modal-types-title {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted, rgba(255,255,255,0.55));
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.ingest-modal-types ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ingest-modal-types li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  min-width: 0;
+}
+.ingest-modal-types li code {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text, #eee);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: 11px;
+  font-weight: 600;
+}
+[data-theme='light'] .ingest-modal-types li code {
+  background: rgba(0, 0, 0, 0.05);
+}
+.ingest-type-count {
+  flex: 0 0 auto;
+  min-width: 34px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.14);
+  color: #f87171;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.ingest-type-more {
+  padding-left: 44px;
+  color: var(--text-muted, rgba(255,255,255,0.45));
+  font-size: 11.5px;
+  font-style: italic;
+}
+
+/* Footer / actions */
+.ingest-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+}
+.ingest-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  font-family: inherit;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+}
+.ingest-btn:active { transform: translateY(1px); }
+.ingest-btn--ghost {
+  background: transparent;
+  color: var(--text-muted, rgba(255,255,255,0.65));
+  border-color: var(--border, rgba(255,255,255,0.12));
+}
+.ingest-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text, #fff);
+}
+[data-theme='light'] .ingest-btn--ghost:hover { background: rgba(0, 0, 0, 0.04); }
+.ingest-btn--primary {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+.ingest-btn--primary:hover { background: #2563eb; border-color: #2563eb; }
+.ingest-btn--primary:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.5);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .ingest-modal { padding: 18px 16px 14px; gap: 14px; }
+  .ingest-modal-head { grid-template-columns: 40px 1fr auto; gap: 12px; }
+  .ingest-modal-icon { width: 40px; height: 40px; font-size: 20px; }
+  .ingest-modal-foot { flex-direction: column-reverse; }
+  .ingest-btn { width: 100%; }
+}

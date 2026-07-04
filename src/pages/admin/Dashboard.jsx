@@ -162,6 +162,7 @@ function UploadCard({ onUploaded }) {
   const [result, setResult] = useState(null)
   const [dragging, setDragging] = useState(false)
   const [cooldown, setCooldown] = useState(null)
+  const [ingestModal, setIngestModal] = useState(null) // { data, summary } | null
 
   useEffect(() => {
     let alive = true
@@ -205,19 +206,17 @@ function UploadCard({ onUploaded }) {
       })
       setResult({ kind: data?.status || 'ok', data })
       if (onUploaded) onUploaded()
-      // If the ingest produced parser warnings or doctor mismatches,
-      // offer a one-click jump to the Fix tab so the admin can triage.
+      // Post-ingest triage prompt: fetch an updated error summary and open
+      // a custom modal so the admin can act (or dismiss) without a browser
+      // confirm() interrupting them.
+      let summary = null
       try {
-        const summary = await getErrorsSummary()
-        const openCount = summary?.totals?.open || 0
-        if (openCount > 0) {
-          if (confirm(`Ingest complete — ${openCount} issue${openCount === 1 ? '' : 's'} to review. Open the Fix tab now?`)) {
-            navigate('/admin/fix')
-          }
-        }
+        summary = await getErrorsSummary()
       } catch {
-        // ignore summary fetch failures
+        // ignore summary fetch failures — the modal still renders with counts
+        // taken from the ingest response.
       }
+      setIngestModal({ data, summary })
     } catch (err) {
       const detail = err instanceof AdminAuthError ? err.detail : null
       setResult({
@@ -332,6 +331,139 @@ function UploadCard({ onUploaded }) {
           </div>
         )}
       </form>
+
+      {ingestModal && (
+        <IngestResultModal
+          data={ingestModal.data}
+          summary={ingestModal.summary}
+          onClose={() => setIngestModal(null)}
+          onReview={() => {
+            setIngestModal(null)
+            navigate('/admin/fix')
+          }}
+        />
+      )}
+    </div>
+  )
+}
+
+function IngestResultModal({ data, summary, onClose, onReview }) {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  const status  = data?.status || (data?.ok ? 'ok' : 'partial')
+  const doctor  = data?.doctor || null
+  const batches = data?.batches ?? 0
+  const classes = data?.classes ?? 0
+  const sheets  = Array.isArray(data?.sheets_used) ? data.sheets_used : []
+  const openCount = summary?.totals?.open || 0
+  const topTypes  = (summary?.by_type || [])
+    .filter((t) => (t.open || 0) > 0)
+    .slice(0, 5)
+
+  const hasIssues = openCount > 0 || (doctor && doctor.mismatched_groups > 0)
+  const tone = status === 'failed' ? 'failed' : hasIssues ? 'partial' : 'ok'
+  const icon = tone === 'ok' ? '✓' : tone === 'partial' ? '!' : '×'
+  const title =
+    tone === 'ok'
+      ? 'Ingest successful'
+      : tone === 'partial'
+        ? 'Ingest complete — review needed'
+        : 'Ingest failed'
+
+  return (
+    <div className="fix-modal-backdrop" onClick={onClose}>
+      <div
+        className={`ingest-modal ingest-modal--${tone}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ingest-modal-title"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="ingest-modal-head">
+          <div className={`ingest-modal-icon ingest-modal-icon--${tone}`}>{icon}</div>
+          <div>
+            <h2 id="ingest-modal-title">{title}</h2>
+            <p className="ingest-modal-sub">
+              Semester <strong>{data?.semester || '—'}</strong>
+              {sheets.length > 0 && <> · {sheets.length} sheet{sheets.length === 1 ? '' : 's'} parsed</>}
+            </p>
+          </div>
+          <button
+            type="button"
+            className="fix-modal-x"
+            aria-label="Close"
+            onClick={onClose}
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="ingest-modal-stats">
+          <div className="ingest-stat">
+            <span className="ingest-stat-value">{batches}</span>
+            <span className="ingest-stat-label">Batches</span>
+          </div>
+          <div className="ingest-stat">
+            <span className="ingest-stat-value">{classes.toLocaleString()}</span>
+            <span className="ingest-stat-label">Classes</span>
+          </div>
+          {doctor && (
+            <div className="ingest-stat">
+              <span className="ingest-stat-value">
+                {doctor.consistent_groups}<span className="ingest-stat-denom">/{doctor.total_groups}</span>
+              </span>
+              <span className="ingest-stat-label">Groups consistent</span>
+            </div>
+          )}
+          <div className={`ingest-stat${openCount > 0 ? ' ingest-stat--warn' : ''}`}>
+            <span className="ingest-stat-value">{openCount}</span>
+            <span className="ingest-stat-label">Open issues</span>
+          </div>
+        </div>
+
+        {topTypes.length > 0 && (
+          <div className="ingest-modal-types">
+            <div className="ingest-modal-types-title">Top error types</div>
+            <ul>
+              {topTypes.map((t) => (
+                <li key={t.error_type}>
+                  <span className="ingest-type-count">{t.open}</span>
+                  <code>{t.error_type}</code>
+                </li>
+              ))}
+              {(summary?.by_type || []).length > topTypes.length && (
+                <li className="ingest-type-more">
+                  +{(summary.by_type.length - topTypes.length)} more type{summary.by_type.length - topTypes.length === 1 ? '' : 's'}
+                </li>
+              )}
+            </ul>
+          </div>
+        )}
+
+        <div className="ingest-modal-foot">
+          <button
+            type="button"
+            className="ingest-btn ingest-btn--ghost"
+            onClick={onClose}
+          >
+            {hasIssues ? 'Dismiss' : 'Done'}
+          </button>
+          {hasIssues && (
+            <button
+              type="button"
+              className="ingest-btn ingest-btn--primary"
+              onClick={onReview}
+              autoFocus
+            >
+              Review {openCount > 0 ? `${openCount} issue${openCount === 1 ? '' : 's'}` : 'ingest'} →
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
