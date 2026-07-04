@@ -2,19 +2,24 @@
 // (e.g. `E1A` = even-semester year 1 group A). The post-ingest doctor uses
 // these to flag drifted batches.
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   listBaselines,
   setBaseline,
   deleteBaseline,
+  previewScheme,
+  applyScheme,
   AdminAuthError,
 } from '../../lib/admin'
 import { loadBatches } from '../../lib/batches'
 import Combobox from '../../components/Combobox'
+import batchesFallback from '../../data/batches.json'
 import './admin.css'
 
 const DEFAULT_TYPES = ['Lecture', 'Tutorial', 'Practical']
 const KEY_RE = /^([EO])(\d+)([A-Z]+)$/
+// Branches whose year-1 curriculum does NOT follow the pool A/B rotation.
+const POOL_EXEMPT_BRANCHES = new Set(['X', 'G', 'J', 'R'])
 
 function errMessage(err) {
   if (err instanceof AdminAuthError) return err.detail?.error || err.message
@@ -219,8 +224,283 @@ export default function BaselinesPage() {
     }
   }
 
+  // ── Course scheme (PDF) uploader ─────────────────────────────────────
+  const [schemeFile, setSchemeFile] = useState(null)
+  const [schemeBranch, setSchemeBranch] = useState('')
+  const [schemePoolSwap, setSchemePoolSwap] = useState(false)
+  const [schemeMerge, setSchemeMerge] = useState(false)
+  const [schemeBusy, setSchemeBusy] = useState(false)
+  const [schemeDragging, setSchemeDragging] = useState(false)
+  const [schemePreview, setSchemePreview] = useState(null)
+  const [schemeError, setSchemeError] = useState(null)
+  const [schemeResult, setSchemeResult] = useState(null)
+
+  // Branch dropdown = the canonical (year 2+) stream list from batches.json.
+  // Pool A/B is a first-year rotation label, not a branch, so it does NOT
+  // appear here; the "Pool B rotation" checkbox below handles that case.
+  const branchOptions = useMemo(() => {
+    const names = batchesFallback?.streamNames?.default || {}
+    return Object.entries(names)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([code, name]) => ({ code, name }))
+  }, [])
+
+  const showPoolSwap = schemeBranch && !POOL_EXEMPT_BRANCHES.has(schemeBranch)
+
+  function resetSchemeState() {
+    setSchemeFile(null)
+    setSchemeBranch('')
+    setSchemePoolSwap(false)
+    setSchemeMerge(false)
+    setSchemePreview(null)
+    setSchemeError(null)
+    setSchemeResult(null)
+  }
+
+  async function onSchemePreview(evt) {
+    evt.preventDefault()
+    if (!schemeFile || !schemeBranch || schemeBusy) return
+    setSchemeBusy(true)
+    setSchemeError(null)
+    setSchemeResult(null)
+    try {
+      const data = await previewScheme({
+        file: schemeFile,
+        branch: schemeBranch,
+        poolSwapYear1: schemePoolSwap,
+      })
+      setSchemePreview(data)
+    } catch (err) {
+      setSchemeError(err)
+    } finally {
+      setSchemeBusy(false)
+    }
+  }
+
+  async function onSchemeApply() {
+    if (!schemeFile || !schemeBranch || schemeBusy) return
+    if (!window.confirm(
+      `Write ${schemePreview?.plan?.length ?? 0} baseline roster(s) for branch ${schemeBranch}?`
+    )) return
+    setSchemeBusy(true)
+    setSchemeError(null)
+    try {
+      const data = await applyScheme({
+        file: schemeFile,
+        branch: schemeBranch,
+        poolSwapYear1: schemePoolSwap,
+        merge: schemeMerge,
+      })
+      setSchemeResult(data)
+      setSchemePreview(null)
+      await refresh()
+    } catch (err) {
+      setSchemeError(err)
+    } finally {
+      setSchemeBusy(false)
+    }
+  }
+
+  // ── Baselines table state ────────────────────────────────────────────
+  const [expandedKey, setExpandedKey] = useState(null)
+
+  function toggleExpanded(key) {
+    setExpandedKey((k) => (k === key ? null : key))
+  }
+
   return (
     <>
+      <div className="admin-card" style={{ marginBottom: 16 }}>
+        <div className="admin-card-header" style={{ alignItems: 'center' }}>
+          <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Course scheme (PDF)</h2>
+          {(schemePreview || schemeResult) && (
+            <button type="button" className="admin-card-action" onClick={resetSchemeState}>
+              Start over
+            </button>
+          )}
+        </div>
+        <p style={{ margin: '4px 0 12px', color: 'var(--muted, #9aa3af)', fontSize: 13 }}>
+          Upload a SUGC/SPGC course-scheme PDF to attach the expected course roster
+          (per subject code) to every baseline for the chosen branch. Existing per-type
+          counts on those baselines are preserved.
+        </p>
+        <form className="upload-form" onSubmit={onSchemePreview} style={{ marginTop: 4 }}>
+          <label
+            className={`dropzone${schemeDragging ? ' is-active' : ''}`}
+            onDragOver={(e) => { e.preventDefault(); setSchemeDragging(true) }}
+            onDragLeave={() => setSchemeDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault()
+              setSchemeDragging(false)
+              const f = e.dataTransfer?.files?.[0]
+              if (f && f.name.toLowerCase().endsWith('.pdf')) {
+                setSchemeFile(f)
+                setSchemePreview(null)
+                setSchemeResult(null)
+              }
+            }}
+          >
+            <input
+              type="file"
+              accept="application/pdf,.pdf"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                setSchemeFile(e.target.files?.[0] || null)
+                setSchemePreview(null)
+                setSchemeResult(null)
+              }}
+            />
+            {schemeFile ? (
+              <span className="dropzone-filename">{schemeFile.name}</span>
+            ) : (
+              <>
+                Drop the course-scheme <code>.pdf</code> here,
+                <br />or click to browse
+              </>
+            )}
+          </label>
+
+          <div className="baseline-field">
+            <label htmlFor="scheme-branch">Branch</label>
+            <select
+              id="scheme-branch"
+              className="upload-input"
+              value={schemeBranch}
+              onChange={(e) => {
+                setSchemeBranch(e.target.value)
+                setSchemePreview(null)
+                setSchemeResult(null)
+              }}
+            >
+              <option value="">Select branch…</option>
+              {branchOptions.map((b) => (
+                <option key={b.code} value={b.code}>
+                  {b.code} — {b.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {showPoolSwap && (
+            <label
+              style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}
+              title="Tick when this scheme belongs to a Pool B stream — flips the parity of year-1 semesters (Sem 1 → E1, Sem 2 → O1)."
+            >
+              <input
+                type="checkbox"
+                checked={schemePoolSwap}
+                onChange={(e) => {
+                  setSchemePoolSwap(e.target.checked)
+                  setSchemePreview(null)
+                  setSchemeResult(null)
+                }}
+              />
+              Pool B rotation (swap year-1 parity)
+            </label>
+          )}
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+            <input
+              type="checkbox"
+              checked={schemeMerge}
+              onChange={(e) => setSchemeMerge(e.target.checked)}
+            />
+            Merge with existing courses (keep any codes already on the baseline)
+          </label>
+          <button
+            type="submit"
+            className="upload-btn"
+            disabled={!schemeFile || !schemeBranch || schemeBusy}
+          >
+            {schemeBusy ? 'Working…' : 'Preview'}
+          </button>
+        </form>
+
+        {schemeError && (
+          <div className="upload-result failed" style={{ marginTop: 12 }}>
+            {errMessage(schemeError)}
+          </div>
+        )}
+
+        {schemePreview && (
+          <div style={{ marginTop: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <div style={{ fontSize: 13, color: 'var(--muted, #9aa3af)' }}>
+                Detected <strong>{schemePreview.semester_count}</strong> semester(s)
+                from <code>{schemePreview.source}</code>. Review the plan below, then
+                confirm to write the rosters.
+              </div>
+              <button
+                type="button"
+                className="upload-btn"
+                onClick={onSchemeApply}
+                disabled={schemeBusy}
+              >
+                {schemeBusy ? 'Applying…' : `Apply to ${schemePreview.plan.length} baseline(s)`}
+              </button>
+            </div>
+            <table className="uploads-table" style={{ marginTop: 12 }}>
+              <thead>
+                <tr>
+                  <th>Sem</th>
+                  <th>Keyline → Baseline</th>
+                  <th>Courses</th>
+                  <th>Existing</th>
+                  <th>Preview</th>
+                </tr>
+              </thead>
+              <tbody>
+                {schemePreview.plan.map((row) => (
+                  <tr key={row.baseline_key}>
+                    <td>{row.semester}</td>
+                    <td style={{ fontFamily: 'var(--mono, monospace)' }}>
+                      {row.keyline} → {row.baseline_key}
+                    </td>
+                    <td>{row.course_count}</td>
+                    <td>
+                      {row.would_create ? (
+                        <span style={{ color: '#4ade80' }}>new</span>
+                      ) : (
+                        <span title="Existing baseline; roster will be replaced (or merged)">
+                          {row.existing_course_count} → {row.course_count}
+                        </span>
+                      )}
+                    </td>
+                    <td style={{ maxWidth: 320 }}>
+                      <span style={{ fontSize: 12, color: 'var(--muted, #9aa3af)' }}>
+                        {row.courses.slice(0, 4).map((c) => c.code || c.title || '?').join(', ')}
+                        {row.courses.length > 4 ? `, +${row.courses.length - 4} more` : ''}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {schemeResult && (
+          <div className="upload-result" style={{ marginTop: 12 }}>
+            Applied to {schemeResult.written.length} baseline(s)
+            {schemeResult.errors.length > 0 ? ` — ${schemeResult.errors.length} error(s)` : ''}.
+            {schemeResult.written.length > 0 && (
+              <div style={{ marginTop: 6, fontSize: 12, color: 'var(--muted, #9aa3af)' }}>
+                {schemeResult.written.map((w) => (
+                  <span key={w.baseline_key} style={{ marginRight: 12 }}>
+                    <code>{w.baseline_key}</code> ({w.course_count} courses{w.created ? ', created' : ''})
+                  </span>
+                ))}
+              </div>
+            )}
+            {schemeResult.errors.length > 0 && (
+              <div style={{ marginTop: 6, fontSize: 12, color: '#f87171' }}>
+                {schemeResult.errors.map((e, i) => (
+                  <div key={i}><code>{e.baseline_key}</code>: {e.error}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       <div className="admin-card" style={{ marginBottom: 16 }}>
         <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Upsert baseline</h2>
         <form className="upload-form" onSubmit={onSubmit} style={{ marginTop: 12 }}>
@@ -408,37 +688,94 @@ export default function BaselinesPage() {
                   <tr>
                     <th>Key</th>
                     {typeColumns.map((t) => <th key={t}>{t}</th>)}
+                    <th title="Number of expected course codes attached to this baseline">Courses</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredItems.map((row) => (
-                    <tr key={row.key}>
-                      <td style={{ fontFamily: 'var(--mono, monospace)' }}>{row.key}</td>
-                      {typeColumns.map((t) => (
-                        <td key={t}>{row.counts?.[t] ?? '—'}</td>
-                      ))}
-                      <td style={{ whiteSpace: 'nowrap' }}>
-                        <button
-                          type="button"
-                          className="admin-card-action"
-                          onClick={() => loadIntoForm(row)}
-                          style={{ marginRight: 8 }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="admin-card-action"
-                          onClick={() => onRemove(row.key)}
-                          disabled={removing === row.key}
-                          style={{ color: '#f87171' }}
-                        >
-                          {removing === row.key ? 'Removing…' : 'Remove'}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {filteredItems.map((row) => {
+                    const courses = Array.isArray(row.courses) ? row.courses : []
+                    const isExpanded = expandedKey === row.key
+                    const courseColSpan = 2 + typeColumns.length + 2
+                    return (
+                      <Fragment key={row.key}>
+                        <tr>
+                          <td style={{ fontFamily: 'var(--mono, monospace)' }}>{row.key}</td>
+                          {typeColumns.map((t) => (
+                            <td key={t}>{row.counts?.[t] ?? '—'}</td>
+                          ))}
+                          <td>
+                            {courses.length > 0 ? (
+                              <button
+                                type="button"
+                                className="admin-card-action"
+                                onClick={() => toggleExpanded(row.key)}
+                                title={row.scheme_source ? `From ${row.scheme_source}` : ''}
+                              >
+                                {courses.length} {isExpanded ? '▾' : '▸'}
+                              </button>
+                            ) : (
+                              <span style={{ color: 'var(--muted, #9aa3af)' }}>—</span>
+                            )}
+                          </td>
+                          <td style={{ whiteSpace: 'nowrap' }}>
+                            <button
+                              type="button"
+                              className="admin-card-action"
+                              onClick={() => loadIntoForm(row)}
+                              style={{ marginRight: 8 }}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="admin-card-action"
+                              onClick={() => onRemove(row.key)}
+                              disabled={removing === row.key}
+                              style={{ color: '#f87171' }}
+                            >
+                              {removing === row.key ? 'Removing…' : 'Remove'}
+                            </button>
+                          </td>
+                        </tr>
+                        {isExpanded && (
+                          <tr key={`${row.key}-courses`}>
+                            <td colSpan={courseColSpan} style={{ background: 'rgba(255,255,255,0.02)' }}>
+                              <div style={{ fontSize: 12, color: 'var(--muted, #9aa3af)', marginBottom: 6 }}>
+                                {row.scheme_source ? `Source: ${row.scheme_source}` : 'Manual roster'}
+                              </div>
+                              <table className="uploads-table" style={{ margin: 0 }}>
+                                <thead>
+                                  <tr>
+                                    <th>Code</th>
+                                    <th>Title</th>
+                                    <th>Cat</th>
+                                    <th>L</th>
+                                    <th>T</th>
+                                    <th>P</th>
+                                    <th>Cr</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {courses.map((c, i) => (
+                                    <tr key={`${c.code || 'x'}-${i}`}>
+                                      <td style={{ fontFamily: 'var(--mono, monospace)' }}>{c.code || '—'}</td>
+                                      <td>{c.title || ''}</td>
+                                      <td>{c.category || ''}</td>
+                                      <td>{c.L ?? ''}</td>
+                                      <td>{c.T ?? ''}</td>
+                                      <td>{c.P ?? ''}</td>
+                                      <td>{c.Cr ?? ''}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
+                    )
+                  })}
                 </tbody>
               </table>
             )}

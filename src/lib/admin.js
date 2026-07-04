@@ -141,15 +141,44 @@ export function listBaselines() {
   return adminFetch('/baselines')
 }
 
-export function setBaseline(key, counts) {
+export function setBaseline(key, counts, { courses, schemeSource } = {}) {
+  const body = { counts }
+  if (Array.isArray(courses)) body.courses = courses
+  if (schemeSource) body.scheme_source = schemeSource
   return adminFetch(`/admin/baselines/${encodeURIComponent(key)}`, {
     method: 'POST',
-    body: JSON.stringify({ counts }),
+    body: JSON.stringify(body),
   })
 }
 
 export function deleteBaseline(key) {
   return adminFetch(`/admin/baselines/${encodeURIComponent(key)}`, { method: 'DELETE' })
+}
+
+// ── Course-scheme PDF upload ──────────────────────────────────────────
+// Parses a Thapar SUGC/SPGC course-scheme PDF and returns/writes the
+// per-semester baseline course rosters.
+function schemeFormData({ file, branch, poolSwapYear1, merge }) {
+  const fd = new FormData()
+  fd.append('file', file)
+  fd.append('branch', String(branch || '').toUpperCase())
+  fd.append('pool_swap_year1', poolSwapYear1 ? 'true' : 'false')
+  if (merge !== undefined) fd.append('merge', merge ? 'true' : 'false')
+  return fd
+}
+
+export function previewScheme({ file, branch, poolSwapYear1 = false }) {
+  return adminFetch('/admin/scheme/preview', {
+    method: 'POST',
+    body: schemeFormData({ file, branch, poolSwapYear1 }),
+  })
+}
+
+export function applyScheme({ file, branch, poolSwapYear1 = false, merge = false }) {
+  return adminFetch('/admin/scheme/apply', {
+    method: 'POST',
+    body: schemeFormData({ file, branch, poolSwapYear1, merge }),
+  })
 }
 
 // ── Contributors ──────────────────────────────────────────────────────
