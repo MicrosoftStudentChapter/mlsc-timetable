@@ -1,0 +1,373 @@
+{
+  "batch": "3B11",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCC612L",
+      "code": "UCC612L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Hydraulic Engineering",
+      "code": "UCE614L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCE615P",
+      "code": "UCE615P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UCE615P",
+      "code": "UCE615P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "UCE831/618/617L",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Foundation Engineering",
+      "code": "UCE613L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Hydraulic Engineering",
+      "code": "UCE614L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCE693P",
+      "code": "UCE693P",
+      "type": "Practical",
+      "room": "LAB-2",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UCE693P",
+      "code": "UCE693P",
+      "type": "Practical",
+      "room": "LAB-2",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UCE615L",
+      "code": "UCE615L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Foundation Engineering",
+      "code": "UCE613L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCC612L",
+      "code": "UCC612L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCE615T",
+      "code": "UCE615T",
+      "type": "Tutorial",
+      "room": "E201",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Foundation Engineering",
+      "code": "UCE613P",
+      "type": "Practical",
+      "room": "GEO LAB",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "RF-2",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Hydraulic Engineering",
+      "code": "UCE614P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Hydraulic Engineering",
+      "code": "UCE614P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UCE615L",
+      "code": "UCE615L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Transportation Engineering - Ii",
+      "code": "UCE605L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": [
+        {
+          "subject_code": "UCE605L",
+          "subject_name": "Transportation Engineering - Ii",
+          "type": "Lecture",
+          "place": "E106",
+          "teacher": "TNC"
+        },
+        {
+          "subject_code": "UCC612L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Foundation Engineering",
+      "code": "UCE613L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Hydraulic Engineering",
+      "code": "UCE614L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UCE617L",
+      "code": "UCE617L",
+      "type": "Lecture",
+      "room": "F202/E106/E304",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Foundation Engineering",
+      "code": "UCE613T",
+      "type": "Tutorial",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Hydraulic Engineering",
+      "code": "UCE614T",
+      "type": "Tutorial",
+      "room": "E301",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Transportation Engineering - Ii",
+      "code": "UCE605T",
+      "type": "Tutorial",
+      "room": "E304",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UCE892L",
+      "code": "UCE892L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UCE615L",
+      "code": "UCE615L",
+      "type": "Lecture",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCE693L",
+      "code": "UCE693L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCE618L",
+      "code": "UCE618L",
+      "type": "Lecture",
+      "room": "F201",
+      "options": [
+        {
+          "subject_code": "UCE618L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F201",
+          "teacher": "HS"
+        },
+        {
+          "subject_code": "UCE617L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E106",
+          "teacher": "APR"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UCE618L",
+      "code": "UCE618L",
+      "type": "Lecture",
+      "room": "F201",
+      "options": [
+        {
+          "subject_code": "UCE618L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F201",
+          "teacher": "HS"
+        },
+        {
+          "subject_code": "UCE617T",
+          "subject_name": null,
+          "type": "Tutorial",
+          "place": "E109",
+          "teacher": "APR"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": null,
+      "options": []
+    }
+  ]
+}

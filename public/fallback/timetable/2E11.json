@@ -1,0 +1,358 @@
+{
+  "batch": "2E11",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UEE410L",
+      "code": "UEE410L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Electrical And Electronic Measurements",
+      "code": "UEI403L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Control Systems",
+      "code": "UEI501L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Mathematics For Data Science",
+      "code": "UMA028L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Electrical And Electronic Measurements",
+      "code": "UEI403T",
+      "type": "Tutorial",
+      "room": "E304",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Object Oriented Programming",
+      "code": "UTA018L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Mathematics For Data Science",
+      "code": "UMA028L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Mathematics For Data Science",
+      "code": "UMA028P",
+      "type": "Practical",
+      "room": "G203(NA-1)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Mathematics For Data Science",
+      "code": "UMA028P",
+      "type": "Practical",
+      "room": "G203(NA-1)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Optimization Techniques",
+      "code": "UMA035P",
+      "type": "Practical",
+      "room": "G203(NA1)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Optimization Techniques",
+      "code": "UMA035P",
+      "type": "Practical",
+      "room": "G203(NA1)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UEE410L",
+      "code": "UEE410L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Electrical And Electronic Measurements",
+      "code": "UEI403L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Object Oriented Programming",
+      "code": "UTA018L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Optimization Techniques",
+      "code": "UMA035L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Object Oriented Programming",
+      "code": "UTA018P",
+      "type": "Practical",
+      "room": "PL-4",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Object Oriented Programming",
+      "code": "UTA018P",
+      "type": "Practical",
+      "room": "PL-4",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UEE410P",
+      "code": "UEE410P",
+      "type": "Practical",
+      "room": "NETWORK(H206)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UEE410P",
+      "code": "UEE410P",
+      "type": "Practical",
+      "room": "NETWORK(H206)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Object Oriented Programming",
+      "code": "UTA018L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Optimization Techniques",
+      "code": "UMA035L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Control Systems",
+      "code": "UEI501T",
+      "type": "Tutorial",
+      "room": "E304",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Control Systems",
+      "code": "UEI501P",
+      "type": "Practical",
+      "room": "I&C(C217)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Control Systems",
+      "code": "UEI501P",
+      "type": "Practical",
+      "room": "I&C(C217)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Control Systems",
+      "code": "UEI501L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Mathematics For Data Science",
+      "code": "UMA028L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Optimization Techniques",
+      "code": "UMA035L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UEE410L",
+      "code": "UEE410L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Control Systems",
+      "code": "UEI501L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UEE410L",
+      "code": "UEE410L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Electrical And Electronic Measurements",
+      "code": "UEI403P",
+      "type": "Practical",
+      "room": "C217(I&C)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Electrical And Electronic Measurements",
+      "code": "UEI403P",
+      "type": "Practical",
+      "room": "C217(I&C)",
+      "options": []
+    }
+  ]
+}

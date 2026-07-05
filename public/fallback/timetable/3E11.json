@@ -1,0 +1,367 @@
+{
+  "batch": "3E11",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Robotics",
+      "code": "UEI612L",
+      "type": "Lecture",
+      "room": "E104/F212",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Data Acquisition And System Design",
+      "code": "UEI701L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Process Dynamics And Control",
+      "code": "UEI604L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Data Acquisition And System Design",
+      "code": "UEI701P",
+      "type": "Practical",
+      "room": "ANALOG-B212",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Data Acquisition And System Design",
+      "code": "UEI701P",
+      "type": "Practical",
+      "room": "ANALOG-B212",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UEI615L",
+      "code": "UEI615L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "E307",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "E307",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Data Acquisition And System Design",
+      "code": "UEI701L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Process Dynamics And Control",
+      "code": "UEI604L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Robotics",
+      "code": "UEI612L",
+      "type": "Lecture",
+      "room": "E104/F212",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Data Acquisition And System Design",
+      "code": "UEI701L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Process Dynamics And Control",
+      "code": "UEI604L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Virtual Instrumentation",
+      "code": "UEI844L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Computer Networks",
+      "code": "UCS414L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UEI632L",
+      "code": "UEI632L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": [
+        {
+          "subject_code": "UEI632L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E103",
+          "teacher": "SVG"
+        },
+        {
+          "subject_code": "UEI627L",
+          "subject_name": "Data Analytics",
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "AMT"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Virtual Instrumentation",
+      "code": "UEI844P",
+      "type": "Practical",
+      "room": "VI-B212",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Virtual Instrumentation",
+      "code": "UEI844P",
+      "type": "Practical",
+      "room": "VI-B212",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Robotics",
+      "code": "UEI612P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Robotics",
+      "code": "UEI612P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UEI615L",
+      "code": "UEI615L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UEI632L",
+      "code": "UEI632L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": [
+        {
+          "subject_code": "UEI632L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SVG"
+        },
+        {
+          "subject_code": "UEI627L",
+          "subject_name": "Data Analytics",
+          "type": "Lecture",
+          "place": "F212",
+          "teacher": "AMT"
+        },
+        {
+          "subject_code": "UCS414P",
+          "subject_name": "Computer Networks",
+          "type": "Practical",
+          "place": null,
+          "teacher": "ANP"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UEI632L",
+      "code": "UEI632L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": [
+        {
+          "subject_code": "UEI632L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SVG"
+        },
+        {
+          "subject_code": "UEI627L",
+          "subject_name": "Data Analytics",
+          "type": "Lecture",
+          "place": "F212",
+          "teacher": "AMT"
+        },
+        {
+          "subject_code": "UCS414P",
+          "subject_name": "Computer Networks",
+          "type": "Practical",
+          "place": null,
+          "teacher": "ANP"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Process Dynamics And Control",
+      "code": "UEI604P",
+      "type": "Practical",
+      "room": "PROCESS/C220",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Process Dynamics And Control",
+      "code": "UEI604P",
+      "type": "Practical",
+      "room": "PROCESS/C220",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Virtual Instrumentation",
+      "code": "UEI844L",
+      "type": "Lecture",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Computer Networks",
+      "code": "UCS414L",
+      "type": "Lecture",
+      "room": "E103/E104/F212",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Process Dynamics And Control",
+      "code": "UEI604T",
+      "type": "Tutorial",
+      "room": "E104",
+      "options": []
+    }
+  ]
+}

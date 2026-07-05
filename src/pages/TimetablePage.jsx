@@ -1,26 +1,58 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import Footer from '../components/Footer'
 import Combobox from '../components/Combobox'
-import Navbar from '../components/Navbar'
+import TimetableGrid from '../components/TimetableGrid'
+import Footer from '../components/Footer'
+import FollowDayBanner from '../components/FollowDayBanner'
 import { loadBatches } from '../lib/batches'
+import { loadTimetable } from '../lib/timetable'
+import { exportGridAsPng, exportGridAsPdf, ASPECT_PRESETS } from '../lib/export_timetable'
+import { DashboardLayout } from '../components/side_columns'
+import { useTheme } from '../hooks/useTheme'
+import { useAuthUser } from '../lib/auth'
 import './TimetablePage.css'
 
 const NAV_AUTO_CLOSE_MS = 3000
 const NAV_COLLAPSE_QUERY = '(max-width: 848px)'
+const CARD_THEME_KEY = 'mlsc-card-theme'
+const CARD_THEMES = [
+  { value: 'default', label: 'Default' },
+  { value: 'aurora', label: 'Aurora' },
+  { value: 'paper', label: 'Paper' },
+]
+
+function getInitialCardTheme() {
+  try {
+    const saved = localStorage.getItem(CARD_THEME_KEY)
+    if (CARD_THEMES.some((t) => t.value === saved)) return saved
+  } catch (_) {}
+  return 'default'
+}
 
 export default function TimetablePage() {
   const { batch } = useParams()
   const navigate  = useNavigate()
+  const { isSignedIn } = useAuthUser()
+  const { theme, toggleTheme } = useTheme()
+  const isDark = theme === 'dark'
+  const [cardTheme, setCardTheme] = useState(getInitialCardTheme)
   const [years, setYears] = useState([])
   const [batchInput, setBatchInput] = useState(batch ?? '')
+  const [timetableState, setTimetableState] = useState({ status: 'loading' })
   const [isCompact, setIsCompact] = useState(
     () => typeof window !== 'undefined' && window.matchMedia(NAV_COLLAPSE_QUERY).matches
   )
   const [navExpanded, setNavExpanded] = useState(false)
+  // 0..4 = Mon–Fri column to highlight in the grid header; null = none
+  // (Sat/Sun by default, or any date explicitly mapped to null). Driven by
+  // sidebar mini-calendar hover; falls back to today's mapping.
+  const [activeWeekdayIdx, setActiveWeekdayIdx] = useState(null)
   const closeTimerRef = useRef(null)
   const isMouseHoveringRef = useRef(false)
   const pillRef = useRef(null)
+  const exportRef = useRef(null)
+
+
 
   useEffect(() => {
     const mq = window.matchMedia(NAV_COLLAPSE_QUERY)
@@ -42,6 +74,10 @@ export default function TimetablePage() {
   }
 
   useEffect(() => () => cancelClose(), [])
+
+  useEffect(() => {
+    try { localStorage.setItem(CARD_THEME_KEY, cardTheme) } catch (_) {}
+  }, [cardTheme])
 
   // when leaving compact mode, drop any pending timer + collapsed flag so the
   // nav renders cleanly on desktop
@@ -101,6 +137,23 @@ export default function TimetablePage() {
     setBatchInput(batch ?? '')
   }, [batch])
 
+  // Fetch this batch's timetable from the backend whenever the URL batch changes.
+  useEffect(() => {
+    if (!batch) {
+      setTimetableState({ status: 'idle' })
+      return
+    }
+    let cancelled = false
+    setTimetableState({ status: 'loading' })
+    loadTimetable(batch).then((result) => {
+      if (cancelled) return
+      setTimetableState(result)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [batch])
+
   const batchOptions = useMemo(() => {
     const out = []
     for (const { label, streams } of years) {
@@ -128,20 +181,55 @@ export default function TimetablePage() {
   }
 
   return (
-    <>
-      <main className="tt-main">
-        {/* Top bar: logo left + centered heading */}
-        <div className="tt-topbar">
-          <button className="tt-logo-btn" onClick={() => navigate('/')} aria-label="Home">
-            <img src="/MLSC-logo.png" alt="MLSC" className="tt-logo" />
-          </button>
-          <h1 className="tt-heading">Timetable for {batch}</h1>
+    <DashboardLayout
+      batch={batch}
+      onActiveWeekdayChange={setActiveWeekdayIdx}
+      footer={<Footer />}
+      headerActions={
+        <label className="tt-card-theme-picker">
+          <span className="tt-card-theme-label">Card style</span>
+          <select
+            className="tt-card-theme-select"
+            value={cardTheme}
+            onChange={(e) => setCardTheme(e.target.value)}
+            aria-label="Card style"
+          >
+            {CARD_THEMES.map((t) => (
+              <option key={t.value} value={t.value}>{t.label}</option>
+            ))}
+          </select>
+        </label>
+      }
+    >
+      <div className="tt-content">
+        {/* Mobile-only card-style row — the picker in the header is hidden
+            on mobile (no room in the compact strip), so mirror it here as
+            a full-width row between header and the follow-day banner. */}
+        <div className="tt-card-style-row">
+          <label className="tt-card-theme-picker">
+            <span className="tt-card-theme-label">Card style</span>
+            <select
+              className="tt-card-theme-select"
+              value={cardTheme}
+              onChange={(e) => setCardTheme(e.target.value)}
+              aria-label="Card style"
+            >
+              {CARD_THEMES.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+          </label>
         </div>
-
-        <div className="tt-content">
-          <p className="tt-placeholder">Content for <strong>{batch}</strong> will appear here.</p>
+        {/* Follow-day alert — shown on desktop AND mobile, but only when
+            the current batch has an override in the next 7 days. Component
+            returns null when there's nothing to surface. */}
+        <div className="tt-follow-day-row">
+          <FollowDayBanner batch={batch} />
         </div>
-      </main>
+        <div className="tt-export-target" ref={exportRef}>
+          <TimetableContent state={timetableState} batch={batch} isDark={isDark} cardTheme={cardTheme} activeWeekdayIdx={activeWeekdayIdx} />
+        </div>
+      </div>
 
       {/* Timetable Navbar */}
       <div
@@ -208,15 +296,11 @@ export default function TimetablePage() {
               </div>
 
               {/* Download */}
-              <div className="tt-tip-wrap" data-tip="Save">
-                <button className="tt-icon-btn" aria-label="Save as PDF or image">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="7 10 12 15 17 10"/>
-                    <line x1="12" y1="15" x2="12" y2="3"/>
-                  </svg>
-                </button>
-              </div>
+              <SaveMenu
+                exportRef={exportRef}
+                batch={batch}
+                disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
+              />
 
               {/* Share */}
               <div className="tt-tip-wrap" data-tip="Share Link">
@@ -233,21 +317,37 @@ export default function TimetablePage() {
             {/* Group 2: user settings */}
             <div className="tt-action-group">
               {/* Theme */}
-              <div className="tt-tip-wrap" data-tip="Toggle theme">
-                <button className="tt-icon-btn" aria-label="Toggle theme">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="5"/>
-                    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                  </svg>
+              <div className="tt-tip-wrap" data-tip={isDark ? 'Light mode' : 'Dark mode'}>
+                <button
+                  className={`tt-icon-btn tt-theme-btn${isDark ? ' is-dark' : ''}`}
+                  aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                  onClick={toggleTheme}
+                >
+                  {isDark ? (
+                    /* Sun icon — click to go light */
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="5"/>
+                      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                  ) : (
+                    /* Moon icon — click to go dark */
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                  )}
                 </button>
               </div>
 
-              {/* Profile */}
+              {/* Profile — route based on Clerk sign-in state. */}
               <div className="tt-tip-wrap" data-tip="Profile">
-                <button className="tt-icon-btn" aria-label="Profile">
+                <button
+                  className="tt-icon-btn"
+                  aria-label="Profile"
+                  onClick={() => navigate(isSignedIn ? '/profile' : '/login')}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="8" r="4"/>
                     <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -258,9 +358,179 @@ export default function TimetablePage() {
           </div>
         </nav>
       </div>
+    </DashboardLayout>
+  )
+}
 
-      <Footer />
-      
-    </>
+// Renders the right thing for each fetch state. Falls back to the grid's
+// hard-coded fixture when no backend is configured (dev convenience).
+function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx }) {
+  if (state.status === 'loading' || state.status === 'idle') {
+    return <div className="tt-status tt-status--loading">Loading {batch ?? 'timetable'}…</div>
+  }
+  if (state.status === 'no_backend') {
+    return (
+      <>
+        <div className="tt-status tt-status--warning">
+          Backend not configured — showing sample data. Set <code>VITE_BACKEND_URL</code> in <code>.env</code> to load <code>{batch}</code>.
+        </div>
+        <TimetableGrid isDarkMode={isDark} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} />
+      </>
+    )
+  }
+  if (state.status === 'not_found') {
+    return (
+      <div className="tt-status tt-status--error">
+        Batch <strong>{batch}</strong> not found. Pick a different batch from the toolbar.
+      </div>
+    )
+  }
+  if (state.status === 'error') {
+    return (
+      <div className="tt-status tt-status--error">
+        Couldn’t load <strong>{batch}</strong>: {state.message}
+      </div>
+    )
+  }
+  if (state.classes.length === 0) {
+    return (
+      <div className="tt-status tt-status--empty">
+        No classes scheduled for <strong>{batch}</strong>.
+      </div>
+    )
+  }
+  return <TimetableGrid isDarkMode={isDark} classes={state.classes} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} />
+}
+
+// ─── SaveMenu ────────────────────────────────────────────────────────────────
+// Two-step popover: choose format (PNG / PDF), then aspect ratio. Captures
+// whatever's inside `exportRef` (the rendered timetable). Closes on
+// outside-click and Escape.
+function SaveMenu({ exportRef, batch, disabled }) {
+  const [open, setOpen] = useState(false)
+  const [step, setStep] = useState('format')   // 'format' | 'aspect'
+  const [format, setFormat] = useState(null)   // 'png' | 'pdf' | null
+  const [busy, setBusy] = useState(null)       // aspect id while running
+  const [error, setError] = useState(null)
+  const wrapRef = useRef(null)
+
+  // Reset the wizard whenever the menu closes so reopening starts fresh.
+  useEffect(() => {
+    if (open) return
+    setStep('format')
+    setFormat(null)
+    setError(null)
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false)
+    }
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('pointerdown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  const pickFormat = (kind) => {
+    setFormat(kind)
+    setError(null)
+    setStep('aspect')
+  }
+
+  const runWithAspect = async (preset) => {
+    if (busy || !format) return
+    const fn = format === 'png' ? exportGridAsPng : exportGridAsPdf
+    setBusy(preset.id); setError(null)
+    try {
+      await fn({ node: exportRef.current, batch, aspect: preset.ratio })
+      setOpen(false)
+    } catch (e) {
+      setError(e?.message || 'Export failed')
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  return (
+    <div className="tt-tip-wrap tt-save-wrap" data-tip="Save" ref={wrapRef}>
+      <button
+        type="button"
+        className="tt-icon-btn"
+        aria-label="Save as PDF or image"
+        aria-haspopup="menu"
+        aria-expanded={open ? 'true' : 'false'}
+        disabled={disabled}
+        onClick={() => !disabled && setOpen((v) => !v)}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+      </button>
+      {open && (
+        <div className="tt-save-menu" role="menu">
+          {step === 'format' ? (
+            <>
+              <button
+                type="button"
+                role="menuitem"
+                className="tt-save-menu-item"
+                onClick={() => pickFormat('png')}
+              >
+                PNG image
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                className="tt-save-menu-item"
+                onClick={() => pickFormat('pdf')}
+              >
+                PDF document
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="tt-save-menu-header">
+                <button
+                  type="button"
+                  className="tt-save-menu-back"
+                  onClick={() => { if (!busy) { setStep('format'); setFormat(null); setError(null) } }}
+                  disabled={!!busy}
+                  aria-label="Back to format"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                </button>
+                <span className="tt-save-menu-title">
+                  {format === 'png' ? 'PNG' : 'PDF'} · aspect
+                </span>
+              </div>
+              <div className="tt-save-menu-aspects">
+                {ASPECT_PRESETS.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    role="menuitem"
+                    className="tt-save-menu-item"
+                    disabled={!!busy}
+                    onClick={() => runWithAspect(p)}
+                  >
+                    {busy === p.id ? 'Saving…' : p.label}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+          {error && <p className="tt-save-menu-error">{error}</p>}
+        </div>
+      )}
+    </div>
   )
 }

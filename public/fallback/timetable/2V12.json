@@ -1,0 +1,348 @@
+{
+  "batch": "2V12",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Electromagnetic Field Theory And Transmission Line",
+      "code": "UEC307L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Circuit Analysis And Synthesis",
+      "code": "UEC311L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UVD401L",
+      "code": "UVD401L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Embedded Systems",
+      "code": "UEC513L",
+      "type": "Lecture",
+      "room": "B303",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UVD401P",
+      "code": "UVD401P",
+      "type": "Practical",
+      "room": "B106",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UVD401P",
+      "code": "UVD401P",
+      "type": "Practical",
+      "room": "B106",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Numerical And Statistical Methods",
+      "code": "UMA033L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Engineering Design Project - 2",
+      "code": "UTA024P",
+      "type": "Practical",
+      "room": "B203/L209",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Engineering Design Project - 2",
+      "code": "UTA024P",
+      "type": "Practical",
+      "room": "B203/L209",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Electromagnetic Field Theory And Transmission Line",
+      "code": "UEC307L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UVD401L",
+      "code": "UVD401L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Electromagnetic Field Theory And Transmission Line",
+      "code": "UEC307T",
+      "type": "Tutorial",
+      "room": "E306",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Circuit Analysis And Synthesis",
+      "code": "UEC311T",
+      "type": "Tutorial",
+      "room": "E306",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Signals & Systems",
+      "code": "UEC404L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Numerical And Statistical Methods",
+      "code": "UMA033L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Circuit Analysis And Synthesis",
+      "code": "UEC311L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Signals & Systems",
+      "code": "UEC404T",
+      "type": "Tutorial",
+      "room": "E306",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Embedded Systems",
+      "code": "UEC513L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Engineering Design Project - 2",
+      "code": "UTA024L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Numerical And Statistical Methods",
+      "code": "UMA033P",
+      "type": "Practical",
+      "room": "G203(NA-1)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Numerical And Statistical Methods",
+      "code": "UMA033P",
+      "type": "Practical",
+      "room": "G203(NA-1)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Embedded Systems",
+      "code": "UEC513L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UVD401L",
+      "code": "UVD401L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Numerical And Statistical Methods",
+      "code": "UMA033L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Signals & Systems",
+      "code": "UEC404L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Signals & Systems",
+      "code": "UEC404P",
+      "type": "Practical",
+      "room": "C326",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Signals & Systems",
+      "code": "UEC404P",
+      "type": "Practical",
+      "room": "C326",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Signals & Systems",
+      "code": "UEC404L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Electromagnetic Field Theory And Transmission Line",
+      "code": "UEC307L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Embedded Systems",
+      "code": "UEC513P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Embedded Systems",
+      "code": "UEC513P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
+    }
+  ]
+}

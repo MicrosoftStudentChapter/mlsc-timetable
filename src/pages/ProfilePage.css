@@ -1,0 +1,372 @@
+.profile-page {
+  min-height: 100svh;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  padding: 32px 20px 60px;
+  box-sizing: border-box;
+}
+
+.profile-loading {
+  color: var(--text);
+  opacity: 0.65;
+}
+
+.profile-shell {
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── top bar ─────────────────────────────────────────── */
+.profile-topbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-back-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.profile-back-btn:hover {
+  background: var(--bg-hover, rgba(255, 255, 255, 0.04));
+  border-color: var(--text);
+  color: var(--text-h);
+}
+
+.profile-topbar-title {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.profile-signout {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #ff6b70;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.profile-signout:hover:not(:disabled) {
+  background: rgba(255, 107, 112, 0.08);
+  border-color: rgba(255, 107, 112, 0.35);
+}
+
+.profile-signout:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ── hero card ───────────────────────────────────────── */
+.profile-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, var(--bg-secondary, var(--bg)));
+  padding: 36px 24px 28px;
+  text-align: center;
+}
+
+.profile-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at top, rgba(59, 130, 246, 0.22), transparent 60%),
+    radial-gradient(ellipse at bottom right, rgba(170, 59, 255, 0.14), transparent 55%);
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+[data-theme="light"] .profile-hero-bg {
+  background:
+    radial-gradient(ellipse at top, rgba(0, 96, 192, 0.10), transparent 60%),
+    radial-gradient(ellipse at bottom right, rgba(170, 59, 255, 0.06), transparent 55%);
+}
+
+.profile-hero-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.profile-avatar--initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--text-h);
+  font-size: 1.7rem;
+  letter-spacing: 0.04em;
+  background:
+    linear-gradient(135deg, rgba(59, 130, 246, 0.35), rgba(170, 59, 255, 0.3));
+}
+
+.profile-display-name {
+  margin: 6px 0 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-h);
+  letter-spacing: -0.01em;
+}
+
+.profile-display-email {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  word-break: break-all;
+}
+
+.profile-batch-pill {
+  margin-top: 4px;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+[data-theme="light"] .profile-batch-pill {
+  background: rgba(0, 96, 192, 0.1);
+  color: #0060c0;
+  border-color: rgba(0, 96, 192, 0.3);
+}
+
+/* ── editable card ───────────────────────────────────── */
+.profile-card {
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, var(--bg-secondary, var(--bg)));
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-card--solo {
+  padding: 28px;
+}
+
+.profile-card-section {
+  padding: 8px 4px;
+}
+
+.profile-card-divider {
+  height: 1px;
+  background: var(--border);
+  opacity: 0.7;
+  margin: 4px 0;
+}
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-field-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-h);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.profile-input {
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0 14px;
+  background: transparent;
+  color: var(--text-h);
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.profile-input:focus {
+  border-color: var(--accent, #3B82F6);
+  box-shadow: 0 0 0 3px var(--accent-bg, rgba(59, 130, 246, 0.12));
+}
+
+.profile-field-hint {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  line-height: 1.4;
+}
+
+.profile-batch-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+/* Styles the <input> rendered inside Combobox (className is forwarded to it).
+   Mirrors .profile-input so the three pickers feel like one cohesive control. */
+.profile-combobox {
+  width: 100%;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0 38px 0 14px;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  color: var(--text-h);
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.profile-combobox::placeholder {
+  color: var(--text);
+  opacity: 0.5;
+}
+
+.profile-combobox:focus {
+  border-color: var(--accent, #3B82F6);
+  box-shadow: 0 0 0 3px var(--accent-bg, rgba(59, 130, 246, 0.12));
+}
+
+.combobox.is-disabled .profile-combobox {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Make sure the parent .combobox wrapper inside the grid fills its cell. */
+.profile-batch-row .combobox {
+  width: 100%;
+}
+
+.profile-error {
+  margin: 4px 4px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(229, 72, 77, 0.12);
+  border: 1px solid rgba(229, 72, 77, 0.35);
+  color: #ff7a7d;
+  font-size: 0.82rem;
+}
+
+[data-theme="light"] .profile-error {
+  color: #c01a1e;
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 0 4px;
+}
+
+.profile-btn {
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  transition: opacity 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.profile-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.profile-btn--ghost {
+  background: transparent;
+  color: var(--text);
+}
+
+.profile-btn--ghost:hover:not(:disabled) {
+  border-color: var(--text);
+  color: var(--text-h);
+  background: var(--bg-hover, rgba(255, 255, 255, 0.04));
+}
+
+.profile-btn--primary {
+  background: linear-gradient(135deg, #0060c0 0%, #3B82F6 100%);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.25);
+}
+
+.profile-btn--primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+@media (max-width: 520px) {
+  .profile-page {
+    padding: 20px 14px 60px;
+  }
+  .profile-hero {
+    padding: 28px 18px 22px;
+    border-radius: 14px;
+  }
+  .profile-avatar {
+    width: 72px;
+    height: 72px;
+  }
+  .profile-display-name {
+    font-size: 1.2rem;
+  }
+  .profile-card {
+    padding: 16px;
+    border-radius: 14px;
+  }
+  .profile-batch-row {
+    grid-template-columns: 1fr;
+  }
+  .profile-actions {
+    flex-direction: column-reverse;
+  }
+  .profile-btn {
+    width: 100%;
+  }
+}

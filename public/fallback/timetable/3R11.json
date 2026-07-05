@@ -1,0 +1,368 @@
+{
+  "batch": "3R11",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Business Communication & Value Science-Iv",
+      "code": "UHU044L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Computer Networks",
+      "code": "UCT601L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Information Security",
+      "code": "UCT602L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Artificial Intelligence",
+      "code": "UCT603L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Advance Finance",
+      "code": "UHU046L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Computer Networks",
+      "code": "UCT601P",
+      "type": "Practical",
+      "room": "IS-1",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Computer Networks",
+      "code": "UCT601P",
+      "type": "Practical",
+      "room": "IS-1",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Modern Web Applications",
+      "code": "UCT632P",
+      "type": "Practical",
+      "room": "IS-1",
+      "options": [
+        {
+          "subject_code": "UCT632P",
+          "subject_name": "Modern Web Applications",
+          "type": "Practical",
+          "place": "IS-1",
+          "teacher": "SMG"
+        },
+        {
+          "subject_code": "UCT633P",
+          "subject_name": "Data Mining & Analytics",
+          "type": "Practical",
+          "place": "IS-2",
+          "teacher": "JBD"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Modern Web Applications",
+      "code": "UCT632P",
+      "type": "Practical",
+      "room": "IS-1",
+      "options": [
+        {
+          "subject_code": "UCT632P",
+          "subject_name": "Modern Web Applications",
+          "type": "Practical",
+          "place": "IS-1",
+          "teacher": "SMG"
+        },
+        {
+          "subject_code": "UCT633P",
+          "subject_name": "Data Mining & Analytics",
+          "type": "Practical",
+          "place": "IS-2",
+          "teacher": "JBD"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Business Communication & Value Science-Iv",
+      "code": "UHU044P",
+      "type": "Practical",
+      "room": "E102",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Business Communication & Value Science-Iv",
+      "code": "UHU044P",
+      "type": "Practical",
+      "room": "E102",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Data Mining & Analytics",
+      "code": "UCT633L",
+      "type": "Lecture",
+      "room": "E101/PG AS-2",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Computer Networks",
+      "code": "UCT601L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Artificial Intelligence",
+      "code": "UCT603L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Computer Networks",
+      "code": "UCT601L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Modern Web Applications",
+      "code": "UCT632L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": [
+        {
+          "subject_code": "UCT632L",
+          "subject_name": "Modern Web Applications",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "SMG"
+        },
+        {
+          "subject_code": "UCT633L",
+          "subject_name": "Data Mining & Analytics",
+          "type": "Lecture",
+          "place": "PGAS-2",
+          "teacher": "JBD"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Modern Web Applications",
+      "code": "UCT632L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": [
+        {
+          "subject_code": "UCT632L",
+          "subject_name": "Modern Web Applications",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "SMG"
+        },
+        {
+          "subject_code": "UCT633L",
+          "subject_name": "Data Mining & Analytics",
+          "type": "Lecture",
+          "place": "PGAS-2",
+          "teacher": "JBD"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Artificial Intelligence",
+      "code": "UCT603P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Artificial Intelligence",
+      "code": "UCT603P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Information Security",
+      "code": "UCT602P",
+      "type": "Practical",
+      "room": "IS-2",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Information Security",
+      "code": "UCT602P",
+      "type": "Practical",
+      "room": "IS-2",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Advance Finance",
+      "code": "UHU046P",
+      "type": "Practical",
+      "room": "E310/F206",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Advance Finance",
+      "code": "UHU046P",
+      "type": "Practical",
+      "room": "E310/F206",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Information Security",
+      "code": "UCT602L",
+      "type": "Lecture",
+      "room": "E102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Financial & Cost Accounting",
+      "code": "UHU043L",
+      "type": "Lecture",
+      "room": "E102",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Information Security",
+      "code": "UCT602L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Artificial Intelligence",
+      "code": "UCT603L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Business Communication & Value Science-Iv",
+      "code": "UHU044L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Financial & Cost Accounting",
+      "code": "UHU043L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Advance Finance",
+      "code": "UHU046L",
+      "type": "Lecture",
+      "room": "E101",
+      "options": []
+    }
+  ]
+}

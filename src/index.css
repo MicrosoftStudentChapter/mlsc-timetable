@@ -25,30 +25,152 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  @media (max-width: 1024px) {
+  @media (min-width: 769px) and (max-width: 1024px) {
+    font-size: 16px;
+  }
+  @media (max-width: 768px) {
     font-size: 16px;
   }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
+    /* Mirror [data-theme="dark"] below so there's no colour flash before
+       useTheme writes the attribute on mount. Keep these in lockstep. */
+    --text:       rgba(255, 255, 255, 0.75);
+    --text-h:     #FFFFFF;
+    --text-muted: rgba(255, 255, 255, 0.50);
+
+    --bg:           #050505;
+    --bg-secondary: #0A0A0A;
+    --bg-surface:   #111111;
+    --bg-card:      #151515;
+    --bg-hover:     #1B1B1B;
+
+    --border:        rgba(255, 255, 255, 0.08);
+    --border-subtle: rgba(255, 255, 255, 0.04);
+
+    --code-bg: #151515;
+
+    --accent:        #3B82F6;
+    --accent-bg:     rgba(59, 130, 246, 0.10);
+    --accent-border: rgba(59, 130, 246, 0.30);
+
     --social-bg: rgba(47, 48, 58, 0.5);
     --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+      rgba(0, 0, 0, 0.85) 0 10px 25px -5px,
+      rgba(0, 0, 0, 0.65) 0 5px 10px -5px;
   }
 
   #social .button-icon {
     filter: invert(1) brightness(2);
   }
 }
+
+/* ─── Manual dark mode ───────────────────────────────────────────────────────
+   Written onto <html data-theme="dark"> by useTheme hook.
+   Always overrides the OS @media block above.                               */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Layered surfaces - Premium OLED True Black refinement */
+  --bg:           #050505;   /* Page background */
+  --bg-secondary: #0A0A0A;   /* Sidebar background */
+  --bg-surface:   #111111;   /* Timetable container background */
+  --bg-card:      #151515;   /* Sidebar cards background */
+  --bg-hover:     #1B1B1B;   /* Card hovers background */
+
+  /* Text */
+  --text:       rgba(255, 255, 255, 0.75);
+  --text-h:     #FFFFFF;
+  --text-muted: rgba(255, 255, 255, 0.50);
+
+  /* Borders */
+  --border:        rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+
+  /* Accent (day highlights, interactive) */
+  --accent:        #3B82F6;
+  --accent-bg:     rgba(59, 130, 246, 0.10);
+  --accent-border: rgba(59, 130, 246, 0.30);
+
+  /* Misc */
+  --code-bg: #151515;
+  --shadow:
+    rgba(0, 0, 0, 0.85) 0 10px 25px -5px,
+    rgba(0, 0, 0, 0.65) 0 5px 10px -5px;
+}
+
+/* ─── Manual light mode ──────────────────────────────────────────────────── */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg:           #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-surface:   #ffffff;
+  --text:         #6b6375;
+  --text-h:       #08060d;
+  --text-muted:   rgba(11, 6, 13, 0.50);
+  --border:        #e5e4e7;
+  --border-subtle: rgba(0, 0, 0, 0.05);
+  --accent:        #004F9E;
+  --accent-bg:     rgba(0, 79, 158, 0.10);
+  --accent-border: rgba(0, 79, 158, 0.40);
+  --code-bg:       #f4f3ec;
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px,
+    rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+}
+
+/* ─── Smooth colour transitions (220 ms) ─────────────────────────────────── */
+*, *::before, *::after {
+  transition:
+    background-color 0.22s ease,
+    border-color     0.22s ease,
+    color            0.22s ease,
+    box-shadow       0.22s ease;
+}
+/* Opt-out: no extra transitions on media/animation elements */
+img, video, svg, canvas { transition: none; }
+
+/* ─── Cross-browser thin scrollbars ──────────────────────────────────────────
+   Firefox renders `scrollbar-width: thin` natively; Chrome/Edge/Safari ignore
+   that property, so without explicit `::-webkit-scrollbar` rules they show
+   their default chunky scrollbar (~16px) while Firefox shows ~8px. Match them
+   here so the timetable grid, sidebar, and any other scroller look identical
+   across browsers. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+[data-theme="dark"] * {
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+[data-theme="dark"] *::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+[data-theme="dark"] *::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
 
 body {
   margin: 0;
@@ -77,7 +199,11 @@ h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
-  @media (max-width: 1024px) {
+  @media (min-width: 769px) and (max-width: 1024px) {
+    font-size: 36px;
+    margin: 20px 0;
+  }
+  @media (max-width: 768px) {
     font-size: 36px;
     margin: 20px 0;
   }
@@ -87,7 +213,10 @@ h2 {
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
-  @media (max-width: 1024px) {
+  @media (min-width: 769px) and (max-width: 1024px) {
+    font-size: 20px;
+  }
+  @media (max-width: 768px) {
     font-size: 20px;
   }
 }

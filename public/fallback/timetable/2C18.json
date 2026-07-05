@@ -1,0 +1,298 @@
+{
+  "batch": "2C18",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Probability And Statistics",
+      "code": "UMA401L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Design And Analysis Of Algorithms",
+      "code": "UCS415L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Aptitude Skills Building",
+      "code": "UTD003L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Aptitude Skills Building",
+      "code": "UTD003L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Computer Networks",
+      "code": "UCS414P",
+      "type": "Practical",
+      "room": "SS-1",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Computer Networks",
+      "code": "UCS414P",
+      "type": "Practical",
+      "room": "SS-1",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Database Management System",
+      "code": "UCS310L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Computer Networks",
+      "code": "UCS414L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Ai For Engineers",
+      "code": "UCS321L",
+      "type": "Lecture",
+      "room": "LT301",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Ai For Engineers",
+      "code": "UCS321L",
+      "type": "Lecture",
+      "room": "LT301",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Probability And Statistics",
+      "code": "UMA401P",
+      "type": "Practical",
+      "room": "CG-2",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Probability And Statistics",
+      "code": "UMA401P",
+      "type": "Practical",
+      "room": "CG-2",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Design And Analysis Of Algorithms",
+      "code": "UCS415L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Computer Networks",
+      "code": "UCS414L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Probability And Statistics",
+      "code": "UMA401L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Engineering Design Project - 2",
+      "code": "UTA024L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Database Management System",
+      "code": "UCS310P",
+      "type": "Practical",
+      "room": "DBMS-2",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Database Management System",
+      "code": "UCS310P",
+      "type": "Practical",
+      "room": "DBMS-2",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Engineering Design Project - 2",
+      "code": "UTA024P",
+      "type": "Practical",
+      "room": "B203/L209",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Engineering Design Project - 2",
+      "code": "UTA024P",
+      "type": "Practical",
+      "room": "B203/L209",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Computer Networks",
+      "code": "UCS414L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Database Management System",
+      "code": "UCS310L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Probability And Statistics",
+      "code": "UMA401L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Database Management System",
+      "code": "UCS310L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Design And Analysis Of Algorithms",
+      "code": "UCS415L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Design And Analysis Of Algorithms",
+      "code": "UCS415P",
+      "type": "Practical",
+      "room": "DS-2",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Design And Analysis Of Algorithms",
+      "code": "UCS415P",
+      "type": "Practical",
+      "room": "DS-2",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Ai For Engineers",
+      "code": "UCS321P",
+      "type": "Practical",
+      "room": "LT401",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Ai For Engineers",
+      "code": "UCS321P",
+      "type": "Practical",
+      "room": "LT401",
+      "options": []
+    }
+  ]
+}

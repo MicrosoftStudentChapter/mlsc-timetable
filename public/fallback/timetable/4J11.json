@@ -1,0 +1,98 @@
+{
+  "batch": "4J11",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UEI613L",
+      "code": "UEI613L",
+      "type": "Lecture",
+      "room": "F303",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UEI613L",
+      "code": "UEI613L",
+      "type": "Lecture",
+      "room": "F303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UEI610L",
+      "code": "UEI610L",
+      "type": "Lecture",
+      "room": "F303",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UEI610L",
+      "code": "UEI610L",
+      "type": "Lecture",
+      "room": "F303",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UEI613P",
+      "code": "UEI613P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UEI613P",
+      "code": "UEI613P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UEI610L",
+      "code": "UEI610L",
+      "type": "Lecture",
+      "room": "F303",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UEI610P",
+      "code": "UEI610P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UEI610P",
+      "code": "UEI610P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    }
+  ]
+}

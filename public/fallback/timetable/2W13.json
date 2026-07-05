@@ -1,0 +1,549 @@
+{
+  "batch": "2W13",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UME405P",
+      "code": "UME405P",
+      "type": "Practical",
+      "room": "CAD-3",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UME405P",
+      "code": "UME405P",
+      "type": "Practical",
+      "room": "CAD-3",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UME518T",
+      "code": "UME518T",
+      "type": "Tutorial",
+      "room": "F209",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "URA401T",
+      "code": "URA401T",
+      "type": "Tutorial",
+      "room": "F209",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UCS546P",
+      "code": "UCS546P",
+      "type": "Practical",
+      "room": "SE-1",
+      "options": [
+        {
+          "subject_code": "UCS546P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "SE-1",
+          "teacher": "CAM"
+        },
+        {
+          "subject_code": "URA411P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "AM"
+        },
+        {
+          "subject_code": "URA732P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "ATI"
+        },
+        {
+          "subject_code": "URA414P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "SNK"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCS546P",
+      "code": "UCS546P",
+      "type": "Practical",
+      "room": "SE-1",
+      "options": [
+        {
+          "subject_code": "UCS546P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "SE-1",
+          "teacher": "CAM"
+        },
+        {
+          "subject_code": "URA411P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "AM"
+        },
+        {
+          "subject_code": "URA732P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "ATI"
+        },
+        {
+          "subject_code": "URA414P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "SNK"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "URA402L",
+      "code": "URA402L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UCS546L",
+      "code": "UCS546L",
+      "type": "Lecture",
+      "room": "F102",
+      "options": [
+        {
+          "subject_code": "UCS546L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F102",
+          "teacher": "ATI"
+        },
+        {
+          "subject_code": "URA411L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F209",
+          "teacher": "SNK"
+        },
+        {
+          "subject_code": "URA732L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F104",
+          "teacher": "JPT"
+        },
+        {
+          "subject_code": "URA414L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F103",
+          "teacher": "VS"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "F104",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Numerical Analysis",
+      "code": "UMA011L",
+      "type": "Lecture",
+      "room": "F104",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Numerical Analysis",
+      "code": "UMA011P",
+      "type": "Practical",
+      "room": "G201-PG",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Numerical Analysis",
+      "code": "UMA011P",
+      "type": "Practical",
+      "room": "G201-PG",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UME405L",
+      "code": "UME405L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Smart Materials For Robotics",
+      "code": "URA301L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "URA402P",
+      "code": "URA402P",
+      "type": "Practical",
+      "room": "ISD(C223)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "URA402P",
+      "code": "URA402P",
+      "type": "Practical",
+      "room": "ISD(C223)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "URA402L",
+      "code": "URA402L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UME405L",
+      "code": "UME405L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UME405L",
+      "code": "UME405L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UME518L",
+      "code": "UME518L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "URA401L",
+      "code": "URA401L",
+      "type": "Lecture",
+      "room": "F104",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "URA414L",
+      "code": "URA414L",
+      "type": "Lecture",
+      "room": "F102/F209/F104/F103",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "URA401P",
+      "code": "URA401P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "URA401P",
+      "code": "URA401P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "URA401L",
+      "code": "URA401L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UME518P",
+      "code": "UME518P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UME518P",
+      "code": "UME518P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Numerical Analysis",
+      "code": "UMA011L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Smart Materials For Robotics",
+      "code": "URA301P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Smart Materials For Robotics",
+      "code": "URA301P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "URA414P",
+      "code": "URA414P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "URA414P",
+      "code": "URA414P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "UME518L",
+      "code": "UME518L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UME405L",
+      "code": "UME405L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UME405T",
+      "code": "UME405T",
+      "type": "Tutorial",
+      "room": "F314",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UME405T",
+      "code": "UME405T",
+      "type": "Tutorial",
+      "room": "F314",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Numerical Analysis",
+      "code": "UMA011L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "URA411P",
+      "code": "URA411P",
+      "type": "Practical",
+      "room": null,
+      "options": [
+        {
+          "subject_code": "URA411P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "ML"
+        },
+        {
+          "subject_code": "URA732P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "CAM"
+        },
+        {
+          "subject_code": "URA414P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "AM"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "URA411P",
+      "code": "URA411P",
+      "type": "Practical",
+      "room": null,
+      "options": [
+        {
+          "subject_code": "URA411P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "ML"
+        },
+        {
+          "subject_code": "URA732P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "CAM"
+        },
+        {
+          "subject_code": "URA414P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "AM"
+        }
+      ]
+    }
+  ]
+}

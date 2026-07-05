@@ -1,0 +1,348 @@
+{
+  "batch": "1J11",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Physics",
+      "code": "UPH013L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Engineering Statics",
+      "code": "UBM032L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Calculus-Ii",
+      "code": "UMA016L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "General Chemistry-Ii",
+      "code": "UCB029L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "General Chemistry-Ii",
+      "code": "UCB029P",
+      "type": "Practical",
+      "room": "G143",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "General Chemistry-Ii",
+      "code": "UCB029P",
+      "type": "Practical",
+      "room": "G143",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Physics With Calculus -Ii",
+      "code": "UPH011T",
+      "type": "Tutorial",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "General Chemistry-Ii",
+      "code": "UCB029L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Calculus-Ii",
+      "code": "UMA016L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Energy And Environment",
+      "code": "UEN002L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Orientation And Introduction To Bioengineering Com",
+      "code": "UBM002L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Orientation And Introduction To Bioengineering Com",
+      "code": "UBM002P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Orientation And Introduction To Bioengineering Com",
+      "code": "UBM002P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Energy And Environment",
+      "code": "UEN002L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Physics With Calculus -Ii",
+      "code": "UPH011L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Engineering Statics",
+      "code": "UBM032L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Calculus-Ii",
+      "code": "UMA016L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Engineering Statics",
+      "code": "UBM032L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "General Chemistry-Ii",
+      "code": "UCB029P",
+      "type": "Practical",
+      "room": "G143",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "General Chemistry-Ii",
+      "code": "UCB029P",
+      "type": "Practical",
+      "room": "G143",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Physics With Calculus -Ii",
+      "code": "UPH011P",
+      "type": "Practical",
+      "room": "G325",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Physics With Calculus -Ii",
+      "code": "UPH011P",
+      "type": "Practical",
+      "room": "G325",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Energy And Environment",
+      "code": "UEN002L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Physics With Calculus -Ii",
+      "code": "UPH011L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "General Chemistry-Ii",
+      "code": "UCB029L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Calculus-Ii",
+      "code": "UMA016T",
+      "type": "Tutorial",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Orientation And Introduction To Bioengineering Com",
+      "code": "UBM002L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Orientation And Introduction To Bioengineering Com",
+      "code": "UBM002P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Orientation And Introduction To Bioengineering Com",
+      "code": "UBM002P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "General Chemistry-Ii",
+      "code": "UCB029T",
+      "type": "Tutorial",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Engineering Statics",
+      "code": "UBM032L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Calculus-Ii",
+      "code": "UMA016L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Physics With Calculus -Ii",
+      "code": "UPH011P",
+      "type": "Practical",
+      "room": "G325",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Physics With Calculus -Ii",
+      "code": "UPH011P",
+      "type": "Practical",
+      "room": "G325",
+      "options": []
+    }
+  ]
+}

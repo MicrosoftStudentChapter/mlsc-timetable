@@ -1,104 +1,41 @@
-// import { useEffect, useState } from 'react'
-// import Navbar from './components/Navbar'
-// import Footer from './components/Footer'
-// import ContributorsScroller from './components/ContributorsScroller'
-// import BatchSelector from './components/BatchSelector'
-// import './App.css'
-
-// function App() {
-//   const [contributors, setContributors] = useState([])
-//   const [semLabel, setSemLabel] = useState('ODD SEM 26-27')
-
-//   useEffect(() => {
-//     fetch('/api/contributors')
-//       .then((r) => r.json())
-//       .then((d) => Array.isArray(d) && setContributors(d))
-//       .catch(() => {})
-//   }, [])
-
-//   useEffect(() => {
-//     const baseUrl = import.meta.env.VITE_BACKEND_URL
-//     if (!baseUrl) return
-//     const url = `${baseUrl.replace(/\/$/, '')}/current`
-//     fetch(url)
-//       .then((r) => (r.ok ? r.json() : null))
-//       .then((d) => {
-//         if (!d) return
-//         if (typeof d.label === 'string' && d.label) setSemLabel(d.label)
-//         else if (d.season && d.year) setSemLabel(`${d.season} SEM ${d.year}`)
-//       })
-//       .catch(() => {})
-//   }, [])
-
-//   return (
-//     <>
-//       <main className="main">
-//         <header className="page-header">
-//           <img src="/MLSC-logo.png" alt="MLSC" className="page-header-logo" />
-//           <p className="page-tagline">MLSC TIMETABLE</p>
-//         </header>
-
-//         <div className="center-grid">
-//           {/* LEFT — logo only, no container */}
-//           <div className="left-panel">
-//             <img src="/MLSC-logo.png" alt="MLSC Logo" className="brand-logo" />
-//           </div>
-
-//           {/* RIGHT — titled card with selection inside */}
-//           <div className="right-panel">
-//             <div className="brand-card">
-//               <div className="brand-heading">
-//                 <p className="brand-title">
-//                   MLSC TIMETABLE <span className="brand-sem">{semLabel}</span>
-//                 </p>
-//                 <p className="brand-affiliation">Thapar Institute of Engineering &amp; Tech.</p>
-//               </div>
-//               <div className="brand-logo-box">
-//                 <BatchSelector />
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         <section className="contributors-section">
-//           <p className="short-tagline">Built by the community</p>
-//           <ContributorsScroller contributors={contributors} />
-//           <a
-//             href={`https://github.com/${import.meta.env.VITE_GITHUB_REPO || 'MicrosoftStudentChapter/mlsc-timetable'}`}
-//             target="_blank"
-//             rel="noreferrer"
-//             className="repo-link"
-//           >
-//             Repo Link ↗
-//           </a>
-//         </section>
-//       </main>
-
-//       <Navbar variant="landing" />
-//       <Footer />
-//     </>
-//   )
-// }
-
-// export default App
-
 import { Routes, Route } from 'react-router-dom'
-
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
+import ProfilePage from './pages/ProfilePage'
 import TimetablePage from './pages/TimetablePage'
+import AdminLayout from './pages/admin/AdminLayout'
+import Dashboard from './pages/admin/Dashboard'
+import UploadsPage from './pages/admin/UploadsPage'
+import UploadDetailPage from './pages/admin/UploadDetailPage'
+import AdminUsersPage from './pages/admin/AdminUsersPage'
+import BaselinesPage from './pages/admin/BaselinesPage'
+import ContentPage from './pages/admin/ContentPage'
+import ContributorsPage from './pages/admin/ContributorsPage'
+import ChangeRequestsPage from './pages/admin/ChangeRequestsPage'
+import FixPage from './pages/admin/FixPage'
+import FixTimetablePage from './pages/admin/FixTimetablePage'
 
-function App() {
+export default function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route
-        path="/timetable/:batch"
-        element={<TimetablePage />}
-      />
+      {/* Clerk's <SignIn routing="path" /> needs the route to capture sub-paths
+          like /login/factor-one, /login/sso-callback, etc. */}
+      <Route path="/login/*" element={<LoginPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/timetable/:batch" element={<TimetablePage />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="uploads" element={<UploadsPage />} />
+        <Route path="uploads/:id" element={<UploadDetailPage />} />
+        <Route path="change-requests" element={<ChangeRequestsPage />} />
+        <Route path="baselines" element={<BaselinesPage />} />
+        <Route path="content" element={<ContentPage />} />
+        <Route path="contributors" element={<ContributorsPage />} />
+        <Route path="users" element={<AdminUsersPage />} />
+        <Route path="fix" element={<FixPage />} />
+        <Route path="fix/timetable/:batch" element={<FixTimetablePage />} />
+      </Route>
     </Routes>
   )
 }
-
-export default App

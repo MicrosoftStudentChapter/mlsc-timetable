@@ -1,0 +1,338 @@
+{
+  "batch": "2S15",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Electric Machinery",
+      "code": "UEE413L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Design And Analysis Of Algorithms",
+      "code": "ULC403L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Operating Systems",
+      "code": "ULC404L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Electric Machinery",
+      "code": "UEE413P",
+      "type": "Practical",
+      "room": "EM(C117)",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Electric Machinery",
+      "code": "UEE413P",
+      "type": "Practical",
+      "room": "EM(C117)",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Design And Analysis Of Algorithms",
+      "code": "ULC403P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Design And Analysis Of Algorithms",
+      "code": "ULC403P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Object Oriented Programming",
+      "code": "UTA018L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Design And Analysis Of Algorithms",
+      "code": "ULC403L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Mathematics For Data Science",
+      "code": "UMA028L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Operating Systems",
+      "code": "ULC404P",
+      "type": "Practical",
+      "room": "BMC(C323)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Operating Systems",
+      "code": "ULC404P",
+      "type": "Practical",
+      "room": "BMC(C323)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Mathematics For Data Science",
+      "code": "UMA028L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Design And Analysis Of Algorithms",
+      "code": "ULC403L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Object Oriented Programming",
+      "code": "UTA018L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Object Oriented Programming",
+      "code": "UTA018P",
+      "type": "Practical",
+      "room": "PL-5",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Object Oriented Programming",
+      "code": "UTA018P",
+      "type": "Practical",
+      "room": "PL-5",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "ULC405L",
+      "code": "ULC405L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "ULC4021",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Mathematics For Data Science",
+      "code": "UMA028P",
+      "type": "Practical",
+      "room": "G203(NA-1)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Mathematics For Data Science",
+      "code": "UMA028P",
+      "type": "Practical",
+      "room": "G203(NA-1)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "ULC405L",
+      "code": "ULC405L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Electric Machinery",
+      "code": "UEE413L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Object Oriented Programming",
+      "code": "UTA018L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Mathematics For Data Science",
+      "code": "UMA028L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Electric Machinery",
+      "code": "UEE413L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "ULC405L",
+      "code": "ULC405L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Electric Machinery",
+      "code": "UEE413T",
+      "type": "Tutorial",
+      "room": "E301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "ULC405T",
+      "code": "ULC405T",
+      "type": "Tutorial",
+      "room": "E301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Operating Systems",
+      "code": "ULC404L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    }
+  ]
+}

@@ -1,0 +1,465 @@
+{
+  "batch": "3H22",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Refrigeration And Air Conditioning",
+      "code": "UME719L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UME606L",
+      "code": "UME606L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Fluid Machines",
+      "code": "UME723L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Fluid Machines",
+      "code": "UME723T",
+      "type": "Tutorial",
+      "room": "F310",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "F105/F106",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "E301",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "E301",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Refrigeration And Air Conditioning",
+      "code": "UME719P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Refrigeration And Air Conditioning",
+      "code": "UME719P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Dynamics And Vibrations",
+      "code": "UME513L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Fluid Machines",
+      "code": "UME723L",
+      "type": "Lecture",
+      "room": "F103",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UME606T",
+      "code": "UME606T",
+      "type": "Tutorial",
+      "room": "E302",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UME606T",
+      "code": "UME606T",
+      "type": "Tutorial",
+      "room": "E302",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Fluid Machines",
+      "code": "UME723P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Fluid Machines",
+      "code": "UME723P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "UME625L",
+      "code": "UME625L",
+      "type": "Lecture",
+      "room": "F301",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Refrigeration And Air Conditioning",
+      "code": "UME719L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UME606L",
+      "code": "UME606L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UME628L",
+      "code": "UME628L",
+      "type": "Lecture",
+      "room": "F105/F314/F302/E105/F303/F106",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Dynamics And Vibrations",
+      "code": "UME513L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Dynamics And Vibrations",
+      "code": "UME513T",
+      "type": "Tutorial",
+      "room": "F315",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Refrigeration And Air Conditioning",
+      "code": "UME719T",
+      "type": "Tutorial",
+      "room": "F315",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Dynamics And Vibrations",
+      "code": "UME513P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Dynamics And Vibrations",
+      "code": "UME513P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Industrial Engineering",
+      "code": "UME515L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UME606L",
+      "code": "UME606L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Dynamics And Vibrations",
+      "code": "UME513L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Fluid Machines",
+      "code": "UME723L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UME630L",
+      "code": "UME630L",
+      "type": "Lecture",
+      "room": "E105",
+      "options": [
+        {
+          "subject_code": "UME630L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E105",
+          "teacher": "AMG"
+        },
+        {
+          "subject_code": "UME631L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F303",
+          "teacher": "MDM"
+        },
+        {
+          "subject_code": "UME628T",
+          "subject_name": null,
+          "type": "Tutorial",
+          "place": "F106",
+          "teacher": "NG"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UME625L",
+      "code": "UME625L",
+      "type": "Lecture",
+      "room": "F301",
+      "options": [
+        {
+          "subject_code": "UME625L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F301",
+          "teacher": "ASO"
+        },
+        {
+          "subject_code": "UME628L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F105",
+          "teacher": "ATI"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UME625L",
+      "code": "UME625L",
+      "type": "Lecture",
+      "room": "F301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Industrial Engineering",
+      "code": "UME515L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Refrigeration And Air Conditioning",
+      "code": "UME719L",
+      "type": "Lecture",
+      "room": "F105",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UME628L",
+      "code": "UME628L",
+      "type": "Lecture",
+      "room": "F105/F314/F302/E105/F303/F106",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UME628T",
+      "code": "UME628T",
+      "type": "Tutorial",
+      "room": "E105/F303/F106",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005L",
+      "type": "Lecture",
+      "room": "F104",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Industrial Engineering",
+      "code": "UME515T",
+      "type": "Tutorial",
+      "room": "F313",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "URA624P",
+      "code": "URA624P",
+      "type": "Practical",
+      "room": "SE-1/RB/?",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "URA624P",
+      "code": "URA624P",
+      "type": "Practical",
+      "room": "SE-1/RB/?",
+      "options": []
+    }
+  ]
+}

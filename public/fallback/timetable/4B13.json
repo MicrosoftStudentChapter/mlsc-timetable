@@ -1,0 +1,243 @@
+{
+  "batch": "4B13",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Infrastructure Contracts & Risk Management",
+      "code": "UCE863L",
+      "type": "Lecture",
+      "room": "F107/F311",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Design Of Structures",
+      "code": "UCE807L",
+      "type": "Lecture",
+      "room": "F107",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Design Of Smart & Sustainable Public Utilities",
+      "code": "UCE853L",
+      "type": "Lecture",
+      "room": "F107/F306",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Geotechiques For Design Of Underground Structures",
+      "code": "UCE864T",
+      "type": "Tutorial",
+      "room": "F107",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UCE806T",
+      "code": "UCE806T",
+      "type": "Tutorial",
+      "room": "E307",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Design Of Structures",
+      "code": "UCE807L",
+      "type": "Lecture",
+      "room": "F107",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "UCE838/864/853L",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Design Of Structures",
+      "code": "UCE807L",
+      "type": "Lecture",
+      "room": "F107",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Seismic Resistant Design Of Structures",
+      "code": "UCE808L",
+      "type": "Lecture",
+      "room": "F107",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Infrastructure Contracts & Risk Management",
+      "code": "UCE863L",
+      "type": "Lecture",
+      "room": "F107/E302",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Geotechiques For Design Of Underground Structures",
+      "code": "UCE864L",
+      "type": "Lecture",
+      "room": "LP109/E302",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Prestressed Concrete Structures",
+      "code": "UCE838L",
+      "type": "Lecture",
+      "room": "LP109",
+      "options": [
+        {
+          "subject_code": "UCE838L",
+          "subject_name": "Prestressed Concrete Structures",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "SHR"
+        },
+        {
+          "subject_code": "UCE853L",
+          "subject_name": "Design Of Smart & Sustainable Public Utilities",
+          "type": "Lecture",
+          "place": "E302",
+          "teacher": "ABK"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Design Of Smart & Sustainable Public Utilities",
+      "code": "UCE853T",
+      "type": "Tutorial",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005L",
+      "type": "Lecture",
+      "room": "F107",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Seismic Resistant Design Of Structures",
+      "code": "UCE808L",
+      "type": "Lecture",
+      "room": "F107",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "E308",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "E308",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Design Of Structures",
+      "code": "UCE807T",
+      "type": "Tutorial",
+      "room": "E301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Humanities For Engineers",
+      "code": "UHU005L",
+      "type": "Lecture",
+      "room": "F107",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Infrastructure Contracts & Risk Management",
+      "code": "UCE863T",
+      "type": "Tutorial",
+      "room": "E302/F107",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Infrastructure Contracts & Risk Management",
+      "code": "UCE863L",
+      "type": "Lecture",
+      "room": "E302/F107",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": null,
+      "options": []
+    }
+  ]
+}

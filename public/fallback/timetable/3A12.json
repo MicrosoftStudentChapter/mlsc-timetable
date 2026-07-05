@@ -1,0 +1,298 @@
+{
+  "batch": "3A12",
+  "semester": {
+    "label": "EVEN 25-26"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Process Utility And Industrial Safety",
+      "code": "UCH605L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCH612L",
+      "code": "UCH612L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Process Modeling And Simulation",
+      "code": "UCH802L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Transport Phenomena",
+      "code": "UCH603L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Chemical Reaction Engineering-Ii",
+      "code": "UCH601T",
+      "type": "Tutorial",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Transport Phenomena",
+      "code": "UCH603L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCH602L",
+      "code": "UCH602L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Process Modeling And Simulation",
+      "code": "UCH802L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Process Utility And Industrial Safety",
+      "code": "UCH605T",
+      "type": "Tutorial",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCH602P",
+      "code": "UCH602P",
+      "type": "Practical",
+      "room": "C122",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCH602P",
+      "code": "UCH602P",
+      "type": "Practical",
+      "room": "C122",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Process Utility And Industrial Safety",
+      "code": "UCH605L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Process Modeling And Simulation",
+      "code": "UCH802L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCH612P",
+      "code": "UCH612P",
+      "type": "Practical",
+      "room": "B112",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UCH612P",
+      "code": "UCH612P",
+      "type": "Practical",
+      "room": "B112",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Transport Phenomena",
+      "code": "UCH603L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCH602L",
+      "code": "UCH602L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Chemical Reaction Engineering-Ii",
+      "code": "UCH601L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Chemical Reaction Engineering-Ii",
+      "code": "UCH601L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Transport Phenomena",
+      "code": "UCH603T",
+      "type": "Tutorial",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCH602L",
+      "code": "UCH602L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Process Utility And Industrial Safety",
+      "code": "UCH605L",
+      "type": "Lecture",
+      "room": "F211",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UCH602T",
+      "code": "UCH602T",
+      "type": "Tutorial",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Chemical Reaction Engineering-Ii",
+      "code": "UCH601L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCH612L",
+      "code": "UCH612L",
+      "type": "Lecture",
+      "room": "F210",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Process Modeling And Simulation",
+      "code": "UCH802P",
+      "type": "Practical",
+      "room": "B112",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Process Modeling And Simulation",
+      "code": "UCH802P",
+      "type": "Practical",
+      "room": "B112",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCH893P",
+      "code": "UCH893P",
+      "type": "Practical",
+      "room": "B113",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UCH893P",
+      "code": "UCH893P",
+      "type": "Practical",
+      "room": "B113",
+      "options": []
+    }
+  ]
+}
