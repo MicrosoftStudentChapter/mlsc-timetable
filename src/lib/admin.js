@@ -155,6 +155,14 @@ export function deleteBaseline(key) {
   return adminFetch(`/admin/baselines/${encodeURIComponent(key)}`, { method: 'DELETE' })
 }
 
+export function checkBaseline(key) {
+  return adminFetch(`/admin/baselines/${encodeURIComponent(key)}/check`, { method: 'POST' })
+}
+
+export function syncBaselineCounts() {
+  return adminFetch('/admin/baselines/sync-counts', { method: 'POST' })
+}
+
 // ── Course-scheme PDF upload ──────────────────────────────────────────
 // Parses a Thapar SUGC/SPGC course-scheme PDF and returns/writes the
 // per-semester baseline course rosters.

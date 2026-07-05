@@ -302,6 +302,22 @@
   cursor: not-allowed;
 }
 
+.baseline-check-btn { color: #34d399; }
+.baseline-check-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+[data-theme='light'] .baseline-check-btn { color: #059669; }
+
+.baseline-check-result {
+  font-size: 12px;
+  margin-right: 8px;
+  font-weight: 500;
+}
+.baseline-check-result.is-ok   { color: #34d399; }
+.baseline-check-result.is-warn { color: #fbbf24; }
+.baseline-check-result.is-error { color: #f87171; }
+[data-theme='light'] .baseline-check-result.is-ok    { color: #059669; }
+[data-theme='light'] .baseline-check-result.is-warn  { color: #d97706; }
+[data-theme='light'] .baseline-check-result.is-error { color: #dc2626; }
+
 .admin-card-sub {
   font-size: 13px;
   color: var(--text-muted, rgba(255, 255, 255, 0.5));
@@ -1366,6 +1382,15 @@
   flex-wrap: wrap;
   gap: 12px;
 }
+.fix-header-left {
+  min-width: 0;
+}
+.fix-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
 .fix-title {
   font-size: 22px;
   font-weight: 600;
@@ -1405,6 +1430,36 @@
 }
 .fix-rollback-btn:hover { background: rgba(99, 102, 241, 0.3); }
 .fix-rollback-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.fix-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.fix-doctor-btn {
+  appearance: none;
+  border: 1px solid rgba(56, 189, 148, 0.5);
+  background: rgba(56, 189, 148, 0.12);
+  color: #6ee7b7;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.fix-doctor-btn:hover { background: rgba(56, 189, 148, 0.22); }
+.fix-doctor-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+[data-theme='light'] .fix-doctor-btn { color: #047857; border-color: rgba(4,120,87,0.4); background: rgba(4,120,87,0.08); }
+[data-theme='light'] .fix-doctor-btn:hover { background: rgba(4,120,87,0.15); }
+.fix-doctor-result {
+  font-size: 12px;
+  color: #6ee7b7;
+}
+.fix-doctor-result.is-error { color: #f87171; }
+[data-theme='light'] .fix-doctor-result { color: #047857; }
+[data-theme='light'] .fix-doctor-result.is-error { color: #dc2626; }
 
 .fix-pills {
   display: flex;

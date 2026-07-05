@@ -83,6 +83,8 @@ export default function FixPage() {
   const [toast, setToast] = useState(null) // { kind, text } | null
   const [expandedGroups, setExpandedGroups] = useState(() => new Set())
   const [sortBy, setSortBy] = useState('severity')
+  const [doctorRunning, setDoctorRunning] = useState(false)
+  const [doctorResult, setDoctorResult] = useState(null) // { ok, written, deleted } | null
 
   const clearUrlFilters = useCallback(() => {
     const next = new URLSearchParams(searchParams)
@@ -242,6 +244,20 @@ export default function FixPage() {
     }
   }
 
+  async function runDoctor() {
+    setDoctorRunning(true)
+    setDoctorResult(null)
+    try {
+      const res = await backfillBaselineErrors()
+      setDoctorResult({ ok: true, written: res.written ?? 0, deleted: res.deleted ?? 0 })
+      await reload()
+    } catch (err) {
+      setDoctorResult({ ok: false, error: err?.message || String(err) })
+    } finally {
+      setDoctorRunning(false)
+    }
+  }
+
   async function runRollback() {
     if (!confirm('Roll back the most recent ingest? This will replace the live batches + timetables with the snapshot taken before the last ingest. Single-use — the snapshot will be deleted after.')) {
       return
@@ -261,30 +277,52 @@ export default function FixPage() {
   return (
     <div className="fix-page">
       <div className="fix-header">
-        <div>
+        <div className="fix-header-left">
           <h1 className="fix-title">Fix issues</h1>
           <p className="fix-sub">
             {summary.totals.open || 0} open · {summary.totals.resolved || 0} resolved · {summary.totals.ignored || 0} ignored
           </p>
         </div>
-        {rollback?.available && (
-          <div className="fix-rollback-card">
-            <div className="fix-rollback-info">
-              <span className="fix-rollback-title">Rollback available</span>
-              <span className="fix-rollback-meta">
-                Snapshot from {fmtDateTime(rollback.created_at)} · expires in {fmtCountdown(rollback.expires_at)} · {rollback.batches} batches, {rollback.timetables} timetables
-              </span>
-            </div>
+        <div className="fix-header-right">
+          <div className="fix-header-actions">
             <button
               type="button"
-              className="fix-rollback-btn"
-              onClick={runRollback}
-              disabled={busy}
+              className="fix-doctor-btn"
+              onClick={runDoctor}
+              disabled={doctorRunning || busy}
+              title="Re-run the doctor against current timetables + baselines. Clears all open baseline errors and rewrites them from scratch."
             >
-              Roll back last ingest
+              {doctorRunning ? 'Running…' : 'Re-run doctor'}
             </button>
+            {doctorResult && (
+              <span className={`fix-doctor-result${doctorResult.ok ? '' : ' is-error'}`}>
+                {doctorResult.ok
+                  ? doctorResult.written === 0
+                    ? 'Done — no baseline issues found'
+                    : `Done — ${doctorResult.written} baseline issue${doctorResult.written === 1 ? '' : 's'} (refreshed)`
+                  : `Failed: ${doctorResult.error}`}
+              </span>
+            )}
           </div>
-        )}
+          {rollback?.available && (
+            <div className="fix-rollback-card">
+              <div className="fix-rollback-info">
+                <span className="fix-rollback-title">Rollback available</span>
+                <span className="fix-rollback-meta">
+                  Snapshot from {fmtDateTime(rollback.created_at)} · expires in {fmtCountdown(rollback.expires_at)} · {rollback.batches} batches, {rollback.timetables} timetables
+                </span>
+              </div>
+              <button
+                type="button"
+                className="fix-rollback-btn"
+                onClick={runRollback}
+                disabled={busy}
+              >
+                Roll back last ingest
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {(uploadFilter || activeType) && (

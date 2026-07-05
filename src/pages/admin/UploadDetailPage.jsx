@@ -13,6 +13,7 @@ function fmtDate(iso) {
 }
 
 const SEV_RANK = { error: 3, warn: 2, warning: 2, info: 1 }
+const ORPHAN_TYPES = new Set(['BASELINE_MISSING', 'BASELINE_MISMATCH', 'doctor_mismatch'])
 
 function TypeGroupRow({ group, uploadId, samples, onLoadSamples, expanded, onToggle }) {
   const total = group.total || (group.open + group.resolved + group.ignored)
@@ -56,7 +57,11 @@ function TypeGroupRow({ group, uploadId, samples, onLoadSamples, expanded, onTog
           )}
         </span>
         <Link
-          to={`/admin/fix?upload=${encodeURIComponent(uploadId)}&type=${encodeURIComponent(group.error_type)}`}
+          to={
+            group.error_type === 'BASELINE_MISSING' || group.error_type === 'BASELINE_MISMATCH' || group.error_type === 'doctor_mismatch'
+              ? `/admin/fix?type=${encodeURIComponent(group.error_type)}`
+              : `/admin/fix?upload=${encodeURIComponent(uploadId)}&type=${encodeURIComponent(group.error_type)}`
+          }
           className="ud-group-jump"
           onClick={(e) => e.stopPropagation()}
         >
@@ -86,7 +91,11 @@ function TypeGroupRow({ group, uploadId, samples, onLoadSamples, expanded, onTog
               ))}
               {samples.length >= 10 && (
                 <Link
-                  to={`/admin/fix?upload=${encodeURIComponent(uploadId)}&type=${encodeURIComponent(group.error_type)}`}
+                  to={
+                    ORPHAN_TYPES.has(group.error_type)
+                      ? `/admin/fix?type=${encodeURIComponent(group.error_type)}`
+                      : `/admin/fix?upload=${encodeURIComponent(uploadId)}&type=${encodeURIComponent(group.error_type)}`
+                  }
                   className="ud-samples-more"
                 >
                   See all {group.open} open →
@@ -133,7 +142,12 @@ export default function UploadDetailPage() {
 
   const loadSamples = useCallback(async (errorType) => {
     try {
-      const res = await listErrors({ uploadId: id, errorType, status: 'open', limit: 10 })
+      const res = await listErrors({
+        uploadId: ORPHAN_TYPES.has(errorType) ? undefined : id,
+        errorType,
+        status: 'open',
+        limit: 10,
+      })
       setSamplesByType((prev) => ({ ...prev, [errorType]: res.items || [] }))
     } catch {
       setSamplesByType((prev) => ({ ...prev, [errorType]: [] }))

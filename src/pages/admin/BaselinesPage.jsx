@@ -7,11 +7,16 @@ import {
   listBaselines,
   setBaseline,
   deleteBaseline,
+  checkBaseline,
+  syncBaselineCounts,
+  getCurrent,
   previewScheme,
   applyScheme,
   applySchemePlan,
   AdminAuthError,
 } from '../../lib/admin'
+import BaselineCheckDialog from '../../components/BaselineCheckDialog'
+import BaselineEditDialog from '../../components/BaselineEditDialog'
 import { loadBatches } from '../../lib/batches'
 import Combobox from '../../components/Combobox'
 import SchemePreviewDialog from '../../components/SchemePreviewDialog'
@@ -64,6 +69,13 @@ export default function BaselinesPage() {
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [removing, setRemoving] = useState(null)
+  const [checkingKey, setCheckingKey] = useState(null) // key currently being checked
+  const [checkResult, setCheckResult] = useState(null)  // full response for the dialog
+  const [editingRow, setEditingRow] = useState(null)    // baseline row open in the edit dialog
+  const [editBusy, setEditBusy] = useState(false)
+  const [syncBusy, setSyncBusy] = useState(false)
+  const [syncResult, setSyncResult] = useState(null)    // { updated, skipped } | null
+  const [currentPrefix, setCurrentPrefix] = useState(null) // 'E' | 'O' | null
 
   const [years, setYears] = useState([])
   const [prefix, setPrefix] = useState('E')
@@ -98,6 +110,14 @@ export default function BaselinesPage() {
     loadBatches()
       .then((y) => { if (alive) setYears(Array.isArray(y) ? y : []) })
       .catch(() => { if (alive) setYears([]) })
+    getCurrent()
+      .then((d) => {
+        if (!alive) return
+        const label = (d?.label || '').trim().toUpperCase()
+        if (label.startsWith('E')) setCurrentPrefix('E')
+        else if (label.startsWith('O')) setCurrentPrefix('O')
+      })
+      .catch(() => {})
     return () => { alive = false }
   }, [])
 
@@ -219,34 +239,31 @@ export default function BaselinesPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  async function onSubmit(evt) {
-    evt.preventDefault()
-    if (!derivedKey || submitting) return
-    const cleaned = {}
-    for (const [k, v] of Object.entries(counts)) {
-      if (v === '' || v == null) continue
-      const n = Number(v)
-      if (!Number.isInteger(n) || n < 0) {
-        setError(new Error(`'${k}' must be a non-negative integer`))
-        return
-      }
-      cleaned[k] = n
-    }
-    if (Object.keys(cleaned).length === 0) {
-      setError(new Error('Provide at least one type count.'))
-      return
-    }
-    setSubmitting(true)
-    setError(null)
+  async function onSyncCounts() {
+    setSyncBusy(true)
+    setSyncResult(null)
     try {
-      await setBaseline(derivedKey, cleaned)
-      setStreamInput('')
-      setCounts({ Lecture: '', Tutorial: '', Practical: '' })
-      await refresh()
+      const res = await syncBaselineCounts()
+      setSyncResult({ updated: res.updated, skipped: res.skipped })
+      if (res.updated > 0) await refresh()
     } catch (err) {
       setError(err)
     } finally {
-      setSubmitting(false)
+      setSyncBusy(false)
+    }
+  }
+
+  async function onEditSave(key, counts, courses) {
+    setEditBusy(true)
+    try {
+      await setBaseline(key, counts, { courses })
+      setEditingRow(null)
+      setStreamInput('')  // reset the upsert form after create
+      await refresh()
+    } catch (err) {
+      throw err // let the dialog surface it
+    } finally {
+      setEditBusy(false)
     }
   }
 
@@ -260,6 +277,18 @@ export default function BaselinesPage() {
       setError(err)
     } finally {
       setRemoving(null)
+    }
+  }
+
+  async function onCheck(key) {
+    setCheckingKey(key)
+    try {
+      const res = await checkBaseline(key)
+      setCheckResult(res)
+    } catch (err) {
+      setCheckResult({ status: 'error', baseline_key: key, group: key, batches: 0, written: 0, deleted: 0, _error: errMessage(err) })
+    } finally {
+      setCheckingKey(null)
     }
   }
 
@@ -497,7 +526,22 @@ export default function BaselinesPage() {
 
       <div className="admin-card" style={{ marginBottom: 16 }}>
         <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Upsert baseline</h2>
-        <form className="upload-form" onSubmit={onSubmit} style={{ marginTop: 12 }}>
+        <form
+          className="upload-form"
+          onSubmit={(e) => {
+            e.preventDefault()
+            if (!derivedKey) return
+            setEditingRow({
+              key: derivedKey,
+              group: derivedKey.slice(1),
+              semester_prefix: prefix,
+              counts: {},
+              courses: [],
+              scheme_source: null,
+            })
+          }}
+          style={{ marginTop: 12 }}
+        >
           <div className="baseline-semester-row">
             <label>Semester</label>
             <div className="seg-switch" role="group" aria-label="Semester parity">
@@ -550,47 +594,8 @@ export default function BaselinesPage() {
             <code>{derivedKey || '—'}</code>
           </div>
 
-          <div className="baseline-counts-row">
-            {Object.entries(counts).map(([type, val]) => (
-              <div key={type} className="baseline-count-field">
-                <label htmlFor={`baseline-${type}`}>{type}</label>
-                <input
-                  id={`baseline-${type}`}
-                  type="number"
-                  min="0"
-                  step="1"
-                  className="upload-input"
-                  placeholder="0"
-                  value={val}
-                  onChange={(e) => setCounts((prev) => ({ ...prev, [type]: e.target.value }))}
-                />
-              </div>
-            ))}
-          </div>
-          <div>
-            <label htmlFor="baseline-extra">Add another type</label>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <input
-                id="baseline-extra"
-                type="text"
-                className="upload-input"
-                placeholder="e.g. Project"
-                value={extraType}
-                onChange={(e) => setExtraType(e.target.value)}
-                style={{ flex: 1 }}
-              />
-              <button
-                type="button"
-                className="admin-card-action"
-                onClick={addCountField}
-                disabled={!extraType.trim()}
-              >
-                Add field
-              </button>
-            </div>
-          </div>
-          <button type="submit" className="upload-btn" disabled={submitting || !derivedKey}>
-            {submitting ? 'Saving…' : derivedKey ? `Save baseline ${derivedKey}` : 'Save baseline'}
+          <button type="submit" className="upload-btn" disabled={!derivedKey}>
+            {derivedKey ? `Configure baseline ${derivedKey}…` : 'Configure baseline'}
           </button>
         </form>
       </div>
@@ -598,14 +603,32 @@ export default function BaselinesPage() {
       <div className="admin-card">
         <div className="admin-card-header" style={{ alignItems: 'center' }}>
           <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Baselines</h2>
-          <button
-            type="button"
-            className="admin-card-action"
-            onClick={refresh}
-            disabled={loading}
-          >
-            {loading ? 'Refreshing…' : 'Refresh'}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {syncResult && (
+              <span style={{ fontSize: 12, color: syncResult.updated > 0 ? '#34d399' : 'var(--text-muted,rgba(255,255,255,0.5))' }}>
+                {syncResult.updated > 0
+                  ? `Synced ${syncResult.updated} baseline${syncResult.updated !== 1 ? 's' : ''}`
+                  : 'All counts already set'}
+              </span>
+            )}
+            <button
+              type="button"
+              className="admin-card-action"
+              onClick={onSyncCounts}
+              disabled={syncBusy || loading}
+              title="Derive and back-fill per-type counts from course L/T/P columns for any baseline that has an empty counts field"
+            >
+              {syncBusy ? 'Syncing…' : 'Sync counts'}
+            </button>
+            <button
+              type="button"
+              className="admin-card-action"
+              onClick={refresh}
+              disabled={loading}
+            >
+              {loading ? 'Refreshing…' : 'Refresh'}
+            </button>
+          </div>
         </div>
 
         {error && (
@@ -744,10 +767,22 @@ export default function BaselinesPage() {
                             )}
                           </td>
                           <td style={{ whiteSpace: 'nowrap', textAlign: 'right' }}>
+                            {currentPrefix && decomposeKey(row.key)?.prefix === currentPrefix && (
+                              <button
+                                type="button"
+                                className="admin-card-action baseline-check-btn"
+                                onClick={() => onCheck(row.key)}
+                                disabled={checkingKey === row.key}
+                                title="Run the doctor against live timetables for this group and log any mismatches"
+                                style={{ marginRight: 8 }}
+                              >
+                                {checkingKey === row.key ? 'Checking…' : 'Check'}
+                              </button>
+                            )}
                             <button
                               type="button"
                               className="admin-card-action"
-                              onClick={() => loadIntoForm(row)}
+                              onClick={() => setEditingRow(row)}
                               style={{ marginRight: 8 }}
                             >
                               Edit
@@ -815,6 +850,18 @@ export default function BaselinesPage() {
         busy={schemeBusy}
         onApply={onSchemeApplyEdited}
         onClose={() => setSchemeDialogOpen(false)}
+      />
+
+      <BaselineCheckDialog
+        result={checkResult}
+        onClose={() => setCheckResult(null)}
+      />
+
+      <BaselineEditDialog
+        row={editingRow}
+        busy={editBusy}
+        onSave={onEditSave}
+        onClose={() => setEditingRow(null)}
       />
     </>
   )
