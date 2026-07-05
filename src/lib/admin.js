@@ -249,6 +249,10 @@ export function deleteAnnouncement(id) {
   return adminFetch(`/admin/announcements/${encodeURIComponent(id)}`, { method: 'DELETE' })
 }
 
+export function resetAnnouncements() {
+  return adminFetch('/admin/announcements/reset', { method: 'POST' })
+}
+
 // ── Exam dates ────────────────────────────────────────────────────────
 export function listExamDates() {
   return adminFetch('/exam-dates')
@@ -271,6 +275,10 @@ export function addExamDate({ subject, code, date, slot, type, room, targetYear 
 
 export function deleteExamDate(id) {
   return adminFetch(`/admin/exam-dates/${encodeURIComponent(id)}`, { method: 'DELETE' })
+}
+
+export function resetExamDates() {
+  return adminFetch('/admin/exam-dates/reset', { method: 'POST' })
 }
 
 // ── Calendar overrides ─────────────────────────────────────────────────
@@ -316,6 +324,10 @@ export function deleteCalendarOverride(id) {
   return adminFetch(`/admin/calendar-overrides/${encodeURIComponent(id)}`, {
     method: 'DELETE',
   })
+}
+
+export function resetCalendarOverrides() {
+  return adminFetch('/admin/calendar-overrides/reset', { method: 'POST' })
 }
 
 // ── Calendar PDF parser ────────────────────────────────────────────────
