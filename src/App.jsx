@@ -9,6 +9,7 @@ import UploadsPage from './pages/admin/UploadsPage'
 import UploadDetailPage from './pages/admin/UploadDetailPage'
 import AdminUsersPage from './pages/admin/AdminUsersPage'
 import BaselinesPage from './pages/admin/BaselinesPage'
+import ContentPage from './pages/admin/ContentPage'
 import ContributorsPage from './pages/admin/ContributorsPage'
 import ChangeRequestsPage from './pages/admin/ChangeRequestsPage'
 import FixPage from './pages/admin/FixPage'
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="uploads/:id" element={<UploadDetailPage />} />
         <Route path="change-requests" element={<ChangeRequestsPage />} />
         <Route path="baselines" element={<BaselinesPage />} />
+        <Route path="content" element={<ContentPage />} />
         <Route path="contributors" element={<ContributorsPage />} />
         <Route path="users" element={<AdminUsersPage />} />
         <Route path="fix" element={<FixPage />} />

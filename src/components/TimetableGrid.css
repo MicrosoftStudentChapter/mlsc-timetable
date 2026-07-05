@@ -10,8 +10,15 @@
   position: relative;
   isolation: isolate;
   width: 100%;
-  /* Explicit height so the scroll-wrapper can inherit it and JS can measure it */
-  height: calc(100vh - 120px);
+  /* Size to the grid's natural content height when it fits; capped at the
+     parent's height so the inner scroll wrapper can actually scroll when
+     the grid is taller than the visible frame. */
+  flex: 0 0 auto;
+  align-self: flex-start;
+  max-height: 100%;
+  min-height: 0;
+  /* Breathing room between the grid and the footer below it. */
+  margin-bottom: 24px;
   overflow: hidden;
   border-radius: 16px;
   border: none;
@@ -26,8 +33,8 @@
   --card-font-size: 10px;      /* Slightly reduced from 11px */
   --card-meta-size: 8.5px;     /* Slightly reduced from 9px */
   --badge-font-size: 8px;      /* Maintained safety limit */
-  --header-padding: 7px 8px;   /* Reduced vertical padding */
-  --header-font-size: 11px;
+  --header-padding: 11px 10px;  /* Roomier so day/batch labels breathe */
+  --header-font-size: 13px;
   --time-font-size: 15px;
   --grid-line-top: 9px;        /* Proportional to row height */
   --active-dot-size: 5px;
@@ -62,7 +69,11 @@
   z-index: 1;
   width: 100%;
   height: 100%;           /* Fills the frame */
-  overflow: auto;         /* Allow scrolling if content overflows */
+  /* Allow scroll on either axis if the JS-zoomed grid still overflows.
+     The zoom effect in TimetableGrid.jsx shrinks the grid to fit width
+     when possible; anything left over falls back to scroll instead of
+     being clipped. */
+  overflow: auto;
   border-radius: inherit;
   /* flexbox centering removed to prevent top content cropping when child overflows wrapper bounds */
 }
@@ -70,11 +81,9 @@
 /* ─── Watermark ──────────────────────────────────────────────────────────────────────── */
 .tt-grid-watermark {
   position: absolute;
-  /* Offset from sticky time column so the watermark sits over the day columns */
-  top: 51px;
-  right: 0;
-  bottom: 0;
-  left: var(--time-col-width); /* tracks breakpoint variable — no hardcoded 96px */
+  /* Centered across the ENTIRE grid frame (not just the day-columns box)
+     so it sits visually in the middle regardless of the time column width. */
+  inset: 0;
   z-index: 0;
   display: flex;
   align-items: center;
@@ -84,12 +93,12 @@
 }
 
 .tt-watermark-logo {
-  /* Desktop: 350–500 px wide, centred, aspect-ratio preserved */
-  width: clamp(350px, 42%, 500px);
-  height: auto;       /* never stretch — aspect ratio locked */
+  /* Smaller than before so the logo doesn't dominate the visible grid,
+     especially on tablet/mobile where the day columns are narrower. */
+  width: clamp(160px, 26%, 320px);
+  height: auto;
   object-fit: contain;
   display: block;
-  /* Tune visibility here — real logo, no silhouette */
   opacity: 0.3;
   pointer-events: none;
   user-select: none;
@@ -930,6 +939,23 @@ select.tt-editor-input {
   }
 }
 
+/* ── Mobile (hamburger breakpoint) grid sizing ─────────────────────────────
+   Bumps row height + font sizes so the grid fills more vertical space and
+   the class cards are easier to read/tap on phones. The width-based JS
+   zoom-to-fit still handles horizontal scaling, so nothing overflows. */
+@media (max-width: 768px) {
+  .tt-grid-frame {
+    --row-height: 64px;
+    --card-padding: 4px 8px 4px;
+    --card-font-size: 12px;
+    --card-meta-size: 10px;
+    --badge-font-size: 9px;
+    --header-padding: 12px 10px;
+    --header-font-size: 14px;
+    --time-font-size: 16px;
+  }
+}
+
 
 /* ═══════════════════════════════════════════════════════════════
    DARK MODE — TimetableGrid  (Premium MLSC redesign)
@@ -1429,11 +1455,11 @@ select.tt-editor-input {
 
 
 
-/* ─── Drag handle button (top-right, next to edit) ───────────────────────── */
+/* ─── Drag handle button (bottom-right corner) ───────────────────────────── */
 .tt-drag-btn {
   position: absolute;
-  top: 4px;
-  right: 24px; /* edit-btn is right:4 width:16 → leaves 4px gap */
+  bottom: 4px;
+  right: 4px;
   width: 16px;
   height: 16px;
   border-radius: 4px;

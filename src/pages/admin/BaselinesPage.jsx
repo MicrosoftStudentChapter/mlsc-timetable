@@ -9,17 +9,43 @@ import {
   deleteBaseline,
   previewScheme,
   applyScheme,
+  applySchemePlan,
   AdminAuthError,
 } from '../../lib/admin'
 import { loadBatches } from '../../lib/batches'
 import Combobox from '../../components/Combobox'
+import SchemePreviewDialog from '../../components/SchemePreviewDialog'
 import batchesFallback from '../../data/batches.json'
 import './admin.css'
 
 const DEFAULT_TYPES = ['Lecture', 'Tutorial', 'Practical']
 const KEY_RE = /^([EO])(\d+)([A-Z]+)$/
-// Branches whose year-1 curriculum does NOT follow the pool A/B rotation.
-const POOL_EXEMPT_BRANCHES = new Set(['X', 'G', 'J', 'R'])
+
+// Course rows in the baseline carry per-week contact hours (L / T / P).
+// When the admin hasn't set explicit per-type counts on the baseline yet
+// (e.g. a fresh scheme upload only wrote courses), derive Lecture /
+// Tutorial / Practical totals from the course list so the table isn't
+// full of dashes. Values are treated as numbers; blanks/non-numeric fall
+// through as 0.
+function numeric(value) {
+  if (value == null) return 0
+  if (typeof value === 'number') return Number.isFinite(value) ? value : 0
+  const s = String(value).trim()
+  if (!s) return 0
+  const n = parseFloat(s)
+  return Number.isFinite(n) ? n : 0
+}
+
+function countsFromCourses(courses) {
+  const out = { Lecture: 0, Tutorial: 0, Practical: 0 }
+  if (!Array.isArray(courses)) return out
+  for (const c of courses) {
+    out.Lecture += numeric(c?.L)
+    out.Tutorial += numeric(c?.T)
+    out.Practical += numeric(c?.P)
+  }
+  return out
+}
 
 function errMessage(err) {
   if (err instanceof AdminAuthError) return err.detail?.error || err.message
@@ -129,7 +155,7 @@ export default function BaselinesPage() {
 
   const filteredItems = useMemo(() => {
     const q = filterQuery.trim().toUpperCase()
-    return items.filter((row) => {
+    const filtered = items.filter((row) => {
       const p = decomposeKey(row.key)
       if (filterParity !== 'all') {
         if (!p || p.prefix !== filterParity) return false
@@ -142,6 +168,19 @@ export default function BaselinesPage() {
       }
       if (q && !String(row.key).toUpperCase().includes(q)) return false
       return true
+    })
+    // Sort by branch/pool letter first, then by student-facing semester
+    // (odd → sem 1, even → sem 2 within a year). Pool A / Pool B thus
+    // render as O1A / E1A then O1B / E1B — matching the scheme review
+    // dialog's tab order.
+    return filtered.sort((a, b) => {
+      const pa = decomposeKey(a.key)
+      const pb = decomposeKey(b.key)
+      if (!pa || !pb) return String(a.key).localeCompare(String(b.key))
+      if (pa.stream !== pb.stream) return pa.stream.localeCompare(pb.stream)
+      const semA = 2 * pa.year - (pa.prefix === 'O' ? 1 : 0)
+      const semB = 2 * pb.year - (pb.prefix === 'O' ? 1 : 0)
+      return semA - semB
     })
   }, [items, filterParity, filterYear, filterStream, filterQuery])
 
@@ -227,34 +266,51 @@ export default function BaselinesPage() {
   // ── Course scheme (PDF) uploader ─────────────────────────────────────
   const [schemeFile, setSchemeFile] = useState(null)
   const [schemeBranch, setSchemeBranch] = useState('')
-  const [schemePoolSwap, setSchemePoolSwap] = useState(false)
-  const [schemeMerge, setSchemeMerge] = useState(false)
   const [schemeBusy, setSchemeBusy] = useState(false)
   const [schemeDragging, setSchemeDragging] = useState(false)
   const [schemePreview, setSchemePreview] = useState(null)
   const [schemeError, setSchemeError] = useState(null)
   const [schemeResult, setSchemeResult] = useState(null)
+  // Dialog opens automatically after a successful preview so the admin can
+  // review + edit rosters inline before hitting apply.
+  const [schemeDialogOpen, setSchemeDialogOpen] = useState(false)
 
-  // Branch dropdown = the canonical (year 2+) stream list from batches.json.
-  // Pool A/B is a first-year rotation label, not a branch, so it does NOT
-  // appear here; the "Pool B rotation" checkbox below handles that case.
-  const branchOptions = useMemo(() => {
+  // Branch dropdown lists every real branch from the canonical stream map
+  // plus a single pool selector at the top. The pool selector uploads the
+  // *year-1* rotation curriculum for BOTH Pool A and Pool B in one shot
+  // (they share the same course roster, Pool B just sees the semester
+  // parity swapped). A real branch upload only fills in that branch's
+  // year 2+ rosters — pool-following branches skip year 1 entirely on the
+  // backend since it's already covered by the pool upload. Independent
+  // branches (X/G/J/R) get their own year 1 straight from their PDF.
+  const branchComboOptions = useMemo(() => {
     const names = batchesFallback?.streamNames?.default || {}
-    return Object.entries(names)
+    const branches = Object.entries(names)
       .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([code, name]) => ({ code, name }))
+      .map(([code, name]) => ({
+        value: code,
+        label: `${code} — ${name}`,
+      }))
+    return [
+      { value: 'POOL', label: 'Pool A/B — Year 1 rotation (both streams)' },
+      ...branches,
+    ]
   }, [])
 
-  const showPoolSwap = schemeBranch && !POOL_EXEMPT_BRANCHES.has(schemeBranch)
+  // Human-readable label of the selected branch, used in preview/apply
+  // confirmations and error copy.
+  const selectedBranchLabel = useMemo(() => {
+    const found = branchComboOptions.find((o) => o.value === schemeBranch)
+    return found?.label || schemeBranch
+  }, [branchComboOptions, schemeBranch])
 
   function resetSchemeState() {
     setSchemeFile(null)
     setSchemeBranch('')
-    setSchemePoolSwap(false)
-    setSchemeMerge(false)
     setSchemePreview(null)
     setSchemeError(null)
     setSchemeResult(null)
+    setSchemeDialogOpen(false)
   }
 
   async function onSchemePreview(evt) {
@@ -267,9 +323,9 @@ export default function BaselinesPage() {
       const data = await previewScheme({
         file: schemeFile,
         branch: schemeBranch,
-        poolSwapYear1: schemePoolSwap,
       })
       setSchemePreview(data)
+      setSchemeDialogOpen(true)
     } catch (err) {
       setSchemeError(err)
     } finally {
@@ -277,29 +333,35 @@ export default function BaselinesPage() {
     }
   }
 
-  async function onSchemeApply() {
-    if (!schemeFile || !schemeBranch || schemeBusy) return
-    if (!window.confirm(
-      `Write ${schemePreview?.plan?.length ?? 0} baseline roster(s) for branch ${schemeBranch}?`
-    )) return
+  async function onSchemeApplyEdited(editedPlan, { merge, source }) {
+    if (schemeBusy) return
+    // The review dialog IS the confirmation step — no extra window.confirm
+    // popup on top; the admin has already inspected + edited every row.
     setSchemeBusy(true)
     setSchemeError(null)
     try {
-      const data = await applyScheme({
-        file: schemeFile,
-        branch: schemeBranch,
-        poolSwapYear1: schemePoolSwap,
-        merge: schemeMerge,
+      const data = await applySchemePlan({
+        plan: editedPlan,
+        source: source || schemeFile?.name || null,
+        merge: !!merge,
       })
       setSchemeResult(data)
       setSchemePreview(null)
+      setSchemeDialogOpen(false)
       await refresh()
     } catch (err) {
       setSchemeError(err)
+      throw err
     } finally {
       setSchemeBusy(false)
     }
   }
+
+  // Merge checkbox lives in the dialog now, so the standalone state is
+  // gone. The `applyScheme` PDF re-parse endpoint is still available for
+  // scripted callers but the UI no longer uses it directly — everything
+  // flows through `applySchemePlan` after human review in the modal.
+  void applyScheme
 
   // ── Baselines table state ────────────────────────────────────────────
   const [expandedKey, setExpandedKey] = useState(null)
@@ -362,49 +424,19 @@ export default function BaselinesPage() {
 
           <div className="baseline-field">
             <label htmlFor="scheme-branch">Branch</label>
-            <select
-              id="scheme-branch"
+            <Combobox
               className="upload-input"
               value={schemeBranch}
-              onChange={(e) => {
-                setSchemeBranch(e.target.value)
+              onChange={(v) => {
+                setSchemeBranch(v)
                 setSchemePreview(null)
                 setSchemeResult(null)
               }}
-            >
-              <option value="">Select branch…</option>
-              {branchOptions.map((b) => (
-                <option key={b.code} value={b.code}>
-                  {b.code} — {b.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          {showPoolSwap && (
-            <label
-              style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}
-              title="Tick when this scheme belongs to a Pool B stream — flips the parity of year-1 semesters (Sem 1 → E1, Sem 2 → O1)."
-            >
-              <input
-                type="checkbox"
-                checked={schemePoolSwap}
-                onChange={(e) => {
-                  setSchemePoolSwap(e.target.checked)
-                  setSchemePreview(null)
-                  setSchemeResult(null)
-                }}
-              />
-              Pool B rotation (swap year-1 parity)
-            </label>
-          )}
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-            <input
-              type="checkbox"
-              checked={schemeMerge}
-              onChange={(e) => setSchemeMerge(e.target.checked)}
+              options={branchComboOptions}
+              placeholder="Select branch…"
+              ariaLabel="Course scheme branch"
             />
-            Merge with existing courses (keep any codes already on the baseline)
-          </label>
+          </div>
           <button
             type="submit"
             className="upload-btn"
@@ -421,59 +453,21 @@ export default function BaselinesPage() {
         )}
 
         {schemePreview && (
-          <div style={{ marginTop: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-              <div style={{ fontSize: 13, color: 'var(--muted, #9aa3af)' }}>
-                Detected <strong>{schemePreview.semester_count}</strong> semester(s)
-                from <code>{schemePreview.source}</code>. Review the plan below, then
-                confirm to write the rosters.
-              </div>
-              <button
-                type="button"
-                className="upload-btn"
-                onClick={onSchemeApply}
-                disabled={schemeBusy}
-              >
-                {schemeBusy ? 'Applying…' : `Apply to ${schemePreview.plan.length} baseline(s)`}
-              </button>
+          <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            <div style={{ fontSize: 13, color: 'var(--muted, #9aa3af)', flex: '1 1 260px', minWidth: 0 }}>
+              Detected <strong>{schemePreview.semester_count}</strong> semester(s) from
+              {' '}<code>{schemePreview.source}</code>. Review each roster and edit
+              inline before writing.
             </div>
-            <table className="uploads-table" style={{ marginTop: 12 }}>
-              <thead>
-                <tr>
-                  <th>Sem</th>
-                  <th>Keyline → Baseline</th>
-                  <th>Courses</th>
-                  <th>Existing</th>
-                  <th>Preview</th>
-                </tr>
-              </thead>
-              <tbody>
-                {schemePreview.plan.map((row) => (
-                  <tr key={row.baseline_key}>
-                    <td>{row.semester}</td>
-                    <td style={{ fontFamily: 'var(--mono, monospace)' }}>
-                      {row.keyline} → {row.baseline_key}
-                    </td>
-                    <td>{row.course_count}</td>
-                    <td>
-                      {row.would_create ? (
-                        <span style={{ color: '#4ade80' }}>new</span>
-                      ) : (
-                        <span title="Existing baseline; roster will be replaced (or merged)">
-                          {row.existing_course_count} → {row.course_count}
-                        </span>
-                      )}
-                    </td>
-                    <td style={{ maxWidth: 320 }}>
-                      <span style={{ fontSize: 12, color: 'var(--muted, #9aa3af)' }}>
-                        {row.courses.slice(0, 4).map((c) => c.code || c.title || '?').join(', ')}
-                        {row.courses.length > 4 ? `, +${row.courses.length - 4} more` : ''}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <button
+              type="button"
+              className="upload-btn"
+              onClick={() => setSchemeDialogOpen(true)}
+              disabled={schemeBusy}
+              style={{ flex: '0 0 auto', width: 'auto' }}
+            >
+              Review &amp; edit {schemePreview.plan.length} baseline{schemePreview.plan.length === 1 ? '' : 's'}
+            </button>
           </div>
         )}
 
@@ -683,7 +677,17 @@ export default function BaselinesPage() {
             {filteredItems.length === 0 ? (
               <div className="error-log-empty">No baselines match the current filters.</div>
             ) : (
-              <table className="uploads-table">
+              <table className="uploads-table" style={{ tableLayout: 'fixed', width: '100%' }}>
+                <colgroup>
+                  {/* First 5 data columns share the width equally; the
+                      trailing Actions column sizes to its content. */}
+                  <col style={{ width: '16%' }} />
+                  {typeColumns.map((t) => (
+                    <col key={t} style={{ width: '16%' }} />
+                  ))}
+                  <col style={{ width: '16%' }} />
+                  <col />
+                </colgroup>
                 <thead>
                   <tr>
                     <th>Key</th>
@@ -696,14 +700,35 @@ export default function BaselinesPage() {
                   {filteredItems.map((row) => {
                     const courses = Array.isArray(row.courses) ? row.courses : []
                     const isExpanded = expandedKey === row.key
-                    const courseColSpan = 2 + typeColumns.length + 2
+                    // Parent columns: Key + typeColumns + Courses + Actions
+                    const courseColSpan = 1 + typeColumns.length + 1 + 1
+                    // If the baseline row has no explicit per-type counts
+                    // (e.g. a fresh scheme upload only populated `courses`),
+                    // derive the L/T/P totals from the course list so the
+                    // table shows real numbers instead of `—`.
+                    const hasCounts = row.counts && Object.keys(row.counts).length > 0
+                    const derived = hasCounts ? null : countsFromCourses(courses)
                     return (
                       <Fragment key={row.key}>
                         <tr>
                           <td style={{ fontFamily: 'var(--mono, monospace)' }}>{row.key}</td>
-                          {typeColumns.map((t) => (
-                            <td key={t}>{row.counts?.[t] ?? '—'}</td>
-                          ))}
+                          {typeColumns.map((t) => {
+                            const explicit = row.counts?.[t]
+                            if (explicit != null) return <td key={t}>{explicit}</td>
+                            const fallback = derived?.[t]
+                            if (fallback != null && fallback !== 0) {
+                              return (
+                                <td
+                                  key={t}
+                                  title="Derived from the course list — no explicit count set on this baseline yet."
+                                  style={{ color: 'var(--muted, #9aa3af)' }}
+                                >
+                                  {Number.isInteger(fallback) ? fallback : fallback.toFixed(1)}
+                                </td>
+                              )
+                            }
+                            return <td key={t}>—</td>
+                          })}
                           <td>
                             {courses.length > 0 ? (
                               <button
@@ -718,7 +743,7 @@ export default function BaselinesPage() {
                               <span style={{ color: 'var(--muted, #9aa3af)' }}>—</span>
                             )}
                           </td>
-                          <td style={{ whiteSpace: 'nowrap' }}>
+                          <td style={{ whiteSpace: 'nowrap', textAlign: 'right' }}>
                             <button
                               type="button"
                               className="admin-card-action"
@@ -782,6 +807,15 @@ export default function BaselinesPage() {
           </>
         )}
       </div>
+
+      <SchemePreviewDialog
+        open={schemeDialogOpen}
+        preview={schemePreview}
+        branchLabel={selectedBranchLabel}
+        busy={schemeBusy}
+        onApply={onSchemeApplyEdited}
+        onClose={() => setSchemeDialogOpen(false)}
+      />
     </>
   )
 }

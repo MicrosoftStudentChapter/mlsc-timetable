@@ -48,15 +48,53 @@
 }
 
 .tt-content {
-  flex: 1;
+  /* Grows to fill available space above the footer (sticky-footer pattern,
+     same as the landing page's <main>). Grid sits top-aligned inside;
+     internal scroll wrapper handles overflow when the grid is tall. */
+  flex: 1 1 auto;
   width: 100%;
   box-sizing: border-box;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  /* Reserve room at the bottom so the fixed navbar pill doesn't sit on top
-     of the last row / sidebar feed sections. */
-  padding-bottom: 84px;
+}
+
+/* Grid export wrapper — fills .tt-content so the frame's max-height has a
+   real reference for internal scrolling. */
+.tt-export-target {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Follow-day alert row — sits between the header (or the mobile
+   card-style row) and the grid. Shown on both desktop and mobile; the
+   FollowDayBanner component itself returns null when there's no upcoming
+   follow-day override for the current batch, so the row collapses to
+   nothing when there's nothing to surface. */
+.tt-follow-day-row {
+  margin: 0 0 12px;
+}
+.tt-follow-day-row:empty {
+  display: none;
+}
+
+/* Mobile-only card-style picker row — the picker in the header is hidden
+   on mobile via .header-actions display:none, so mirror it here below the
+   header. Hidden on desktop where the header still shows the picker. */
+.tt-card-style-row {
+  display: none;
+  margin: 0 0 12px;
+}
+.tt-card-style-row > .tt-card-theme-picker {
+  width: 100%;
+  justify-content: space-between;
+}
+@media (max-width: 768px) {
+  .tt-card-style-row {
+    display: flex;
+  }
 }
 
 /* ── Card theme picker (lives in dashboard header) ── */
@@ -675,12 +713,22 @@
   display: none !important;
 }
 
-/* Collapse all wrapping containers down to the grid's natural width so the
-   captured canvas has no dark gutter on the right. */
+/* Collapse all wrapping containers down to the grid's natural width AND
+   height so the captured canvas has no dark gutter on any side. The flex
+   overrides are critical — on-screen `.tt-export-target` is `flex: 1 1 auto`
+   inside a flex-column `.tt-content`, so it stretches vertically to fill
+   the viewport; without resetting `flex` to `0 0 auto` the capture picks
+   up the full stretched box (grid at top + huge empty bottom).
+   `align-self: flex-start` cancels the cross-axis stretch too. */
 .tt-export-target.tt-exporting {
   display: inline-block !important;
+  flex: 0 0 auto !important;
+  align-self: flex-start !important;
   width: max-content !important;
   max-width: none !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
 }
 
 /* Force desktop CSS variables regardless of viewport (the mobile @media
@@ -695,6 +743,11 @@
   max-height: none !important;
   min-height: 0 !important;
   overflow: visible !important;
+  /* Strip the on-screen margin-bottom that gives the grid breathing room
+     from the footer — otherwise the export captures 24px of extra whitespace
+     only at the bottom, and `fitToAspect` then centres the unevenly-padded
+     bitmap, making the aspect padding look bottom-heavy. */
+  margin: 0 !important;
   --col-width: 200px !important;
   --time-col-width: 84px !important;
   --row-height: 56px !important;
@@ -721,6 +774,10 @@
   width: max-content !important;
   min-width: 0 !important;
   transform: none !important;
+  /* JS applies an inline `zoom: <fraction>` to fit the grid to narrow
+     viewports; if we don't override it here, exports on phones render at
+     the shrunk (~0.6x) size and look microscopic. */
+  zoom: 1 !important;
 }
 
 .tt-export-target.tt-exporting .tt-day-header-cell,

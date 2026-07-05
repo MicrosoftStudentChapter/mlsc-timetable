@@ -1,0 +1,140 @@
+/* ─────────────────────────────────────────────────────────────
+   FollowDayBanner
+   Alert-style banner shown above the timetable grid whenever the
+   current batch has one or more follow-day overrides in the next
+   7 days (e.g. "This Saturday follows Monday's schedule"). Uses
+   the same fancy pale-blue gradient card as the dashboard header
+   so it feels native to the page.
+   ───────────────────────────────────────────────────────────── */
+.follow-day-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(238, 244, 255, 0.72) 0%,
+    rgba(255, 255, 255, 0.5) 55%,
+    rgba(232, 240, 253, 0.55) 100%
+  );
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 3px 12px rgba(30, 41, 59, 0.05);
+  color: #1f2937;
+}
+
+.follow-day-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.follow-day-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.05);
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.follow-day-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.follow-day-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.follow-day-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.follow-day-when {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.follow-day-date {
+  color: #475569;
+}
+
+.follow-day-target {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.follow-day-reason {
+  color: #64748b;
+  font-style: italic;
+}
+
+.follow-day-dot {
+  color: #94a3b8;
+}
+
+/* ── Mobile (hamburger breakpoint): tighten paddings ────────────────── */
+@media (max-width: 768px) {
+  .follow-day-banner {
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+  .follow-day-title {
+    font-size: 10px;
+  }
+  .follow-day-row {
+    font-size: 12px;
+  }
+}
+
+/* ── Dark theme ─────────────────────────────────────────────────────── */
+[data-theme="dark"] .follow-day-banner {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+  color: rgba(226, 232, 240, 0.9);
+}
+[data-theme="dark"] .follow-day-icon {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(226, 232, 240, 0.75);
+}
+[data-theme="dark"] .follow-day-title {
+  color: rgba(226, 232, 240, 0.55);
+}
+[data-theme="dark"] .follow-day-when {
+  color: rgba(241, 245, 249, 0.95);
+}
+[data-theme="dark"] .follow-day-date {
+  color: rgba(226, 232, 240, 0.7);
+}
+[data-theme="dark"] .follow-day-target {
+  color: rgba(241, 245, 249, 0.95);
+}
+[data-theme="dark"] .follow-day-reason {
+  color: rgba(226, 232, 240, 0.6);
+}
+[data-theme="dark"] .follow-day-dot {
+  color: rgba(148, 163, 184, 0.5);
+}

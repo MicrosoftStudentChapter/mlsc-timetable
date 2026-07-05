@@ -38,6 +38,7 @@ const NAV_ITEMS = [
   { to: '/admin/uploads', label: 'Uploads' },
   { to: '/admin/change-requests', label: 'Change requests' },
   { to: '/admin/baselines', label: 'Baselines' },
+  { to: '/admin/content', label: 'Content' },
   { to: '/admin/contributors', label: 'Contributors' },
   { to: '/admin/users', label: 'Admins' },
 ]

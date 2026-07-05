@@ -50,3 +50,12 @@ export function loadExamDates(batch) {
   const qs = cleaned ? `?batch=${encodeURIComponent(cleaned)}` : ''
   return loadList({ apiPath: `/exam-dates${qs}`, fallbackName: 'exam_dates.json' })
 }
+
+export function loadCalendarOverrides(batch) {
+  const cleaned = String(batch || '').trim()
+  const qs = cleaned ? `?batch=${encodeURIComponent(cleaned)}` : ''
+  return loadList({
+    apiPath: `/calendar-overrides${qs}`,
+    fallbackName: 'calendar_overrides.json',
+  })
+}

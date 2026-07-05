@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import './side_columns.css';
-import { loadAnnouncements, loadExamDates } from '../lib/sidebar_feeds';
+import { loadAnnouncements, loadExamDates, loadCalendarOverrides } from '../lib/sidebar_feeds';
 import { useAuthUser } from '../lib/auth';
 
 const IconBell = () => (
@@ -51,15 +51,9 @@ const IconChevron = () => (
 // A date can "follow" any weekday's timetable (e.g. a Saturday running
 // Monday's schedule). Sunday is always a holiday → null.
 // Default rule: Mon–Fri map to themselves, Sat/Sun map to null.
-// Per-date overrides (keyed by 'YYYY-MM-DD') come from the college's
-// semester calendar — drop them into DAY_OVERRIDES below.
+// Per-date overrides are now loaded from the backend
+// (`/calendar-overrides?batch=<code>`) — see `loadCalendarOverrides`.
 const MON_SUN = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-
-// Example: '2026-06-27': 0  →  this Saturday follows Monday's schedule
-//          '2026-08-15': null →  declared holiday
-const DAY_OVERRIDES = {
-  // populate from semester calendar
-};
 
 const pad2 = (n) => String(n).padStart(2, '0');
 const ymdKey = (y, m, d) => `${y}-${pad2(m + 1)}-${pad2(d)}`;
@@ -70,9 +64,37 @@ function defaultWeekdayIdx(monSunIdx) {
   return monSunIdx <= 4 ? monSunIdx : null;
 }
 
-function weekdayIdxFor(year, month, day) {
+// Given the backend override rows, return a { 'YYYY-MM-DD': overrideRow } map
+// keyed by date. If multiple rows land on the same date we prefer the more
+// specific scope (branch > year > global) so a per-branch holiday can shadow
+// a global follow-day rule for that same date.
+const SCOPE_PRIORITY = { branch: 2, year: 1, global: 0 };
+function buildOverrideMap(rows) {
+  const map = new Map();
+  if (!Array.isArray(rows)) return map;
+  for (const row of rows) {
+    if (!row || typeof row.date !== 'string' || !row.kind) continue;
+    const prev = map.get(row.date);
+    const prevRank = prev ? (SCOPE_PRIORITY[prev.scope] ?? 0) : -1;
+    const nextRank = SCOPE_PRIORITY[row.scope] ?? 0;
+    if (!prev || nextRank >= prevRank) map.set(row.date, row);
+  }
+  return map;
+}
+
+// Resolve the weekday-index to use for a given date, honouring overrides:
+//   - kind = 'holiday'    → null (no classes)
+//   - kind = 'follow_day' → follows_day (0..4)
+//   - no override         → default Mon..Fri map, Sat/Sun → null
+function weekdayIdxFor(year, month, day, overrideMap) {
   const key = ymdKey(year, month, day);
-  if (key in DAY_OVERRIDES) return DAY_OVERRIDES[key];
+  if (overrideMap && overrideMap.has(key)) {
+    const row = overrideMap.get(key);
+    if (row.kind === 'holiday') return null;
+    if (row.kind === 'follow_day' && Number.isInteger(row.follows_day)) {
+      return row.follows_day;
+    }
+  }
   const jsDay = new Date(year, month, day).getDay();
   return defaultWeekdayIdx(toMonSunIdx(jsDay));
 }
@@ -151,16 +173,27 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
   // hovered day → number (1..daysInMonth) or null
   const [hoveredDay, setHoveredDay] = useState(null);
 
-  // weekday header column to highlight: hovered day's mapping if any,
-  // else today's mapping
-  const activeDay = hoveredDay ?? todayDate;
-  const activeWeekdayIdx = weekdayIdxFor(year, month, activeDay);
-
-  // Sidebar feeds — backend with bundled fallback. Exam dates are filtered
-  // server-side by the currently-viewed batch (year scope + subject codes).
+  // Sidebar feeds — backend with bundled fallback. Exam dates + calendar
+  // overrides are filtered server-side by the currently-viewed batch
+  // (year scope + subject codes / global vs year vs branch).
   const announcements = useFeed(loadAnnouncements);
   const examDatesLoader = useCallback(() => loadExamDates(batch), [batch]);
   const examDates = useFeed(examDatesLoader);
+  const overridesLoader = useCallback(() => loadCalendarOverrides(batch), [batch]);
+  const calendarOverrides = useFeed(overridesLoader);
+
+  // Build a fast { 'YYYY-MM-DD' → override } lookup from the loaded rows;
+  // more-specific scopes (branch > year > global) shadow less-specific ones
+  // on the same date.
+  const overrideMap = useMemo(
+    () => buildOverrideMap(calendarOverrides.items),
+    [calendarOverrides.items],
+  );
+
+  // weekday header column to highlight: hovered day's mapping if any,
+  // else today's mapping
+  const activeDay = hoveredDay ?? todayDate;
+  const activeWeekdayIdx = weekdayIdxFor(year, month, activeDay, overrideMap);
 
   // Whole-section dropdowns: collapsed by default so the sidebar feels calm
   // on arrival; users opt in by clicking the section header.
@@ -186,7 +219,6 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
           <div className="logo-img-wrapper">
             <img src="/MLSC-logo.png" alt="MLSC Logo" className="sidebar-logo-img" />
           </div>
-          <h2 className="sidebar-logo-text">MLSC TIMETABLE</h2>
         </Link>
       </div>
 
@@ -337,16 +369,87 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                 }
                 const isToday = cell.day === todayDate;
                 const isHovered = cell.day === hoveredDay;
+                const override = overrideMap.get(ymdKey(year, month, cell.day));
+                const KIND_CLASS = {
+                  holiday: 'calendar-day--holiday',
+                  follow_day: 'calendar-day--follow',
+                  mst: 'calendar-day--mst',
+                  est: 'calendar-day--est',
+                  assessment: 'calendar-day--assessment',
+                };
+                const overrideClass = override ? (KIND_CLASS[override.kind] || '') : '';
+                // Sat/Sun with no override at all → dim so it visually reads
+                // as "no class here". Weekends that HAVE a follow_day override
+                // don't get dimmed (they become class days via the ring style).
+                const jsDay = new Date(year, month, cell.day).getDay();
+                const isWeekend = jsDay === 0 || jsDay === 6;
+                const dimClass = (isWeekend && !override) ? 'calendar-day--dim' : '';
+                // Human-readable tooltip.
+                let title;
+                if (override) {
+                  if (override.kind === 'holiday') {
+                    title = override.reason ? `Holiday · ${override.reason}` : 'Holiday';
+                  } else if (override.kind === 'follow_day') {
+                    const label = MON_SUN[override.follows_day] || '?';
+                    const long = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'][override.follows_day] || label;
+                    title = override.reason
+                      ? `Follows ${long} · ${override.reason}`
+                      : `Follows ${long}`;
+                  } else if (override.kind === 'mst') {
+                    title = override.reason || 'MST week';
+                  } else if (override.kind === 'est') {
+                    title = override.reason || 'EST week';
+                  } else if (override.kind === 'assessment') {
+                    title = override.reason || 'Assessment / Evaluation week';
+                  }
+                } else if (isWeekend) {
+                  title = 'No classes';
+                }
                 return (
                   <span
                     key={cell.key}
-                    className={`calendar-day ${isToday ? 'today' : ''} ${isHovered ? 'hovered' : ''}`}
+                    className={`calendar-day ${isToday ? 'today' : ''} ${isHovered ? 'hovered' : ''} ${overrideClass} ${dimClass}`}
                     onMouseEnter={() => setHoveredDay(cell.day)}
+                    title={title}
                   >
                     {cell.day}
                   </span>
                 );
               })}
+            </div>
+            {/* Legend — only shows swatches for kinds actually visible
+                this month. "Today" is always shown. */}
+            <div className="calendar-legend" aria-label="Calendar legend">
+              <span className="calendar-legend-item">
+                <span className="calendar-legend-swatch calendar-legend-swatch--today" aria-hidden="true" />
+                Today
+              </span>
+              {(() => {
+                const kindsPresent = new Set();
+                for (const cell of cells) {
+                  if (cell.blank) continue;
+                  const ov = overrideMap.get(ymdKey(year, month, cell.day));
+                  if (ov && ov.kind) kindsPresent.add(ov.kind);
+                }
+                const items = [
+                  { kind: 'holiday', label: 'Holiday', swatch: 'holiday' },
+                  { kind: 'follow_day', label: 'Follows day', swatch: 'follow' },
+                  { kind: 'mst', label: 'MST week', swatch: 'mst' },
+                  { kind: 'est', label: 'EST week', swatch: 'est' },
+                  { kind: 'assessment', label: 'Assessment', swatch: 'assessment' },
+                ];
+                return items
+                  .filter((it) => kindsPresent.has(it.kind))
+                  .map((it) => (
+                    <span key={it.kind} className="calendar-legend-item">
+                      <span
+                        className={`calendar-legend-swatch calendar-legend-swatch--${it.swatch}`}
+                        aria-hidden="true"
+                      />
+                      {it.label}
+                    </span>
+                  ));
+              })()}
             </div>
           </div>
         </div>
@@ -399,7 +502,7 @@ function SidebarProfileCard() {
   );
 }
 
-export function DashboardLayout({ children, onActiveWeekdayChange, headerActions, batch }) {
+export function DashboardLayout({ children, footer, onActiveWeekdayChange, headerActions, headerBanner, batch }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { isSignedIn, user } = useAuthUser();
   const welcomeName = isSignedIn
@@ -452,12 +555,15 @@ export function DashboardLayout({ children, onActiveWeekdayChange, headerActions
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="dashboard-main">
-        {/* Header Section */}
-        <header className="dashboard-header">
-          <div className="header-left">
-            {/* Hamburger Button for mobile */}
+      {/* Right column: main content + footer stacked (footer is OUTSIDE
+          .dashboard-main so its 24px padding doesn't push the footer up
+          from the true bottom edge). */}
+      <div className="dashboard-column">
+        {/* Main Content Area */}
+        <div className="dashboard-main">
+          {/* Header Section */}
+          <header className="dashboard-header" data-signed-in={isSignedIn ? 'true' : 'false'}>
+            {/* Hamburger — desktop hides it via CSS, only shown at hamburger breakpoint. */}
             <button className="hamburger-btn" onClick={toggleDrawer} aria-label="Open menu">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -465,17 +571,45 @@ export function DashboardLayout({ children, onActiveWeekdayChange, headerActions
                 <line x1="3" y1="18" x2="21" y2="18"></line>
               </svg>
             </button>
-            <h1 className="welcome-heading">Welcome, {welcomeName}</h1>
-          </div>
-          {headerActions && (
-            <div className="header-actions">{headerActions}</div>
-          )}
-        </header>
+            <Link to="/" className="dashboard-brand" aria-label="MLSC home">
+              <img src="/MLSC-logo.png" alt="" className="dashboard-brand-mark" />
+              <div className="dashboard-brand-text">
+                <span className="dashboard-brand-name">MLSC</span>
+                <span className="dashboard-brand-sub">Timetable</span>
+              </div>
+            </Link>
+            <div className="dashboard-brand-divider" aria-hidden="true" />
+            {/* Right-side welcome block mirrors .dashboard-brand's structure
+                exactly — same wrapper, same padding, same gap, and a hidden
+                logo placeholder so both blocks have identical box geometry
+                and vertical centering. */}
+            <div className="dashboard-welcome">
+              <img
+                src="/MLSC-logo.png"
+                alt=""
+                className="dashboard-brand-mark dashboard-brand-mark--ghost"
+                aria-hidden="true"
+              />
+              <h1 className="welcome-heading">
+                <span className="welcome-line">Welcome,</span>{' '}
+                <span className="welcome-name">{welcomeName}</span>
+              </h1>
+            </div>
+            {headerBanner && (
+              <div className="header-banner-slot">{headerBanner}</div>
+            )}
+            {headerActions && (
+              <div className="header-actions">{headerActions}</div>
+            )}
+          </header>
 
-        {/* Existing Timetable Page Content */}
-        <div className="dashboard-content">
-          {children}
+          {/* Existing Timetable Page Content */}
+          <div className="dashboard-content">
+            {children}
+          </div>
         </div>
+
+        {footer}
       </div>
     </div>
   );

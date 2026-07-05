@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Combobox from '../components/Combobox'
 import TimetableGrid from '../components/TimetableGrid'
+import Footer from '../components/Footer'
+import FollowDayBanner from '../components/FollowDayBanner'
 import { loadBatches } from '../lib/batches'
 import { loadTimetable } from '../lib/timetable'
 import { exportGridAsPng, exportGridAsPdf, ASPECT_PRESETS } from '../lib/export_timetable'
@@ -182,6 +184,7 @@ export default function TimetablePage() {
     <DashboardLayout
       batch={batch}
       onActiveWeekdayChange={setActiveWeekdayIdx}
+      footer={<Footer />}
       headerActions={
         <label className="tt-card-theme-picker">
           <span className="tt-card-theme-label">Card style</span>
@@ -199,6 +202,30 @@ export default function TimetablePage() {
       }
     >
       <div className="tt-content">
+        {/* Mobile-only card-style row — the picker in the header is hidden
+            on mobile (no room in the compact strip), so mirror it here as
+            a full-width row between header and the follow-day banner. */}
+        <div className="tt-card-style-row">
+          <label className="tt-card-theme-picker">
+            <span className="tt-card-theme-label">Card style</span>
+            <select
+              className="tt-card-theme-select"
+              value={cardTheme}
+              onChange={(e) => setCardTheme(e.target.value)}
+              aria-label="Card style"
+            >
+              {CARD_THEMES.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+        {/* Follow-day alert — shown on desktop AND mobile, but only when
+            the current batch has an override in the next 7 days. Component
+            returns null when there's nothing to surface. */}
+        <div className="tt-follow-day-row">
+          <FollowDayBanner batch={batch} />
+        </div>
         <div className="tt-export-target" ref={exportRef}>
           <TimetableContent state={timetableState} batch={batch} isDark={isDark} cardTheme={cardTheme} activeWeekdayIdx={activeWeekdayIdx} />
         </div>

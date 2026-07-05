@@ -623,7 +623,10 @@ export default function TimetableGrid({
     if (currentDay && DAYS.includes(currentDay)) return currentDay
     const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
     const today = names[new Date().getDay()]
-    return DAYS.includes(today) ? today : 'Monday'
+    // On Sat/Sun (or any non-weekday input) return null so NO column is
+    // highlighted by default — previously this fell back to 'Monday' which
+    // painted Monday blue on weekends.
+    return DAYS.includes(today) ? today : null
   }, [currentDay, activeWeekdayIdx])
 
   // Sliding pill: index into DAYS (0..4) of the column to highlight, or null
@@ -650,6 +653,41 @@ export default function TimetableGrid({
     measure()
     const ro = new ResizeObserver(measure)
     ro.observe(row)
+    return () => ro.disconnect()
+  }, [])
+
+  // ── Body-only zoom-to-fit ───────────────────────────────────────────────
+  // Scale the grid down when the frame is narrower than the grid's target
+  // width, so the whole timetable stays visible on small screens without
+  // affecting the surrounding sidebar/header/navbar (they respond to the
+  // real viewport width as usual). CSS `zoom` also shrinks the layout box
+  // so the scroll wrapper doesn't think content overflows unless the zoomed
+  // grid still exceeds its bounds.
+  const frameRef = useRef(null)
+  const tableRef = useRef(null)
+  const [bodyZoom, setBodyZoom] = useState(1)
+  useLayoutEffect(() => {
+    const frame = frameRef.current
+    const table = tableRef.current
+    if (!frame || !table) return
+    const measure = () => {
+      const frameW = frame.clientWidth
+      // Prefer the table's intrinsic min-width (respects breakpoint
+      // overrides on `--col-width` / `--time-col-width`), but bump the
+      // effective target by ~14% so zoom starts trimming a little before
+      // the grid would otherwise start scrolling. This makes narrower
+      // viewports feel roomier without triggering horizontal scroll.
+      const cs = window.getComputedStyle(table)
+      const intrinsic = parseFloat(cs.minWidth) || table.scrollWidth || frameW
+      const designW = intrinsic * 1.14
+      if (!designW) return
+      const k = Math.min(1, frameW / designW)
+      // Round to 3 decimals to avoid tiny reflows on every 1px resize.
+      setBodyZoom((prev) => (Math.abs(prev - k) < 0.005 ? prev : Math.round(k * 1000) / 1000))
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(frame)
     return () => ro.disconnect()
   }, [])
 
@@ -899,7 +937,7 @@ export default function TimetableGrid({
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="tt-grid-frame" data-card-theme={cardTheme}>
+    <div className="tt-grid-frame" data-card-theme={cardTheme} ref={frameRef}>
       <div className="tt-grid-watermark" aria-hidden="true">
         <img
           src="/MLSC-logo.png"
@@ -909,7 +947,7 @@ export default function TimetableGrid({
         />
       </div>
       <div className="tt-grid-scroll-wrapper">
-        <div className="tt-grid-table">
+        <div className="tt-grid-table" ref={tableRef} style={bodyZoom < 1 ? { zoom: bodyZoom } : undefined}>
 
           {/* ── Header row ─────────────────────────────────────────────── */}
           <div className="tt-grid-header-row" ref={headerRowRef}>

@@ -1,7 +1,9 @@
-/* floating wrapper — sits above content, centered */
+/* floating wrapper — sits above content, centered. `bottom: 10px` matches
+   the timetable page's pill so the footer content vertical center aligns
+   with the pill's vertical center on both pages. */
 .navbar {
   position: fixed;
-  bottom: 16px;
+  bottom: 10px;
   top: unset;
   left: 50%;
   transform: translateX(-50%);

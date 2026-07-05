@@ -158,26 +158,48 @@ export function deleteBaseline(key) {
 // ── Course-scheme PDF upload ──────────────────────────────────────────
 // Parses a Thapar SUGC/SPGC course-scheme PDF and returns/writes the
 // per-semester baseline course rosters.
-function schemeFormData({ file, branch, poolSwapYear1, merge }) {
+//
+// `branch` is either a single letter A–Z (branch code) or one of the
+// special selectors "POOL_A" / "POOL_B" for the year-1 pool rotation.
+// The backend derives the target key + semester filter from that value —
+// pool uploads only touch Sem 1 & 2, pool-following branches skip year 1,
+// independent branches (X/G/J/R) write all 8 semesters.
+function schemeFormData({ file, branch, merge }) {
   const fd = new FormData()
   fd.append('file', file)
   fd.append('branch', String(branch || '').toUpperCase())
-  fd.append('pool_swap_year1', poolSwapYear1 ? 'true' : 'false')
   if (merge !== undefined) fd.append('merge', merge ? 'true' : 'false')
   return fd
 }
 
-export function previewScheme({ file, branch, poolSwapYear1 = false }) {
+export function previewScheme({ file, branch }) {
   return adminFetch('/admin/scheme/preview', {
     method: 'POST',
-    body: schemeFormData({ file, branch, poolSwapYear1 }),
+    body: schemeFormData({ file, branch }),
   })
 }
 
-export function applyScheme({ file, branch, poolSwapYear1 = false, merge = false }) {
+export function applyScheme({ file, branch, merge = false }) {
   return adminFetch('/admin/scheme/apply', {
     method: 'POST',
-    body: schemeFormData({ file, branch, poolSwapYear1, merge }),
+    body: schemeFormData({ file, branch, merge }),
+  })
+}
+
+// Apply a hand-edited scheme plan (no PDF re-parse). Companion to
+// `applyScheme` for the edit-in-modal flow: after previewing a PDF the
+// admin can tweak the parsed course rosters row-by-row, then send the
+// edited plan as JSON.
+//
+// `plan` shape: `[{ baseline_key, semester?, courses: [{code, title, category, L, T, P, Cr}] }, ...]`
+export function applySchemePlan({ plan, source, merge = false }) {
+  return adminFetch('/admin/scheme/apply-plan', {
+    method: 'POST',
+    body: JSON.stringify({
+      plan,
+      source: source || undefined,
+      merge: !!merge,
+    }),
   })
 }
 
@@ -241,6 +263,91 @@ export function addExamDate({ subject, code, date, slot, type, room, targetYear 
 
 export function deleteExamDate(id) {
   return adminFetch(`/admin/exam-dates/${encodeURIComponent(id)}`, { method: 'DELETE' })
+}
+
+// ── Calendar overrides ─────────────────────────────────────────────────
+// Overrides drive the mini-calendar in the sidebar: mark a date as a
+// holiday (with optional reason) or make it follow another weekday's
+// timetable. Scope is one of `global` | `year` | `branch`; when scope is
+// `year` or `branch`, `scopeValues` must be non-empty (e.g. ['1','2'] or
+// ['2A','1E']).
+export function listCalendarOverrides() {
+  // Public GET returns all rows when no batch is supplied — perfect for
+  // admin listing since the admin panel shouldn't be batch-scoped.
+  return adminFetch('/calendar-overrides')
+}
+
+function toOverridePayload({ date, kind, reason, followsDay, scope, scopeValues } = {}) {
+  return {
+    date,
+    kind,
+    reason: reason ? String(reason).trim() : null,
+    follows_day: kind === 'follow_day' ? Number(followsDay) : null,
+    scope: scope || 'global',
+    scope_values: Array.isArray(scopeValues)
+      ? scopeValues.map((v) => String(v).trim().toUpperCase()).filter(Boolean)
+      : [],
+  }
+}
+
+export function addCalendarOverride(input = {}) {
+  return adminFetch('/admin/calendar-overrides', {
+    method: 'POST',
+    body: JSON.stringify(toOverridePayload(input)),
+  })
+}
+
+export function updateCalendarOverride(id, input = {}) {
+  return adminFetch(`/admin/calendar-overrides/${encodeURIComponent(id)}`, {
+    method: 'PUT',
+    body: JSON.stringify(toOverridePayload(input)),
+  })
+}
+
+export function deleteCalendarOverride(id) {
+  return adminFetch(`/admin/calendar-overrides/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+  })
+}
+
+// ── Calendar PDF parser ────────────────────────────────────────────────
+// Parses a Thapar academic-calendar PDF and returns a preview of the
+// calendar overrides that would be written (holidays + follow-day rules
+// + ambiguous cells surfaced as warnings).
+export function previewCalendarPdf({ file }) {
+  const fd = new FormData()
+  fd.append('file', file)
+  return adminFetch('/admin/calendar/preview', {
+    method: 'POST',
+    body: fd,
+  })
+}
+
+// Apply a hand-edited calendar plan (no PDF re-parse). `plan` is the
+// array of override rows the admin confirmed in the review dialog.
+// `scope` + `scopeValues` are applied uniformly to every row; use
+// `replaceRange` for idempotent re-uploads — every existing override
+// whose date falls in [start, end] AND matches the same scope is
+// deleted before the fresh plan is inserted.
+export function applyCalendarPlan({
+  plan,
+  scope = 'global',
+  scopeValues = [],
+  replaceRange = null,
+  source = null,
+}) {
+  return adminFetch('/admin/calendar/apply-plan', {
+    method: 'POST',
+    body: JSON.stringify({
+      plan,
+      scope,
+      scope_values: Array.isArray(scopeValues)
+        ? scopeValues.map((v) => String(v).trim().toUpperCase()).filter(Boolean)
+        : [],
+      replace_range: replaceRange || undefined,
+      source: source || undefined,
+    }),
+  })
 }
 
 // ── Change requests ───────────────────────────────────────────────────

@@ -148,6 +148,39 @@
   margin: 0 auto;
 }
 
+/* Shared page shell used by dedicated admin pages (Content, etc.) that
+   render a simple heading + description above a stack of cards. Kept
+   compact so the hero doesn't dominate the viewport. */
+.admin-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.admin-page-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text, rgba(255, 255, 255, 0.92));
+  line-height: 1.2;
+}
+
+.admin-page-sub {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted, rgba(255, 255, 255, 0.6));
+  max-width: 760px;
+}
+
 /* ── Hero stat cards ────────────────────────────────────────────────── */
 .admin-stats-row {
   display: grid;
@@ -2699,4 +2732,70 @@
   .ingest-modal-icon { width: 40px; height: 40px; font-size: 20px; }
   .ingest-modal-foot { flex-direction: column-reverse; }
   .ingest-btn { width: 100%; }
+}
+
+/* Calendar-upload card: flex-column so the submit button sits at the bottom
+   of the card, visually aligning with the "Add override" button in the
+   sibling calendar-overrides card. */
+.admin-card.manager-card {
+  display: flex;
+  flex-direction: column;
+}
+.cal-upload-form {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.cal-upload-form .cal-upload-submit {
+  margin-top: auto;
+}
+
+.cal-year-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+}
+[data-theme='light'] .cal-year-picker {
+  background: #fafafd;
+}
+.cal-year-picker-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-muted, rgba(255, 255, 255, 0.55));
+}
+.cal-year-picker-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cal-year-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));
+  background: transparent;
+  color: var(--text-h, #fff);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+[data-theme='light'] .cal-year-pill {
+  color: #1d1c24;
+}
+.cal-year-pill:hover {
+  border-color: rgba(59, 130, 246, 0.55);
+}
+.cal-year-pill.is-active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+}
+.cal-year-picker-hint {
+  font-size: 11.5px;
+  color: var(--text-muted, rgba(255, 255, 255, 0.5));
 }
