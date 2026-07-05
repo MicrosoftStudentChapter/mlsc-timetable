@@ -411,6 +411,26 @@ body:has(.dashboard-layout) {
   border: 1px solid rgba(20, 184, 166, 0.55);
 }
 
+/* ─── Frosh (pink) ────────────────────────────────────────────────── */
+.calendar-day--frosh {
+  background: rgba(236, 72, 153, 0.18);
+  color: #BE185D;
+  font-weight: 600;
+}
+.calendar-day--frosh:hover,
+.calendar-day--frosh.hovered {
+  background: rgba(236, 72, 153, 0.28);
+  color: #9D174D;
+}
+.calendar-day.today.calendar-day--frosh {
+  background: #EC4899;
+  color: #ffffff !important;
+}
+.calendar-legend-swatch--frosh {
+  background: rgba(236, 72, 153, 0.18);
+  border: 1px solid rgba(236, 72, 153, 0.55);
+}
+
 /* Profile Card - Bottom Aligned (lives inside .sidebar-footer) */
 .profile-card {
   margin-top: 0;

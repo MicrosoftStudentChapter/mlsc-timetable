@@ -42,7 +42,14 @@ function formatPostedAt(value) {
 }
 
 const SEVERITY_LABEL = { info: 'Info', warn: 'Warning', critical: 'Critical' }
-const KIND_LABELS = { holiday: 'Holiday', follow_day: 'Follows day' }
+const KIND_LABELS = {
+  holiday: 'Holiday',
+  follow_day: 'Follows day',
+  mst: 'MST week',
+  est: 'EST week',
+  assessment: 'Assessment',
+  frosh: 'Frosh',
+}
 const WEEKDAY_LABELS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 const SCOPE_LABELS = { global: 'Everyone', year: 'Year', branch: 'Branch' }
 
@@ -517,11 +524,11 @@ function CalendarOverridesCard() {
             </div>
             <div className="manager-row-body">
               <div className="manager-row-title">
-                {o.kind === 'holiday'
-                  ? (o.reason || 'Holiday')
-                  : `Follows ${WEEKDAY_LABELS[o.follows_day] || '?'}`}
+                {o.kind === 'follow_day'
+                  ? `Follows ${WEEKDAY_LABELS[o.follows_day] || '?'}`
+                  : (o.reason || KIND_LABELS[o.kind] || 'Override')}
                 <span className="manager-year-pill manager-year-pill--all">
-                  {KIND_LABELS[o.kind]}
+                  {KIND_LABELS[o.kind] || o.kind}
                 </span>
               </div>
               <div className="manager-row-sub">
@@ -563,6 +570,10 @@ function CalendarOverridesCard() {
           >
             <option value="holiday">Holiday</option>
             <option value="follow_day">Follows day</option>
+            <option value="mst">MST week</option>
+            <option value="est">EST week</option>
+            <option value="assessment">Assessment</option>
+            <option value="frosh">Frosh</option>
           </select>
         </div>
 
@@ -585,7 +596,11 @@ function CalendarOverridesCard() {
         <input
           type="text"
           className="upload-input"
-          placeholder={form.kind === 'holiday' ? 'Reason (e.g. Diwali) — optional' : 'Note (e.g. compensatory day) — optional'}
+          placeholder={
+            form.kind === 'holiday' ? 'Reason (e.g. Diwali) — optional'
+              : form.kind === 'follow_day' ? 'Note (e.g. compensatory day) — optional'
+              : `Note for ${KIND_LABELS[form.kind] || form.kind} — optional`
+          }
           value={form.reason}
           onChange={(e) => update('reason', e.target.value)}
           maxLength={140}

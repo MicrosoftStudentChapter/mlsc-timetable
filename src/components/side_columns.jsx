@@ -376,6 +376,7 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                   mst: 'calendar-day--mst',
                   est: 'calendar-day--est',
                   assessment: 'calendar-day--assessment',
+                  frosh: 'calendar-day--frosh',
                 };
                 const overrideClass = override ? (KIND_CLASS[override.kind] || '') : '';
                 // Sat/Sun with no override at all → dim so it visually reads
@@ -401,6 +402,8 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                     title = override.reason || 'EST week';
                   } else if (override.kind === 'assessment') {
                     title = override.reason || 'Assessment / Evaluation week';
+                  } else if (override.kind === 'frosh') {
+                    title = override.reason || 'Frosh';
                   }
                 } else if (isWeekend) {
                   title = 'No classes';
@@ -437,6 +440,7 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                   { kind: 'mst', label: 'MST week', swatch: 'mst' },
                   { kind: 'est', label: 'EST week', swatch: 'est' },
                   { kind: 'assessment', label: 'Assessment', swatch: 'assessment' },
+                  { kind: 'frosh', label: 'Frosh', swatch: 'frosh' },
                 ];
                 return items
                   .filter((it) => kindsPresent.has(it.kind))

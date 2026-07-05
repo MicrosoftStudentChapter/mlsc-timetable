@@ -312,6 +312,7 @@ export default function CalendarPreviewDialog({
                         <option value="mst">MST week</option>
                         <option value="est">EST week</option>
                         <option value="assessment">Assessment</option>
+                        <option value="frosh">Frosh</option>
                       </select>
                     </td>
                     <td>
