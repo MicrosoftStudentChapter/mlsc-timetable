@@ -26,6 +26,13 @@ import {
 import CalendarPreviewDialog from '../../components/CalendarPreviewDialog'
 import './admin.css'
 
+const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+function monthShort(dateStr) {
+  if (!dateStr) return '?'
+  const m = parseInt(dateStr.slice(5, 7), 10)
+  return MONTH_SHORT[m - 1] || dateStr.slice(5, 7)
+}
+
 function errMessage(err) {
   if (err instanceof AdminAuthError) return err.detail?.error || err.message
   return err?.message || 'Unknown error'
@@ -302,7 +309,7 @@ function ExamDatesCard() {
           <li key={e.id} className="manager-row">
             <div className="manager-exam-date">
               <span className="manager-exam-d">{e.date?.slice(8, 10) || '?'}</span>
-              <span className="manager-exam-m">{(e.date || '').slice(5, 7)}</span>
+              <span className="manager-exam-m">{monthShort(e.date)}</span>
             </div>
             <div className="manager-row-body">
               <div className="manager-row-title">
@@ -520,7 +527,7 @@ function CalendarOverridesCard() {
           <li key={o.id} className="manager-row">
             <div className="manager-exam-date">
               <span className="manager-exam-d">{o.date?.slice(8, 10) || '?'}</span>
-              <span className="manager-exam-m">{(o.date || '').slice(5, 7)}</span>
+              <span className="manager-exam-m">{monthShort(o.date)}</span>
             </div>
             <div className="manager-row-body">
               <div className="manager-row-title">
