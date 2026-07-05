@@ -521,7 +521,43 @@ function CalendarOverridesCard() {
     }
   }
 
-  async function onRemove(id) {\n    if (!window.confirm('Delete this calendar override?')) return\n    setRemoving(id)\n    try {\n      await deleteCalendarOverride(id)\n      await refresh()\n    } catch (err) {\n      setError(err)\n    } finally {\n      setRemoving(null)\n    }\n  }\n\n  async function onReset() {\n    if (!window.confirm('Reset calendar overrides to defaults? This will delete all current overrides and restore the bundled ones.')) return\n    setLoading(true)\n    setError(null)\n    try {\n      await resetCalendarOverrides()\n      await refresh()\n    } catch (err) {\n      setError(err)\n      setLoading(false)\n    }\n  }\n\n  return (\n    <div className="admin-card manager-card">\n      <div className="admin-card-header" style={{ alignItems: 'center' }}>\n        <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Calendar overrides</h2>\n        <button type="button" className="admin-card-action" onClick={refresh} disabled={loading}>\n          {loading ? 'Refreshing…' : 'Refresh'}\n        </button>\n        <button type="button" className="admin-card-action" style={{ color: '#f87171' }} onClick={onReset} disabled={loading}>\n          Reset\n        </button>\n      </div>
+  async function onRemove(id) {
+    if (!window.confirm('Delete this calendar override?')) return
+    setRemoving(id)
+    try {
+      await deleteCalendarOverride(id)
+      await refresh()
+    } catch (err) {
+      setError(err)
+    } finally {
+      setRemoving(null)
+    }
+  }
+
+  async function onReset() {
+    if (!window.confirm('Reset calendar overrides to defaults? This will delete all current overrides and restore the bundled ones.')) return
+    setLoading(true)
+    setError(null)
+    try {
+      await resetCalendarOverrides()
+      await refresh()
+    } catch (err) {
+      setError(err)
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="admin-card manager-card">
+      <div className="admin-card-header" style={{ alignItems: 'center' }}>
+        <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Calendar overrides</h2>
+        <button type="button" className="admin-card-action" onClick={refresh} disabled={loading}>
+          {loading ? 'Refreshing…' : 'Refresh'}
+        </button>
+        <button type="button" className="admin-card-action" style={{ color: '#f87171' }} onClick={onReset} disabled={loading}>
+          Reset
+        </button>
+      </div>
       <p className="admin-card-sub" style={{ textAlign: 'left', marginBottom: 12 }}>
         Mark holidays or make a date follow another weekday's schedule.
         Scope can be global, per year, or per branch (e.g. <code>2A</code>).
