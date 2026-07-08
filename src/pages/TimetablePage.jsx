@@ -162,7 +162,7 @@ function CalendarSyncModal({ isOpen, onClose, currentBatch }) {
           >
             <span className="csm-toggle-knob" />
           </button>
-          <button className="csm-btn csm-btn--link" onClick={() => { onClose(); navigate('/profile') }}>
+          <button className="csm-btn csm-btn--link" onClick={() => { onClose(); navigate('/profile#calendar') }}>
             More options →
           </button>
         </div>

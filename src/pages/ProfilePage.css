@@ -294,6 +294,77 @@
   opacity: 0.65;
 }
 
+/* ── Confirmation Modal ──────────────────────────────────────── */
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.confirm-modal {
+  background: #0f1117;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 28px 24px 20px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+}
+[data-theme="light"] .confirm-modal {
+  background: #ffffff;
+  border-color: rgba(0,0,0,0.1);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+}
+.confirm-title {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-h, #fff);
+}
+[data-theme="light"] .confirm-title { color: #0f172a; }
+.confirm-message {
+  margin: 0 0 22px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text, #ccc);
+  opacity: 0.8;
+}
+[data-theme="light"] .confirm-message { opacity: 0.65; }
+.confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.confirm-btn {
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s, opacity 0.15s;
+}
+.confirm-btn:hover { opacity: 0.85; }
+.confirm-btn--ghost {
+  background: transparent;
+  color: var(--text, #ccc);
+  border-color: rgba(255,255,255,0.15);
+}
+[data-theme="light"] .confirm-btn--ghost {
+  border-color: rgba(0,0,0,0.15);
+  color: rgba(0,0,0,0.65);
+}
+.confirm-btn--primary { background: #3b82f6; color: #fff; }
+.confirm-btn--danger { background: #ef4444; color: #fff; }
+
 .profile-shell {
   width: 100%;
   max-width: 620px;
@@ -746,6 +817,23 @@
     flex-direction: column-reverse;
   }
   .profile-btn {
+    width: 100%;
+  }
+  .gcal-autosync-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .gcal-autosync-label {
+    min-width: 0;
+  }
+  .gcal-info-grid {
+    grid-template-columns: auto auto;
+    font-size: 0.78rem;
+  }
+  .confirm-actions {
+    flex-direction: column-reverse;
+  }
+  .confirm-btn {
     width: 100%;
   }
 }

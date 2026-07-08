@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react'
 import { loadBatches } from '../lib/batches'
 import Combobox from '../components/Combobox'
@@ -37,6 +37,35 @@ function findBatchPath(years, batchCode) {
   return { year: '', stream: '', batch: '' }
 }
 
+// ── Confirmation Modal ────────────────────────────────────────────────────────
+function ConfirmModal({ open, title, message, confirmLabel = 'Confirm', danger = false, onConfirm, onCancel }) {
+  useEffect(() => {
+    if (!open) return
+    const fn = (e) => { if (e.key === 'Escape') onCancel() }
+    document.addEventListener('keydown', fn)
+    return () => document.removeEventListener('keydown', fn)
+  }, [open, onCancel])
+
+  if (!open) return null
+  return (
+    <div className="confirm-backdrop" onClick={onCancel}>
+      <div className="confirm-modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+        <h3 className="confirm-title">{title}</h3>
+        <p className="confirm-message">{message}</p>
+        <div className="confirm-actions">
+          <button className="confirm-btn confirm-btn--ghost" onClick={onCancel}>Cancel</button>
+          <button
+            className={`confirm-btn ${danger ? 'confirm-btn--danger' : 'confirm-btn--primary'}`}
+            onClick={onConfirm}
+          >
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ── Google Calendar Card ──────────────────────────────────────────────────────
 
 function GoogleCalendarCard({ savedBatch }) {
@@ -44,8 +73,8 @@ function GoogleCalendarCard({ savedBatch }) {
   const [status, setStatus] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [confirm, setConfirm] = useState(null) // {title, message, confirmLabel, danger, onConfirm}
 
-  // Use Clerk's React hook token fn — avoids window.Clerk.session timing issues
   const tk = useCallback(() => getToken(), [getToken])
 
   const reload = useCallback(async () => {
@@ -53,7 +82,6 @@ function GoogleCalendarCard({ savedBatch }) {
       const s = await getCalendarStatus(tk)
       setStatus(s)
     } catch (err) {
-      // Expose the error so we can see what went wrong
       setStatus({ configured: true, _loadError: err?.message || String(err) })
     }
   }, [tk])
@@ -86,14 +114,20 @@ function GoogleCalendarCard({ savedBatch }) {
   const handleEnable     = () => run(() => enableCalendarSync(savedBatch, tk), 'Enable')
   const handleDisable    = () => run(() => disableCalendarSync(tk), 'Disable')
   const handleResync     = () => run(() => triggerResync(savedBatch, tk), 'Sync')
-  const handleClear      = () => {
-    if (!window.confirm('Delete all MLSC timetable events from your Google Calendar?\n\nYou can resync them at any time.')) return
-    run(() => clearCalendarEvents(tk), 'Clear')
-  }
-  const handleDisconnect = () => {
-    if (!window.confirm('Disconnect Google Calendar?\n\nThis will revoke access and delete all MLSC events from your calendar.')) return
-    run(() => disconnectCalendar(tk), 'Disconnect')
-  }
+  const handleClear      = () => setConfirm({
+    title: 'Clear all events?',
+    message: 'This will delete all MLSC timetable events from your Google Calendar. You can resync them at any time.',
+    confirmLabel: 'Clear events',
+    danger: true,
+    onConfirm: () => { setConfirm(null); run(() => clearCalendarEvents(tk), 'Clear') },
+  })
+  const handleDisconnect = () => setConfirm({
+    title: 'Disconnect Google Calendar?',
+    message: 'This will revoke access and permanently delete all MLSC timetable events from your Google Calendar.',
+    confirmLabel: 'Disconnect',
+    danger: true,
+    onConfirm: () => { setConfirm(null); run(() => disconnectCalendar(tk), 'Disconnect') },
+  })
 
   const lastSync = status?.last_synced_at
     ? new Date(status.last_synced_at).toLocaleString()
@@ -101,7 +135,7 @@ function GoogleCalendarCard({ savedBatch }) {
 
   if (!status) {
     return (
-      <div className="profile-card gcal-card">
+      <div id="calendar" className="profile-card gcal-card">
         <div className="gcal-header">
           <span className="gcal-icon" aria-hidden="true">📅</span>
           <div>
@@ -128,7 +162,16 @@ function GoogleCalendarCard({ savedBatch }) {
   }
 
   return (
-    <div className="profile-card gcal-card">
+    <div id="calendar" className="profile-card gcal-card">
+      <ConfirmModal
+        open={!!confirm}
+        title={confirm?.title}
+        message={confirm?.message}
+        confirmLabel={confirm?.confirmLabel}
+        danger={confirm?.danger}
+        onConfirm={confirm?.onConfirm}
+        onCancel={() => setConfirm(null)}
+      />
       <div className="gcal-header">
         <span className="gcal-icon" aria-hidden="true">📅</span>
         <div>
@@ -227,6 +270,15 @@ function ProfileInner() {
   const { user, isLoaded } = useUser()
   const { signOut } = useClerk()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Scroll to #calendar anchor when navigated with hash
+  useEffect(() => {
+    if (location.hash === '#calendar') {
+      const el = document.getElementById('calendar')
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [location.hash])
 
   const [years, setYears] = useState([])
   const [yearInput, setYearInput] = useState('')
