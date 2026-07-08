@@ -413,37 +413,67 @@ function ProfileInner() {
           <div className="profile-card-section">
             <div className="profile-field">
               <span className="profile-field-label">Default batch</span>
-              <div className="profile-batch-row">
-                <Combobox
-                  className="profile-combobox"
-                  value={yearInput}
-                  onChange={(v) => { setYearInput(v); setSavedAt(null) }}
-                  options={yearOptions}
-                  placeholder="Year"
-                  ariaLabel="Year"
-                />
-                <Combobox
-                  className="profile-combobox"
-                  value={streamInput}
-                  onChange={(v) => { setStreamInput(v); setSavedAt(null) }}
-                  options={streamOptions}
-                  placeholder="Stream"
-                  ariaLabel="Stream"
-                  disabled={!selectedYear}
-                />
-                <Combobox
-                  className="profile-combobox"
-                  value={batchInput}
-                  onChange={(v) => { setBatchInput(v.toUpperCase()); setSavedAt(null) }}
-                  options={batchOptions}
-                  placeholder="Batch"
-                  ariaLabel="Batch"
-                  disabled={!selectedStream}
-                />
-              </div>
+
+              {/* When fully selected, show a summary card with a Change button */}
+              {batchInput && batches.includes(batchInput) ? (
+                <div className="profile-batch-selected">
+                  <span className="profile-batch-selected-code">{batchInput}</span>
+                  <span className="profile-batch-selected-name">
+                    {yearInput} · {streamInput}
+                  </span>
+                  <button
+                    type="button"
+                    className="profile-batch-change"
+                    onClick={() => { setBatchInput(''); setSavedAt(null) }}
+                    disabled={saving}
+                  >
+                    Change
+                  </button>
+                </div>
+              ) : (
+                <div className="profile-batch-row">
+                  <div className="profile-batch-path">
+                    <div className="profile-batch-segment">
+                      <span className="profile-batch-segment-label">Year</span>
+                      <Combobox
+                        className="profile-combobox"
+                        value={yearInput}
+                        onChange={(v) => { setYearInput(v); setSavedAt(null) }}
+                        options={yearOptions}
+                        placeholder="Select year"
+                        ariaLabel="Year"
+                      />
+                    </div>
+                    <div className="profile-batch-segment">
+                      <span className="profile-batch-segment-label">Stream</span>
+                      <Combobox
+                        className="profile-combobox"
+                        value={streamInput}
+                        onChange={(v) => { setStreamInput(v); setSavedAt(null) }}
+                        options={streamOptions}
+                        placeholder={selectedYear ? 'Select stream' : '—'}
+                        ariaLabel="Stream"
+                        disabled={!selectedYear}
+                      />
+                    </div>
+                    <div className="profile-batch-segment">
+                      <span className="profile-batch-segment-label">Batch</span>
+                      <Combobox
+                        className="profile-combobox"
+                        value={batchInput}
+                        onChange={(v) => { setBatchInput(v.toUpperCase()); setSavedAt(null) }}
+                        options={batchOptions}
+                        placeholder={selectedStream ? 'Select batch' : '—'}
+                        ariaLabel="Batch"
+                        disabled={!selectedStream}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <span className="profile-field-hint">
-                Pick year → stream → batch. Saved to your account so it
-                follows you across devices.
+                Saved to your account so it follows you across devices.
               </span>
             </div>
           </div>

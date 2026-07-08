@@ -2,7 +2,7 @@
 // Login is OPTIONAL — the site renders fine without it. When AUTH_ENABLED is
 // false, every Clerk touchpoint becomes a no-op so the app still works.
 
-import { useUser as useClerkUser } from '@clerk/clerk-react'
+import { useUser as useClerkUser, useAuth as useClerkAuth } from '@clerk/clerk-react'
 
 const rawKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -34,4 +34,14 @@ export const useAuthUser = AUTH_ENABLED
     }
   : function useAuthUserStub() {
       return { isLoaded: true, isSignedIn: false, user: null }
+    }
+
+// Exposes getToken for calendar sync. Stub returns null when auth is off.
+export const useCalendarAuth = AUTH_ENABLED
+  ? function useCalendarAuthClerk() {
+      const { getToken } = useClerkAuth()
+      return { getToken }
+    }
+  : function useCalendarAuthStub() {
+      return { getToken: async () => null }
     }

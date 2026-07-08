@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Combobox from '../components/Combobox'
 import TimetableGrid from '../components/TimetableGrid'
@@ -9,8 +9,11 @@ import { loadTimetable } from '../lib/timetable'
 import { exportGridAsPng, exportGridAsPdf, ASPECT_PRESETS } from '../lib/export_timetable'
 import { DashboardLayout } from '../components/side_columns'
 import { useTheme } from '../hooks/useTheme'
-import { useAuthUser } from '../lib/auth'
-import { getCalendarConfigured, getCalendarStatus } from '../lib/calendar_api'
+import { useAuthUser, useCalendarAuth } from '../lib/auth'
+import {
+  getCalendarConfigured, getCalendarStatus,
+  connectCalendar, enableCalendarSync, disableCalendarSync, triggerResync,
+} from '../lib/calendar_api'
 import './TimetablePage.css'
 
 const NAV_AUTO_CLOSE_MS = 3000
@@ -28,6 +31,152 @@ function getInitialCardTheme() {
     if (CARD_THEMES.some((t) => t.value === saved)) return saved
   } catch (_) {}
   return 'default'
+}
+
+// ── Calendar Sync Modal ───────────────────────────────────────────────────────
+function CalendarSyncModal({ isOpen, onClose, currentBatch }) {
+  const navigate = useNavigate()
+  const { isLoaded, isSignedIn, user } = useAuthUser()
+  const { getToken } = useCalendarAuth()
+  const tk = useCallback(() => getToken(), [getToken])
+
+  const [calStatus, setCalStatus] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+
+  const savedBatch = user?.unsafeMetadata?.batch || currentBatch || ''
+
+  const reload = useCallback(async () => {
+    if (!isSignedIn) return
+    try {
+      const s = await getCalendarStatus(tk)
+      setCalStatus(s)
+    } catch (e) {
+      setCalStatus({ configured: true, _err: e?.message })
+    }
+  }, [isSignedIn, tk])
+
+  useEffect(() => {
+    if (!isOpen || !isLoaded || !isSignedIn) return
+    setCalStatus(null)
+    reload()
+  }, [isOpen, isLoaded, isSignedIn, reload])
+
+  // close on Escape
+  useEffect(() => {
+    if (!isOpen) return
+    const fn = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', fn)
+    return () => document.removeEventListener('keydown', fn)
+  }, [isOpen, onClose])
+
+  if (!isOpen) return null
+
+  async function run(fn) {
+    setBusy(true); setErr('')
+    try { await fn(); await reload() }
+    catch (e) { setErr(e?.message || 'Failed') }
+    finally { setBusy(false) }
+  }
+
+  const renderBody = () => {
+    if (!isLoaded) return <p className="csm-hint">Loading…</p>
+
+    if (!isSignedIn) return (
+      <>
+        <p className="csm-hint">Sign in to automatically sync your timetable to Google Calendar. Holidays and schedule changes push automatically.</p>
+        <div className="csm-actions">
+          <button className="csm-btn csm-btn--primary" onClick={() => { onClose(); navigate('/login') }}>Sign in</button>
+          <button className="csm-btn csm-btn--ghost" onClick={onClose}>Later</button>
+        </div>
+      </>
+    )
+
+    if (!savedBatch) return (
+      <>
+        <p className="csm-hint">Save your default batch in your profile first — we need it to know which timetable to sync.</p>
+        <div className="csm-actions">
+          <button className="csm-btn csm-btn--primary" onClick={() => { onClose(); navigate('/profile') }}>Go to Profile</button>
+          <button className="csm-btn csm-btn--ghost" onClick={onClose}>Later</button>
+        </div>
+      </>
+    )
+
+    if (!calStatus) return <p className="csm-hint">Loading sync status…</p>
+
+    if (calStatus._err) return (
+      <>
+        <p className="csm-hint" style={{ color: '#f87171' }}>Error: {calStatus._err}</p>
+        <div className="csm-actions">
+          <button className="csm-btn csm-btn--ghost" onClick={reload}>Retry</button>
+        </div>
+      </>
+    )
+
+    if (!calStatus.connected) return (
+      <>
+        <p className="csm-hint">Connect your Google account to sync <strong>{savedBatch}</strong> timetable — holidays and schedule changes update automatically.</p>
+        {err && <p className="csm-error">{err}</p>}
+        <div className="csm-actions">
+          <button className="csm-btn csm-btn--primary" disabled={busy} onClick={() => run(() => connectCalendar(tk))}>
+            {busy ? 'Connecting…' : 'Connect Google Calendar'}
+          </button>
+          <button className="csm-btn csm-btn--ghost" onClick={onClose}>Later</button>
+        </div>
+      </>
+    )
+
+    const lastSync = calStatus.last_synced_at ? new Date(calStatus.last_synced_at).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : null
+
+    return (
+      <>
+        <div className="csm-info">
+          <span className="csm-info-row"><span className="csm-info-label">Account</span><span>{calStatus.google_email}</span></span>
+          <span className="csm-info-row"><span className="csm-info-label">Batch</span><span>{calStatus.batch_code || savedBatch}</span></span>
+          {lastSync && <span className="csm-info-row"><span className="csm-info-label">Last sync</span><span>{lastSync}</span></span>}
+        </div>
+        {err && <p className="csm-error">{err}</p>}
+        {calStatus.last_error === 'invalid_grant' && (
+          <p className="csm-error">Google access revoked — reconnect to restore sync.</p>
+        )}
+        <div className="csm-actions">
+          {!calStatus.enabled ? (
+            <button className="csm-btn csm-btn--primary" disabled={busy} onClick={() => run(() => enableCalendarSync(savedBatch, tk))}>
+              {busy ? 'Enabling…' : 'Enable sync'}
+            </button>
+          ) : (
+            <>
+              <button className="csm-btn csm-btn--secondary" disabled={busy} onClick={() => run(() => triggerResync(savedBatch, tk))}>
+                {busy ? 'Syncing…' : 'Sync now'}
+              </button>
+              <button className="csm-btn csm-btn--ghost" disabled={busy} onClick={() => run(() => disableCalendarSync(tk))}>
+                Pause
+              </button>
+            </>
+          )}
+          <button className="csm-btn csm-btn--link" onClick={() => { onClose(); navigate('/profile') }}>
+            More options →
+          </button>
+        </div>
+      </>
+    )
+  }
+
+  return (
+    <div className="csm-backdrop" onClick={onClose}>
+      <div className="csm" onClick={(e) => e.stopPropagation()}>
+        <div className="csm-header">
+          <span className="csm-icon" aria-hidden="true">📅</span>
+          <div className="csm-header-text">
+            <strong className="csm-title">Google Calendar Sync</strong>
+            {calStatus?.enabled && <span className="csm-dot csm-dot--on" />}
+          </div>
+          <button className="csm-close" onClick={onClose} aria-label="Close">×</button>
+        </div>
+        <div className="csm-body">{renderBody()}</div>
+      </div>
+    </div>
+  )
 }
 
 export default function TimetablePage() {
@@ -53,12 +202,11 @@ export default function TimetablePage() {
   const pillRef = useRef(null)
   const exportRef = useRef(null)
 
-  // Show button immediately when backend URL is set; fetch only to hide it if unconfigured
   const [calendarConfigured, setCalendarConfigured] = useState(
     () => !!(import.meta.env.VITE_BACKEND_URL || '')
   )
   const [calendarStatus, setCalendarStatus] = useState(null)
-  const [calendarNudge, setCalendarNudge] = useState(false)
+  const [calendarModalOpen, setCalendarModalOpen] = useState(false)
 
   useEffect(() => {
     getCalendarConfigured().then((d) => {
@@ -76,8 +224,7 @@ export default function TimetablePage() {
   }, [isSignedIn])
 
   function handleCalendarClick() {
-    if (!isSignedIn) { setCalendarNudge(true); return }
-    navigate('/profile')
+    setCalendarModalOpen(true)
   }
 
   useEffect(() => {
@@ -208,26 +355,11 @@ export default function TimetablePage() {
 
   return (
     <>
-      {/* Sign-in nudge modal for Google Calendar */}
-      {calendarNudge && (
-        <div className="cal-nudge-backdrop" onClick={() => setCalendarNudge(false)}>
-          <div className="cal-nudge" onClick={(e) => e.stopPropagation()}>
-            <div className="cal-nudge-icon">📅</div>
-            <h3 className="cal-nudge-title">Sync to Google Calendar</h3>
-            <p className="cal-nudge-body">
-              Sign in to automatically sync your timetable — holidays and schedule changes push to your Google Calendar whenever admins publish them.
-            </p>
-            <div className="cal-nudge-actions">
-              <button className="cal-nudge-btn cal-nudge-btn--primary" onClick={() => { setCalendarNudge(false); navigate('/login') }}>
-                Sign in
-              </button>
-              <button className="cal-nudge-btn cal-nudge-btn--ghost" onClick={() => setCalendarNudge(false)}>
-                Maybe later
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <CalendarSyncModal
+        isOpen={calendarModalOpen}
+        onClose={() => setCalendarModalOpen(false)}
+        currentBatch={batch}
+      />
     <DashboardLayout
       batch={batch}
       onActiveWeekdayChange={setActiveWeekdayIdx}
