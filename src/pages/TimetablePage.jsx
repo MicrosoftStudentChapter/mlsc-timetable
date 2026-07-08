@@ -10,7 +10,7 @@ import { exportGridAsPng, exportGridAsPdf, ASPECT_PRESETS } from '../lib/export_
 import { DashboardLayout } from '../components/side_columns'
 import { useTheme } from '../hooks/useTheme'
 import { useAuthUser } from '../lib/auth'
-import { getCalendarStatus } from '../lib/calendar_api'
+import { getCalendarConfigured, getCalendarStatus } from '../lib/calendar_api'
 import './TimetablePage.css'
 
 const NAV_AUTO_CLOSE_MS = 3000
@@ -53,15 +53,23 @@ export default function TimetablePage() {
   const pillRef = useRef(null)
   const exportRef = useRef(null)
 
-  const [calendarStatus, setCalendarStatus] = useState(null) // null=loading, false=off, obj=status
+  const [calendarConfigured, setCalendarConfigured] = useState(false)
+  const [calendarStatus, setCalendarStatus] = useState(null)
 
   useEffect(() => {
+    // Public check — shows the button even before sign-in
+    getCalendarConfigured().then((d) => setCalendarConfigured(!!d?.configured))
+  }, [])
+
+  useEffect(() => {
+    // Auth'd check — loads sync status when signed in
+    if (!isSignedIn) return
     let cancelled = false
     getCalendarStatus()
       .then((s) => { if (!cancelled) setCalendarStatus(s) })
-      .catch(() => { if (!cancelled) setCalendarStatus(false) })
+      .catch(() => {})
     return () => { cancelled = true }
-  }, [])
+  }, [isSignedIn])
 
   useEffect(() => {
     const mq = window.matchMedia(NAV_COLLAPSE_QUERY)
@@ -288,11 +296,11 @@ export default function TimetablePage() {
             {/* Group 1: timetable-focused */}
             <div className="tt-action-group">
               {/* Google Calendar — hidden when not configured */}
-              {calendarStatus && calendarStatus.configured && (
+              {calendarConfigured && (
                 <div className="tt-tip-wrap" data-tip={
-                  calendarStatus.connected && calendarStatus.enabled
+                  calendarStatus?.connected && calendarStatus?.enabled
                     ? 'Calendar sync active'
-                    : calendarStatus.connected
+                    : calendarStatus?.connected
                     ? 'Calendar connected (sync paused)'
                     : 'Sync timetable to Google Calendar'
                 }>
@@ -301,7 +309,7 @@ export default function TimetablePage() {
                     aria-label="Google Calendar sync"
                     onClick={() => navigate('/profile')}
                   >
-                    {calendarStatus.connected && calendarStatus.enabled && (
+                    {calendarStatus?.connected && calendarStatus?.enabled && (
                       <span className="tt-cal-dot" aria-hidden="true" />
                     )}
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 48 48">

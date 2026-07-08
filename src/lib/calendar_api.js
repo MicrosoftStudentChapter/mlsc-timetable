@@ -47,6 +47,21 @@ async function calendarFetch(path, opts = {}) {
 // ── Status ──────────────────────────────────────────────────────────────
 
 /**
+ * GET /api/calendar/configured  (no auth)
+ * Returns { configured: bool } — safe to call before the user signs in.
+ */
+export async function getCalendarConfigured() {
+  if (backendDisabled()) return { configured: false }
+  try {
+    const res = await fetch(`${BASE}/api/calendar/configured`)
+    if (!res.ok) return { configured: false }
+    return res.json()
+  } catch {
+    return { configured: false }
+  }
+}
+
+/**
  * GET /api/calendar/status
  * Returns { configured, connected, enabled, google_email, last_synced_at, last_error, ... }
  */
