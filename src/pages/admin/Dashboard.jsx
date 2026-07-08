@@ -148,7 +148,8 @@ function AccuracyDonut({ pct }) {
 function UploadCard({ onUploaded }) {
   const navigate = useNavigate()
   const [file, setFile] = useState(null)
-  const [semester, setSemester] = useState('')
+  const [isOdd, setIsOdd] = useState(true)
+  const [year, setYear] = useState('')
   const [sheet, setSheet] = useState('all')
   const [force, setForce] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -186,7 +187,8 @@ function UploadCard({ onUploaded }) {
 
   async function submit(evt) {
     evt.preventDefault()
-    if (!file || !semester.trim() || uploading) return
+    const semester = buildLabel(isOdd, year)
+    if (!file || !semester || uploading) return
     setUploading(true)
     setProgress(0)
     setResult(null)
@@ -251,16 +253,47 @@ function UploadCard({ onUploaded }) {
         </label>
 
         <div>
-          <label htmlFor="upload-semester">Semester label</label>
+          <label>Semester type</label>
+          <div className="seg-switch" style={{ marginTop: 6 }}>
+            <button
+              type="button"
+              className={`seg-switch-opt${!isOdd ? ' active' : ''}`}
+              onClick={() => setIsOdd(false)}
+              disabled={uploading}
+            >Even</button>
+            <button
+              type="button"
+              className={`seg-switch-opt${isOdd ? ' active' : ''}`}
+              onClick={() => setIsOdd(true)}
+              disabled={uploading}
+            >Odd</button>
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="upload-year">
+            Current year
+            <span style={{ fontWeight: 400, opacity: 0.55, marginLeft: 6 }}>
+              ({isOdd ? 'e.g. 25' : 'e.g. 26'})
+            </span>
+          </label>
           <input
-            id="upload-semester"
-            type="text"
+            id="upload-year"
+            type="number"
             className="upload-input"
-            placeholder="e.g. JAN-MAY 2026"
-            value={semester}
-            onChange={(e) => setSemester(e.target.value)}
+            placeholder={isOdd ? '25' : '26'}
+            value={year}
+            min={0}
+            max={9999}
+            onChange={(e) => setYear(e.target.value)}
+            disabled={uploading}
             required
           />
+          {year && (
+            <span style={{ fontSize: '0.78rem', opacity: 0.55, display: 'block', marginTop: 3 }}>
+              Label: <strong>{buildLabel(isOdd, year)}</strong>
+            </span>
+          )}
         </div>
 
         <div>
@@ -278,7 +311,7 @@ function UploadCard({ onUploaded }) {
         <button
           type="submit"
           className="upload-btn"
-          disabled={!file || !semester.trim() || uploading || cooldownActive}
+          disabled={!file || !buildLabel(isOdd, year) || uploading || cooldownActive}
         >
           {uploading ? 'Uploading…' : cooldownActive ? 'On cooldown' : 'Upload semester timetable'}
         </button>
