@@ -20,9 +20,9 @@ async function getClerkToken() {
   }
 }
 
-async function calendarFetch(path, opts = {}) {
+async function calendarFetch(path, opts = {}, getTokenFn = null) {
   if (backendDisabled()) throw new Error('Backend not configured')
-  const token = await getClerkToken()
+  const token = getTokenFn ? await getTokenFn() : await getClerkToken()
   if (!token) throw new Error('Not signed in')
   const res = await fetch(`${BASE}${path}`, {
     ...opts,
@@ -65,8 +65,8 @@ export async function getCalendarConfigured() {
  * GET /api/calendar/status
  * Returns { configured, connected, enabled, google_email, last_synced_at, last_error, ... }
  */
-export async function getCalendarStatus() {
-  return calendarFetch('/api/calendar/status')
+export async function getCalendarStatus(getTokenFn = null) {
+  return calendarFetch('/api/calendar/status', {}, getTokenFn)
 }
 
 // ── OAuth ────────────────────────────────────────────────────────────────
@@ -115,32 +115,32 @@ export function openOAuthPopup(redirectUrl) {
  * GET /api/calendar/oauth/start → { redirect_url }
  * Then opens the popup and waits for the postMessage.
  */
-export async function connectCalendar() {
-  const { redirect_url } = await calendarFetch('/api/calendar/oauth/start')
+export async function connectCalendar(getTokenFn = null) {
+  const { redirect_url } = await calendarFetch('/api/calendar/oauth/start', {}, getTokenFn)
   await openOAuthPopup(redirect_url)
 }
 
 // ── Enable / disable / resync ─────────────────────────────────────────────
 
 /** POST /api/calendar/enable  body { batch } */
-export async function enableCalendarSync(batch) {
+export async function enableCalendarSync(batch, getTokenFn = null) {
   return calendarFetch('/api/calendar/enable', {
     method: 'POST',
     body: JSON.stringify({ batch }),
-  })
+  }, getTokenFn)
 }
 
 /** POST /api/calendar/disable */
-export async function disableCalendarSync() {
-  return calendarFetch('/api/calendar/disable', { method: 'POST' })
+export async function disableCalendarSync(getTokenFn = null) {
+  return calendarFetch('/api/calendar/disable', { method: 'POST' }, getTokenFn)
 }
 
 /** POST /api/calendar/resync  optionally updates batch */
-export async function triggerResync(batch) {
+export async function triggerResync(batch, getTokenFn = null) {
   const url = batch
     ? `/api/calendar/resync?batch=${encodeURIComponent(batch)}`
     : '/api/calendar/resync'
-  return calendarFetch(url, { method: 'POST' })
+  return calendarFetch(url, { method: 'POST' }, getTokenFn)
 }
 
 // ── Disconnect / clear ────────────────────────────────────────────────────
@@ -149,8 +149,8 @@ export async function triggerResync(batch) {
  * DELETE /api/calendar/disconnect
  * Revokes Google token, deletes the MLSC calendar, wipes all DB rows.
  */
-export async function disconnectCalendar() {
-  return calendarFetch('/api/calendar/disconnect', { method: 'DELETE' })
+export async function disconnectCalendar(getTokenFn = null) {
+  return calendarFetch('/api/calendar/disconnect', { method: 'DELETE' }, getTokenFn)
 }
 
 /**
@@ -158,6 +158,6 @@ export async function disconnectCalendar() {
  * Deletes all events we created + the MLSC calendar, but keeps the Google
  * connection active. User can resync to start fresh.
  */
-export async function clearCalendarEvents() {
-  return calendarFetch('/api/calendar/clear', { method: 'DELETE' })
+export async function clearCalendarEvents(getTokenFn = null) {
+  return calendarFetch('/api/calendar/clear', { method: 'DELETE' }, getTokenFn)
 }

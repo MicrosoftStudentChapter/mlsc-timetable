@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useUser, useClerk } from '@clerk/clerk-react'
+import { useUser, useClerk, useAuth } from '@clerk/clerk-react'
 import { loadBatches } from '../lib/batches'
 import Combobox from '../components/Combobox'
 import { RequireAuth } from './LoginPage'
@@ -40,25 +40,31 @@ function findBatchPath(years, batchCode) {
 // ── Google Calendar Card ──────────────────────────────────────────────────────
 
 function GoogleCalendarCard({ savedBatch }) {
-  const [status, setStatus] = useState(null)   // null = loading
+  const { getToken, isLoaded, isSignedIn } = useAuth()
+  const [status, setStatus] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
+  // Use Clerk's React hook token fn — avoids window.Clerk.session timing issues
+  const tk = useCallback(() => getToken(), [getToken])
+
   const reload = useCallback(async () => {
     try {
-      const s = await getCalendarStatus()
+      const s = await getCalendarStatus(tk)
       setStatus(s)
     } catch {
       setStatus({ configured: false })
     }
-  }, [])
+  }, [tk])
 
   useEffect(() => {
+    if (!isLoaded || !isSignedIn) return
     reload()
     const id = setInterval(reload, 8000)
     return () => clearInterval(id)
-  }, [reload])
+  }, [reload, isLoaded, isSignedIn])
 
+  if (!isLoaded || !isSignedIn) return null
   if (!status || !status.configured) return null
 
   async function run(fn, label) {
@@ -74,17 +80,17 @@ function GoogleCalendarCard({ savedBatch }) {
     }
   }
 
-  const handleConnect    = () => run(connectCalendar, 'Connect')
-  const handleEnable     = () => run(() => enableCalendarSync(savedBatch), 'Enable')
-  const handleDisable    = () => run(disableCalendarSync, 'Disable')
-  const handleResync     = () => run(() => triggerResync(savedBatch), 'Sync')
+  const handleConnect    = () => run(() => connectCalendar(tk), 'Connect')
+  const handleEnable     = () => run(() => enableCalendarSync(savedBatch, tk), 'Enable')
+  const handleDisable    = () => run(() => disableCalendarSync(tk), 'Disable')
+  const handleResync     = () => run(() => triggerResync(savedBatch, tk), 'Sync')
   const handleClear      = () => {
     if (!window.confirm('Delete all MLSC timetable events from your Google Calendar?\n\nYou can resync them at any time.')) return
-    run(clearCalendarEvents, 'Clear')
+    run(() => clearCalendarEvents(tk), 'Clear')
   }
   const handleDisconnect = () => {
     if (!window.confirm('Disconnect Google Calendar?\n\nThis will revoke access and delete all MLSC events from your calendar.')) return
-    run(disconnectCalendar, 'Disconnect')
+    run(() => disconnectCalendar(tk), 'Disconnect')
   }
 
   const lastSync = status.last_synced_at
