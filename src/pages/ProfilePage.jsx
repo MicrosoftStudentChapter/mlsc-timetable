@@ -1,10 +1,19 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useUser, useClerk } from '@clerk/clerk-react'
 import { loadBatches } from '../lib/batches'
 import Combobox from '../components/Combobox'
 import { RequireAuth } from './LoginPage'
 import { AUTH_ENABLED } from '../lib/auth'
+import {
+  getCalendarStatus,
+  connectCalendar,
+  enableCalendarSync,
+  disableCalendarSync,
+  triggerResync,
+  disconnectCalendar,
+  clearCalendarEvents,
+} from '../lib/calendar_api'
 import './ProfilePage.css'
 
 function splitName(full) {
@@ -26,6 +35,150 @@ function findBatchPath(years, batchCode) {
     }
   }
   return { year: '', stream: '', batch: '' }
+}
+
+// ── Google Calendar Card ──────────────────────────────────────────────────────
+
+function GoogleCalendarCard({ savedBatch }) {
+  const [status, setStatus] = useState(null)   // null = loading
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+
+  const reload = useCallback(async () => {
+    try {
+      const s = await getCalendarStatus()
+      setStatus(s)
+    } catch {
+      setStatus({ configured: false })
+    }
+  }, [])
+
+  useEffect(() => {
+    reload()
+    const id = setInterval(reload, 8000)
+    return () => clearInterval(id)
+  }, [reload])
+
+  if (!status || !status.configured) return null
+
+  async function run(fn, label) {
+    setBusy(true)
+    setError('')
+    try {
+      await fn()
+      await reload()
+    } catch (err) {
+      setError(err.message || `${label} failed`)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const handleConnect    = () => run(connectCalendar, 'Connect')
+  const handleEnable     = () => run(() => enableCalendarSync(savedBatch), 'Enable')
+  const handleDisable    = () => run(disableCalendarSync, 'Disable')
+  const handleResync     = () => run(() => triggerResync(savedBatch), 'Sync')
+  const handleClear      = () => {
+    if (!window.confirm('Delete all MLSC timetable events from your Google Calendar?\n\nYou can resync them at any time.')) return
+    run(clearCalendarEvents, 'Clear')
+  }
+  const handleDisconnect = () => {
+    if (!window.confirm('Disconnect Google Calendar?\n\nThis will revoke access and delete all MLSC events from your calendar.')) return
+    run(disconnectCalendar, 'Disconnect')
+  }
+
+  const lastSync = status.last_synced_at
+    ? new Date(status.last_synced_at).toLocaleString()
+    : null
+
+  return (
+    <div className="profile-card gcal-card">
+      <div className="gcal-header">
+        <span className="gcal-icon" aria-hidden="true">📅</span>
+        <div>
+          <h2 className="gcal-title">Google Calendar Sync</h2>
+          <p className="gcal-subtitle">Auto-push your timetable to Google Calendar</p>
+        </div>
+        {status.connected && status.enabled && (
+          <span className="gcal-status-dot gcal-status-dot--on" title="Sync active" />
+        )}
+      </div>
+
+      {error && <p className="gcal-error">{error}</p>}
+
+      {status.last_error === 'invalid_grant' && (
+        <p className="gcal-error">
+          Google access was revoked.{' '}
+          <button className="gcal-link" onClick={handleConnect} disabled={busy}>Reconnect</button>
+          {' '}to restore sync.
+        </p>
+      )}
+
+      {!status.connected ? (
+        <div className="gcal-section">
+          <p className="gcal-hint">
+            Connect your Google account to sync your batch timetable into a dedicated calendar.
+            Holidays and schedule changes push automatically when admins publish them.
+          </p>
+          {!savedBatch && (
+            <p className="gcal-warn">Save your batch first before connecting.</p>
+          )}
+          <button
+            className="gcal-btn gcal-btn--primary"
+            onClick={handleConnect}
+            disabled={busy || !savedBatch}
+          >
+            {busy ? 'Connecting…' : 'Connect Google Calendar'}
+          </button>
+        </div>
+      ) : (
+        <div className="gcal-section">
+          <div className="gcal-info-grid">
+            <span className="gcal-label">Account</span>
+            <span className="gcal-value">{status.google_email}</span>
+            {lastSync && <>
+              <span className="gcal-label">Last synced</span>
+              <span className="gcal-value">{lastSync}</span>
+            </>}
+            {status.batch_code && <>
+              <span className="gcal-label">Syncing batch</span>
+              <span className="gcal-value">{status.batch_code}</span>
+            </>}
+          </div>
+
+          <div className="gcal-actions">
+            {!status.enabled ? (
+              <button
+                className="gcal-btn gcal-btn--primary"
+                onClick={handleEnable}
+                disabled={busy || !savedBatch}
+              >
+                {busy ? 'Enabling…' : 'Enable sync'}
+              </button>
+            ) : (
+              <>
+                <button className="gcal-btn gcal-btn--secondary" onClick={handleResync} disabled={busy}>
+                  {busy ? 'Syncing…' : 'Sync now'}
+                </button>
+                <button className="gcal-btn gcal-btn--ghost" onClick={handleDisable} disabled={busy}>
+                  Pause sync
+                </button>
+              </>
+            )}
+          </div>
+
+          <div className="gcal-danger-row">
+            <button className="gcal-link gcal-link--warn" onClick={handleClear} disabled={busy}>
+              Clear all events
+            </button>
+            <button className="gcal-link gcal-link--danger" onClick={handleDisconnect} disabled={busy}>
+              Disconnect
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }
 
 function ProfileInner() {
@@ -279,6 +432,8 @@ function ProfileInner() {
             </button>
           </div>
         </form>
+
+        <GoogleCalendarCard savedBatch={savedBatch} />
       </div>
     </main>
   )
