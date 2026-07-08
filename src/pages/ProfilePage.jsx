@@ -52,8 +52,9 @@ function GoogleCalendarCard({ savedBatch }) {
     try {
       const s = await getCalendarStatus(tk)
       setStatus(s)
-    } catch {
-      setStatus({ configured: false })
+    } catch (err) {
+      // Expose the error so we can see what went wrong
+      setStatus({ configured: true, _loadError: err?.message || String(err) })
     }
   }, [tk])
 
@@ -106,6 +107,20 @@ function GoogleCalendarCard({ savedBatch }) {
           <div>
             <h2 className="gcal-title">Google Calendar Sync</h2>
             <p className="gcal-subtitle" style={{ opacity: 0.5 }}>Loading…</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (status._loadError) {
+    return (
+      <div className="profile-card gcal-card">
+        <div className="gcal-header">
+          <span className="gcal-icon" aria-hidden="true">📅</span>
+          <div>
+            <h2 className="gcal-title">Google Calendar Sync</h2>
+            <p className="gcal-subtitle" style={{ color: '#f87171' }}>Error: {status._loadError}</p>
           </div>
         </div>
       </div>
