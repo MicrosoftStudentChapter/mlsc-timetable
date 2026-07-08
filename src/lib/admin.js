@@ -129,10 +129,12 @@ export function getCurrent() {
   return adminFetch('/current')
 }
 
-export function setCurrent(label) {
+export function setCurrent(label, termEndDate) {
+  const body = { label }
+  if (termEndDate) body.term_end_date = termEndDate
   return adminFetch('/admin/current', {
     method: 'PUT',
-    body: JSON.stringify({ label }),
+    body: JSON.stringify(body),
   })
 }
 
