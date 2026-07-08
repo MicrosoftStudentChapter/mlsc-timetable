@@ -100,7 +100,10 @@ export function openOAuthPopup(redirectUrl) {
       try {
         if (popup.closed) {
           cleanup()
-        reject(new Error('Window closed'))
+          reject(new Error('Window closed'))
+        }
+      } catch (_) {
+        // COOP policy blocks popup.closed — ignore, rely on postMessage instead
       }
     }, 500)
 
