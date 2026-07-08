@@ -55,14 +55,13 @@ export default function TimetablePage() {
 
   const [calendarConfigured, setCalendarConfigured] = useState(false)
   const [calendarStatus, setCalendarStatus] = useState(null)
+  const [calendarNudge, setCalendarNudge] = useState(false) // sign-in prompt
 
   useEffect(() => {
-    // Public check — shows the button even before sign-in
     getCalendarConfigured().then((d) => setCalendarConfigured(!!d?.configured))
   }, [])
 
   useEffect(() => {
-    // Auth'd check — loads sync status when signed in
     if (!isSignedIn) return
     let cancelled = false
     getCalendarStatus()
@@ -70,6 +69,11 @@ export default function TimetablePage() {
       .catch(() => {})
     return () => { cancelled = true }
   }, [isSignedIn])
+
+  function handleCalendarClick() {
+    if (!isSignedIn) { setCalendarNudge(true); return }
+    navigate('/profile')
+  }
 
   useEffect(() => {
     const mq = window.matchMedia(NAV_COLLAPSE_QUERY)
@@ -198,6 +202,27 @@ export default function TimetablePage() {
   }
 
   return (
+    <>
+      {/* Sign-in nudge modal for Google Calendar */}
+      {calendarNudge && (
+        <div className="cal-nudge-backdrop" onClick={() => setCalendarNudge(false)}>
+          <div className="cal-nudge" onClick={(e) => e.stopPropagation()}>
+            <div className="cal-nudge-icon">📅</div>
+            <h3 className="cal-nudge-title">Sync to Google Calendar</h3>
+            <p className="cal-nudge-body">
+              Sign in to automatically sync your timetable — holidays and schedule changes push to your Google Calendar whenever admins publish them.
+            </p>
+            <div className="cal-nudge-actions">
+              <button className="cal-nudge-btn cal-nudge-btn--primary" onClick={() => { setCalendarNudge(false); navigate('/login') }}>
+                Sign in
+              </button>
+              <button className="cal-nudge-btn cal-nudge-btn--ghost" onClick={() => setCalendarNudge(false)}>
+                Maybe later
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     <DashboardLayout
       batch={batch}
       onActiveWeekdayChange={setActiveWeekdayIdx}
@@ -307,7 +332,7 @@ export default function TimetablePage() {
                   <button
                     className="tt-icon-btn tt-cal-btn"
                     aria-label="Google Calendar sync"
-                    onClick={() => navigate('/profile')}
+                    onClick={handleCalendarClick}
                   >
                     {calendarStatus?.connected && calendarStatus?.enabled && (
                       <span className="tt-cal-dot" aria-hidden="true" />
@@ -391,6 +416,7 @@ export default function TimetablePage() {
         </nav>
       </div>
     </DashboardLayout>
+    </>
   )
 }
 

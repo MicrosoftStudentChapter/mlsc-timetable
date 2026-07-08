@@ -349,6 +349,66 @@
   pointer-events: none;
 }
 
+/* ── Calendar sign-in nudge modal ─────────────────────────────── */
+.cal-nudge-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.cal-nudge {
+  background: var(--card-bg, #1e1e2e);
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 18px;
+  padding: 32px 28px 24px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+}
+.cal-nudge-icon { font-size: 2.2rem; margin-bottom: 12px; }
+.cal-nudge-title {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-h, #fff);
+}
+.cal-nudge-body {
+  margin: 0 0 22px;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  opacity: 0.72;
+  color: var(--text, #ccc);
+}
+.cal-nudge-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cal-nudge-btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s;
+}
+.cal-nudge-btn:hover { opacity: 0.85; }
+.cal-nudge-btn--primary {
+  background: #3b82f6;
+  color: #fff;
+}
+.cal-nudge-btn--ghost {
+  background: transparent;
+  color: var(--text, #ccc);
+  border: 1px solid var(--border, rgba(255,255,255,0.15));
+}
+
 /* tooltip wrapper */
 .tt-tip-wrap {
   position: relative;
