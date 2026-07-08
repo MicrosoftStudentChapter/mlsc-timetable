@@ -50,9 +50,14 @@ function CalendarSyncModal({ isOpen, onClose, currentBatch }) {
     if (!isSignedIn) return
     try {
       const s = await getCalendarStatus(tk)
-      setCalStatus(s)
+      setCalStatus(s)  // clears any prior _err
     } catch (e) {
-      setCalStatus({ configured: true, _err: e?.message })
+      // Only set error if we have no prior connected state
+      setCalStatus((prev) =>
+        prev?.connected
+          ? prev  // keep last-known good state if already connected
+          : { configured: true, _err: e?.message }
+      )
     }
   }, [isSignedIn, tk])
 
@@ -106,9 +111,14 @@ function CalendarSyncModal({ isOpen, onClose, currentBatch }) {
 
     if (calStatus._err) return (
       <>
-        <p className="csm-hint" style={{ color: '#f87171' }}>Error: {calStatus._err}</p>
+        <p className="csm-hint">
+          Couldn't load sync status — this can happen right after connecting. Click Retry.
+        </p>
+        <p className="csm-hint" style={{ fontSize: '0.75rem', opacity: 0.45, marginTop: -10 }}>
+          ({calStatus._err})
+        </p>
         <div className="csm-actions">
-          <button className="csm-btn csm-btn--ghost" onClick={reload}>Retry</button>
+          <button className="csm-btn csm-btn--primary" onClick={reload}>Retry</button>
         </div>
       </>
     )
