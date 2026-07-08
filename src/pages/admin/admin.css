@@ -1262,6 +1262,23 @@
   letter-spacing: 0;
   opacity: 0.55;
 }
+.manager-term-end-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.manager-term-end-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+.manager-term-end-field .upload-input {
+  margin-bottom: 0;
+  font-size: 0.8rem;
+  padding: 6px 8px;
+}
 .manager-term-end-row {
   display: flex;
   gap: 8px;

@@ -60,6 +60,10 @@ export default function CalendarPreviewDialog({
     Array.isArray(defaultScopeValues) ? defaultScopeValues.join(', ') : '',
   )
   const [replaceRange, setReplaceRange] = useState(true)
+  const [termEndDates, setTermEndDates] = useState(() => {
+    const s = preview?.suggested_term_end || ''
+    return { '1': s, '2': s, '3': s, '4': s }
+  })
   const [error, setError] = useState(null)
 
   useEffect(() => {
@@ -70,6 +74,8 @@ export default function CalendarPreviewDialog({
       Array.isArray(defaultScopeValues) ? defaultScopeValues.join(', ') : '',
     )
     setReplaceRange(true)
+    const s = preview?.suggested_term_end || ''
+    setTermEndDates({ '1': s, '2': s, '3': s, '4': s })
     setError(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, preview])
@@ -143,6 +149,9 @@ export default function CalendarPreviewDialog({
               .filter(Boolean),
         replaceRange: replaceRange && range ? range : null,
         source: preview.source,
+        termEndDates: Object.fromEntries(
+          Object.entries(termEndDates).filter(([, v]) => v.trim())
+        ),
       })
     } catch (err) {
       setError(err?.message || String(err))
@@ -221,6 +230,27 @@ export default function CalendarPreviewDialog({
                 </span>
               </label>
             )}
+          </div>
+
+          {/* Term end dates — one per UG year, pre-filled from PDF's last date. */}
+          <div className="cal-term-end">
+            <span className="cal-term-end-label">
+              Term end dates
+              <span className="cal-term-end-hint"> — RRULE UNTIL for Google Calendar (per UG year)</span>
+            </span>
+            <div className="cal-term-end-grid">
+              {['1', '2', '3', '4'].map((yr) => (
+                <label key={yr} className="cal-term-end-field">
+                  <span>Year {yr}</span>
+                  <input
+                    type="date"
+                    className="cal-input"
+                    value={termEndDates[yr] || ''}
+                    onChange={(e) => setTermEndDates((d) => ({ ...d, [yr]: e.target.value }))}
+                  />
+                </label>
+              ))}
+            </div>
           </div>
 
           {/* Warnings surfaced by the parser. */}

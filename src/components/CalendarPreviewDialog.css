@@ -165,6 +165,50 @@
   color: #1d1c24;
 }
 
+/* ── Term end dates ──────────────────────────────────────────── */
+.cal-term-end {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+}
+[data-theme='light'] .cal-term-end { background: rgba(0, 0, 0, 0.02); }
+.cal-term-end-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted, rgba(255, 255, 255, 0.55));
+}
+.cal-term-end-hint {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.6;
+}
+.cal-term-end-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.cal-term-end-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text-muted, rgba(255, 255, 255, 0.55));
+}
+.cal-term-end-field .cal-input[type="date"] {
+  width: 100%;
+  font-size: 12px;
+}
+
 /* ── Warnings block ────────────────────────────────────────── */
 .cal-warnings {
   padding: 12px 14px;

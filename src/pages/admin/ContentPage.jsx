@@ -460,8 +460,8 @@ function ExamDatesCard() {
 // (with optional reason) or make it follow another weekday's timetable.
 // Scope: global (everyone), year (["1","2"] etc.), branch (["2A","1E"] etc.).
 function TermEndDateRow() {
-  const [termEnd, setTermEnd] = useState('')
-  const [original, setOriginal] = useState('')
+  const [dates, setDates] = useState({ '1': '', '2': '', '3': '', '4': '' })
+  const [original, setOriginal] = useState({ '1': '', '2': '', '3': '', '4': '' })
   const [label, setLabel] = useState('')  // needed to call setCurrent
   const [saving, setSaving] = useState(false)
   const [result, setResult] = useState(null)
@@ -469,9 +469,10 @@ function TermEndDateRow() {
   useEffect(() => {
     getCurrent()
       .then((d) => {
-        const v = d?.term_end_date || ''
-        setTermEnd(v)
-        setOriginal(v)
+        const v = d?.term_end_dates || {}
+        const loaded = { '1': v['1'] || '', '2': v['2'] || '', '3': v['3'] || '', '4': v['4'] || '' }
+        setDates(loaded)
+        setOriginal(loaded)
         setLabel(d?.label || '')
       })
       .catch(() => {})
@@ -483,9 +484,14 @@ function TermEndDateRow() {
     setSaving(true)
     setResult(null)
     try {
-      const data = await setCurrent(label, termEnd || null)
-      const saved = data?.term_end_date || termEnd || ''
-      setOriginal(saved)
+      // Use write_term_end_dates via setCurrent is not available directly;
+      // we call /admin/calendar/apply-plan with empty plan and term_end_dates only.
+      const { applyCalendarPlan } = await import('../../lib/admin')
+      await applyCalendarPlan({
+        plan: [],
+        termEndDates: Object.fromEntries(Object.entries(dates).filter(([, v]) => v)),
+      })
+      setOriginal({ ...dates })
       setResult('ok')
     } catch (err) {
       setResult(errMessage(err))
@@ -494,30 +500,36 @@ function TermEndDateRow() {
     }
   }
 
+  const dirty = ['1', '2', '3', '4'].some((y) => dates[y] !== original[y])
+
   return (
     <form className="manager-term-end" onSubmit={onSave}>
-      <label htmlFor="cal-term-end" className="manager-term-end-label">
-        Term end date
+      <span className="manager-term-end-label">
+        Term end dates
         <span className="manager-term-end-hint"> — RRULE UNTIL for Google Calendar</span>
-      </label>
-      <div className="manager-term-end-row">
-        <input
-          id="cal-term-end"
-          type="date"
-          className="upload-input"
-          value={termEnd}
-          onChange={(e) => { setTermEnd(e.target.value); setResult(null) }}
-          disabled={saving}
-        />
-        <button
-          type="submit"
-          className="upload-btn"
-          style={{ marginTop: 0 }}
-          disabled={saving || termEnd === original}
-        >
-          {saving ? 'Saving…' : 'Save'}
-        </button>
+      </span>
+      <div className="manager-term-end-grid">
+        {['1', '2', '3', '4'].map((yr) => (
+          <label key={yr} className="manager-term-end-field">
+            <span>Year {yr}</span>
+            <input
+              type="date"
+              className="upload-input"
+              value={dates[yr]}
+              onChange={(e) => { setDates((d) => ({ ...d, [yr]: e.target.value })); setResult(null) }}
+              disabled={saving}
+            />
+          </label>
+        ))}
       </div>
+      <button
+        type="submit"
+        className="upload-btn"
+        style={{ marginTop: 4 }}
+        disabled={saving || !dirty}
+      >
+        {saving ? 'Saving…' : 'Save'}
+      </button>
       {result === 'ok' && <p className="upload-result ok">Saved.</p>}
       {result && result !== 'ok' && <p className="upload-result failed">{result}</p>}
     </form>
@@ -831,6 +843,7 @@ function CalendarPdfCard({ onApplied }) {
         scopeValues: opts.scopeValues,
         replaceRange: opts.replaceRange,
         source: opts.source,
+        termEndDates: opts.termEndDates || null,
       })
       setResult(data)
       setPreview(null)
