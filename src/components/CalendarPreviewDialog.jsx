@@ -150,7 +150,15 @@ export default function CalendarPreviewDialog({
         replaceRange: replaceRange && range ? range : null,
         source: preview.source,
         termEndDates: Object.fromEntries(
-          Object.entries(termEndDates).filter(([, v]) => v.trim())
+          Object.entries(termEndDates).filter(([yr, v]) => {
+            if (!v.trim()) return false
+            // When scoped to specific years, only save those years.
+            if (scope === 'year') {
+              const yrs = scopeValuesRaw.split(/[\s,]+/).map((s) => s.trim()).filter(Boolean)
+              return yrs.includes(yr)
+            }
+            return true
+          })
         ),
       })
     } catch (err) {
@@ -232,24 +240,31 @@ export default function CalendarPreviewDialog({
             )}
           </div>
 
-          {/* Term end dates — one per UG year, pre-filled from PDF's last date. */}
+          {/* Term end dates — only for scoped years (or all when global). */}
           <div className="cal-term-end">
             <span className="cal-term-end-label">
               Term end dates
               <span className="cal-term-end-hint"> — RRULE UNTIL for Google Calendar (per UG year)</span>
             </span>
             <div className="cal-term-end-grid">
-              {['1', '2', '3', '4'].map((yr) => (
-                <label key={yr} className="cal-term-end-field">
-                  <span>Year {yr}</span>
-                  <input
-                    type="date"
-                    className="cal-input"
-                    value={termEndDates[yr] || ''}
-                    onChange={(e) => setTermEndDates((d) => ({ ...d, [yr]: e.target.value }))}
-                  />
-                </label>
-              ))}
+              {['1', '2', '3', '4'].map((yr) => {
+                const scopedYears = scope === 'year'
+                  ? scopeValuesRaw.split(/[\s,]+/).map((s) => s.trim()).filter(Boolean)
+                  : null
+                const excluded = scopedYears && !scopedYears.includes(yr)
+                if (excluded) return null
+                return (
+                  <label key={yr} className="cal-term-end-field">
+                    <span>Year {yr}</span>
+                    <input
+                      type="date"
+                      className="cal-input"
+                      value={termEndDates[yr] || ''}
+                      onChange={(e) => setTermEndDates((d) => ({ ...d, [yr]: e.target.value }))}
+                    />
+                  </label>
+                )
+              })}
             </div>
           </div>
 
