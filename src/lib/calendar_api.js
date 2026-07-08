@@ -94,10 +94,12 @@ export function openOAuthPopup(redirectUrl) {
       }
     }
 
-    // Poll for popup close (user closed without completing)
+    // Poll for popup close (user closed without completing).
+    // Wrap in try/catch: Google's COOP header blocks popup.closed on some browsers.
     const pollClosed = setInterval(() => {
-      if (popup.closed) {
-        cleanup()
+      try {
+        if (popup.closed) {
+          cleanup()
         reject(new Error('Window closed'))
       }
     }, 500)
