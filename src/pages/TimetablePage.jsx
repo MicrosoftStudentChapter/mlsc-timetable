@@ -53,12 +53,17 @@ export default function TimetablePage() {
   const pillRef = useRef(null)
   const exportRef = useRef(null)
 
-  const [calendarConfigured, setCalendarConfigured] = useState(false)
+  // Show button immediately when backend URL is set; fetch only to hide it if unconfigured
+  const [calendarConfigured, setCalendarConfigured] = useState(
+    () => !!(import.meta.env.VITE_BACKEND_URL || '')
+  )
   const [calendarStatus, setCalendarStatus] = useState(null)
-  const [calendarNudge, setCalendarNudge] = useState(false) // sign-in prompt
+  const [calendarNudge, setCalendarNudge] = useState(false)
 
   useEffect(() => {
-    getCalendarConfigured().then((d) => setCalendarConfigured(!!d?.configured))
+    getCalendarConfigured().then((d) => {
+      if (d && !d.configured) setCalendarConfigured(false)
+    })
   }, [])
 
   useEffect(() => {
