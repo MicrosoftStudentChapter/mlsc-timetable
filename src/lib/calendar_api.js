@@ -3,7 +3,7 @@
 // All calls require a valid Clerk session JWT (the user's `sub` claim is
 // the key used on the backend).  getClerkToken() fetches it lazily.
 
-const BASE = (import.meta?.env?.VITE_BACKEND_URL || '').replace(/\/$/, '')
+const BASE = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/$/, '')
 
 function backendDisabled() {
   return !BASE
