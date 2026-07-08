@@ -150,20 +150,18 @@ function CalendarSyncModal({ isOpen, onClose, currentBatch }) {
           <p className="csm-error">Google access revoked — reconnect to restore sync.</p>
         )}
         <div className="csm-actions">
-          {!calStatus.enabled ? (
-            <button className="csm-btn csm-btn--primary" disabled={busy} onClick={() => run(() => enableCalendarSync(savedBatch, tk))}>
-              {busy ? 'Enabling…' : 'Enable sync'}
-            </button>
-          ) : (
-            <>
-              <button className="csm-btn csm-btn--secondary" disabled={busy} onClick={() => run(() => triggerResync(savedBatch, tk))}>
-                {busy ? 'Syncing…' : 'Sync now'}
-              </button>
-              <button className="csm-btn csm-btn--ghost" disabled={busy} onClick={() => run(() => disableCalendarSync(tk))}>
-                Pause
-              </button>
-            </>
-          )}
+          <button className="csm-btn csm-btn--secondary" disabled={busy} onClick={() => run(() => triggerResync(savedBatch, tk))}>
+            {busy ? 'Syncing…' : 'Sync now'}
+          </button>
+          <button
+            className={`csm-toggle${calStatus.enabled ? ' csm-toggle--on' : ''}`}
+            disabled={busy || (!calStatus.enabled && !savedBatch)}
+            onClick={() => run(calStatus.enabled ? () => disableCalendarSync(tk) : () => enableCalendarSync(savedBatch, tk))}
+            aria-label={calStatus.enabled ? 'Disable auto-sync' : 'Enable auto-sync'}
+            title={calStatus.enabled ? 'Auto-sync on' : 'Auto-sync off'}
+          >
+            <span className="csm-toggle-knob" />
+          </button>
           <button className="csm-btn csm-btn--link" onClick={() => { onClose(); navigate('/profile') }}>
             More options →
           </button>

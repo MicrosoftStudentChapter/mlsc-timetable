@@ -182,25 +182,31 @@ function GoogleCalendarCard({ savedBatch }) {
             </>}
           </div>
 
+          {/* Sync now — always available when connected */}
           <div className="gcal-actions">
-            {!status.enabled ? (
-              <button
-                className="gcal-btn gcal-btn--primary"
-                onClick={handleEnable}
-                disabled={busy || !savedBatch}
-              >
-                {busy ? 'Enabling…' : 'Enable sync'}
-              </button>
-            ) : (
-              <>
-                <button className="gcal-btn gcal-btn--secondary" onClick={handleResync} disabled={busy}>
-                  {busy ? 'Syncing…' : 'Sync now'}
-                </button>
-                <button className="gcal-btn gcal-btn--ghost" onClick={handleDisable} disabled={busy}>
-                  Pause sync
-                </button>
-              </>
-            )}
+            <button className="gcal-btn gcal-btn--secondary" onClick={handleResync} disabled={busy || !savedBatch}>
+              {busy ? 'Syncing…' : 'Sync now'}
+            </button>
+          </div>
+
+          {/* Auto-sync toggle — separate from manual sync */}
+          <div className="gcal-autosync-row">
+            <div className="gcal-autosync-label">
+              <span className="gcal-autosync-title">Auto-sync</span>
+              <span className="gcal-autosync-sub">
+                {status.enabled
+                  ? 'Syncs automatically when the admin publishes schedule changes'
+                  : 'Off — changes won\'t push automatically'}
+              </span>
+            </div>
+            <button
+              className={`gcal-toggle${status.enabled ? ' gcal-toggle--on' : ''}`}
+              onClick={status.enabled ? handleDisable : handleEnable}
+              disabled={busy || (!status.enabled && !savedBatch)}
+              aria-label={status.enabled ? 'Disable auto-sync' : 'Enable auto-sync'}
+            >
+              <span className="gcal-toggle-knob" />
+            </button>
           </div>
 
           <div className="gcal-danger-row">
