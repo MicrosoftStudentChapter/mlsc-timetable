@@ -65,7 +65,8 @@ function GoogleCalendarCard({ savedBatch }) {
   }, [reload, isLoaded, isSignedIn])
 
   if (!isLoaded || !isSignedIn) return null
-  if (!status || !status.configured) return null
+  // Show loading state while fetching, hide only if explicitly not configured
+  if (status && !status.configured) return null
 
   async function run(fn, label) {
     setBusy(true)
@@ -93,9 +94,23 @@ function GoogleCalendarCard({ savedBatch }) {
     run(() => disconnectCalendar(tk), 'Disconnect')
   }
 
-  const lastSync = status.last_synced_at
+  const lastSync = status?.last_synced_at
     ? new Date(status.last_synced_at).toLocaleString()
     : null
+
+  if (!status) {
+    return (
+      <div className="profile-card gcal-card">
+        <div className="gcal-header">
+          <span className="gcal-icon" aria-hidden="true">📅</span>
+          <div>
+            <h2 className="gcal-title">Google Calendar Sync</h2>
+            <p className="gcal-subtitle" style={{ opacity: 0.5 }}>Loading…</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="profile-card gcal-card">
