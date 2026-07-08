@@ -24,6 +24,8 @@ import {
   resetCalendarOverrides,
   previewCalendarPdf,
   applyCalendarPlan,
+  getCurrent,
+  setCurrent,
   AdminAuthError,
 } from '../../lib/admin'
 import CalendarPreviewDialog from '../../components/CalendarPreviewDialog'
@@ -457,6 +459,71 @@ function ExamDatesCard() {
 // Overrides drive the sidebar mini-calendar: mark a date as a holiday
 // (with optional reason) or make it follow another weekday's timetable.
 // Scope: global (everyone), year (["1","2"] etc.), branch (["2A","1E"] etc.).
+function TermEndDateRow() {
+  const [termEnd, setTermEnd] = useState('')
+  const [original, setOriginal] = useState('')
+  const [label, setLabel] = useState('')  // needed to call setCurrent
+  const [saving, setSaving] = useState(false)
+  const [result, setResult] = useState(null)
+
+  useEffect(() => {
+    getCurrent()
+      .then((d) => {
+        const v = d?.term_end_date || ''
+        setTermEnd(v)
+        setOriginal(v)
+        setLabel(d?.label || '')
+      })
+      .catch(() => {})
+  }, [])
+
+  async function onSave(evt) {
+    evt.preventDefault()
+    if (saving) return
+    setSaving(true)
+    setResult(null)
+    try {
+      const data = await setCurrent(label, termEnd || null)
+      const saved = data?.term_end_date || termEnd || ''
+      setOriginal(saved)
+      setResult('ok')
+    } catch (err) {
+      setResult(errMessage(err))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <form className="manager-term-end" onSubmit={onSave}>
+      <label htmlFor="cal-term-end" className="manager-term-end-label">
+        Term end date
+        <span className="manager-term-end-hint"> — RRULE UNTIL for Google Calendar</span>
+      </label>
+      <div className="manager-term-end-row">
+        <input
+          id="cal-term-end"
+          type="date"
+          className="upload-input"
+          value={termEnd}
+          onChange={(e) => { setTermEnd(e.target.value); setResult(null) }}
+          disabled={saving}
+        />
+        <button
+          type="submit"
+          className="upload-btn"
+          style={{ marginTop: 0 }}
+          disabled={saving || termEnd === original}
+        >
+          {saving ? 'Saving…' : 'Save'}
+        </button>
+      </div>
+      {result === 'ok' && <p className="upload-result ok">Saved.</p>}
+      {result && result !== 'ok' && <p className="upload-result failed">{result}</p>}
+    </form>
+  )
+}
+
 function CalendarOverridesCard() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
@@ -559,9 +626,10 @@ function CalendarOverridesCard() {
         </button>
       </div>
       <p className="admin-card-sub" style={{ textAlign: 'left', marginBottom: 12 }}>
-        Mark holidays or make a date follow another weekday's schedule.
+        Mark holidays or make a date follow another weekday&apos;s schedule.
         Scope can be global, per year, or per branch (e.g. <code>2A</code>).
       </p>
+      <TermEndDateRow />
 
       {error && (
         <div className="upload-result failed" style={{ marginBottom: 10 }}>

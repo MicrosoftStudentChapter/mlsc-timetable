@@ -1241,6 +1241,37 @@
   padding-top: 10px;
   border-top: 1px dashed var(--border, rgba(255, 255, 255, 0.1));
 }
+.manager-term-end {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0 12px;
+  border-bottom: 1px dashed var(--border, rgba(255, 255, 255, 0.1));
+  margin-bottom: 10px;
+}
+.manager-term-end-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.manager-term-end-hint {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.55;
+}
+.manager-term-end-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.manager-term-end-row .upload-input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
 .manager-add textarea.upload-input {
   resize: vertical;
   min-height: 56px;

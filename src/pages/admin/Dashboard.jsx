@@ -464,9 +464,7 @@ function IngestResultModal({ data, summary, onClose, onReview }) {
 
 function SemesterLabelCard() {
   const [label, setLabel] = useState('')
-  const [termEnd, setTermEnd] = useState('')
   const [original, setOriginal] = useState('')
-  const [originalTermEnd, setOriginalTermEnd] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [result, setResult] = useState(null)
@@ -477,11 +475,8 @@ function SemesterLabelCard() {
     try {
       const data = await getCurrent()
       const next = data?.label || ''
-      const nextEnd = data?.term_end_date || ''
       setLabel(next)
       setOriginal(next)
-      setTermEnd(nextEnd)
-      setOriginalTermEnd(nextEnd)
     } catch (err) {
       // 503 data_missing is normal before first ingest.
       const detail = err instanceof AdminAuthError ? err.detail : null
@@ -498,14 +493,13 @@ function SemesterLabelCard() {
   async function onSubmit(evt) {
     evt.preventDefault()
     const next = label.trim()
-    if (!next || saving) return
+    if (!next || saving || next === original) return
     setSaving(true)
     setResult(null)
     try {
-      const data = await setCurrent(next, termEnd.trim() || null)
+      const data = await setCurrent(next)
       setOriginal(data?.label || next)
-      setOriginalTermEnd(data?.term_end_date || termEnd.trim() || '')
-      setResult({ kind: 'ok', message: 'Saved.' })
+      setResult({ kind: 'ok', message: `Semester label set to "${data?.label || next}".` })
     } catch (err) {
       const detail = err instanceof AdminAuthError ? err.detail : null
       setResult({ kind: 'failed', message: detail?.error || err.message })
@@ -514,47 +508,31 @@ function SemesterLabelCard() {
     }
   }
 
-  const dirty = label.trim() !== original || termEnd.trim() !== originalTermEnd
-
   return (
     <div className="admin-card">
-      <h2 className="admin-card-title">Semester settings</h2>
+      <h2 className="admin-card-title">Semester label</h2>
       <p className="admin-card-sub" style={{ marginBottom: 12 }}>
-        Shown on the landing page. Drives the doctor&apos;s E/O baseline prefix
-        and sets the end date for Google Calendar recurring events.
+        Shown on the landing page&apos;s brand card. Drives the doctor&apos;s
+        E/O baseline prefix.
       </p>
       <form className="upload-form" onSubmit={onSubmit}>
         <div>
-          <label htmlFor="semester-label">Semester label</label>
+          <label htmlFor="semester-label">Current label</label>
           <input
             id="semester-label"
             type="text"
             className="upload-input"
             placeholder={loading ? 'Loading…' : 'e.g. EVEN 25-26'}
             value={label}
-            onChange={(e) => { setLabel(e.target.value); setResult(null) }}
+            onChange={(e) => setLabel(e.target.value)}
             disabled={loading || saving}
             required
-          />
-        </div>
-        <div style={{ marginTop: 10 }}>
-          <label htmlFor="term-end-date">
-            Term end date{' '}
-            <span style={{ fontWeight: 400, opacity: 0.6 }}>(Google Calendar RRULE)</span>
-          </label>
-          <input
-            id="term-end-date"
-            type="date"
-            className="upload-input"
-            value={termEnd}
-            onChange={(e) => { setTermEnd(e.target.value); setResult(null) }}
-            disabled={loading || saving}
           />
         </div>
         <button
           type="submit"
           className="upload-btn"
-          disabled={saving || loading || !label.trim() || !dirty}
+          disabled={saving || loading || !label.trim() || label.trim() === original}
         >
           {saving ? 'Saving…' : 'Save'}
         </button>
