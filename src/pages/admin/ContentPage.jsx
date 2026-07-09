@@ -24,6 +24,8 @@ import {
   resetCalendarOverrides,
   previewCalendarPdf,
   applyCalendarPlan,
+  getCurrent,
+  setCurrent,
   AdminAuthError,
 } from '../../lib/admin'
 import CalendarPreviewDialog from '../../components/CalendarPreviewDialog'
@@ -457,6 +459,83 @@ function ExamDatesCard() {
 // Overrides drive the sidebar mini-calendar: mark a date as a holiday
 // (with optional reason) or make it follow another weekday's timetable.
 // Scope: global (everyone), year (["1","2"] etc.), branch (["2A","1E"] etc.).
+function TermEndDateRow() {
+  const [dates, setDates] = useState({ '1': '', '2': '', '3': '', '4': '' })
+  const [original, setOriginal] = useState({ '1': '', '2': '', '3': '', '4': '' })
+  const [label, setLabel] = useState('')  // needed to call setCurrent
+  const [saving, setSaving] = useState(false)
+  const [result, setResult] = useState(null)
+
+  useEffect(() => {
+    getCurrent()
+      .then((d) => {
+        const v = d?.term_end_dates || {}
+        const loaded = { '1': v['1'] || '', '2': v['2'] || '', '3': v['3'] || '', '4': v['4'] || '' }
+        setDates(loaded)
+        setOriginal(loaded)
+        setLabel(d?.label || '')
+      })
+      .catch(() => {})
+  }, [])
+
+  async function onSave(evt) {
+    evt.preventDefault()
+    if (saving) return
+    setSaving(true)
+    setResult(null)
+    try {
+      // Use write_term_end_dates via setCurrent is not available directly;
+      // we call /admin/calendar/apply-plan with empty plan and term_end_dates only.
+      const { applyCalendarPlan } = await import('../../lib/admin')
+      await applyCalendarPlan({
+        plan: [],
+        termEndDates: Object.fromEntries(Object.entries(dates).filter(([, v]) => v)),
+      })
+      setOriginal({ ...dates })
+      setResult('ok')
+    } catch (err) {
+      setResult(errMessage(err))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const dirty = ['1', '2', '3', '4'].some((y) => dates[y] !== original[y])
+
+  return (
+    <form className="manager-term-end" onSubmit={onSave}>
+      <span className="manager-term-end-label">
+        Term end dates
+        <span className="manager-term-end-hint"> — RRULE UNTIL for Google Calendar</span>
+      </span>
+      <div className="manager-term-end-grid">
+        {['1', '2', '3', '4'].map((yr) => (
+          <label key={yr} className="manager-term-end-field">
+            <span>Year {yr}</span>
+            <input
+              type="date"
+              className="upload-input"
+              value={dates[yr]}
+              onChange={(e) => { setDates((d) => ({ ...d, [yr]: e.target.value })); setResult(null) }}
+              disabled={saving}
+            />
+          </label>
+        ))}
+      </div>
+      <button
+        type="submit"
+        className="upload-btn"
+        style={{ marginTop: 4 }}
+        disabled={saving || !dirty}
+      >
+        {saving ? 'Saving…' : 'Save'}
+      </button>
+      {result === 'ok' && <p className="upload-result ok">Saved.</p>}
+      {result && result !== 'ok' && <p className="upload-result failed">{result}</p>}
+    </form>
+  )
+}
+
 function CalendarOverridesCard() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
@@ -559,9 +638,10 @@ function CalendarOverridesCard() {
         </button>
       </div>
       <p className="admin-card-sub" style={{ textAlign: 'left', marginBottom: 12 }}>
-        Mark holidays or make a date follow another weekday's schedule.
+        Mark holidays or make a date follow another weekday&apos;s schedule.
         Scope can be global, per year, or per branch (e.g. <code>2A</code>).
       </p>
+      <TermEndDateRow />
 
       {error && (
         <div className="upload-result failed" style={{ marginBottom: 10 }}>
@@ -763,6 +843,7 @@ function CalendarPdfCard({ onApplied }) {
         scopeValues: opts.scopeValues,
         replaceRange: opts.replaceRange,
         source: opts.source,
+        termEndDates: opts.termEndDates || null,
       })
       setResult(data)
       setPreview(null)

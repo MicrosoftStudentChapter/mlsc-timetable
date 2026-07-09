@@ -148,7 +148,8 @@ function AccuracyDonut({ pct }) {
 function UploadCard({ onUploaded }) {
   const navigate = useNavigate()
   const [file, setFile] = useState(null)
-  const [semester, setSemester] = useState('')
+  const [isOdd, setIsOdd] = useState(true)
+  const [year, setYear] = useState('')
   const [sheet, setSheet] = useState('all')
   const [force, setForce] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -186,7 +187,8 @@ function UploadCard({ onUploaded }) {
 
   async function submit(evt) {
     evt.preventDefault()
-    if (!file || !semester.trim() || uploading) return
+    const semester = buildLabel(isOdd, year)
+    if (!file || !semester || uploading) return
     setUploading(true)
     setProgress(0)
     setResult(null)
@@ -251,16 +253,47 @@ function UploadCard({ onUploaded }) {
         </label>
 
         <div>
-          <label htmlFor="upload-semester">Semester label</label>
+          <label>Semester type</label>
+          <div className="seg-switch" style={{ marginTop: 6 }}>
+            <button
+              type="button"
+              className={`seg-switch-opt${!isOdd ? ' active' : ''}`}
+              onClick={() => setIsOdd(false)}
+              disabled={uploading}
+            >Even</button>
+            <button
+              type="button"
+              className={`seg-switch-opt${isOdd ? ' active' : ''}`}
+              onClick={() => setIsOdd(true)}
+              disabled={uploading}
+            >Odd</button>
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="upload-year">
+            Current year
+            <span style={{ fontWeight: 400, opacity: 0.55, marginLeft: 6 }}>
+              ({isOdd ? 'e.g. 25' : 'e.g. 26'})
+            </span>
+          </label>
           <input
-            id="upload-semester"
-            type="text"
+            id="upload-year"
+            type="number"
             className="upload-input"
-            placeholder="e.g. JAN-MAY 2026"
-            value={semester}
-            onChange={(e) => setSemester(e.target.value)}
+            placeholder={isOdd ? '25' : '26'}
+            value={year}
+            min={0}
+            max={9999}
+            onChange={(e) => setYear(e.target.value)}
+            disabled={uploading}
             required
           />
+          {year && (
+            <span style={{ fontSize: '0.78rem', opacity: 0.55, display: 'block', marginTop: 3 }}>
+              Label: <strong>{buildLabel(isOdd, year)}</strong>
+            </span>
+          )}
         </div>
 
         <div>
@@ -278,7 +311,7 @@ function UploadCard({ onUploaded }) {
         <button
           type="submit"
           className="upload-btn"
-          disabled={!file || !semester.trim() || uploading || cooldownActive}
+          disabled={!file || !buildLabel(isOdd, year) || uploading || cooldownActive}
         >
           {uploading ? 'Uploading…' : cooldownActive ? 'On cooldown' : 'Upload semester timetable'}
         </button>
@@ -462,9 +495,33 @@ function IngestResultModal({ data, summary, onClose, onReview }) {
   )
 }
 
+// Parse an existing label like "ODD 25-26" or "EVEN 25-26" into { isOdd, year }.
+function parseLabel(label) {
+  if (!label) return { isOdd: true, year: '' }
+  const upper = label.toUpperCase()
+  const isOdd = !upper.startsWith('EVEN')
+  const m = label.match(/(\d{2,4})-(\d{2,4})/)
+  if (!m) return { isOdd, year: '' }
+  // ODD 25-26 → the "25" is the primary year; EVEN 25-26 → "26" is the primary year
+  const yr = isOdd ? parseInt(m[1], 10) : parseInt(m[2], 10)
+  return { isOdd, year: String(yr) }
+}
+
+// Build label from isOdd + year (2-or-4-digit).
+function buildLabel(isOdd, yearRaw) {
+  const yy = parseInt(yearRaw, 10)
+  if (Number.isNaN(yy)) return ''
+  const y = yy > 100 ? yy % 100 : yy
+  const pad = (n) => String(((n % 100) + 100) % 100).padStart(2, '0')
+  return isOdd
+    ? `ODD ${pad(y)}-${pad(y + 1)}`
+    : `EVEN ${pad(y - 1)}-${pad(y)}`
+}
+
 function SemesterLabelCard() {
-  const [label, setLabel] = useState('')
-  const [original, setOriginal] = useState('')
+  const [isOdd, setIsOdd] = useState(true)
+  const [year, setYear] = useState('')
+  const [original, setOriginal] = useState('')   // the full derived label
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [result, setResult] = useState(null)
@@ -474,11 +531,12 @@ function SemesterLabelCard() {
     setResult(null)
     try {
       const data = await getCurrent()
-      const next = data?.label || ''
-      setLabel(next)
-      setOriginal(next)
+      const stored = data?.label || ''
+      setOriginal(stored)
+      const { isOdd: o, year: y } = parseLabel(stored)
+      setIsOdd(o)
+      setYear(y)
     } catch (err) {
-      // 503 data_missing is normal before first ingest.
       const detail = err instanceof AdminAuthError ? err.detail : null
       if (detail?.code !== 'data_missing') {
         setResult({ kind: 'failed', message: detail?.error || err.message })
@@ -490,16 +548,18 @@ function SemesterLabelCard() {
 
   useEffect(() => { load() }, [load])
 
+  const derivedLabel = buildLabel(isOdd, year)
+  const dirty = derivedLabel && derivedLabel !== original
+
   async function onSubmit(evt) {
     evt.preventDefault()
-    const next = label.trim()
-    if (!next || saving || next === original) return
+    if (!derivedLabel || saving || !dirty) return
     setSaving(true)
     setResult(null)
     try {
-      const data = await setCurrent(next)
-      setOriginal(data?.label || next)
-      setResult({ kind: 'ok', message: `Semester label set to "${data?.label || next}".` })
+      const data = await setCurrent(derivedLabel)
+      setOriginal(data?.label || derivedLabel)
+      setResult({ kind: 'ok', message: `Set to "${data?.label || derivedLabel}".` })
     } catch (err) {
       const detail = err instanceof AdminAuthError ? err.detail : null
       setResult({ kind: 'failed', message: detail?.error || err.message })
@@ -512,27 +572,55 @@ function SemesterLabelCard() {
     <div className="admin-card">
       <h2 className="admin-card-title">Semester label</h2>
       <p className="admin-card-sub" style={{ marginBottom: 12 }}>
-        Shown on the landing page's brand card. Drives the doctor's
-        E/O baseline prefix.
+        Shown on the landing page&apos;s brand card. Drives the doctor&apos;s E/O baseline prefix.
       </p>
       <form className="upload-form" onSubmit={onSubmit}>
         <div>
-          <label htmlFor="semester-label">Current label</label>
+          <label>Semester type</label>
+          <div className="seg-switch" style={{ marginTop: 6 }}>
+            <button
+              type="button"
+              className={`seg-switch-opt${!isOdd ? ' active' : ''}`}
+              onClick={() => { setIsOdd(false); setResult(null) }}
+              disabled={loading || saving}
+            >Even</button>
+            <button
+              type="button"
+              className={`seg-switch-opt${isOdd ? ' active' : ''}`}
+              onClick={() => { setIsOdd(true); setResult(null) }}
+              disabled={loading || saving}
+            >Odd</button>
+          </div>
+        </div>
+        <div style={{ marginTop: 10 }}>
+          <label htmlFor="sem-year">
+            Current year
+            <span style={{ fontWeight: 400, opacity: 0.55, marginLeft: 6 }}>
+              ({isOdd ? 'year the odd sem runs in, e.g. 25' : 'year the even sem runs in, e.g. 26'})
+            </span>
+          </label>
           <input
-            id="semester-label"
-            type="text"
+            id="sem-year"
+            type="number"
             className="upload-input"
-            placeholder={loading ? 'Loading…' : 'e.g. EVEN 25-26'}
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
+            placeholder={loading ? 'Loading…' : isOdd ? '25' : '26'}
+            value={year}
+            min={0}
+            max={9999}
+            onChange={(e) => { setYear(e.target.value); setResult(null) }}
             disabled={loading || saving}
             required
           />
         </div>
+        {derivedLabel && (
+          <p style={{ margin: '6px 0 0', fontSize: '0.8rem', opacity: 0.65 }}>
+            Label: <strong>{derivedLabel}</strong>
+          </p>
+        )}
         <button
           type="submit"
           className="upload-btn"
-          disabled={saving || loading || !label.trim() || label.trim() === original}
+          disabled={saving || loading || !derivedLabel || !dirty}
         >
           {saving ? 'Saving…' : 'Save'}
         </button>

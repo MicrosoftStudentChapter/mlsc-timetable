@@ -1,10 +1,19 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useUser, useClerk } from '@clerk/clerk-react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useUser, useClerk, useAuth } from '@clerk/clerk-react'
 import { loadBatches } from '../lib/batches'
 import Combobox from '../components/Combobox'
 import { RequireAuth } from './LoginPage'
 import { AUTH_ENABLED } from '../lib/auth'
+import {
+  getCalendarStatus,
+  connectCalendar,
+  enableCalendarSync,
+  disableCalendarSync,
+  triggerResync,
+  disconnectCalendar,
+  clearCalendarEvents,
+} from '../lib/calendar_api'
 import './ProfilePage.css'
 
 function splitName(full) {
@@ -28,10 +37,248 @@ function findBatchPath(years, batchCode) {
   return { year: '', stream: '', batch: '' }
 }
 
+// ── Confirmation Modal ────────────────────────────────────────────────────────
+function ConfirmModal({ open, title, message, confirmLabel = 'Confirm', danger = false, onConfirm, onCancel }) {
+  useEffect(() => {
+    if (!open) return
+    const fn = (e) => { if (e.key === 'Escape') onCancel() }
+    document.addEventListener('keydown', fn)
+    return () => document.removeEventListener('keydown', fn)
+  }, [open, onCancel])
+
+  if (!open) return null
+  return (
+    <div className="confirm-backdrop" onClick={onCancel}>
+      <div className="confirm-modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+        <h3 className="confirm-title">{title}</h3>
+        <p className="confirm-message">{message}</p>
+        <div className="confirm-actions">
+          <button className="confirm-btn confirm-btn--ghost" onClick={onCancel}>Cancel</button>
+          <button
+            className={`confirm-btn ${danger ? 'confirm-btn--danger' : 'confirm-btn--primary'}`}
+            onClick={onConfirm}
+          >
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Google Calendar Card ──────────────────────────────────────────────────────
+
+function GoogleCalendarCard({ savedBatch }) {
+  const { getToken, isLoaded, isSignedIn } = useAuth()
+  const [status, setStatus] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const [confirm, setConfirm] = useState(null) // {title, message, confirmLabel, danger, onConfirm}
+
+  const tk = useCallback(() => getToken(), [getToken])
+
+  const reload = useCallback(async () => {
+    try {
+      const s = await getCalendarStatus(tk)
+      setStatus(s)
+    } catch (err) {
+      setStatus({ configured: true, _loadError: err?.message || String(err) })
+    }
+  }, [tk])
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn) return
+    reload()
+    const id = setInterval(reload, 8000)
+    return () => clearInterval(id)
+  }, [reload, isLoaded, isSignedIn])
+
+  if (!isLoaded || !isSignedIn) return null
+  // Show loading state while fetching, hide only if explicitly not configured
+  if (status && !status.configured) return null
+
+  async function run(fn, label) {
+    setBusy(true)
+    setError('')
+    try {
+      await fn()
+      await reload()
+    } catch (err) {
+      setError(err.message || `${label} failed`)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const handleConnect    = () => run(() => connectCalendar(tk), 'Connect')
+  const handleEnable     = () => run(() => enableCalendarSync(savedBatch, tk), 'Enable')
+  const handleDisable    = () => run(() => disableCalendarSync(tk), 'Disable')
+  const handleResync     = () => run(() => triggerResync(savedBatch, tk), 'Sync')
+  const handleClear      = () => setConfirm({
+    title: 'Clear all events?',
+    message: 'This will delete all MLSC timetable events from your Google Calendar. You can resync them at any time.',
+    confirmLabel: 'Clear events',
+    danger: true,
+    onConfirm: () => { setConfirm(null); run(() => clearCalendarEvents(tk), 'Clear') },
+  })
+  const handleDisconnect = () => setConfirm({
+    title: 'Disconnect Google Calendar?',
+    message: 'This will revoke access and permanently delete all MLSC timetable events from your Google Calendar.',
+    confirmLabel: 'Disconnect',
+    danger: true,
+    onConfirm: () => { setConfirm(null); run(() => disconnectCalendar(tk), 'Disconnect') },
+  })
+
+  const lastSync = status?.last_synced_at
+    ? new Date(status.last_synced_at).toLocaleString()
+    : null
+
+  if (!status) {
+    return (
+      <div id="calendar" className="profile-card gcal-card">
+        <div className="gcal-header">
+          <span className="gcal-icon" aria-hidden="true">📅</span>
+          <div>
+            <h2 className="gcal-title">Google Calendar Sync</h2>
+            <p className="gcal-subtitle" style={{ opacity: 0.5 }}>Loading…</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (status._loadError) {
+    return (
+      <div className="profile-card gcal-card">
+        <div className="gcal-header">
+          <span className="gcal-icon" aria-hidden="true">📅</span>
+          <div>
+            <h2 className="gcal-title">Google Calendar Sync</h2>
+            <p className="gcal-subtitle" style={{ color: '#f87171' }}>Error: {status._loadError}</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div id="calendar" className="profile-card gcal-card">
+      <ConfirmModal
+        open={!!confirm}
+        title={confirm?.title}
+        message={confirm?.message}
+        confirmLabel={confirm?.confirmLabel}
+        danger={confirm?.danger}
+        onConfirm={confirm?.onConfirm}
+        onCancel={() => setConfirm(null)}
+      />
+      <div className="gcal-header">
+        <span className="gcal-icon" aria-hidden="true">📅</span>
+        <div>
+          <h2 className="gcal-title">Google Calendar Sync</h2>
+          <p className="gcal-subtitle">Auto-push your timetable to Google Calendar</p>
+        </div>
+        {status.connected && status.enabled && (
+          <span className="gcal-status-dot gcal-status-dot--on" title="Sync active" />
+        )}
+      </div>
+
+      {error && <p className="gcal-error">{error}</p>}
+
+      {status.last_error === 'invalid_grant' && (
+        <p className="gcal-error">
+          Google access was revoked.{' '}
+          <button className="gcal-link" onClick={handleConnect} disabled={busy}>Reconnect</button>
+          {' '}to restore sync.
+        </p>
+      )}
+
+      {!status.connected ? (
+        <div className="gcal-section">
+          <p className="gcal-hint">
+            Connect your Google account to sync your batch timetable into a dedicated calendar.
+            Holidays and schedule changes push automatically when admins publish them.
+          </p>
+          {!savedBatch && (
+            <p className="gcal-warn">Save your batch first before connecting.</p>
+          )}
+          <button
+            className="gcal-btn gcal-btn--primary"
+            onClick={handleConnect}
+            disabled={busy || !savedBatch}
+          >
+            {busy ? 'Connecting…' : 'Connect Google Calendar'}
+          </button>
+        </div>
+      ) : (
+        <div className="gcal-section">
+          <div className="gcal-info-grid">
+            <span className="gcal-label">Account</span>
+            <span className="gcal-value">{status.google_email}</span>
+            {lastSync && <>
+              <span className="gcal-label">Last synced</span>
+              <span className="gcal-value">{lastSync}</span>
+            </>}
+            {status.batch_code && <>
+              <span className="gcal-label">Syncing batch</span>
+              <span className="gcal-value">{status.batch_code}</span>
+            </>}
+          </div>
+
+          {/* Sync now — always available when connected */}
+          <div className="gcal-actions">
+            <button className="gcal-btn gcal-btn--secondary" onClick={handleResync} disabled={busy || !savedBatch}>
+              {busy ? 'Syncing…' : 'Sync now'}
+            </button>
+          </div>
+
+          {/* Auto-sync toggle — separate from manual sync */}
+          <div className="gcal-autosync-row">
+            <div className="gcal-autosync-label">
+              <span className="gcal-autosync-title">Auto-sync</span>
+              <span className="gcal-autosync-sub">
+                {status.enabled
+                  ? 'Syncs automatically when the admin publishes schedule changes'
+                  : 'Off — changes won\'t push automatically'}
+              </span>
+            </div>
+            <button
+              className={`gcal-toggle${status.enabled ? ' gcal-toggle--on' : ''}`}
+              onClick={status.enabled ? handleDisable : handleEnable}
+              disabled={busy || (!status.enabled && !savedBatch)}
+              aria-label={status.enabled ? 'Disable auto-sync' : 'Enable auto-sync'}
+            >
+              <span className="gcal-toggle-knob" />
+            </button>
+          </div>
+
+          <div className="gcal-danger-row">
+            <button className="gcal-link gcal-link--warn" onClick={handleClear} disabled={busy}>
+              Clear all events
+            </button>
+            <button className="gcal-link gcal-link--danger" onClick={handleDisconnect} disabled={busy}>
+              Disconnect
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ProfileInner() {
   const { user, isLoaded } = useUser()
   const { signOut } = useClerk()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Scroll to #calendar anchor when navigated with hash
+  useEffect(() => {
+    if (location.hash === '#calendar') {
+      const el = document.getElementById('calendar')
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [location.hash])
 
   const [years, setYears] = useState([])
   const [yearInput, setYearInput] = useState('')
@@ -224,37 +471,67 @@ function ProfileInner() {
           <div className="profile-card-section">
             <div className="profile-field">
               <span className="profile-field-label">Default batch</span>
-              <div className="profile-batch-row">
-                <Combobox
-                  className="profile-combobox"
-                  value={yearInput}
-                  onChange={(v) => { setYearInput(v); setSavedAt(null) }}
-                  options={yearOptions}
-                  placeholder="Year"
-                  ariaLabel="Year"
-                />
-                <Combobox
-                  className="profile-combobox"
-                  value={streamInput}
-                  onChange={(v) => { setStreamInput(v); setSavedAt(null) }}
-                  options={streamOptions}
-                  placeholder="Stream"
-                  ariaLabel="Stream"
-                  disabled={!selectedYear}
-                />
-                <Combobox
-                  className="profile-combobox"
-                  value={batchInput}
-                  onChange={(v) => { setBatchInput(v.toUpperCase()); setSavedAt(null) }}
-                  options={batchOptions}
-                  placeholder="Batch"
-                  ariaLabel="Batch"
-                  disabled={!selectedStream}
-                />
-              </div>
+
+              {/* When fully selected, show a summary card with a Change button */}
+              {batchInput && batches.includes(batchInput) ? (
+                <div className="profile-batch-selected">
+                  <span className="profile-batch-selected-code">{batchInput}</span>
+                  <span className="profile-batch-selected-name">
+                    {yearInput} · {streamInput}
+                  </span>
+                  <button
+                    type="button"
+                    className="profile-batch-change"
+                    onClick={() => { setBatchInput(''); setSavedAt(null) }}
+                    disabled={saving}
+                  >
+                    Change
+                  </button>
+                </div>
+              ) : (
+                <div className="profile-batch-row">
+                  <div className="profile-batch-path">
+                    <div className="profile-batch-segment">
+                      <span className="profile-batch-segment-label">Year</span>
+                      <Combobox
+                        className="profile-combobox"
+                        value={yearInput}
+                        onChange={(v) => { setYearInput(v); setSavedAt(null) }}
+                        options={yearOptions}
+                        placeholder="Select year"
+                        ariaLabel="Year"
+                      />
+                    </div>
+                    <div className="profile-batch-segment">
+                      <span className="profile-batch-segment-label">Stream</span>
+                      <Combobox
+                        className="profile-combobox"
+                        value={streamInput}
+                        onChange={(v) => { setStreamInput(v); setSavedAt(null) }}
+                        options={streamOptions}
+                        placeholder={selectedYear ? 'Select stream' : '—'}
+                        ariaLabel="Stream"
+                        disabled={!selectedYear}
+                      />
+                    </div>
+                    <div className="profile-batch-segment">
+                      <span className="profile-batch-segment-label">Batch</span>
+                      <Combobox
+                        className="profile-combobox"
+                        value={batchInput}
+                        onChange={(v) => { setBatchInput(v.toUpperCase()); setSavedAt(null) }}
+                        options={batchOptions}
+                        placeholder={selectedStream ? 'Select batch' : '—'}
+                        ariaLabel="Batch"
+                        disabled={!selectedStream}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <span className="profile-field-hint">
-                Pick year → stream → batch. Saved to your account so it
-                follows you across devices.
+                Saved to your account so it follows you across devices.
               </span>
             </div>
           </div>
@@ -279,6 +556,8 @@ function ProfileInner() {
             </button>
           </div>
         </form>
+
+        <GoogleCalendarCard savedBatch={savedBatch} />
       </div>
     </main>
   )
