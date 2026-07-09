@@ -358,6 +358,7 @@ export function applyCalendarPlan({
   replaceRange = null,
   source = null,
   termEndDates = null,
+  termStartDates = null,
 }) {
   return adminFetch('/admin/calendar/apply-plan', {
     method: 'POST',
@@ -370,6 +371,7 @@ export function applyCalendarPlan({
       replace_range: replaceRange || undefined,
       source: source || undefined,
       term_end_dates: termEndDates || undefined,
+      term_start_dates: termStartDates || undefined,
     }),
   })
 }

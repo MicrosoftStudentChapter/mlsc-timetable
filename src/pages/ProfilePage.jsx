@@ -38,7 +38,7 @@ function findBatchPath(years, batchCode) {
 }
 
 // ── Confirmation Modal ────────────────────────────────────────────────────────
-function ConfirmModal({ open, title, message, confirmLabel = 'Confirm', danger = false, onConfirm, onCancel }) {
+function ConfirmModal({ open, title, message, confirmLabel = 'Confirm', secondaryLabel = null, danger = false, onConfirm, onSecondary = null, onCancel }) {
   useEffect(() => {
     if (!open) return
     const fn = (e) => { if (e.key === 'Escape') onCancel() }
@@ -54,6 +54,11 @@ function ConfirmModal({ open, title, message, confirmLabel = 'Confirm', danger =
         <p className="confirm-message">{message}</p>
         <div className="confirm-actions">
           <button className="confirm-btn confirm-btn--ghost" onClick={onCancel}>Cancel</button>
+          {secondaryLabel && onSecondary && (
+            <button className="confirm-btn confirm-btn--ghost" onClick={onSecondary}>
+              {secondaryLabel}
+            </button>
+          )}
           <button
             className={`confirm-btn ${danger ? 'confirm-btn--danger' : 'confirm-btn--primary'}`}
             onClick={onConfirm}
@@ -123,10 +128,12 @@ function GoogleCalendarCard({ savedBatch }) {
   })
   const handleDisconnect = () => setConfirm({
     title: 'Disconnect Google Calendar?',
-    message: 'This will revoke access and permanently delete all MLSC timetable events from your Google Calendar.',
-    confirmLabel: 'Disconnect',
+    message: 'Google access will be revoked. Do you also want to remove all MLSC timetable events from your Google Calendar?',
+    confirmLabel: 'Remove events & disconnect',
+    secondaryLabel: 'Disconnect only',
     danger: true,
-    onConfirm: () => { setConfirm(null); run(() => disconnectCalendar(tk), 'Disconnect') },
+    onConfirm: () => { setConfirm(null); run(() => disconnectCalendar(tk, true), 'Disconnect') },
+    onSecondary: () => { setConfirm(null); run(() => disconnectCalendar(tk, false), 'Disconnect') },
   })
 
   const lastSync = status?.last_synced_at
@@ -168,8 +175,10 @@ function GoogleCalendarCard({ savedBatch }) {
         title={confirm?.title}
         message={confirm?.message}
         confirmLabel={confirm?.confirmLabel}
+        secondaryLabel={confirm?.secondaryLabel}
         danger={confirm?.danger}
         onConfirm={confirm?.onConfirm}
+        onSecondary={confirm?.onSecondary}
         onCancel={() => setConfirm(null)}
       />
       <div className="gcal-header">

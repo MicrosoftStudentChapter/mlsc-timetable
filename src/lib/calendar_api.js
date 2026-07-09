@@ -83,24 +83,31 @@ export function openOAuthPopup(redirectUrl) {
       return
     }
 
+    let settled = false
+
     function onMessage(evt) {
       if (!evt.data || typeof evt.data !== 'object') return
       if (evt.data.type === 'mlsc_calendar_connected') {
         cleanup()
-        resolve()
+        if (!settled) { settled = true; resolve() }
       } else if (evt.data.type === 'mlsc_calendar_error') {
         cleanup()
-        reject(new Error(evt.data.error || 'Google OAuth failed'))
+        if (!settled) { settled = true; reject(new Error(evt.data.error || 'Google OAuth failed')) }
       }
     }
 
-    // Poll for popup close (user closed without completing).
-    // Wrap in try/catch: Google's COOP header blocks popup.closed on some browsers.
+    // Poll for popup close. When the popup closes we wait a short grace
+    // period for any pending postMessage to arrive before rejecting — this
+    // prevents a race where the interval fires between window.close() and
+    // the opener receiving the message.
     const pollClosed = setInterval(() => {
       try {
         if (popup.closed) {
-          cleanup()
-          reject(new Error('Window closed'))
+          clearInterval(pollClosed)
+          setTimeout(() => {
+            window.removeEventListener('message', onMessage)
+            if (!settled) { settled = true; reject(new Error('Window closed')) }
+          }, 600)
         }
       } catch (_) {
         // COOP policy blocks popup.closed — ignore, rely on postMessage instead
@@ -152,10 +159,12 @@ export async function triggerResync(batch, getTokenFn = null) {
 
 /**
  * DELETE /api/calendar/disconnect
- * Revokes Google token, deletes the MLSC calendar, wipes all DB rows.
+ * Revokes Google token, wipes all DB rows.
+ * @param {function|null} getTokenFn
+ * @param {boolean} clear  When true (default) also deletes the MLSC calendar + events.
  */
-export async function disconnectCalendar(getTokenFn = null) {
-  return calendarFetch('/api/calendar/disconnect', { method: 'DELETE' }, getTokenFn)
+export async function disconnectCalendar(getTokenFn = null, clear = true) {
+  return calendarFetch(`/api/calendar/disconnect?clear=${clear}`, { method: 'DELETE' }, getTokenFn)
 }
 
 /**
