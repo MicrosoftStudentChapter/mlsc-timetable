@@ -236,7 +236,7 @@ function GoogleCalendarCard({ savedBatch }) {
 
           {/* Sync now — always available when connected */}
           <div className="gcal-actions">
-            <button className="gcal-btn gcal-btn--secondary" onClick={handleResync} disabled={busy || !savedBatch}>
+             <button className="gcal-btn gcal-btn--secondary" onClick={handleResync} disabled={busy || !savedBatch}>
               {busy ? 'Syncing…' : 'Sync now'}
             </button>
           </div>

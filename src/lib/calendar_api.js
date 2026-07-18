@@ -33,10 +33,20 @@ async function calendarFetch(path, opts = {}, getTokenFn = null) {
     },
   })
   if (!res.ok) {
+    const contentType = res.headers.get('content-type') || ''
     let detail = {}
-    try { detail = await res.json() } catch {}
-    const err = new Error(detail?.error || detail?.detail || `HTTP ${res.status}`)
-    err.code = detail?.code || String(res.status)
+    if (contentType.includes('application/json')) {
+      try { detail = await res.json() } catch { detail = {} }
+    } else {
+      try { await res.text() } catch { /* Ignore unreadable error bodies. */ }
+    }
+    const nestedDetail = typeof detail?.detail === 'object' ? detail.detail : null
+    const err = new Error(
+      detail?.error || nestedDetail?.error ||
+      (typeof detail?.detail === 'string' ? detail.detail : null) ||
+      `HTTP ${res.status}`,
+    )
+    err.code = detail?.code || nestedDetail?.code || String(res.status)
     err.status = res.status
     throw err
   }
@@ -136,6 +146,7 @@ export async function connectCalendar(getTokenFn = null) {
 
 /** POST /api/calendar/enable  body { batch } */
 export async function enableCalendarSync(batch, getTokenFn = null) {
+  if (!batch?.trim()) throw new Error('Select a batch before enabling calendar sync')
   return calendarFetch('/api/calendar/enable', {
     method: 'POST',
     body: JSON.stringify({ batch }),
@@ -149,6 +160,7 @@ export async function disableCalendarSync(getTokenFn = null) {
 
 /** POST /api/calendar/resync  optionally updates batch */
 export async function triggerResync(batch, getTokenFn = null) {
+  if (!batch?.trim()) throw new Error('Select a batch before syncing your calendar')
   const url = batch
     ? `/api/calendar/resync?batch=${encodeURIComponent(batch)}`
     : '/api/calendar/resync'
