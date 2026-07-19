@@ -32,9 +32,11 @@
   margin-top: 0;
 }
 
-.gcal-header > .gcal-icon {
-  position: absolute;
-  left: 4px;
+.gcal-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .gcal-header > div {

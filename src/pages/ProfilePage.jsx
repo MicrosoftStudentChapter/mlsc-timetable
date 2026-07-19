@@ -155,9 +155,11 @@ function GoogleCalendarCard({ savedBatch }) {
     return (
       <div id="calendar" className="profile-card gcal-card">
         <div className="gcal-header">
-          <CalendarIcon />
           <div>
-            <h2 className="gcal-title">Google Calendar Sync</h2>
+            <div className="gcal-heading-row">
+              <CalendarIcon />
+              <h2 className="gcal-title">Google Calendar Sync</h2>
+            </div>
             <p className="gcal-subtitle" style={{ opacity: 0.5 }}>Loading…</p>
           </div>
         </div>
@@ -169,9 +171,11 @@ function GoogleCalendarCard({ savedBatch }) {
     return (
       <div className="profile-card gcal-card">
         <div className="gcal-header">
-          <CalendarIcon />
           <div>
-            <h2 className="gcal-title">Google Calendar Sync</h2>
+            <div className="gcal-heading-row">
+              <CalendarIcon />
+              <h2 className="gcal-title">Google Calendar Sync</h2>
+            </div>
             <p className="gcal-subtitle gcal-subtitle--error">
               Calendar sync is temporarily unavailable. Please try again later.
             </p>
@@ -195,9 +199,11 @@ function GoogleCalendarCard({ savedBatch }) {
         onCancel={() => setConfirm(null)}
       />
       <div className="gcal-header">
-        <CalendarIcon />
         <div>
-          <h2 className="gcal-title">Google Calendar Sync</h2>
+          <div className="gcal-heading-row">
+            <CalendarIcon />
+            <h2 className="gcal-title">Google Calendar Sync</h2>
+          </div>
           <p className="gcal-subtitle">Auto-push your timetable to Google Calendar</p>
         </div>
         {status.connected && status.enabled && (
