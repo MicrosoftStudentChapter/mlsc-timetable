@@ -36,7 +36,7 @@ async function calendarFetch(path, opts = {}, getTokenFn = null) {
   let payload = null
   if (res.status !== 204) {
     const body = await res.text()
-    if (body && contentType.includes('application/json')) {
+    if (body) {
       try { payload = JSON.parse(body) } catch { payload = null }
     }
   }
@@ -54,7 +54,10 @@ async function calendarFetch(path, opts = {}, getTokenFn = null) {
   }
   if (res.status === 204) return null
   if (payload === null) {
-    throw new Error(`Backend returned an invalid response (HTTP ${res.status})`)
+    throw new Error(
+      `Backend returned non-JSON data (HTTP ${res.status}, ${contentType || 'unknown content type'}). ` +
+      'Check that VITE_BACKEND_URL points to the FastAPI backend.',
+    )
   }
   return payload
 }
