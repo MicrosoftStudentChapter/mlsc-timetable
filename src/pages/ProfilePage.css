@@ -15,7 +15,7 @@
 
 .gcal-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   position: relative;
   gap: 12px;
@@ -25,11 +25,11 @@
 }
 
 .gcal-icon {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   color: #60a5fa;
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 0;
 }
 
 .gcal-header > .gcal-icon {
@@ -43,8 +43,8 @@
 
 .gcal-title {
   margin: 0 0 2px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: var(--text-h);
 }
 
