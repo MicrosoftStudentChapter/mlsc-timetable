@@ -642,6 +642,8 @@
   border-radius: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
+  padding-left: 38px;
+  padding-right: 38px;
   padding-top: 2px;
   padding-bottom: 8px;
   font-size: 0.88rem;
