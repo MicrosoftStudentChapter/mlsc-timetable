@@ -23,8 +23,9 @@
 }
 
 .gcal-icon {
-  font-size: 1.5rem;
-  line-height: 1;
+  width: 26px;
+  height: 26px;
+  color: #60a5fa;
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -599,12 +600,17 @@
   background: var(--bg-hover, rgba(255,255,255,0.03));
   border: 1px solid var(--border);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .profile-batch-segment {
   flex: 1;
   position: relative;
+  min-width: 0;
+}
+
+.profile-batch-segment:focus-within {
+  z-index: 2;
 }
 
 .profile-batch-segment + .profile-batch-segment::before {

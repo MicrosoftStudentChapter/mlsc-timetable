@@ -32,14 +32,16 @@ async function calendarFetch(path, opts = {}, getTokenFn = null) {
       ...(opts.headers || {}),
     },
   })
-  if (!res.ok) {
-    const contentType = res.headers.get('content-type') || ''
-    let detail = {}
-    if (contentType.includes('application/json')) {
-      try { detail = await res.json() } catch { detail = {} }
-    } else {
-      try { await res.text() } catch { /* Ignore unreadable error bodies. */ }
+  const contentType = res.headers.get('content-type') || ''
+  let payload = null
+  if (res.status !== 204) {
+    const body = await res.text()
+    if (body && contentType.includes('application/json')) {
+      try { payload = JSON.parse(body) } catch { payload = null }
     }
+  }
+  if (!res.ok) {
+    const detail = payload || {}
     const nestedDetail = typeof detail?.detail === 'object' ? detail.detail : null
     const err = new Error(
       detail?.error || nestedDetail?.error ||
@@ -51,7 +53,10 @@ async function calendarFetch(path, opts = {}, getTokenFn = null) {
     throw err
   }
   if (res.status === 204) return null
-  return res.json()
+  if (payload === null) {
+    throw new Error(`Backend returned an invalid response (HTTP ${res.status})`)
+  }
+  return payload
 }
 
 // ── Status ──────────────────────────────────────────────────────────────
@@ -65,6 +70,8 @@ export async function getCalendarConfigured() {
   try {
     const res = await fetch(`${BASE}/api/calendar/configured`)
     if (!res.ok) return { configured: false }
+    const contentType = res.headers.get('content-type') || ''
+    if (!contentType.includes('application/json')) return { configured: false }
     return res.json()
   } catch {
     return { configured: false }

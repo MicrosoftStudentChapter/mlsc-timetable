@@ -37,6 +37,16 @@ function findBatchPath(years, batchCode) {
   return { year: '', stream: '', batch: '' }
 }
 
+function CalendarIcon() {
+  return (
+    <svg className="gcal-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M7 3v4M17 3v4M3 9h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M7 13h.01M12 13h.01M17 13h.01M7 17h.01M12 17h.01" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 // ── Confirmation Modal ────────────────────────────────────────────────────────
 function ConfirmModal({ open, title, message, confirmLabel = 'Confirm', secondaryLabel = null, danger = false, onConfirm, onSecondary = null, onCancel }) {
   useEffect(() => {
@@ -144,7 +154,7 @@ function GoogleCalendarCard({ savedBatch }) {
     return (
       <div id="calendar" className="profile-card gcal-card">
         <div className="gcal-header">
-          <span className="gcal-icon" aria-hidden="true">📅</span>
+          <CalendarIcon />
           <div>
             <h2 className="gcal-title">Google Calendar Sync</h2>
             <p className="gcal-subtitle" style={{ opacity: 0.5 }}>Loading…</p>
@@ -158,7 +168,7 @@ function GoogleCalendarCard({ savedBatch }) {
     return (
       <div className="profile-card gcal-card">
         <div className="gcal-header">
-          <span className="gcal-icon" aria-hidden="true">📅</span>
+          <CalendarIcon />
           <div>
             <h2 className="gcal-title">Google Calendar Sync</h2>
             <p className="gcal-subtitle" style={{ color: '#f87171' }}>Error: {status._loadError}</p>
@@ -182,7 +192,7 @@ function GoogleCalendarCard({ savedBatch }) {
         onCancel={() => setConfirm(null)}
       />
       <div className="gcal-header">
-        <span className="gcal-icon" aria-hidden="true">📅</span>
+        <CalendarIcon />
         <div>
           <h2 className="gcal-title">Google Calendar Sync</h2>
           <p className="gcal-subtitle">Auto-push your timetable to Google Calendar</p>
