@@ -55,6 +55,7 @@
 }
 
 .gcal-subtitle--error {
+  margin-top: 10px;
   color: #f87171;
 }
 
