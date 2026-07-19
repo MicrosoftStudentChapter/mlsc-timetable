@@ -16,6 +16,8 @@
 .gcal-header {
   display: flex;
   align-items: flex-start;
+  justify-content: center;
+  position: relative;
   gap: 12px;
   padding: 4px 4px 14px;
   border-bottom: 1px solid var(--border);
@@ -30,6 +32,15 @@
   margin-top: 2px;
 }
 
+.gcal-header > .gcal-icon {
+  position: absolute;
+  left: 4px;
+}
+
+.gcal-header > div {
+  text-align: center;
+}
+
 .gcal-title {
   margin: 0 0 2px;
   font-size: 0.95rem;
@@ -41,6 +52,10 @@
   margin: 0;
   font-size: 0.78rem;
   opacity: 0.6;
+}
+
+.gcal-subtitle--error {
+  color: #f87171;
 }
 
 .gcal-status-dot {

@@ -97,6 +97,7 @@ function GoogleCalendarCard({ savedBatch }) {
       const s = await getCalendarStatus(tk)
       setStatus(s)
     } catch (err) {
+      console.error('Calendar status request failed:', err)
       setStatus({ configured: true, _loadError: err?.message || String(err) })
     }
   }, [tk])
@@ -171,7 +172,9 @@ function GoogleCalendarCard({ savedBatch }) {
           <CalendarIcon />
           <div>
             <h2 className="gcal-title">Google Calendar Sync</h2>
-            <p className="gcal-subtitle" style={{ color: '#f87171' }}>Error: {status._loadError}</p>
+            <p className="gcal-subtitle gcal-subtitle--error">
+              Calendar sync is temporarily unavailable. Please try again later.
+            </p>
           </div>
         </div>
       </div>
