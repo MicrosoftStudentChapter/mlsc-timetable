@@ -536,6 +536,79 @@ function TermEndDateRow() {
   )
 }
 
+function TermStartDateRow() {
+  const [dates, setDates] = useState({ '1': '', '2': '', '3': '', '4': '' })
+  const [original, setOriginal] = useState({ '1': '', '2': '', '3': '', '4': '' })
+  const [saving, setSaving] = useState(false)
+  const [result, setResult] = useState(null)
+
+  useEffect(() => {
+    getCurrent()
+      .then((d) => {
+        const v = d?.term_start_dates || {}
+        const loaded = { '1': v['1'] || '', '2': v['2'] || '', '3': v['3'] || '', '4': v['4'] || '' }
+        setDates(loaded)
+        setOriginal(loaded)
+      })
+      .catch(() => {})
+  }, [])
+
+  async function onSave(evt) {
+    evt.preventDefault()
+    if (saving) return
+    setSaving(true)
+    setResult(null)
+    try {
+      const { applyCalendarPlan } = await import('../../lib/admin')
+      await applyCalendarPlan({
+        plan: [],
+        termStartDates: Object.fromEntries(Object.entries(dates).filter(([, v]) => v)),
+      })
+      setOriginal({ ...dates })
+      setResult('ok')
+    } catch (err) {
+      setResult(errMessage(err))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const dirty = ['1', '2', '3', '4'].some((y) => dates[y] !== original[y])
+
+  return (
+    <form className="manager-term-end" onSubmit={onSave}>
+      <span className="manager-term-end-label">
+        Term start dates
+        <span className="manager-term-end-hint"> — RRULE DTSTART for Google Calendar</span>
+      </span>
+      <div className="manager-term-end-grid">
+        {['1', '2', '3', '4'].map((yr) => (
+          <label key={yr} className="manager-term-end-field">
+            <span>Year {yr}</span>
+            <input
+              type="date"
+              className="upload-input"
+              value={dates[yr]}
+              onChange={(e) => { setDates((d) => ({ ...d, [yr]: e.target.value })); setResult(null) }}
+              disabled={saving}
+            />
+          </label>
+        ))}
+      </div>
+      <button
+        type="submit"
+        className="upload-btn"
+        style={{ marginTop: 4 }}
+        disabled={saving || !dirty}
+      >
+        {saving ? 'Saving…' : 'Save'}
+      </button>
+      {result === 'ok' && <p className="upload-result ok">Saved.</p>}
+      {result && result !== 'ok' && <p className="upload-result failed">{result}</p>}
+    </form>
+  )
+}
+
 function CalendarOverridesCard() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
@@ -641,6 +714,7 @@ function CalendarOverridesCard() {
         Mark holidays or make a date follow another weekday&apos;s schedule.
         Scope can be global, per year, or per branch (e.g. <code>2A</code>).
       </p>
+      <TermStartDateRow />
       <TermEndDateRow />
 
       {error && (

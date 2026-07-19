@@ -33,10 +33,20 @@ async function calendarFetch(path, opts = {}, getTokenFn = null) {
     },
   })
   if (!res.ok) {
+    const contentType = res.headers.get('content-type') || ''
     let detail = {}
-    try { detail = await res.json() } catch {}
-    const err = new Error(detail?.error || detail?.detail || `HTTP ${res.status}`)
-    err.code = detail?.code || String(res.status)
+    if (contentType.includes('application/json')) {
+      try { detail = await res.json() } catch { detail = {} }
+    } else {
+      try { await res.text() } catch { /* Ignore unreadable error bodies. */ }
+    }
+    const nestedDetail = typeof detail?.detail === 'object' ? detail.detail : null
+    const err = new Error(
+      detail?.error || nestedDetail?.error ||
+      (typeof detail?.detail === 'string' ? detail.detail : null) ||
+      `HTTP ${res.status}`,
+    )
+    err.code = detail?.code || nestedDetail?.code || String(res.status)
     err.status = res.status
     throw err
   }
@@ -83,24 +93,31 @@ export function openOAuthPopup(redirectUrl) {
       return
     }
 
+    let settled = false
+
     function onMessage(evt) {
       if (!evt.data || typeof evt.data !== 'object') return
       if (evt.data.type === 'mlsc_calendar_connected') {
         cleanup()
-        resolve()
+        if (!settled) { settled = true; resolve() }
       } else if (evt.data.type === 'mlsc_calendar_error') {
         cleanup()
-        reject(new Error(evt.data.error || 'Google OAuth failed'))
+        if (!settled) { settled = true; reject(new Error(evt.data.error || 'Google OAuth failed')) }
       }
     }
 
-    // Poll for popup close (user closed without completing).
-    // Wrap in try/catch: Google's COOP header blocks popup.closed on some browsers.
+    // Poll for popup close. When the popup closes we wait a short grace
+    // period for any pending postMessage to arrive before rejecting — this
+    // prevents a race where the interval fires between window.close() and
+    // the opener receiving the message.
     const pollClosed = setInterval(() => {
       try {
         if (popup.closed) {
-          cleanup()
-          reject(new Error('Window closed'))
+          clearInterval(pollClosed)
+          setTimeout(() => {
+            window.removeEventListener('message', onMessage)
+            if (!settled) { settled = true; reject(new Error('Window closed')) }
+          }, 600)
         }
       } catch (_) {
         // COOP policy blocks popup.closed — ignore, rely on postMessage instead
@@ -129,6 +146,7 @@ export async function connectCalendar(getTokenFn = null) {
 
 /** POST /api/calendar/enable  body { batch } */
 export async function enableCalendarSync(batch, getTokenFn = null) {
+  if (!batch?.trim()) throw new Error('Select a batch before enabling calendar sync')
   return calendarFetch('/api/calendar/enable', {
     method: 'POST',
     body: JSON.stringify({ batch }),
@@ -142,6 +160,7 @@ export async function disableCalendarSync(getTokenFn = null) {
 
 /** POST /api/calendar/resync  optionally updates batch */
 export async function triggerResync(batch, getTokenFn = null) {
+  if (!batch?.trim()) throw new Error('Select a batch before syncing your calendar')
   const url = batch
     ? `/api/calendar/resync?batch=${encodeURIComponent(batch)}`
     : '/api/calendar/resync'
@@ -152,10 +171,12 @@ export async function triggerResync(batch, getTokenFn = null) {
 
 /**
  * DELETE /api/calendar/disconnect
- * Revokes Google token, deletes the MLSC calendar, wipes all DB rows.
+ * Revokes Google token, wipes all DB rows.
+ * @param {function|null} getTokenFn
+ * @param {boolean} clear  When true (default) also deletes the MLSC calendar + events.
  */
-export async function disconnectCalendar(getTokenFn = null) {
-  return calendarFetch('/api/calendar/disconnect', { method: 'DELETE' }, getTokenFn)
+export async function disconnectCalendar(getTokenFn = null, clear = true) {
+  return calendarFetch(`/api/calendar/disconnect?clear=${clear}`, { method: 'DELETE' }, getTokenFn)
 }
 
 /**
