@@ -61,6 +61,20 @@ export function resetUserId() {
   }
 }
 
-export function authHeaders(extra = {}) {
-  return { 'X-User-Id': getUserId(), ...extra }
+export async function getClerkToken() {
+  try {
+    const token = await window.Clerk?.session?.getToken()
+    return token || null
+  } catch {
+    return null
+  }
+}
+
+export async function authHeaders(extra = {}) {
+  const headers = { 'X-User-Id': getUserId(), ...extra }
+  const token = await getClerkToken()
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+  return headers
 }

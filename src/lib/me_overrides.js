@@ -40,7 +40,7 @@ export async function putMyOverride({ day, startTime, kind, entry }) {
     const url = `${BASE}/me/overrides/${encodeURIComponent(day)}/${encodeURIComponent(startTime)}`
     const res = await fetch(url, {
       method: 'PUT',
-      headers: authHeaders({ 'Content-Type': 'application/json' }),
+      headers: await authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
         kind,
         entry: kind === 'delete' ? null : entryToBackend(entry),
@@ -59,7 +59,7 @@ export async function deleteMyOverride({ day, startTime }) {
     const url = `${BASE}/me/overrides/${encodeURIComponent(day)}/${encodeURIComponent(startTime)}`
     const res = await fetch(url, {
       method: 'DELETE',
-      headers: authHeaders(),
+      headers: await authHeaders(),
     })
     return res.ok
   } catch {

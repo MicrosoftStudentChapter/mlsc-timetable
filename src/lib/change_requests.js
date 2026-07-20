@@ -48,7 +48,7 @@ export async function submitChangeRequest({
   try {
     res = await fetch(url, {
       method: 'POST',
-      headers: authHeaders({ 'Content-Type': 'application/json' }),
+      headers: await authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
         requester_batch: requesterBatch,
         scope,

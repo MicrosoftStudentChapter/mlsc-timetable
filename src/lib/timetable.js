@@ -97,7 +97,7 @@ export async function loadMyTimetable(batch) {
     const url = batch
       ? `${root}/me/timetable?batch=${encodeURIComponent(batch)}`
       : `${root}/me/timetable`
-    const result = await fetchTimetable(url, { headers: authHeaders() })
+    const result = await fetchTimetable(url, { headers: await authHeaders() })
     if (result.status === 'ok' || result.status === 'not_found') return result
   }
   if (!batch) return { status: 'error', message: 'No batch supplied' }
