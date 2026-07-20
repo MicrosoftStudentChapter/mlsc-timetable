@@ -10,8 +10,9 @@
 // the source of truth for rendering.
 
 import { authHeaders } from './identity'
+import { getBackendUrl } from './backend_url'
 
-const BASE = (import.meta?.env?.VITE_BACKEND_URL || '').replace(/\/$/, '')
+const BASE = getBackendUrl()
 
 function backendDisabled() {
   return !BASE

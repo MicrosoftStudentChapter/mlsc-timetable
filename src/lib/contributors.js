@@ -11,6 +11,8 @@
  * Resulting items: { id?, login, avatar_url, html_url }
  */
 
+import { getBackendUrl } from './backend_url'
+
 const SHAPE_KEYS = ['id', 'login', 'avatar_url', 'html_url']
 
 function pickShape(obj) {
@@ -37,10 +39,6 @@ function getRepos() {
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean)
-}
-
-function getBackendUrl() {
-  return (import.meta.env.VITE_BACKEND_URL || '').replace(/\/$/, '')
 }
 
 async function fetchFromMiddleware() {

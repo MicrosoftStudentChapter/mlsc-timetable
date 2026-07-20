@@ -12,6 +12,7 @@
 // meaningful "too many submissions" / "duplicate" message.
 
 import { authHeaders } from './identity'
+import { getBackendUrl } from './backend_url'
 
 function entryToBackend(entry) {
   if (!entry) return null
@@ -39,7 +40,7 @@ export async function submitChangeRequest({
   startTime,
   entry = null,
 }) {
-  const baseUrl = import.meta.env.VITE_BACKEND_URL
+  const baseUrl = getBackendUrl()
   if (!baseUrl) {
     throw Object.assign(new Error('Backend not configured'), { code: 'no_backend' })
   }

@@ -12,10 +12,12 @@
 // Return shape (both helpers):
 //   { status: 'ok' | 'fallback' | 'error', items: Array<...> }
 
+import { getBackendUrl } from './backend_url'
+
 const FALLBACK_BASE = `${import.meta.env.BASE_URL || '/'}fallback`.replace(/\/+$/, '')
 
 function backendUrl(path) {
-  const base = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/$/, '')
+  const base = getBackendUrl()
   return base ? `${base}${path}` : null
 }
 

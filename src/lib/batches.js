@@ -1,4 +1,5 @@
 import fallback from '../data/batches.json'
+import { getBackendUrl } from './backend_url'
 
 const YEAR_LABELS = {
   1: '1st Year',
@@ -71,7 +72,7 @@ async function fetchBatchList(url) {
 }
 
 export async function loadBatches() {
-  const baseUrl = import.meta.env.VITE_BACKEND_URL
+  const baseUrl = getBackendUrl()
   if (baseUrl) {
     const list = await fetchBatchList(`${baseUrl.replace(/\/$/, '')}/batch`)
     if (list) return groupBatches(list, fallback.streamNames)

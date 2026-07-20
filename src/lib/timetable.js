@@ -10,6 +10,7 @@
 // `X-User-Id` header so the backend can merge per-user overrides server-side.
 
 import { authHeaders } from './identity'
+import { getBackendUrl } from './backend_url'
 
 const TIME_SLOTS = [
   '08:00', '08:50', '09:40', '10:30', '11:20', '12:10',
@@ -77,7 +78,7 @@ const fallbackTimetableUrl = (batch) =>
 
 // status: 'ok' | 'not_found' | 'error' | 'no_backend'
 export async function loadTimetable(batch) {
-  const baseUrl = import.meta.env.VITE_BACKEND_URL
+  const baseUrl = getBackendUrl()
   if (baseUrl) {
     const url = `${baseUrl.replace(/\/$/, '')}/timetable/${encodeURIComponent(batch)}`
     const result = await fetchTimetable(url)
@@ -91,7 +92,7 @@ export async function loadTimetable(batch) {
 // server-side. Falls back to the canonical bundled snapshot when the backend
 // is unreachable (overrides are then necessarily empty).
 export async function loadMyTimetable(batch) {
-  const baseUrl = import.meta.env.VITE_BACKEND_URL
+  const baseUrl = getBackendUrl()
   if (baseUrl) {
     const root = baseUrl.replace(/\/$/, '')
     const url = batch

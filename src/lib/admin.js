@@ -9,7 +9,9 @@
 // The Clerk dashboard must have a JWT template named `mlsc-admin` whose
 // body is `{ "email": "{{user.primary_email_address}}" }`.
 
-const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/$/, '')
+import { getBackendUrl } from './backend_url'
+
+const BACKEND_URL = getBackendUrl()
 const CLERK_JWT_TEMPLATE = 'mlsc-admin'
 
 export class AdminAuthError extends Error {
