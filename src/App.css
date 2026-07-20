@@ -141,6 +141,35 @@
   text-decoration: underline;
 }
 
+.landing-legal-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+}
+
+.landing-legal-links:hover {
+  opacity: 0.85;
+}
+
+.landing-legal-links a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.landing-legal-links a:hover {
+  text-decoration: underline;
+}
+
+.landing-legal-sep {
+  color: var(--text);
+  font-size: 0.6rem;
+  opacity: 0.5;
+}
+
 /* ── Mobile/tablet: stack vertically and move logo into header ── */
 @media (max-width: 720px) {
   .main {

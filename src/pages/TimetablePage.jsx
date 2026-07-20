@@ -6,7 +6,7 @@ import Footer from '../components/Footer'
 import FollowDayBanner from '../components/FollowDayBanner'
 import { loadBatches } from '../lib/batches'
 import { loadTimetable } from '../lib/timetable'
-import { exportGridAsPng, exportGridAsPdf, ASPECT_PRESETS } from '../lib/export_timetable'
+import { exportGridAsPng, exportGridAsPdf } from '../lib/export_timetable'
 import { DashboardLayout } from '../components/side_columns'
 import { useTheme } from '../hooks/useTheme'
 import { useAuthUser, useCalendarAuth } from '../lib/auth'
@@ -201,9 +201,6 @@ export default function TimetablePage() {
     () => typeof window !== 'undefined' && window.matchMedia(NAV_COLLAPSE_QUERY).matches
   )
   const [navExpanded, setNavExpanded] = useState(false)
-  // 0..4 = Mon–Fri column to highlight in the grid header; null = none
-  // (Sat/Sun by default, or any date explicitly mapped to null). Driven by
-  // sidebar mini-calendar hover; falls back to today's mapping.
   const [activeWeekdayIdx, setActiveWeekdayIdx] = useState(null)
   const closeTimerRef = useRef(null)
   const isMouseHoveringRef = useRef(false)
@@ -257,11 +254,9 @@ export default function TimetablePage() {
   useEffect(() => () => cancelClose(), [])
 
   useEffect(() => {
-    try { localStorage.setItem(CARD_THEME_KEY, cardTheme) } catch (_) {}
+    try { localStorage.setItem(CARD_THEME_KEY, cardTheme) } catch (err) { void err }
   }, [cardTheme])
 
-  // when leaving compact mode, drop any pending timer + collapsed flag so the
-  // nav renders cleanly on desktop
   useEffect(() => {
     if (!isCompact) {
       cancelClose()
@@ -270,8 +265,6 @@ export default function TimetablePage() {
     }
   }, [isCompact])
 
-  // mouse hover keeps the nav open; touch is ignored here so taps don't get
-  // mistaken for a permanent hover
   const handleNavEnter = (e) => {
     if (e.pointerType !== 'mouse') return
     isMouseHoveringRef.current = true
@@ -282,8 +275,6 @@ export default function TimetablePage() {
     isMouseHoveringRef.current = false
     if (navExpanded) armClose()
   }
-  // any pointer/key activity inside the expanded nav resets the auto-close timer
-  // (this is what makes auto-close work on touch devices)
   const handleNavInteract = () => {
     if (navExpanded && !isMouseHoveringRef.current) armClose()
   }
@@ -292,7 +283,6 @@ export default function TimetablePage() {
     if (!isMouseHoveringRef.current) armClose()
   }
 
-  // close when the user taps/clicks anywhere outside the open pill
   useEffect(() => {
     if (!isCompact || !navExpanded) return
     const onDocPointerDown = (e) => {
@@ -355,14 +345,29 @@ export default function TimetablePage() {
     if (allCodes.has(upper) && upper !== batch) navigate(`/timetable/${upper}`)
   }
 
+  const [shareCopied, setShareCopied] = useState(false)
+
   const handleShare = () => {
-    navigator.share
-      ? navigator.share({ title: `MLSC Timetable – ${batch}`, url: window.location.href })
-      : navigator.clipboard.writeText(window.location.href)
+    if (navigator.share) {
+      navigator.share({ title: `MLSC Timetable – ${batch}`, url: window.location.href }).catch(() => {})
+    } else {
+      try {
+        navigator.clipboard.writeText(window.location.href)
+        setShareCopied(true)
+        setTimeout(() => setShareCopied(false), 2200)
+      } catch (err) {
+        void err
+      }
+    }
   }
 
   return (
     <>
+      {shareCopied && (
+        <div className="tt-share-toast" role="status">
+          ✓ Timetable link copied to clipboard
+        </div>
+      )}
       <CalendarSyncModal
         isOpen={calendarModalOpen}
         onClose={() => setCalendarModalOpen(false)}
@@ -372,27 +377,42 @@ export default function TimetablePage() {
       batch={batch}
       onActiveWeekdayChange={setActiveWeekdayIdx}
       footer={<Footer />}
-      headerActions={
-        <label className="tt-card-theme-picker">
-          <span className="tt-card-theme-label">Card style</span>
-          <select
-            className="tt-card-theme-select"
-            value={cardTheme}
-            onChange={(e) => setCardTheme(e.target.value)}
-            aria-label="Card style"
-          >
-            {CARD_THEMES.map((t) => (
-              <option key={t.value} value={t.value}>{t.label}</option>
-            ))}
-          </select>
-        </label>
-      }
     >
       <div className="tt-content">
-        {/* Mobile-only card-style row — the picker in the header is hidden
-            on mobile (no room in the compact strip), so mirror it here as
-            a full-width row between header and the follow-day banner. */}
-        <div className="tt-card-style-row">
+        {/* Top Control Toolbar Row — permanent across desktop and mobile */}
+        <div className="tt-toolbar-row">
+          <div className="tt-toolbar-actions">
+            <ExportDropdownButton
+              format="png"
+              label="PNG"
+              icon={
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+              }
+              exportRef={exportRef}
+              batch={batch}
+              disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
+            />
+            <ExportDropdownButton
+              format="pdf"
+              label="PDF"
+              icon={
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10 9 9 9 8 9"/>
+                </svg>
+              }
+              exportRef={exportRef}
+              batch={batch}
+              disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
+            />
+          </div>
           <label className="tt-card-theme-picker">
             <span className="tt-card-theme-label">Card style</span>
             <select
@@ -497,21 +517,24 @@ export default function TimetablePage() {
                 </div>
               )}
 
-              {/* Download */}
-              <SaveMenu
-                exportRef={exportRef}
-                batch={batch}
-                disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
-              />
-
               {/* Share */}
-              <div className="tt-tip-wrap" data-tip="Share Link">
-                <button className="tt-icon-btn" aria-label="Share link" onClick={handleShare}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                  </svg>
+              <div className="tt-tip-wrap" data-tip={shareCopied ? 'Link Copied!' : 'Share Link'}>
+                <button
+                  className={`tt-icon-btn ${shareCopied ? 'is-copied' : ''}`}
+                  aria-label="Share link"
+                  onClick={handleShare}
+                >
+                  {shareCopied ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                    </svg>
+                  )}
                 </button>
               </div>
             </div>
@@ -605,25 +628,13 @@ function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx })
   return <TimetableGrid isDarkMode={isDark} classes={state.classes} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} />
 }
 
-// ─── SaveMenu ────────────────────────────────────────────────────────────────
-// Two-step popover: choose format (PNG / PDF), then aspect ratio. Captures
-// whatever's inside `exportRef` (the rendered timetable). Closes on
-// outside-click and Escape.
-function SaveMenu({ exportRef, batch, disabled }) {
+// ─── ExportDropdownButton ───────────────────────────────────────────────────
+// Sleek dropdown button for PNG or PDF exports offering max 3 core ratio options.
+function ExportDropdownButton({ format, label, icon, exportRef, batch, disabled }) {
   const [open, setOpen] = useState(false)
-  const [step, setStep] = useState('format')   // 'format' | 'aspect'
-  const [format, setFormat] = useState(null)   // 'png' | 'pdf' | null
-  const [busy, setBusy] = useState(null)       // aspect id while running
+  const [busy, setBusy] = useState(null)
   const [error, setError] = useState(null)
   const wrapRef = useRef(null)
-
-  // Reset the wizard whenever the menu closes so reopening starts fresh.
-  useEffect(() => {
-    if (open) return
-    setStep('format')
-    setFormat(null)
-    setError(null)
-  }, [open])
 
   useEffect(() => {
     if (!open) return
@@ -639,18 +650,23 @@ function SaveMenu({ exportRef, batch, disabled }) {
     }
   }, [open])
 
-  const pickFormat = (kind) => {
-    setFormat(kind)
-    setError(null)
-    setStep('aspect')
-  }
+  const options = format === 'png' ? [
+    { id: 'fit', label: 'Fit Content (Default)', ratio: null },
+    { id: '16-9', label: '16:9 Landscape', ratio: 16 / 9 },
+    { id: '9-16', label: '9:16 Phone Wallpaper', ratio: 9 / 16 },
+  ] : [
+    { id: 'fit', label: 'Fit Content (Default)', ratio: null },
+    { id: '16-9', label: '16:9 Landscape', ratio: 16 / 9 },
+    { id: 'a4-p', label: 'A4 Portrait', ratio: 1 / Math.SQRT2 },
+  ]
 
-  const runWithAspect = async (preset) => {
-    if (busy || !format) return
+  const handleExport = async (opt) => {
+    if (busy) return
+    setBusy(opt.id)
+    setError(null)
     const fn = format === 'png' ? exportGridAsPng : exportGridAsPdf
-    setBusy(preset.id); setError(null)
     try {
-      await fn({ node: exportRef.current, batch, aspect: preset.ratio })
+      await fn({ node: exportRef.current, batch, aspect: opt.ratio })
       setOpen(false)
     } catch (e) {
       setError(e?.message || 'Export failed')
@@ -660,80 +676,41 @@ function SaveMenu({ exportRef, batch, disabled }) {
   }
 
   return (
-    <div className="tt-tip-wrap tt-save-wrap" data-tip="Save" ref={wrapRef}>
+    <div className="tt-export-wrap" ref={wrapRef}>
       <button
         type="button"
-        className="tt-icon-btn"
-        aria-label="Save as PDF or image"
+        className={`tt-quick-export-btn ${open ? 'is-active' : ''}`}
+        aria-label={`Export ${label}`}
         aria-haspopup="menu"
         aria-expanded={open ? 'true' : 'false'}
         disabled={disabled}
         onClick={() => !disabled && setOpen((v) => !v)}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
+        {icon}
+        <span>{label}</span>
+        <svg className="tt-export-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="6 9 12 15 18 9" />
         </svg>
       </button>
       {open && (
-        <div className="tt-save-menu" role="menu">
-          {step === 'format' ? (
-            <>
-              <button
-                type="button"
-                role="menuitem"
-                className="tt-save-menu-item"
-                onClick={() => pickFormat('png')}
-              >
-                PNG image
-              </button>
-              <button
-                type="button"
-                role="menuitem"
-                className="tt-save-menu-item"
-                onClick={() => pickFormat('pdf')}
-              >
-                PDF document
-              </button>
-            </>
-          ) : (
-            <>
-              <div className="tt-save-menu-header">
-                <button
-                  type="button"
-                  className="tt-save-menu-back"
-                  onClick={() => { if (!busy) { setStep('format'); setFormat(null); setError(null) } }}
-                  disabled={!!busy}
-                  aria-label="Back to format"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="15 18 9 12 15 6"/>
-                  </svg>
-                </button>
-                <span className="tt-save-menu-title">
-                  {format === 'png' ? 'PNG' : 'PDF'} · aspect
-                </span>
-              </div>
-              <div className="tt-save-menu-aspects">
-                {ASPECT_PRESETS.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    role="menuitem"
-                    className="tt-save-menu-item"
-                    disabled={!!busy}
-                    onClick={() => runWithAspect(p)}
-                  >
-                    {busy === p.id ? 'Saving…' : p.label}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-          {error && <p className="tt-save-menu-error">{error}</p>}
+        <div className="tt-export-menu" role="menu">
+          <div className="tt-export-menu-header">{label} Ratio</div>
+          {options.map((opt) => (
+            <button
+              key={opt.id}
+              type="button"
+              role="menuitem"
+              className="tt-export-menu-item"
+              disabled={!!busy}
+              onClick={() => handleExport(opt)}
+            >
+              {busy === opt.id ? 'Exporting…' : opt.label}
+            </button>
+          ))}
+          {error && <p className="tt-export-menu-error">{error}</p>}
         </div>
       )}
     </div>
   )
 }
+

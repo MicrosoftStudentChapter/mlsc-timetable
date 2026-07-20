@@ -527,7 +527,7 @@ body:has(.dashboard-layout) {
      viewports so the grid gets more horizontal real estate and the JS
      zoom-to-fit doesn't have to shrink content as aggressively. */
   padding: 24px;
-  overflow: hidden;
+  overflow: visible;
 }@media (max-width: 1280px) { .dashboard-main { padding: 18px; } }
 @media (max-width: 1024px) { .dashboard-main { padding: 14px; } }
 @media (max-width: 768px)  { .dashboard-main { padding: 10px; } }

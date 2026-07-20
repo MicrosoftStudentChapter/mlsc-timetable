@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import ContributorsScroller from '../components/ContributorsScroller'
@@ -92,6 +93,11 @@ export default function LandingPage() {
           >
             Repo Link ↗
           </a>
+          <div className="landing-legal-links">
+            <Link to="/privacy">Privacy Policy</Link>
+            <span className="landing-legal-sep">•</span>
+            <Link to="/terms">Terms of Service</Link>
+          </div>
         </section>
       </main>
 

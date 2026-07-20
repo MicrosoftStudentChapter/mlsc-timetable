@@ -83,18 +83,197 @@
 /* Mobile-only card-style picker row — the picker in the header is hidden
    on mobile via .header-actions display:none, so mirror it here below the
    header. Hidden on desktop where the header still shows the picker. */
-.tt-card-style-row {
-  display: none;
-  margin: 0 0 12px;
-}
-.tt-card-style-row > .tt-card-theme-picker {
-  width: 100%;
+/* ── Top Control Toolbar Row — permanent across desktop and mobile ── */
+.tt-toolbar-row {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 6px;
+  margin: -6px 0 14px;
+  position: relative;
+  z-index: 50;
 }
-@media (max-width: 768px) {
-  .tt-card-style-row {
-    display: flex;
+
+.tt-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+  margin-top: -4px;
+  position: relative;
+  z-index: 60;
+}
+
+.tt-quick-export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: #2563eb;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+
+.tt-quick-export-btn:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.2);
+}
+
+.tt-quick-export-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+[data-theme="dark"] .tt-quick-export-btn {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+}
+
+[data-theme="dark"] .tt-quick-export-btn:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #bfdbfe;
+  box-shadow: 0 3px 12px rgba(59, 130, 246, 0.3);
+}
+
+@media (max-width: 380px) {
+  .tt-toolbar-row {
+    justify-content: center;
   }
+  .tt-toolbar-actions {
+    justify-content: center;
+  }
+  .tt-card-theme-picker {
+    justify-content: center;
+  }
+}
+
+.tt-share-toast {
+  position: fixed;
+  bottom: 84px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #10b981;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+  z-index: 9999;
+  animation: tt-toast-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+@keyframes tt-toast-in {
+  from { opacity: 0; transform: translate(-50%, 10px) scale(0.95); }
+  to   { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+.tt-export-wrap {
+  position: relative;
+  z-index: 70;
+}
+
+.tt-export-chevron {
+  opacity: 0.7;
+  transition: transform 0.15s ease;
+}
+
+.tt-quick-export-btn.is-active .tt-export-chevron {
+  transform: rotate(180deg);
+}
+
+.tt-export-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 175px;
+  padding: 6px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18), 0 2px 6px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 1000;
+  animation: tt-save-menu-in 140ms ease-out;
+}
+
+.tt-export-menu-header {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  padding: 4px 8px 6px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 2px;
+}
+
+.tt-export-menu-item {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: #111827;
+  text-align: left;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 7px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tt-export-menu-item:hover:not(:disabled),
+.tt-export-menu-item:focus-visible {
+  background: #f3f4f6;
+  outline: none;
+}
+
+.tt-export-menu-item:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tt-export-menu-error {
+  margin: 4px 8px 2px;
+  font-size: 0.72rem;
+  color: #b91c1c;
+}
+
+[data-theme="dark"] .tt-export-menu {
+  background: #161616;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .tt-export-menu-header {
+  color: #9ca3af;
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .tt-export-menu-item {
+  color: #f5f5f5;
+}
+
+[data-theme="dark"] .tt-export-menu-item:hover:not(:disabled),
+[data-theme="dark"] .tt-export-menu-item:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* ── Card theme picker (lives in dashboard header) ── */
@@ -881,6 +1060,26 @@
 .tt-save-menu-item:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.tt-save-menu-item--secondary {
+  color: #6B7280;
+  font-size: 0.8rem;
+}
+
+.tt-save-menu-divider {
+  height: 1px;
+  margin: 4px 0;
+  background: rgba(0, 0, 0, 0.06);
+  border: none;
+}
+
+[data-theme="dark"] .tt-save-menu-divider {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .tt-save-menu-item--secondary {
+  color: #9CA3AF;
 }
 
 .tt-save-menu-error {
