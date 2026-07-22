@@ -1,637 +1,379 @@
 {
   "batch": "3Q25",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
   "classes": [
     {
       "day": "Monday",
       "start_time": "08:00",
       "end_time": "08:50",
-      "subject": "Optimization Techniques",
-      "code": "UMA035P",
+      "subject": "UCS553P",
+      "code": "UCS553P",
       "type": "Practical",
-      "room": "G309(NEW LAB)",
+      "room": "ES2(L402)",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "Optimization Techniques",
-      "code": "UMA035P",
+      "subject": "UCS553P",
+      "code": "UCS553P",
       "type": "Practical",
-      "room": "G309(NEW LAB)",
+      "room": "ES2(L402)",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Innovation And Entrepreneurship",
-      "code": "UTA025L",
+      "subject": "UCS553L",
+      "code": "UCS553L",
       "type": "Lecture",
-      "room": "LT402",
+      "room": "LT403",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Theory Of Computation",
-      "code": "UCS701L",
+      "subject": "Computer Architecture and Organization",
+      "code": "UCS510L",
       "type": "Lecture",
-      "room": "LT402",
+      "room": "LT403",
       "options": []
     },
     {
       "day": "Monday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "Innovation And Entrepreneurship",
-      "code": "UTA025T",
-      "type": "Tutorial",
-      "room": "F301",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Computer Vision",
+      "code": "UCS532P",
+      "type": "Practical",
+      "room": "L429",
+      "options": [
+        {
+          "subject_code": "UCS532P",
+          "subject_name": "Computer Vision",
+          "type": "Practical",
+          "place": "L429",
+          "teacher": "PRK-RA"
+        },
+        {
+          "subject_code": "UCS548P",
+          "subject_name": "Foundations of Data Science",
+          "type": "Practical",
+          "place": "L312",
+          "teacher": "SHV"
+        },
+        {
+          "subject_code": "UCS534P",
+          "subject_name": "Computer & Network Security",
+          "type": "Practical",
+          "place": "L409",
+          "teacher": "KNK-RA"
+        },
+        {
+          "subject_code": "UCS537P",
+          "subject_name": "Source Code Management",
+          "type": "Practical",
+          "place": "L106",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS668P",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Practical",
+          "place": "L004",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550P",
+          "subject_name": "Network Defence",
+          "type": "Practical",
+          "place": "L102",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UCS539L",
+          "subject_name": "Finance Accounting and Valuation",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "ROS"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Computer Vision",
+      "code": "UCS532P",
+      "type": "Practical",
+      "room": "L429",
+      "options": [
+        {
+          "subject_code": "UCS532P",
+          "subject_name": "Computer Vision",
+          "type": "Practical",
+          "place": "L429",
+          "teacher": "PRK-RA"
+        },
+        {
+          "subject_code": "UCS548P",
+          "subject_name": "Foundations of Data Science",
+          "type": "Practical",
+          "place": "L312",
+          "teacher": "SHV"
+        },
+        {
+          "subject_code": "UCS534P",
+          "subject_name": "Computer & Network Security",
+          "type": "Practical",
+          "place": "L409",
+          "teacher": "KNK-RA"
+        },
+        {
+          "subject_code": "UCS537P",
+          "subject_name": "Source Code Management",
+          "type": "Practical",
+          "place": "L106",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS668P",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Practical",
+          "place": "L004",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550P",
+          "subject_name": "Network Defence",
+          "type": "Practical",
+          "place": "L102",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UCS539L",
+          "subject_name": "Finance Accounting and Valuation",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "ROS"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539P",
+      "type": "Practical",
+      "room": "L005",
       "options": []
     },
     {
       "day": "Monday",
+      "start_time": "18:00",
+      "end_time": "18:50",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539P",
+      "type": "Practical",
+      "room": "L005",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Cloud Computing",
+      "code": "UCS531P",
+      "type": "Practical",
+      "room": "L430",
+      "options": [
+        {
+          "subject_code": "UCS531P",
+          "subject_name": "Cloud Computing",
+          "type": "Practical",
+          "place": "L430",
+          "teacher": "ISN-RAGUK-RA"
+        },
+        {
+          "subject_code": "UCS542P",
+          "subject_name": "Ui & Ux Specialist",
+          "type": "Practical",
+          "place": "L402",
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS551P",
+          "subject_name": "Conversational Ai: Accelerated Data Science",
+          "type": "Practical",
+          "place": "LP108",
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Cloud Computing",
+      "code": "UCS531P",
+      "type": "Practical",
+      "room": "L430",
+      "options": [
+        {
+          "subject_code": "UCS531P",
+          "subject_name": "Cloud Computing",
+          "type": "Practical",
+          "place": "L430",
+          "teacher": "ISN-RAGUK-RA"
+        },
+        {
+          "subject_code": "UCS542P",
+          "subject_name": "Ui & Ux Specialist",
+          "type": "Practical",
+          "place": "L402",
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS551P",
+          "subject_name": "Conversational Ai: Accelerated Data Science",
+          "type": "Practical",
+          "place": "LP108",
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "LT403",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UCS420L",
+      "code": "UCS420L",
+      "type": "Lecture",
+      "room": "LT403",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Computer Architecture and Organization",
+      "code": "UCS510L",
+      "type": "Lecture",
+      "room": "LT403",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Machine Learning",
+      "code": "UML501L",
+      "type": "Lecture",
+      "room": "LT403",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Software Engineering",
+      "code": "UCS503L",
+      "type": "Lecture",
+      "room": "LT403",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "UMC513P",
+      "code": "UMC513P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UMC513P",
+      "code": "UMC513P",
+      "type": "Practical",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Wednesday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "Innovation And Entrepreneurship",
-      "code": "UTA025T",
-      "type": "Tutorial",
-      "room": "F301",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "Ethical Hacking-I",
-      "code": "UCS673P",
-      "type": "Practical",
-      "room": "GC-1",
-      "options": [
-        {
-          "subject_code": "UCS673P",
-          "subject_name": "Ethical Hacking-I",
-          "type": "Practical",
-          "place": "GC-1",
-          "teacher": "IOT"
-        },
-        {
-          "subject_code": "UCSXX2P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "PG AS-2",
-          "teacher": "GA"
-        },
-        {
-          "subject_code": "UCS660P",
-          "subject_name": "Continuous Integration And Continuous Deployment",
-          "type": "Practical",
-          "place": "GC-2",
-          "teacher": "HPC"
-        },
-        {
-          "subject_code": "UCS636P",
-          "subject_name": "3D Modelling And Animation",
-          "type": "Practical",
-          "place": "IS-1",
-          "teacher": "SAL"
-        },
-        {
-          "subject_code": "UCS635P",
-          "subject_name": "Gpu Computing",
-          "type": "Practical",
-          "place": "LT101",
-          "teacher": "VJY"
-        },
-        {
-          "subject_code": "UCS658L",
-          "subject_name": "Derivatives Pricing, Trading And Strategies",
-          "type": "Lecture",
-          "place": null,
-          "teacher": "JHB"
-        }
-      ]
-    },
-    {
-      "day": "Monday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Ethical Hacking-I",
-      "code": "UCS673P",
-      "type": "Practical",
-      "room": "GC-1",
-      "options": [
-        {
-          "subject_code": "UCS673P",
-          "subject_name": "Ethical Hacking-I",
-          "type": "Practical",
-          "place": "GC-1",
-          "teacher": "IOT"
-        },
-        {
-          "subject_code": "UCSXX2P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "PG AS-2",
-          "teacher": "GA"
-        },
-        {
-          "subject_code": "UCS660P",
-          "subject_name": "Continuous Integration And Continuous Deployment",
-          "type": "Practical",
-          "place": "GC-2",
-          "teacher": "HPC"
-        },
-        {
-          "subject_code": "UCS636P",
-          "subject_name": "3D Modelling And Animation",
-          "type": "Practical",
-          "place": "IS-1",
-          "teacher": "SAL"
-        },
-        {
-          "subject_code": "UCS635P",
-          "subject_name": "Gpu Computing",
-          "type": "Practical",
-          "place": "LT101",
-          "teacher": "VJY"
-        },
-        {
-          "subject_code": "UCS658L",
-          "subject_name": "Derivatives Pricing, Trading And Strategies",
-          "type": "Lecture",
-          "place": null,
-          "teacher": "JHB"
-        }
-      ]
-    },
-    {
-      "day": "Monday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": "Ethical Hacking-Ii",
-      "code": "UCS674P",
-      "type": "Practical",
-      "room": "GC-1",
-      "options": [
-        {
-          "subject_code": "UCS674P",
-          "subject_name": "Ethical Hacking-Ii",
-          "type": "Practical",
-          "place": "GC-1",
-          "teacher": "IOT"
-        },
-        {
-          "subject_code": "UCSXX1P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "GC-2",
-          "teacher": "SD"
-        },
-        {
-          "subject_code": "UCS547P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "IS-1",
-          "teacher": "GA"
-        },
-        {
-          "subject_code": "UCS638P",
-          "subject_name": "Secure Coding",
-          "type": "Practical",
-          "place": null,
-          "teacher": "HPC"
-        },
-        {
-          "subject_code": "UCS646P",
-          "subject_name": "Game Design And Development",
-          "type": "Practical",
-          "place": null,
-          "teacher": "GS"
-        }
-      ]
-    },
-    {
-      "day": "Monday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "Ethical Hacking-Ii",
-      "code": "UCS674P",
-      "type": "Practical",
-      "room": "GC-1",
-      "options": [
-        {
-          "subject_code": "UCS674P",
-          "subject_name": "Ethical Hacking-Ii",
-          "type": "Practical",
-          "place": "GC-1",
-          "teacher": "IOT"
-        },
-        {
-          "subject_code": "UCSXX1P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "GC-2",
-          "teacher": "SD"
-        },
-        {
-          "subject_code": "UCS547P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "IS-1",
-          "teacher": "GA"
-        },
-        {
-          "subject_code": "UCS638P",
-          "subject_name": "Secure Coding",
-          "type": "Practical",
-          "place": null,
-          "teacher": "HPC"
-        },
-        {
-          "subject_code": "UCS646P",
-          "subject_name": "Game Design And Development",
-          "type": "Practical",
-          "place": null,
-          "teacher": "GS"
-        }
-      ]
-    },
-    {
-      "day": "Monday",
-      "start_time": "17:10",
-      "end_time": "18:00",
-      "subject": "UCS675P",
-      "code": "UCS675P",
-      "type": "Practical",
-      "room": "DS-2",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "18:00",
-      "end_time": "18:50",
-      "subject": "UCS675P",
-      "code": "UCS675P",
-      "type": "Practical",
-      "room": "DS-2",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "09:40",
-      "end_time": "10:30",
-      "subject": "Parallel & Distributed Computing",
-      "code": "UCS645L",
+      "subject": "Graph Theory and Applications",
+      "code": "UMA069L",
       "type": "Lecture",
-      "room": "LT302",
-      "options": [
-        {
-          "subject_code": "UCS645L",
-          "subject_name": "Parallel & Distributed Computing",
-          "type": "Lecture",
-          "place": "LT302",
-          "teacher": "SND"
-        },
-        {
-          "subject_code": "UCS646L",
-          "subject_name": "Game Design And Development",
-          "type": "Lecture",
-          "place": "LP109",
-          "teacher": "SSH"
-        },
-        {
-          "subject_code": "UCS648L",
-          "subject_name": "Cyber Forensics",
-          "type": "Lecture",
-          "place": "LP108",
-          "teacher": "JAS"
-        },
-        {
-          "subject_code": "UCS660L",
-          "subject_name": "Continuous Integration And Continuous Deployment",
-          "type": "Lecture",
-          "place": "F303",
-          "teacher": "GS"
-        },
-        {
-          "subject_code": "UCS662L",
-          "subject_name": "Test Automation",
-          "type": "Lecture",
-          "place": "LT301",
-          "teacher": "MNK"
-        },
-        {
-          "subject_code": "UCS749L",
-          "subject_name": "Conversational Ai: Speech Processing And Synthesis",
-          "type": "Lecture",
-          "place": "LT402",
-          "teacher": "KML"
-        },
-        {
-          "subject_code": "UCS671L",
-          "subject_name": "Edge Ai And Robotics: Embedded Vision",
-          "type": "Lecture",
-          "place": "PGAS2",
-          "teacher": "JHB"
-        },
-        {
-          "subject_code": "UCS673L",
-          "subject_name": "Ethical Hacking-I",
-          "type": "Lecture",
-          "place": "F302",
-          "teacher": "SAL"
-        },
-        {
-          "subject_code": "UCS761L",
-          "subject_name": "Deep Learning",
-          "type": "Lecture",
-          "place": "LT403",
-          "teacher": "VJY"
-        },
-        {
-          "subject_code": "UCSXX1L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F301",
-          "teacher": "RVK"
-        },
-        {
-          "subject_code": "UCS675L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "LT103",
-          "teacher": "ROS"
-        }
-      ]
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "Parallel & Distributed Computing",
-      "code": "UCS645L",
-      "type": "Lecture",
-      "room": "LT302",
-      "options": [
-        {
-          "subject_code": "UCS645L",
-          "subject_name": "Parallel & Distributed Computing",
-          "type": "Lecture",
-          "place": "LT302",
-          "teacher": "SND"
-        },
-        {
-          "subject_code": "UCS646L",
-          "subject_name": "Game Design And Development",
-          "type": "Lecture",
-          "place": "LP109",
-          "teacher": "SSH"
-        },
-        {
-          "subject_code": "UCS648L",
-          "subject_name": "Cyber Forensics",
-          "type": "Lecture",
-          "place": "LP108",
-          "teacher": "JAS"
-        },
-        {
-          "subject_code": "UCS660L",
-          "subject_name": "Continuous Integration And Continuous Deployment",
-          "type": "Lecture",
-          "place": "F303",
-          "teacher": "GS"
-        },
-        {
-          "subject_code": "UCS662L",
-          "subject_name": "Test Automation",
-          "type": "Lecture",
-          "place": "LT301",
-          "teacher": "MNK"
-        },
-        {
-          "subject_code": "UCS749L",
-          "subject_name": "Conversational Ai: Speech Processing And Synthesis",
-          "type": "Lecture",
-          "place": "LT402",
-          "teacher": "KML"
-        },
-        {
-          "subject_code": "UCS671L",
-          "subject_name": "Edge Ai And Robotics: Embedded Vision",
-          "type": "Lecture",
-          "place": "PGAS2",
-          "teacher": "JHB"
-        },
-        {
-          "subject_code": "UCS673L",
-          "subject_name": "Ethical Hacking-I",
-          "type": "Lecture",
-          "place": "F302",
-          "teacher": "SAL"
-        },
-        {
-          "subject_code": "UCS761L",
-          "subject_name": "Deep Learning",
-          "type": "Lecture",
-          "place": "LT403",
-          "teacher": "VJY"
-        },
-        {
-          "subject_code": "UCSXX1L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F301",
-          "teacher": "RVK"
-        },
-        {
-          "subject_code": "UCS675L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "LT103",
-          "teacher": "ROS"
-        }
-      ]
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "Conversational Ai: Speech Processing And Synthesis",
-      "code": "UCS749P",
-      "type": "Practical",
-      "room": "CG-1",
-      "options": [
-        {
-          "subject_code": "UCS749P",
-          "subject_name": "Conversational Ai: Speech Processing And Synthesis",
-          "type": "Practical",
-          "place": "CG-1",
-          "teacher": "DT"
-        },
-        {
-          "subject_code": "UCS662P",
-          "subject_name": "Test Automation",
-          "type": "Practical",
-          "place": "SE-2",
-          "teacher": "JYT"
-        },
-        {
-          "subject_code": "UCS761P",
-          "subject_name": "Deep Learning",
-          "type": "Practical",
-          "place": null,
-          "teacher": "SWL-RA"
-        }
-      ]
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Conversational Ai: Speech Processing And Synthesis",
-      "code": "UCS749P",
-      "type": "Practical",
-      "room": "CG-1",
-      "options": [
-        {
-          "subject_code": "UCS749P",
-          "subject_name": "Conversational Ai: Speech Processing And Synthesis",
-          "type": "Practical",
-          "place": "CG-1",
-          "teacher": "DT"
-        },
-        {
-          "subject_code": "UCS662P",
-          "subject_name": "Test Automation",
-          "type": "Practical",
-          "place": "SE-2",
-          "teacher": "JYT"
-        },
-        {
-          "subject_code": "UCS761P",
-          "subject_name": "Deep Learning",
-          "type": "Practical",
-          "place": null,
-          "teacher": "SWL-RA"
-        }
-      ]
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": "Conversational Ai: Natural Language Processing",
-      "code": "UCS664P",
-      "type": "Practical",
-      "room": "LP109",
-      "options": [
-        {
-          "subject_code": "UCS664P",
-          "subject_name": "Conversational Ai: Natural Language Processing",
-          "type": "Practical",
-          "place": "LP109",
-          "teacher": "AI"
-        },
-        {
-          "subject_code": "UCS677P",
-          "subject_name": "Data Engineering",
-          "type": "Practical",
-          "place": "SE-2",
-          "teacher": "JS"
-        },
-        {
-          "subject_code": "UCS654P",
-          "subject_name": "Predictive Analytics Using Statistics",
-          "type": "Practical",
-          "place": null,
-          "teacher": "MKB"
-        }
-      ]
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "Conversational Ai: Natural Language Processing",
-      "code": "UCS664P",
-      "type": "Practical",
-      "room": "LP109",
-      "options": [
-        {
-          "subject_code": "UCS664P",
-          "subject_name": "Conversational Ai: Natural Language Processing",
-          "type": "Practical",
-          "place": "LP109",
-          "teacher": "AI"
-        },
-        {
-          "subject_code": "UCS677P",
-          "subject_name": "Data Engineering",
-          "type": "Practical",
-          "place": "SE-2",
-          "teacher": "JS"
-        },
-        {
-          "subject_code": "UCS654P",
-          "subject_name": "Predictive Analytics Using Statistics",
-          "type": "Practical",
-          "place": null,
-          "teacher": "MKB"
-        }
-      ]
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "17:10",
-      "end_time": "18:00",
-      "subject": "Derivatives Pricing, Trading And Strategies",
-      "code": "UCS658P",
-      "type": "Practical",
-      "room": "DS-2",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "18:00",
-      "end_time": "18:50",
-      "subject": "Derivatives Pricing, Trading And Strategies",
-      "code": "UCS658P",
-      "type": "Practical",
-      "room": "DS-2",
+      "room": "LT101/LT102/B303/F201",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "13:00",
       "end_time": "13:50",
-      "subject": "Theory Of Computation",
-      "code": "UCS701L",
+      "subject": "Introduction to Corporate Finance",
+      "code": "UHU018L",
       "type": "Lecture",
-      "room": "LT403",
+      "room": "LT101",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "13:50",
       "end_time": "14:40",
-      "subject": "Optimization Techniques",
-      "code": "UMA035L",
-      "type": "Lecture",
-      "room": "LT403",
+      "subject": "Software Engineering",
+      "code": "UCS503P",
+      "type": "Practical",
+      "room": "SD(L501)",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "Quantum Computing",
-      "code": "UCS619L",
+      "subject": "Software Engineering",
+      "code": "UCS503P",
+      "type": "Practical",
+      "room": "SD(L501)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Machine Learning",
+      "code": "UML501L",
+      "type": "Lecture",
+      "room": "LT403",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Computer Architecture and Organization",
+      "code": "UCS510L",
       "type": "Lecture",
       "room": "LT403",
       "options": []
@@ -640,8 +382,28 @@
       "day": "Wednesday",
       "start_time": "17:10",
       "end_time": "18:00",
-      "subject": "Derivatives Pricing, Trading And Strategies",
-      "code": "UCS658L",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539L",
+      "type": "Lecture",
+      "room": "LP101",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Graph Theory and Applications",
+      "code": "UMA069L",
+      "type": "Lecture",
+      "room": "LT101/LT102/B303/F201",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Introduction to Corporate Finance",
+      "code": "UHU018L",
       "type": "Lecture",
       "room": "LT101",
       "options": []
@@ -650,171 +412,100 @@
       "day": "Thursday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Optimization Techniques",
-      "code": "UMA035L",
+      "subject": "Software Engineering",
+      "code": "UCS503L",
       "type": "Lecture",
-      "room": "LT302",
+      "room": "LT403",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Gpu Computing",
-      "code": "UCS635L",
+      "subject": "UCS553L",
+      "code": "UCS553L",
       "type": "Lecture",
-      "room": "LT301",
-      "options": [
-        {
-          "subject_code": "UCS635L",
-          "subject_name": "Gpu Computing",
-          "type": "Lecture",
-          "place": "LT301",
-          "teacher": "VPS"
-        },
-        {
-          "subject_code": "UCS636L",
-          "subject_name": "3D Modelling And Animation",
-          "type": "Lecture",
-          "place": "LP109",
-          "teacher": "ST"
-        },
-        {
-          "subject_code": "UCS638L",
-          "subject_name": "Secure Coding",
-          "type": "Lecture",
-          "place": "LP108",
-          "teacher": "ASA"
-        },
-        {
-          "subject_code": "UCS659L",
-          "subject_name": "Build And Release Management",
-          "type": "Lecture",
-          "place": "F303",
-          "teacher": "MNK"
-        },
-        {
-          "subject_code": "UCS677L",
-          "subject_name": "Data Engineering",
-          "type": "Lecture",
-          "place": "LT302",
-          "teacher": "RAK"
-        },
-        {
-          "subject_code": "UCS664L",
-          "subject_name": "Conversational Ai: Natural Language Processing",
-          "type": "Lecture",
-          "place": "LT101",
-          "teacher": "JS"
-        },
-        {
-          "subject_code": "UCS547L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "PGAS2",
-          "teacher": "MMK"
-        },
-        {
-          "subject_code": "UCS654L",
-          "subject_name": "Predictive Analytics Using Statistics",
-          "type": "Lecture",
-          "place": "LT403",
-          "teacher": "AMO"
-        },
-        {
-          "subject_code": "UCS674L",
-          "subject_name": "Ethical Hacking-Ii",
-          "type": "Lecture",
-          "place": "F302",
-          "teacher": "GS"
-        },
-        {
-          "subject_code": "UCSXX2L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F301",
-          "teacher": "VJY"
-        }
-      ]
+      "room": "LT403",
+      "options": []
     },
     {
       "day": "Thursday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "Gpu Computing",
-      "code": "UCS635L",
+      "subject": "Cloud Computing",
+      "code": "UCS531L",
       "type": "Lecture",
-      "room": "LT301",
+      "room": "LT303",
       "options": [
         {
-          "subject_code": "UCS635L",
-          "subject_name": "Gpu Computing",
+          "subject_code": "UCS531L",
+          "subject_name": "Cloud Computing",
           "type": "Lecture",
-          "place": "LT301",
-          "teacher": "VPS"
+          "place": "LT303",
+          "teacher": "ANS"
         },
         {
-          "subject_code": "UCS636L",
-          "subject_name": "3D Modelling And Animation",
+          "subject_code": "UCS548L",
+          "subject_name": "Foundations of Data Science",
+          "type": "Lecture",
+          "place": "LT403",
+          "teacher": "SHV"
+        },
+        {
+          "subject_code": "UCS532L",
+          "subject_name": "Computer Vision",
           "type": "Lecture",
           "place": "LP109",
           "teacher": "ST"
         },
         {
-          "subject_code": "UCS638L",
-          "subject_name": "Secure Coding",
+          "subject_code": "UCS534L",
+          "subject_name": "Computer & Network Security",
           "type": "Lecture",
           "place": "LP108",
-          "teacher": "ASA"
+          "teacher": "MAN"
         },
         {
-          "subject_code": "UCS659L",
-          "subject_name": "Build And Release Management",
+          "subject_code": "UCS537L",
+          "subject_name": "Source Code Management",
           "type": "Lecture",
-          "place": "F303",
-          "teacher": "MNK"
+          "place": "E101",
+          "teacher": "GS"
         },
         {
-          "subject_code": "UCS677L",
-          "subject_name": "Data Engineering",
+          "subject_code": "UCS542L",
+          "subject_name": "Ui & Ux Specialist",
           "type": "Lecture",
-          "place": "LT302",
-          "teacher": "RAK"
+          "place": "LT101",
+          "teacher": "MKB"
         },
         {
-          "subject_code": "UCS664L",
-          "subject_name": "Conversational Ai: Natural Language Processing",
+          "subject_code": "UCS551L",
+          "subject_name": "Conversational Ai: Accelerated Data Science",
           "type": "Lecture",
           "place": "LT101",
           "teacher": "JS"
         },
         {
-          "subject_code": "UCS547L",
+          "subject_code": "UCS668L",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550L",
+          "subject_name": "Network Defence",
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UMC513L",
           "subject_name": null,
           "type": "Lecture",
-          "place": "PGAS2",
-          "teacher": "MMK"
-        },
-        {
-          "subject_code": "UCS654L",
-          "subject_name": "Predictive Analytics Using Statistics",
-          "type": "Lecture",
-          "place": "LT403",
-          "teacher": "AMO"
-        },
-        {
-          "subject_code": "UCS674L",
-          "subject_name": "Ethical Hacking-Ii",
-          "type": "Lecture",
-          "place": "F302",
-          "teacher": "GS"
-        },
-        {
-          "subject_code": "UCSXX2L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F301",
-          "teacher": "VJY"
+          "place": "T106",
+          "teacher": "YK"
         }
       ]
     },
@@ -822,70 +513,181 @@
       "day": "Thursday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "Quantum Computing",
-      "code": "UCS619L",
+      "subject": "Cloud Computing",
+      "code": "UCS531L",
       "type": "Lecture",
-      "room": "LT401",
+      "room": "LT303",
+      "options": [
+        {
+          "subject_code": "UCS531L",
+          "subject_name": "Cloud Computing",
+          "type": "Lecture",
+          "place": "LT303",
+          "teacher": "ANS"
+        },
+        {
+          "subject_code": "UCS548L",
+          "subject_name": "Foundations of Data Science",
+          "type": "Lecture",
+          "place": "LT403",
+          "teacher": "SHV"
+        },
+        {
+          "subject_code": "UCS532L",
+          "subject_name": "Computer Vision",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "ST"
+        },
+        {
+          "subject_code": "UCS534L",
+          "subject_name": "Computer & Network Security",
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS537L",
+          "subject_name": "Source Code Management",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS542L",
+          "subject_name": "Ui & Ux Specialist",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS551L",
+          "subject_name": "Conversational Ai: Accelerated Data Science",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS668L",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550L",
+          "subject_name": "Network Defence",
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UMC513L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "T106",
+          "teacher": "YK"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Machine Learning",
+      "code": "UML501P",
+      "type": "Practical",
+      "room": "AI(L307)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Machine Learning",
+      "code": "UML501P",
+      "type": "Practical",
+      "room": "AI(L307)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Machine Learning",
+      "code": "UML501L",
+      "type": "Lecture",
+      "room": "LT403",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "LT403",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Software Engineering",
+      "code": "UCS503L",
+      "type": "Lecture",
+      "room": "LT403",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UCS421L",
+      "code": "UCS421L",
+      "type": "Lecture",
+      "room": "LT403",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Quantum Computing",
-      "code": "UCS619P",
-      "type": "Practical",
-      "room": "IS-1",
+      "subject": "UCS420L",
+      "code": "UCS420L",
+      "type": "Lecture",
+      "room": "LT403",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Quantum Computing",
-      "code": "UCS619P",
-      "type": "Practical",
-      "room": "IS-1",
+      "subject": "UCS553L",
+      "code": "UCS553L",
+      "type": "Lecture",
+      "room": "LT403",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "Theory Of Computation",
-      "code": "UCS701T",
-      "type": "Tutorial",
-      "room": "E312",
+      "subject": "UCS420P",
+      "code": "UCS420P",
+      "type": "Practical",
+      "room": "CIS(L301)",
       "options": []
     },
     {
       "day": "Friday",
-      "start_time": "13:00",
-      "end_time": "13:50",
-      "subject": "Optimization Techniques",
-      "code": "UMA035L",
-      "type": "Lecture",
-      "room": "LT402",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "Theory Of Computation",
-      "code": "UCS701L",
-      "type": "Lecture",
-      "room": "LT402",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Quantum Computing",
-      "code": "UCS619L",
-      "type": "Lecture",
-      "room": "LT402",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UCS420P",
+      "code": "UCS420P",
+      "type": "Practical",
+      "room": "CIS(L301)",
       "options": []
     }
   ]

@@ -1,261 +1,119 @@
 {
   "batch": "3O24",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
   "classes": [
     {
       "day": "Monday",
-      "start_time": "09:40",
-      "end_time": "10:30",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005L",
-      "type": "Lecture",
-      "room": "F204",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Data Science Fundamentals",
+      "code": "UNC514P",
+      "type": "Practical",
+      "room": "C328",
       "options": []
     },
     {
       "day": "Monday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "Computer Architecture",
-      "code": "UEC610L",
-      "type": "Lecture",
-      "room": "F204",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Data Science Fundamentals",
+      "code": "UNC514P",
+      "type": "Practical",
+      "room": "C328",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "Analog And Digital Communication Systems",
-      "code": "UEC519L",
-      "type": "Lecture",
-      "room": "F204",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "B308",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "Mos Circuit Design",
-      "code": "UEC750L",
-      "type": "Lecture",
-      "room": "F204",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "B308",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "13:50",
       "end_time": "14:40",
-      "subject": "Continuous Integration And Continuous Deployment",
-      "code": "UCS660P",
-      "type": "Practical",
-      "room": "GC-2",
-      "options": [
-        {
-          "subject_code": "UCS660P",
-          "subject_name": "Continuous Integration And Continuous Deployment",
-          "type": "Practical",
-          "place": "GC-2",
-          "teacher": "IOT"
-        },
-        {
-          "subject_code": "UCS671P",
-          "subject_name": "Edge Ai And Robotics: Embedded Vision",
-          "type": "Practical",
-          "place": "PGAS2",
-          "teacher": "GS"
-        },
-        {
-          "subject_code": "UCSXX2P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "GC-1",
-          "teacher": "JHB"
-        },
-        {
-          "subject_code": "UCS749P",
-          "subject_name": "Conversational Ai: Speech Processing And Synthesis",
-          "type": "Practical",
-          "place": "CG-2",
-          "teacher": "VJY"
-        },
-        {
-          "subject_code": "UCS662P",
-          "subject_name": "Test Automation",
-          "type": "Practical",
-          "place": "SE-2",
-          "teacher": "KML"
-        },
-        {
-          "subject_code": "UCS673P",
-          "subject_name": "Ethical Hacking-I",
-          "type": "Practical",
-          "place": "C210",
-          "teacher": "SNL-RA"
-        },
-        {
-          "subject_code": "UEC635P",
-          "subject_name": "Blockchain Technology",
-          "type": "Practical",
-          "place": "C326",
-          "teacher": "SAL"
-        },
-        {
-          "subject_code": "UNC631P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "C327",
-          "teacher": "HSS"
-        },
-        {
-          "subject_code": "UCS658L",
-          "subject_name": "Derivatives Pricing, Trading And Strategies",
-          "type": "Lecture",
-          "place": "LT101",
-          "teacher": "SSK"
-        }
-      ]
+      "subject": "Operating Systems",
+      "code": "UNC501L",
+      "type": "Lecture",
+      "room": "B308",
+      "options": []
     },
     {
       "day": "Monday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "Continuous Integration And Continuous Deployment",
-      "code": "UCS660P",
-      "type": "Practical",
-      "room": "GC-2",
-      "options": [
-        {
-          "subject_code": "UCS660P",
-          "subject_name": "Continuous Integration And Continuous Deployment",
-          "type": "Practical",
-          "place": "GC-2",
-          "teacher": "IOT"
-        },
-        {
-          "subject_code": "UCS671P",
-          "subject_name": "Edge Ai And Robotics: Embedded Vision",
-          "type": "Practical",
-          "place": "PGAS2",
-          "teacher": "GS"
-        },
-        {
-          "subject_code": "UCSXX2P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "GC-1",
-          "teacher": "JHB"
-        },
-        {
-          "subject_code": "UCS749P",
-          "subject_name": "Conversational Ai: Speech Processing And Synthesis",
-          "type": "Practical",
-          "place": "CG-2",
-          "teacher": "VJY"
-        },
-        {
-          "subject_code": "UCS662P",
-          "subject_name": "Test Automation",
-          "type": "Practical",
-          "place": "SE-2",
-          "teacher": "KML"
-        },
-        {
-          "subject_code": "UCS673P",
-          "subject_name": "Ethical Hacking-I",
-          "type": "Practical",
-          "place": "C210",
-          "teacher": "SNL-RA"
-        },
-        {
-          "subject_code": "UEC635P",
-          "subject_name": "Blockchain Technology",
-          "type": "Practical",
-          "place": "C326",
-          "teacher": "SAL"
-        },
-        {
-          "subject_code": "UNC631P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "C327",
-          "teacher": "HSS"
-        },
-        {
-          "subject_code": "UCS658L",
-          "subject_name": "Derivatives Pricing, Trading And Strategies",
-          "type": "Lecture",
-          "place": "LT101",
-          "teacher": "SSK"
-        }
-      ]
+      "subject": "UTA025L",
+      "code": "UTA025L",
+      "type": "Lecture",
+      "room": "B308",
+      "options": []
     },
     {
       "day": "Monday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "Build And Release Management",
-      "code": "UCS659P",
+      "subject": "Design Using System Verilog",
+      "code": "UEC521P",
       "type": "Practical",
-      "room": "GC-2",
+      "room": "C221",
       "options": [
         {
-          "subject_code": "UCS659P",
-          "subject_name": "Build And Release Management",
+          "subject_code": "UEC521P",
+          "subject_name": "Design Using System Verilog",
           "type": "Practical",
-          "place": "GC-2",
-          "teacher": "SD"
+          "place": "C221",
+          "teacher": "SSK"
         },
         {
-          "subject_code": "UCS547P",
-          "subject_name": null,
+          "subject_code": "UNC514P",
+          "subject_name": "Data Science Fundamentals",
           "type": "Practical",
-          "place": "GC-1",
-          "teacher": "IOT"
+          "place": "C326",
+          "teacher": "SUR"
         },
         {
-          "subject_code": "UCSXX1P",
-          "subject_name": null,
+          "subject_code": "UCS534P",
+          "subject_name": "Computer & Network Security",
           "type": "Practical",
-          "place": "LP109",
-          "teacher": "MNK"
+          "place": "L408",
+          "teacher": "MAN"
         },
         {
-          "subject_code": "UCS674P",
-          "subject_name": "Ethical Hacking-Ii",
+          "subject_code": "UCS668P",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
           "type": "Practical",
-          "place": "SE-2",
-          "teacher": "MMK"
+          "place": "L004",
+          "teacher": "JHB"
         },
         {
-          "subject_code": "UCS664P",
-          "subject_name": "Conversational Ai: Natural Language Processing",
+          "subject_code": "UCS550P",
+          "subject_name": "Network Defence",
           "type": "Practical",
-          "place": "C333",
-          "teacher": "RBK"
+          "place": "L102",
+          "teacher": "SAL"
         },
         {
-          "subject_code": "UCS677P",
-          "subject_name": "Data Engineering",
-          "type": "Practical",
-          "place": "C334",
-          "teacher": "GS"
-        },
-        {
-          "subject_code": "UEC638P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "C327",
-          "teacher": "JS"
-        },
-        {
-          "subject_code": "UNC512P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": null,
-          "teacher": "ARS-RA"
+          "subject_code": "UCS539L",
+          "subject_name": "Finance Accounting and Valuation",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "ROS"
         }
       ]
     },
@@ -263,66 +121,52 @@
       "day": "Monday",
       "start_time": "16:20",
       "end_time": "17:10",
-      "subject": "Build And Release Management",
-      "code": "UCS659P",
+      "subject": "Design Using System Verilog",
+      "code": "UEC521P",
       "type": "Practical",
-      "room": "GC-2",
+      "room": "C221",
       "options": [
         {
-          "subject_code": "UCS659P",
-          "subject_name": "Build And Release Management",
+          "subject_code": "UEC521P",
+          "subject_name": "Design Using System Verilog",
           "type": "Practical",
-          "place": "GC-2",
-          "teacher": "SD"
+          "place": "C221",
+          "teacher": "SSK"
         },
         {
-          "subject_code": "UCS547P",
-          "subject_name": null,
+          "subject_code": "UNC514P",
+          "subject_name": "Data Science Fundamentals",
           "type": "Practical",
-          "place": "GC-1",
-          "teacher": "IOT"
+          "place": "C326",
+          "teacher": "SUR"
         },
         {
-          "subject_code": "UCSXX1P",
-          "subject_name": null,
+          "subject_code": "UCS534P",
+          "subject_name": "Computer & Network Security",
           "type": "Practical",
-          "place": "LP109",
-          "teacher": "MNK"
+          "place": "L408",
+          "teacher": "MAN"
         },
         {
-          "subject_code": "UCS674P",
-          "subject_name": "Ethical Hacking-Ii",
+          "subject_code": "UCS668P",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
           "type": "Practical",
-          "place": "SE-2",
-          "teacher": "MMK"
+          "place": "L004",
+          "teacher": "JHB"
         },
         {
-          "subject_code": "UCS664P",
-          "subject_name": "Conversational Ai: Natural Language Processing",
+          "subject_code": "UCS550P",
+          "subject_name": "Network Defence",
           "type": "Practical",
-          "place": "C333",
-          "teacher": "RBK"
+          "place": "L102",
+          "teacher": "SAL"
         },
         {
-          "subject_code": "UCS677P",
-          "subject_name": "Data Engineering",
-          "type": "Practical",
-          "place": "C334",
-          "teacher": "GS"
-        },
-        {
-          "subject_code": "UEC638P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "C327",
-          "teacher": "JS"
-        },
-        {
-          "subject_code": "UNC512P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": null,
-          "teacher": "ARS-RA"
+          "subject_code": "UCS539L",
+          "subject_name": "Finance Accounting and Valuation",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "ROS"
         }
       ]
     },
@@ -330,608 +174,371 @@
       "day": "Monday",
       "start_time": "17:10",
       "end_time": "18:00",
-      "subject": "UCS675P",
-      "code": "UCS675P",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539P",
       "type": "Practical",
-      "room": "PL-5",
+      "room": "L002",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "18:00",
       "end_time": "18:50",
-      "subject": "UCS675P",
-      "code": "UCS675P",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539P",
       "type": "Practical",
-      "room": "PL-5",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "08:00",
-      "end_time": "08:50",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005P",
-      "type": "Practical",
-      "room": "B109",
+      "room": "L002",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005P",
-      "type": "Practical",
-      "room": "B109",
+      "subject": "Database Management Systems",
+      "code": "UEC716L",
+      "type": "Lecture",
+      "room": "B308",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Continuous Integration And Continuous Deployment",
-      "code": "UCS660L",
+      "subject": "UNC503L",
+      "code": "UNC503L",
       "type": "Lecture",
-      "room": "F303",
-      "options": [
-        {
-          "subject_code": "UCS660L",
-          "subject_name": "Continuous Integration And Continuous Deployment",
-          "type": "Lecture",
-          "place": "F303",
-          "teacher": "GS"
-        },
-        {
-          "subject_code": "UCS662L",
-          "subject_name": "Test Automation",
-          "type": "Lecture",
-          "place": "LT301",
-          "teacher": "MNK"
-        },
-        {
-          "subject_code": "UCS749L",
-          "subject_name": "Conversational Ai: Speech Processing And Synthesis",
-          "type": "Lecture",
-          "place": "LT402",
-          "teacher": "KML"
-        },
-        {
-          "subject_code": "UCS671L",
-          "subject_name": "Edge Ai And Robotics: Embedded Vision",
-          "type": "Lecture",
-          "place": "PGAS2",
-          "teacher": "JHB"
-        },
-        {
-          "subject_code": "UCS673L",
-          "subject_name": "Ethical Hacking-I",
-          "type": "Lecture",
-          "place": "F302",
-          "teacher": "SAL"
-        },
-        {
-          "subject_code": "UCSXX1L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F301",
-          "teacher": "RVK"
-        },
-        {
-          "subject_code": "UCS675L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "LT103",
-          "teacher": "ROS"
-        },
-        {
-          "subject_code": "UEC644L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F203",
-          "teacher": "KSS"
-        },
-        {
-          "subject_code": "UEC647L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F314",
-          "teacher": "HSS"
-        }
-      ]
+      "room": "B308",
+      "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Continuous Integration And Continuous Deployment",
-      "code": "UCS660L",
+      "subject": "Information and Communication Theory",
+      "code": "UEC310L",
       "type": "Lecture",
-      "room": "F303",
-      "options": [
-        {
-          "subject_code": "UCS660L",
-          "subject_name": "Continuous Integration And Continuous Deployment",
-          "type": "Lecture",
-          "place": "F303",
-          "teacher": "GS"
-        },
-        {
-          "subject_code": "UCS662L",
-          "subject_name": "Test Automation",
-          "type": "Lecture",
-          "place": "LT301",
-          "teacher": "MNK"
-        },
-        {
-          "subject_code": "UCS749L",
-          "subject_name": "Conversational Ai: Speech Processing And Synthesis",
-          "type": "Lecture",
-          "place": "LT402",
-          "teacher": "KML"
-        },
-        {
-          "subject_code": "UCS671L",
-          "subject_name": "Edge Ai And Robotics: Embedded Vision",
-          "type": "Lecture",
-          "place": "PGAS2",
-          "teacher": "JHB"
-        },
-        {
-          "subject_code": "UCS673L",
-          "subject_name": "Ethical Hacking-I",
-          "type": "Lecture",
-          "place": "F302",
-          "teacher": "SAL"
-        },
-        {
-          "subject_code": "UCSXX1L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F301",
-          "teacher": "RVK"
-        },
-        {
-          "subject_code": "UCS675L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "LT103",
-          "teacher": "ROS"
-        },
-        {
-          "subject_code": "UNC512L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F203",
-          "teacher": "RGB"
-        },
-        {
-          "subject_code": "UEC634L",
-          "subject_name": "Cloud Computing Technology",
-          "type": "Lecture",
-          "place": "F204",
-          "teacher": "AJK"
-        },
-        {
-          "subject_code": "UEC638L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "B304",
-          "teacher": "CDM"
-        }
-      ]
+      "room": "B308",
+      "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "Blockchain Technology",
-      "code": "UEC635L",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502L",
       "type": "Lecture",
-      "room": "F203",
-      "options": [
-        {
-          "subject_code": "UEC635L",
-          "subject_name": "Blockchain Technology",
-          "type": "Lecture",
-          "place": "F203",
-          "teacher": "SSK"
-        },
-        {
-          "subject_code": "UNC631L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F204",
-          "teacher": "SS"
-        }
-      ]
+      "room": "B308",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Operating Systems",
+      "code": "UNC501L",
+      "type": "Lecture",
+      "room": "B308",
+      "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "13:50",
       "end_time": "14:40",
-      "subject": "Mos Circuit Design",
-      "code": "UEC750T",
-      "type": "Tutorial",
-      "room": "F310",
+      "subject": "Operating Systems",
+      "code": "UNC501P",
+      "type": "Practical",
+      "room": "C327",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "Analog And Digital Communication Systems",
-      "code": "UEC519T",
-      "type": "Tutorial",
-      "room": "F310",
+      "subject": "Operating Systems",
+      "code": "UNC501P",
+      "type": "Practical",
+      "room": "C327",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "UNC631P",
-      "code": "UNC631P",
-      "type": "Practical",
-      "room": "C327",
-      "options": [
-        {
-          "subject_code": "UNC631P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "C327",
-          "teacher": "SS"
-        },
-        {
-          "subject_code": "UEC635P",
-          "subject_name": "Blockchain Technology",
-          "type": "Practical",
-          "place": "C326",
-          "teacher": "SSK"
-        },
-        {
-          "subject_code": "UEC644P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "CC21",
-          "teacher": "KSS"
-        }
-      ]
+      "subject": "UTA025T",
+      "code": "UTA025T",
+      "type": "Tutorial",
+      "room": "E205",
+      "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "16:20",
       "end_time": "17:10",
-      "subject": "UNC631P",
-      "code": "UNC631P",
-      "type": "Practical",
-      "room": "C327",
-      "options": [
-        {
-          "subject_code": "UNC631P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "C327",
-          "teacher": "SS"
-        },
-        {
-          "subject_code": "UEC635P",
-          "subject_name": "Blockchain Technology",
-          "type": "Practical",
-          "place": "C326",
-          "teacher": "SSK"
-        },
-        {
-          "subject_code": "UEC644P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "CC21",
-          "teacher": "KSS"
-        }
-      ]
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "17:10",
-      "end_time": "18:00",
-      "subject": "Derivatives Pricing, Trading And Strategies",
-      "code": "UCS658P",
-      "type": "Practical",
-      "room": "PL-5",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "18:00",
-      "end_time": "18:50",
-      "subject": "Derivatives Pricing, Trading And Strategies",
-      "code": "UCS658P",
-      "type": "Practical",
-      "room": "PL-5",
+      "subject": "UTA025T",
+      "code": "UTA025T",
+      "type": "Tutorial",
+      "room": "E205",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "08:00",
       "end_time": "08:50",
-      "subject": "UME625L",
-      "code": "UME625L",
+      "subject": "Data Science Fundamentals",
+      "code": "UNC514P",
+      "type": "Practical",
+      "room": "C326",
+      "options": [
+        {
+          "subject_code": "UNC514P",
+          "subject_name": "Data Science Fundamentals",
+          "type": "Practical",
+          "place": "C326",
+          "teacher": "SUR"
+        },
+        {
+          "subject_code": "UEC521P",
+          "subject_name": "Design Using System Verilog",
+          "type": "Practical",
+          "place": "C221",
+          "teacher": "SSK"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Data Science Fundamentals",
+      "code": "UNC514P",
+      "type": "Practical",
+      "room": "C326",
+      "options": [
+        {
+          "subject_code": "UNC514P",
+          "subject_name": "Data Science Fundamentals",
+          "type": "Practical",
+          "place": "C326",
+          "teacher": "SUR"
+        },
+        {
+          "subject_code": "UEC521P",
+          "subject_name": "Design Using System Verilog",
+          "type": "Practical",
+          "place": "C221",
+          "teacher": "SSK"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502L",
       "type": "Lecture",
-      "room": "F301",
+      "room": "B308",
       "options": []
     },
     {
       "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Information and Communication Theory",
+      "code": "UEC310T",
+      "type": "Tutorial",
+      "room": "F303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UNC503P",
+      "code": "UNC503P",
+      "type": "Practical",
+      "room": "C333",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UNC503P",
+      "code": "UNC503P",
+      "type": "Practical",
+      "room": "C333",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Database Management Systems",
+      "code": "UEC716L",
+      "type": "Lecture",
+      "room": "B305",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UNC503L",
+      "code": "UNC503L",
+      "type": "Lecture",
+      "room": "B305",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539L",
+      "type": "Lecture",
+      "room": "LT101/ROS",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "B305",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "B305",
+      "options": []
+    },
+    {
+      "day": "Thursday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Mos Circuit Design",
-      "code": "UEC750L",
-      "type": "Lecture",
-      "room": "F203",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "Computer Architecture",
-      "code": "UEC610L",
-      "type": "Lecture",
-      "room": "F203",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "Analog And Digital Communication Systems",
-      "code": "UEC519L",
-      "type": "Lecture",
-      "room": "F204",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005L",
-      "type": "Lecture",
-      "room": "F204",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "Cloud Computing Technology",
-      "code": "UEC634P",
+      "subject": "Database Management Systems",
+      "code": "UEC716P",
       "type": "Practical",
-      "room": "C333",
-      "options": [
-        {
-          "subject_code": "UEC634P",
-          "subject_name": "Cloud Computing Technology",
-          "type": "Practical",
-          "place": "C333",
-          "teacher": "AJK"
-        },
-        {
-          "subject_code": "UNC512P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "C326",
-          "teacher": "CDM"
-        }
-      ]
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Cloud Computing Technology",
-      "code": "UEC634P",
-      "type": "Practical",
-      "room": "C333",
-      "options": [
-        {
-          "subject_code": "UEC634P",
-          "subject_name": "Cloud Computing Technology",
-          "type": "Practical",
-          "place": "C333",
-          "teacher": "AJK"
-        },
-        {
-          "subject_code": "UNC512P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "C326",
-          "teacher": "CDM"
-        }
-      ]
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "17:10",
-      "end_time": "18:00",
-      "subject": "Derivatives Pricing, Trading And Strategies",
-      "code": "UCS658L",
-      "type": "Lecture",
-      "room": "LT101",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "08:00",
-      "end_time": "08:50",
-      "subject": "Analog And Digital Communication Systems",
-      "code": "UEC519P",
-      "type": "Practical",
-      "room": "B214",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "08:50",
-      "end_time": "09:40",
-      "subject": "Analog And Digital Communication Systems",
-      "code": "UEC519P",
-      "type": "Practical",
-      "room": "B214",
+      "room": "C202",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Build And Release Management",
-      "code": "UCS659L",
-      "type": "Lecture",
-      "room": "F303",
-      "options": [
-        {
-          "subject_code": "UCS659L",
-          "subject_name": "Build And Release Management",
-          "type": "Lecture",
-          "place": "F303",
-          "teacher": "MNK"
-        },
-        {
-          "subject_code": "UCS677L",
-          "subject_name": "Data Engineering",
-          "type": "Lecture",
-          "place": "LT302",
-          "teacher": "RAK"
-        },
-        {
-          "subject_code": "UCS664L",
-          "subject_name": "Conversational Ai: Natural Language Processing",
-          "type": "Lecture",
-          "place": "LT101",
-          "teacher": "JS"
-        },
-        {
-          "subject_code": "UCS547L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "PGAS2",
-          "teacher": "MMK"
-        },
-        {
-          "subject_code": "UCS674L",
-          "subject_name": "Ethical Hacking-Ii",
-          "type": "Lecture",
-          "place": "F302",
-          "teacher": "GS"
-        },
-        {
-          "subject_code": "UCSXX2L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F301",
-          "teacher": "VJY"
-        },
-        {
-          "subject_code": "UNC512L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F203",
-          "teacher": "RGB"
-        },
-        {
-          "subject_code": "UEC634L",
-          "subject_name": "Cloud Computing Technology",
-          "type": "Lecture",
-          "place": "F204",
-          "teacher": "AJK"
-        },
-        {
-          "subject_code": "UEC638L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "B307",
-          "teacher": "CDM"
-        }
-      ]
+      "subject": "Database Management Systems",
+      "code": "UEC716P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
     },
     {
       "day": "Thursday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "Build And Release Management",
-      "code": "UCS659L",
+      "subject": "Design Using System Verilog",
+      "code": "UEC521L",
       "type": "Lecture",
-      "room": "F303",
+      "room": "B305",
       "options": [
         {
-          "subject_code": "UCS659L",
-          "subject_name": "Build And Release Management",
+          "subject_code": "UEC521L",
+          "subject_name": "Design Using System Verilog",
           "type": "Lecture",
-          "place": "F303",
-          "teacher": "MNK"
-        },
-        {
-          "subject_code": "UCS677L",
-          "subject_name": "Data Engineering",
-          "type": "Lecture",
-          "place": "LT302",
-          "teacher": "RAK"
-        },
-        {
-          "subject_code": "UCS664L",
-          "subject_name": "Conversational Ai: Natural Language Processing",
-          "type": "Lecture",
-          "place": "LT101",
-          "teacher": "JS"
-        },
-        {
-          "subject_code": "UCS547L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "PGAS2",
-          "teacher": "MMK"
-        },
-        {
-          "subject_code": "UCS674L",
-          "subject_name": "Ethical Hacking-Ii",
-          "type": "Lecture",
-          "place": "F302",
-          "teacher": "GS"
-        },
-        {
-          "subject_code": "UCSXX2L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F301",
-          "teacher": "VJY"
-        },
-        {
-          "subject_code": "UEC644L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "E203",
-          "teacher": "KSS"
-        },
-        {
-          "subject_code": "UEC647L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "E201",
-          "teacher": "HSS"
-        },
-        {
-          "subject_code": "UEC635L",
-          "subject_name": "Blockchain Technology",
-          "type": "Lecture",
-          "place": "F203",
+          "place": "B305",
           "teacher": "SSK"
         },
         {
-          "subject_code": "UNC631L",
-          "subject_name": null,
+          "subject_code": "UNC514L",
+          "subject_name": "Data Science Fundamentals",
+          "type": "Lecture",
+          "place": "B308",
+          "teacher": "SUR"
+        },
+        {
+          "subject_code": "UEC518L",
+          "subject_name": "Network Security",
           "type": "Lecture",
           "place": "F204",
-          "teacher": "SUK"
+          "teacher": "NS"
+        },
+        {
+          "subject_code": "UCS531L",
+          "subject_name": "Cloud Computing",
+          "type": "Lecture",
+          "place": "LT301",
+          "teacher": "SAM"
+        },
+        {
+          "subject_code": "UCS548L",
+          "subject_name": "Foundations of Data Science",
+          "type": "Lecture",
+          "place": "LT401",
+          "teacher": "DET"
+        },
+        {
+          "subject_code": "UCS532L",
+          "subject_name": "Computer Vision",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "ST"
+        },
+        {
+          "subject_code": "UCS534L",
+          "subject_name": "Computer & Network Security",
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS537L",
+          "subject_name": "Source Code Management",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS542L",
+          "subject_name": "Ui & Ux Specialist",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS551L",
+          "subject_name": "Conversational Ai: Accelerated Data Science",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS668L",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550L",
+          "subject_name": "Network Defence",
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UMC513L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "T106",
+          "teacher": "YK"
         }
       ]
     },
@@ -939,91 +546,257 @@
       "day": "Thursday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "Computer Architecture",
-      "code": "UEC610L",
+      "subject": "Design Using System Verilog",
+      "code": "UEC521L",
       "type": "Lecture",
-      "room": "F204",
+      "room": "B305",
+      "options": [
+        {
+          "subject_code": "UEC521L",
+          "subject_name": "Design Using System Verilog",
+          "type": "Lecture",
+          "place": "B305",
+          "teacher": "SSK"
+        },
+        {
+          "subject_code": "UNC514L",
+          "subject_name": "Data Science Fundamentals",
+          "type": "Lecture",
+          "place": "B308",
+          "teacher": "SUR"
+        },
+        {
+          "subject_code": "UEC518L",
+          "subject_name": "Network Security",
+          "type": "Lecture",
+          "place": "F204",
+          "teacher": "NS"
+        },
+        {
+          "subject_code": "UCS531L",
+          "subject_name": "Cloud Computing",
+          "type": "Lecture",
+          "place": "LT301",
+          "teacher": "SAM"
+        },
+        {
+          "subject_code": "UCS548L",
+          "subject_name": "Foundations of Data Science",
+          "type": "Lecture",
+          "place": "LT401",
+          "teacher": "DET"
+        },
+        {
+          "subject_code": "UCS532L",
+          "subject_name": "Computer Vision",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "ST"
+        },
+        {
+          "subject_code": "UCS534L",
+          "subject_name": "Computer & Network Security",
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS537L",
+          "subject_name": "Source Code Management",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS542L",
+          "subject_name": "Ui & Ux Specialist",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS551L",
+          "subject_name": "Conversational Ai: Accelerated Data Science",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS668L",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550L",
+          "subject_name": "Network Defence",
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UMC513L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "T106",
+          "teacher": "YK"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Information and Communication Theory",
+      "code": "UEC310L",
+      "type": "Lecture",
+      "room": "B308",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "UME625L",
-      "code": "UME625L",
+      "subject": "Database Management Systems",
+      "code": "UEC716L",
       "type": "Lecture",
-      "room": "F301",
+      "room": "B308",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "Mos Circuit Design",
-      "code": "UEC750P",
-      "type": "Practical",
-      "room": "C334",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502T",
+      "type": "Tutorial",
+      "room": "E101",
       "options": []
     },
     {
-      "day": "Thursday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "Mos Circuit Design",
-      "code": "UEC750P",
-      "type": "Practical",
-      "room": "C334",
+      "day": "Friday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Operating Systems",
+      "code": "UNC501L",
+      "type": "Lecture",
+      "room": "B308",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "UME625L",
-      "code": "UME625L",
+      "subject": "UNC503L",
+      "code": "UNC503L",
       "type": "Lecture",
-      "room": "F301",
+      "room": "B308",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502P",
+      "type": "Practical",
+      "room": "C326",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502P",
+      "type": "Practical",
+      "room": "C326",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "Analog And Digital Communication Systems",
-      "code": "UEC519L",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502L",
       "type": "Lecture",
-      "room": "F204",
+      "room": "B308",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "Mos Circuit Design",
-      "code": "UEC750L",
+      "subject": "Information and Communication Theory",
+      "code": "UEC310L",
       "type": "Lecture",
-      "room": "F204",
+      "room": "B308",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "Cloud Computing Technology",
-      "code": "UEC634P",
+      "subject": "Data Science Fundamentals",
+      "code": "UNC514P",
       "type": "Practical",
-      "room": "C327",
-      "options": []
+      "room": "C326",
+      "options": [
+        {
+          "subject_code": "UNC514P",
+          "subject_name": "Data Science Fundamentals",
+          "type": "Practical",
+          "place": "C326",
+          "teacher": "SUR"
+        },
+        {
+          "subject_code": "UEC521P",
+          "subject_name": "Design Using System Verilog",
+          "type": "Practical",
+          "place": "C221",
+          "teacher": "SSK"
+        },
+        {
+          "subject_code": "UEC518P",
+          "subject_name": "Network Security",
+          "type": "Practical",
+          "place": "C202",
+          "teacher": "NS"
+        }
+      ]
     },
     {
       "day": "Friday",
       "start_time": "16:20",
       "end_time": "17:10",
-      "subject": "Cloud Computing Technology",
-      "code": "UEC634P",
+      "subject": "Data Science Fundamentals",
+      "code": "UNC514P",
       "type": "Practical",
-      "room": "C327",
-      "options": []
+      "room": "C326",
+      "options": [
+        {
+          "subject_code": "UNC514P",
+          "subject_name": "Data Science Fundamentals",
+          "type": "Practical",
+          "place": "C326",
+          "teacher": "SUR"
+        },
+        {
+          "subject_code": "UEC521P",
+          "subject_name": "Design Using System Verilog",
+          "type": "Practical",
+          "place": "C221",
+          "teacher": "SSK"
+        },
+        {
+          "subject_code": "UEC518P",
+          "subject_name": "Network Security",
+          "type": "Practical",
+          "place": "C202",
+          "teacher": "NS"
+        }
+      ]
     }
   ]
 }

@@ -1,266 +1,536 @@
 {
   "batch": "3V13",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
   "classes": [
     {
       "day": "Monday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "UNC503P",
+      "code": "UNC503P",
+      "type": "Practical",
+      "room": "C333",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UNC503P",
+      "code": "UNC503P",
+      "type": "Practical",
+      "room": "C333",
+      "options": []
+    },
+    {
+      "day": "Monday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "UEC620L",
-      "code": "UEC620L",
+      "subject": "UVD501L",
+      "code": "UVD501L",
       "type": "Lecture",
-      "room": "E202",
-      "options": [
-        {
-          "subject_code": "UEC620L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "E202",
-          "teacher": "AUS"
-        },
-        {
-          "subject_code": "UEC632L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "E203",
-          "teacher": "SUJ"
-        }
-      ]
+      "room": "F204",
+      "options": []
     },
     {
       "day": "Monday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005L",
+      "subject": "UNC503L",
+      "code": "UNC503L",
       "type": "Lecture",
-      "room": "E202",
+      "room": "F204",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "UVD602P",
-      "code": "UVD602P",
-      "type": "Practical",
-      "room": "C325",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502L",
+      "type": "Lecture",
+      "room": "F204",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "UVD602P",
-      "code": "UVD602P",
+      "subject": "Modern Control Theory",
+      "code": "UEC867L",
+      "type": "Lecture",
+      "room": "F204",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UVD515L",
+      "code": "UVD515L",
+      "type": "Lecture",
+      "room": "F202",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Computer & Network Security",
+      "code": "UCS534P",
       "type": "Practical",
-      "room": "C325",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "UVD626L",
-      "code": "UVD626L",
-      "type": "Lecture",
-      "room": "E202",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "UEC602L",
-      "code": "UEC602L",
-      "type": "Lecture",
-      "room": "E202",
+      "room": "L408",
       "options": [
         {
-          "subject_code": "UEC602L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "E202",
-          "teacher": "AUS"
+          "subject_code": "UCS534P",
+          "subject_name": "Computer & Network Security",
+          "type": "Practical",
+          "place": "L408",
+          "teacher": "MAN"
         },
         {
-          "subject_code": "UVD632L",
-          "subject_name": null,
+          "subject_code": "UCS668P",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Practical",
+          "place": "L004",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550P",
+          "subject_name": "Network Defence",
+          "type": "Practical",
+          "place": "L102",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UCS539L",
+          "subject_name": "Finance Accounting and Valuation",
           "type": "Lecture",
-          "place": "E203",
-          "teacher": "SUJ"
+          "place": "LT101",
+          "teacher": "ROS"
         }
       ]
     },
     {
-      "day": "Tuesday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005P",
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Computer & Network Security",
+      "code": "UCS534P",
       "type": "Practical",
-      "room": "B223",
+      "room": "L408",
+      "options": [
+        {
+          "subject_code": "UCS534P",
+          "subject_name": "Computer & Network Security",
+          "type": "Practical",
+          "place": "L408",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS668P",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Practical",
+          "place": "L004",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550P",
+          "subject_name": "Network Defence",
+          "type": "Practical",
+          "place": "L102",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UCS539L",
+          "subject_name": "Finance Accounting and Valuation",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "ROS"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539P",
+      "type": "Practical",
+      "room": "L002",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "18:00",
+      "end_time": "18:50",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539P",
+      "type": "Practical",
+      "room": "L002",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "F204",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "F204",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UVD501L",
+      "code": "UVD501L",
+      "type": "Lecture",
+      "room": "F204",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Computer Architecture",
+      "code": "UEC610L",
+      "type": "Lecture",
+      "room": "F204",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005P",
-      "type": "Practical",
-      "room": "B223",
+      "subject": "UVD515L",
+      "code": "UVD515L",
+      "type": "Lecture",
+      "room": "F202",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Modern Control Theory",
+      "code": "UEC867T",
+      "type": "Tutorial",
+      "room": "E306",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UVD501T",
+      "code": "UVD501T",
+      "type": "Tutorial",
+      "room": "E306",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "UVD602T",
-      "code": "UVD602T",
-      "type": "Tutorial",
-      "room": "E202",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502L",
+      "type": "Lecture",
+      "room": "F203",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "UVD601L",
-      "code": "UVD601L",
-      "type": "Lecture",
-      "room": "E202",
+      "subject": "UVD501P",
+      "code": "UVD501P",
+      "type": "Practical",
+      "room": "C221",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005L",
-      "type": "Lecture",
-      "room": "E202",
+      "subject": "UVD501P",
+      "code": "UVD501P",
+      "type": "Practical",
+      "room": "C221",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "UVD602L",
-      "code": "UVD602L",
+      "subject": "Computer Architecture",
+      "code": "UEC610L",
       "type": "Lecture",
-      "room": "E202",
+      "room": "F204",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "UVD621L",
-      "code": "UVD621L",
+      "subject": "Modern Control Theory",
+      "code": "UEC867L",
       "type": "Lecture",
-      "room": "E202",
+      "room": "F204",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UTA025L",
+      "code": "UTA025L",
+      "type": "Lecture",
+      "room": "F204",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "UVD621P",
-      "code": "UVD621P",
-      "type": "Practical",
-      "room": "C327/C211",
+      "subject": "UNC503L",
+      "code": "UNC503L",
+      "type": "Lecture",
+      "room": "F204",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "16:20",
       "end_time": "17:10",
-      "subject": "UVD621P",
-      "code": "UVD621P",
-      "type": "Practical",
-      "room": "C327/C211",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502T",
+      "type": "Tutorial",
+      "room": "B307",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "17:10",
       "end_time": "18:00",
-      "subject": "Derivatives Pricing, Trading And Strategies",
-      "code": "UCS658L",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539L",
       "type": "Lecture",
       "room": "LT101",
       "options": []
     },
     {
       "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "UVD515P",
+      "code": "UVD515P",
+      "type": "Practical",
+      "room": "C221",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UVD515P",
+      "code": "UVD515P",
+      "type": "Practical",
+      "room": "C221",
+      "options": []
+    },
+    {
+      "day": "Thursday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "UVD626L",
-      "code": "UVD626L",
+      "subject": "UNC503L",
+      "code": "UNC503L",
       "type": "Lecture",
-      "room": "E202",
-      "options": [
-        {
-          "subject_code": "UVD626L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "E202",
-          "teacher": "VSL"
-        },
-        {
-          "subject_code": "UVD621L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "E203",
-          "teacher": "SSK"
-        }
-      ]
+      "room": "F204",
+      "options": []
     },
     {
       "day": "Thursday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UVD601L",
-      "code": "UVD601L",
+      "subject": "UVD501L",
+      "code": "UVD501L",
       "type": "Lecture",
-      "room": "E202",
+      "room": "F204",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "UVD602L",
-      "code": "UVD602L",
+      "subject": "Cloud Computing",
+      "code": "UCS531L",
       "type": "Lecture",
-      "room": "E202",
-      "options": []
+      "room": "LT301",
+      "options": [
+        {
+          "subject_code": "UCS531L",
+          "subject_name": "Cloud Computing",
+          "type": "Lecture",
+          "place": "LT301",
+          "teacher": "SAM"
+        },
+        {
+          "subject_code": "UCS548L",
+          "subject_name": "Foundations of Data Science",
+          "type": "Lecture",
+          "place": "LT401",
+          "teacher": "DET"
+        },
+        {
+          "subject_code": "UCS532L",
+          "subject_name": "Computer Vision",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "ST"
+        },
+        {
+          "subject_code": "UCS534L",
+          "subject_name": "Computer & Network Security",
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS537L",
+          "subject_name": "Source Code Management",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS542L",
+          "subject_name": "Ui & Ux Specialist",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS551L",
+          "subject_name": "Conversational Ai: Accelerated Data Science",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS668L",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550L",
+          "subject_name": "Network Defence",
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UMC513L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "T106",
+          "teacher": "YK"
+        }
+      ]
     },
     {
       "day": "Thursday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "UEC620L",
-      "code": "UEC620L",
+      "subject": "Cloud Computing",
+      "code": "UCS531L",
       "type": "Lecture",
-      "room": "E202",
+      "room": "LT301",
       "options": [
         {
-          "subject_code": "UEC620L",
-          "subject_name": null,
+          "subject_code": "UCS531L",
+          "subject_name": "Cloud Computing",
           "type": "Lecture",
-          "place": "E202",
-          "teacher": "AUS"
+          "place": "LT301",
+          "teacher": "SAM"
         },
         {
-          "subject_code": "UVD632L",
+          "subject_code": "UCS548L",
+          "subject_name": "Foundations of Data Science",
+          "type": "Lecture",
+          "place": "LT401",
+          "teacher": "DET"
+        },
+        {
+          "subject_code": "UCS532L",
+          "subject_name": "Computer Vision",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "ST"
+        },
+        {
+          "subject_code": "UCS534L",
+          "subject_name": "Computer & Network Security",
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS537L",
+          "subject_name": "Source Code Management",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS542L",
+          "subject_name": "Ui & Ux Specialist",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS551L",
+          "subject_name": "Conversational Ai: Accelerated Data Science",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS668L",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550L",
+          "subject_name": "Network Defence",
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UMC513L",
           "subject_name": null,
           "type": "Lecture",
-          "place": "E203",
-          "teacher": "SUJ"
+          "place": "T106",
+          "teacher": "YK"
         }
       ]
     },
@@ -268,60 +538,100 @@
       "day": "Thursday",
       "start_time": "13:50",
       "end_time": "14:40",
-      "subject": "UVD601P",
-      "code": "UVD601P",
+      "subject": "UVD515P",
+      "code": "UVD515P",
       "type": "Practical",
-      "room": "C334",
+      "room": "C221",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "UVD601P",
-      "code": "UVD601P",
+      "subject": "UVD515P",
+      "code": "UVD515P",
       "type": "Practical",
-      "room": "C334",
+      "room": "C221",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "F204",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "F204",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502L",
+      "type": "Lecture",
+      "room": "F204",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "UVD601L",
-      "code": "UVD601L",
-      "type": "Lecture",
-      "room": "E202",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502P",
+      "type": "Practical",
+      "room": "C203",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UVD602L",
-      "code": "UVD602L",
-      "type": "Lecture",
-      "room": "E202",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "UVD602P",
-      "code": "UVD602P",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502P",
       "type": "Practical",
-      "room": "C325",
+      "room": "C203",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "UVD602P",
-      "code": "UVD602P",
-      "type": "Practical",
-      "room": "C325",
+      "subject": "Computer Architecture",
+      "code": "UEC610L",
+      "type": "Lecture",
+      "room": "F208",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UTA025T",
+      "code": "UTA025T",
+      "type": "Tutorial",
+      "room": "F204",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UTA025T",
+      "code": "UTA025T",
+      "type": "Tutorial",
+      "room": "F204",
       "options": []
     }
   ]

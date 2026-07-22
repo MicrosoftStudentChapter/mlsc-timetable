@@ -1,362 +1,337 @@
 {
   "batch": "3B13",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
   "classes": [
     {
       "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UCE521L",
+      "code": "UCE521L",
+      "type": "Lecture",
+      "room": "D115",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Transportation Engineering - I",
+      "code": "UCE511L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Soil Mechanics",
+      "code": "UCE501L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UCE521P",
+      "code": "UCE521P",
+      "type": "Practical",
+      "room": "D115",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCE521P",
+      "code": "UCE521P",
+      "type": "Practical",
+      "room": "D115",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Soil Mechanics",
+      "code": "UCE501P",
+      "type": "Practical",
+      "room": "CD122",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Soil Mechanics",
+      "code": "UCE501P",
+      "type": "Practical",
+      "room": "CD122",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Soil Mechanics",
+      "code": "UCE501L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "UCE615P",
-      "code": "UCE615P",
-      "type": "Practical",
-      "room": "SEE LAB",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "09:40",
-      "end_time": "10:30",
-      "subject": "UCE615P",
-      "code": "UCE615P",
-      "type": "Practical",
-      "room": "SEE LAB",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "UCC612L",
-      "code": "UCC612L",
+      "subject": "Hydrology and Ground Water",
+      "code": "UCE401L",
       "type": "Lecture",
-      "room": "E106",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "Hydraulic Engineering",
-      "code": "UCE614L",
-      "type": "Lecture",
-      "room": "E106",
+      "room": "E103",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": null,
-      "code": null,
-      "type": "Unknown",
-      "room": "UCE831/618/617L",
+      "subject": "Design of Steel Structures",
+      "code": "UCE512L",
+      "type": "Lecture",
+      "room": "E103",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Foundation Engineering",
-      "code": "UCE613L",
+      "subject": "Transportation Engineering - I",
+      "code": "UCE511L",
       "type": "Lecture",
-      "room": "E106",
+      "room": "E103",
       "options": []
     },
     {
       "day": "Tuesday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "Hydraulic Engineering",
-      "code": "UCE614L",
-      "type": "Lecture",
-      "room": "E106",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "Hydraulic Engineering",
-      "code": "UCE614T",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Hydrology and Ground Water",
+      "code": "UCE401T",
       "type": "Tutorial",
-      "room": "E106",
+      "room": "E103",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "Hydraulic Engineering",
-      "code": "UCE614P",
+      "subject": "UCE693P",
+      "code": "UCE693P",
       "type": "Practical",
-      "room": null,
+      "room": "C218",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "16:20",
       "end_time": "17:10",
-      "subject": "Hydraulic Engineering",
-      "code": "UCE614P",
+      "subject": "UCE693P",
+      "code": "UCE693P",
       "type": "Practical",
-      "room": null,
+      "room": "C218",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "UCE615L",
-      "code": "UCE615L",
+      "subject": "Hydrology and Ground Water",
+      "code": "UCE401L",
       "type": "Lecture",
-      "room": "E106",
+      "room": "E103",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Foundation Engineering",
-      "code": "UCE613L",
+      "subject": "Design of Steel Structures",
+      "code": "UCE512L",
       "type": "Lecture",
-      "room": "E106",
+      "room": "E103",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UCC612L",
-      "code": "UCC612L",
+      "subject": "Transportation Engineering - I",
+      "code": "UCE511L",
       "type": "Lecture",
-      "room": "E106",
+      "room": "E103",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "Transportation Engineering - Ii",
-      "code": "UCE605T",
-      "type": "Tutorial",
-      "room": "E106",
+      "subject": "UCE513L",
+      "code": "UCE513L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCE521L",
+      "code": "UCE521L",
+      "type": "Lecture",
+      "room": "D115",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "Foundation Engineering",
-      "code": "UCE613P",
-      "type": "Practical",
-      "room": "RF-2",
+      "subject": "Soil Mechanics",
+      "code": "UCE501T",
+      "type": "Tutorial",
+      "room": "E303",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "16:20",
       "end_time": "17:10",
-      "subject": "Foundation Engineering",
-      "code": "UCE613P",
-      "type": "Practical",
-      "room": "RF-2",
+      "subject": "Design of Steel Structures",
+      "code": "UCE512T",
+      "type": "Tutorial",
+      "room": "E103",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "UCE513L",
+      "code": "UCE513L",
+      "type": "Lecture",
+      "room": "E103",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "UCE615L",
-      "code": "UCE615L",
+      "subject": "Hydrology and Ground Water",
+      "code": "UCE401L",
       "type": "Lecture",
-      "room": "E106",
+      "room": "E103",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Transportation Engineering - Ii",
-      "code": "UCE605L",
+      "subject": "UTA025L",
+      "code": "UTA025L",
       "type": "Lecture",
-      "room": "E106",
-      "options": [
-        {
-          "subject_code": "UCE605L",
-          "subject_name": "Transportation Engineering - Ii",
-          "type": "Lecture",
-          "place": "E106",
-          "teacher": "TNC"
-        },
-        {
-          "subject_code": "UCC612L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        }
-      ]
-    },
-    {
-      "day": "Thursday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "Foundation Engineering",
-      "code": "UCE613L",
-      "type": "Lecture",
-      "room": "E106",
+      "room": "E103",
       "options": []
     },
     {
       "day": "Thursday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "Hydraulic Engineering",
-      "code": "UCE614L",
-      "type": "Lecture",
-      "room": "E106",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "UCE617L",
-      "code": "UCE617L",
-      "type": "Lecture",
-      "room": "F202/E106/E304",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UTA025P",
+      "code": "UTA025P",
+      "type": "Practical",
+      "room": "F309",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "UCE693P",
-      "code": "UCE693P",
+      "subject": "UTA025P",
+      "code": "UTA025P",
       "type": "Practical",
-      "room": "LAB-2",
+      "room": "F309",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "UCE693P",
-      "code": "UCE693P",
+      "subject": "Transportation Engineering - I",
+      "code": "UCE511P",
       "type": "Practical",
-      "room": "LAB-2",
+      "room": "D117",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "16:20",
       "end_time": "17:10",
-      "subject": "Foundation Engineering",
-      "code": "UCE613T",
-      "type": "Tutorial",
-      "room": "E106",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "08:00",
-      "end_time": "08:50",
-      "subject": "UCE615T",
-      "code": "UCE615T",
-      "type": "Tutorial",
-      "room": "E109",
+      "subject": "Transportation Engineering - I",
+      "code": "UCE511P",
+      "type": "Practical",
+      "room": "D117",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "UCE892L",
-      "code": "UCE892L",
+      "subject": "Soil Mechanics",
+      "code": "UCE501L",
       "type": "Lecture",
-      "room": "E106",
+      "room": "E103",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "UCE615L",
-      "code": "UCE615L",
+      "subject": "UCE513L",
+      "code": "UCE513L",
       "type": "Lecture",
-      "room": null,
+      "room": "E103",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UCE693L",
-      "code": "UCE693L",
+      "subject": "Design of Steel Structures",
+      "code": "UCE512L",
       "type": "Lecture",
-      "room": "E106",
+      "room": "E103",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "UCE618L",
-      "code": "UCE618L",
-      "type": "Lecture",
-      "room": "F201",
-      "options": [
-        {
-          "subject_code": "UCE618L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F201",
-          "teacher": "HS"
-        },
-        {
-          "subject_code": "UCE617L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "E106",
-          "teacher": "APR"
-        }
-      ]
+      "subject": "UCE513T",
+      "code": "UCE513T",
+      "type": "Tutorial",
+      "room": "F313",
+      "options": []
     },
     {
       "day": "Friday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "UCE618L",
-      "code": "UCE618L",
-      "type": "Lecture",
-      "room": "F201",
-      "options": [
-        {
-          "subject_code": "UCE618L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F201",
-          "teacher": "HS"
-        },
-        {
-          "subject_code": "UCE617T",
-          "subject_name": null,
-          "type": "Tutorial",
-          "place": "E109",
-          "teacher": "APR"
-        }
-      ]
-    },
-    {
-      "day": "Friday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": null,
-      "code": null,
-      "type": "Unknown",
-      "room": null,
+      "subject": "UCE513T",
+      "code": "UCE513T",
+      "type": "Tutorial",
+      "room": "F313",
       "options": []
     }
   ]

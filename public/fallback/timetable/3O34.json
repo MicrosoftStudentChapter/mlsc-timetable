@@ -1,488 +1,748 @@
 {
   "batch": "3O34",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
   "classes": [
     {
       "day": "Monday",
-      "start_time": "09:40",
-      "end_time": "10:30",
-      "subject": "UEC613L",
-      "code": "UEC613L",
-      "type": "Lecture",
-      "room": "LT102/F104/LT301/LT403/LP110/B301/B302/B303/F204",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "UEC633L",
-      "code": "UEC633L",
-      "type": "Lecture",
-      "room": "LT102/F109/LT301/LT403/LP110/B301/B302/B303/F210",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "UNC601L",
-      "code": "UNC601L",
-      "type": "Lecture",
-      "room": "B303",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Analog And Digital Communication Systems",
-      "code": "UEC519L",
-      "type": "Lecture",
-      "room": "B303",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": "UEC707P",
-      "code": "UEC707P",
-      "type": "Practical",
-      "room": "CP-3/VLSI/AI/WMC/VLSI/AI",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "UEC707P",
-      "code": "UEC707P",
-      "type": "Practical",
-      "room": "CP-3/VLSI/AI/WMC/VLSI/AI",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "17:10",
-      "end_time": "18:00",
-      "subject": null,
-      "code": null,
-      "type": "Unknown",
-      "room": "UCS657",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "18:00",
-      "end_time": "18:50",
-      "subject": null,
-      "code": null,
-      "type": "Unknown",
-      "room": "UCS657",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
       "start_time": "08:00",
       "end_time": "08:50",
-      "subject": "Blockchain Technology",
-      "code": "UEC635P",
+      "subject": "Database Management Systems",
+      "code": "UEC716P",
       "type": "Practical",
-      "room": "CP-1",
+      "room": "C202",
       "options": []
     },
     {
-      "day": "Tuesday",
+      "day": "Monday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "Blockchain Technology",
-      "code": "UEC635P",
+      "subject": "Database Management Systems",
+      "code": "UEC716P",
       "type": "Practical",
-      "room": "CP-1",
+      "room": "C202",
       "options": []
     },
     {
-      "day": "Tuesday",
+      "day": "Monday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Cloud Computing Technology",
-      "code": "UEC634L",
+      "subject": "UNC503L",
+      "code": "UNC503L",
       "type": "Lecture",
-      "room": "B301/F209",
+      "room": "B309",
       "options": []
     },
     {
-      "day": "Tuesday",
+      "day": "Monday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UEC732L",
-      "code": "UEC732L",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502L",
       "type": "Lecture",
-      "room": "F204",
+      "room": "B309",
       "options": []
     },
     {
-      "day": "Tuesday",
+      "day": "Monday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Database Management Systems",
+      "code": "UEC716L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Monday",
       "start_time": "13:50",
       "end_time": "14:40",
-      "subject": "UNC601L",
-      "code": "UNC601L",
-      "type": "Lecture",
-      "room": "B303",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Mos Circuit Design",
-      "code": "UEC750L",
-      "type": "Lecture",
-      "room": "B303",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": "Mos Circuit Design",
-      "code": "UEC750P",
-      "type": "Practical",
-      "room": null,
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "Mos Circuit Design",
-      "code": "UEC750P",
-      "type": "Practical",
-      "room": null,
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "17:10",
-      "end_time": "18:00",
-      "subject": "USC658P",
-      "code": "USC658P",
-      "type": "Practical",
-      "room": null,
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "18:00",
-      "end_time": "18:50",
-      "subject": "USC658P",
-      "code": "USC658P",
-      "type": "Practical",
-      "room": null,
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "08:50",
-      "end_time": "09:40",
-      "subject": "Mos Circuit Design",
-      "code": "UEC750T",
+      "subject": "UTA025T",
+      "code": "UTA025T",
       "type": "Tutorial",
-      "room": "B209",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "09:40",
-      "end_time": "10:30",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005L",
-      "type": "Lecture",
-      "room": "B303",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "UNC601L",
-      "code": "UNC601L",
-      "type": "Lecture",
-      "room": "B303",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "Analog And Digital Communication Systems",
-      "code": "UEC519L",
-      "type": "Lecture",
-      "room": "B303",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "Mos Circuit Design",
-      "code": "UEC750L",
-      "type": "Lecture",
-      "room": "B303",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "Analog And Digital Communication Systems",
-      "code": "UEC519P",
-      "type": "Practical",
-      "room": null,
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Analog And Digital Communication Systems",
-      "code": "UEC519P",
-      "type": "Practical",
-      "room": null,
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": null,
-      "code": null,
-      "type": "Unknown",
-      "room": "UEC634/UCS660/UEC633/UEC707/UEC638",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": null,
-      "code": null,
-      "type": "Unknown",
-      "room": "UEC634/UCS660/UEC633/UEC707/UEC638",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "17:10",
-      "end_time": "18:00",
-      "subject": "UCS858L",
-      "code": "UCS858L",
-      "type": "Lecture",
-      "room": null,
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "18:00",
-      "end_time": "18:50",
-      "subject": "Derivatives Pricing, Trading And Strategies",
-      "code": "UCS658L",
-      "type": "Lecture",
-      "room": null,
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "08:00",
-      "end_time": "08:50",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005P",
-      "type": "Practical",
       "room": "F310",
       "options": []
     },
     {
-      "day": "Thursday",
-      "start_time": "08:50",
-      "end_time": "09:40",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005P",
-      "type": "Practical",
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UTA025T",
+      "code": "UTA025T",
+      "type": "Tutorial",
       "room": "F310",
       "options": []
     },
     {
-      "day": "Thursday",
-      "start_time": "09:40",
-      "end_time": "10:30",
-      "subject": "Cloud Computing Technology",
-      "code": "UEC634L",
-      "type": "Lecture",
-      "room": "B301/F209",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "UEC633L",
-      "code": "UEC633L",
-      "type": "Lecture",
-      "room": "F109/LT301/LT403/LP110/B301/B302/F209/F210",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "UEC613L",
-      "code": "UEC613L",
-      "type": "Lecture",
-      "room": "F109/LT301/LT403/LP110/B301/B302/B309/F209",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "UEC732L",
-      "code": "UEC732L",
-      "type": "Lecture",
-      "room": "F204",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "UNC601P",
-      "code": "UNC601P",
-      "type": "Practical",
-      "room": "CP-3",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "UNC601P",
-      "code": "UNC601P",
-      "type": "Practical",
-      "room": "CP-3",
-      "options": []
-    },
-    {
-      "day": "Thursday",
+      "day": "Monday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "UEC633P",
-      "code": "UEC633P",
+      "subject": "Design Using System Verilog",
+      "code": "UEC521P",
       "type": "Practical",
-      "room": "CP-1/FPGA/CP-3",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "UEC633P",
-      "code": "UEC633P",
-      "type": "Practical",
-      "room": "CP-1/FPGA/CP-3",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "09:40",
-      "end_time": "10:30",
-      "subject": "Analog And Digital Communication Systems",
-      "code": "UEC519T",
-      "type": "Tutorial",
-      "room": "F210",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "Mos Circuit Design",
-      "code": "UEC750L",
-      "type": "Lecture",
-      "room": "B303",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "Analog And Digital Communication Systems",
-      "code": "UEC519L",
-      "type": "Lecture",
-      "room": "B303",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005L",
-      "type": "Lecture",
-      "room": "B303",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "UEC633P",
-      "code": "UEC633P",
-      "type": "Practical",
-      "room": "VLSI/CP-3/AI/IOT",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "UEC633P",
-      "code": "UEC633P",
-      "type": "Practical",
-      "room": "VLSI/CP-3/AI/IOT",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": "UEC644P",
-      "code": "UEC644P",
-      "type": "Practical",
-      "room": "CP-1",
+      "room": "C221",
       "options": [
         {
-          "subject_code": "UEC644P",
-          "subject_name": null,
+          "subject_code": "UEC521P",
+          "subject_name": "Design Using System Verilog",
           "type": "Practical",
-          "place": "CP-1",
-          "teacher": "VLSI"
+          "place": "C221",
+          "teacher": "SSK"
         },
         {
-          "subject_code": "UEC635P",
-          "subject_name": "Blockchain Technology",
+          "subject_code": "UNC514P",
+          "subject_name": "Data Science Fundamentals",
           "type": "Practical",
-          "place": null,
-          "teacher": "IOT"
+          "place": "C326",
+          "teacher": "SUR"
         },
         {
-          "subject_code": "UEC613P",
-          "subject_name": null,
+          "subject_code": "UCS534P",
+          "subject_name": "Computer & Network Security",
           "type": "Practical",
-          "place": null,
-          "teacher": "AI"
+          "place": "L408",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS668P",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Practical",
+          "place": "L004",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550P",
+          "subject_name": "Network Defence",
+          "type": "Practical",
+          "place": "L102",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UCS539L",
+          "subject_name": "Finance Accounting and Valuation",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "ROS"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Design Using System Verilog",
+      "code": "UEC521P",
+      "type": "Practical",
+      "room": "C221",
+      "options": [
+        {
+          "subject_code": "UEC521P",
+          "subject_name": "Design Using System Verilog",
+          "type": "Practical",
+          "place": "C221",
+          "teacher": "SSK"
+        },
+        {
+          "subject_code": "UNC514P",
+          "subject_name": "Data Science Fundamentals",
+          "type": "Practical",
+          "place": "C326",
+          "teacher": "SUR"
+        },
+        {
+          "subject_code": "UCS534P",
+          "subject_name": "Computer & Network Security",
+          "type": "Practical",
+          "place": "L408",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS668P",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Practical",
+          "place": "L004",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550P",
+          "subject_name": "Network Defence",
+          "type": "Practical",
+          "place": "L102",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UCS539L",
+          "subject_name": "Finance Accounting and Valuation",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "ROS"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539P",
+      "type": "Practical",
+      "room": "L002",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "18:00",
+      "end_time": "18:50",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539P",
+      "type": "Practical",
+      "room": "L002",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502P",
+      "type": "Practical",
+      "room": "C326",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502P",
+      "type": "Practical",
+      "room": "C326",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UNC503L",
+      "code": "UNC503L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Information and Communication Theory",
+      "code": "UEC310L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Operating Systems",
+      "code": "UNC501L",
+      "type": "Lecture",
+      "room": "B308",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Database Management Systems",
+      "code": "UEC716L",
+      "type": "Lecture",
+      "room": "B308",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "B308",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "B308",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Data Science Fundamentals",
+      "code": "UNC514P",
+      "type": "Practical",
+      "room": "C326",
+      "options": [
+        {
+          "subject_code": "UNC514P",
+          "subject_name": "Data Science Fundamentals",
+          "type": "Practical",
+          "place": "C326",
+          "teacher": "SUR"
+        },
+        {
+          "subject_code": "UEC521P",
+          "subject_name": "Design Using System Verilog",
+          "type": "Practical",
+          "place": "C221",
+          "teacher": "SSK"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Data Science Fundamentals",
+      "code": "UNC514P",
+      "type": "Practical",
+      "room": "C326",
+      "options": [
+        {
+          "subject_code": "UNC514P",
+          "subject_name": "Data Science Fundamentals",
+          "type": "Practical",
+          "place": "C326",
+          "teacher": "SUR"
+        },
+        {
+          "subject_code": "UEC521P",
+          "subject_name": "Design Using System Verilog",
+          "type": "Practical",
+          "place": "C221",
+          "teacher": "SSK"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Information and Communication Theory",
+      "code": "UEC310L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UNC503L",
+      "code": "UNC503L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Operating Systems",
+      "code": "UNC501L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502T",
+      "type": "Tutorial",
+      "room": "F303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Information and Communication Theory",
+      "code": "UEC310T",
+      "type": "Tutorial",
+      "room": "F303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539L",
+      "type": "Lecture",
+      "room": "LT101/ROS",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "UNC503P",
+      "code": "UNC503P",
+      "type": "Practical",
+      "room": "C333",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UNC503P",
+      "code": "UNC503P",
+      "type": "Practical",
+      "room": "C333",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Design Using System Verilog",
+      "code": "UEC521L",
+      "type": "Lecture",
+      "room": "B305",
+      "options": [
+        {
+          "subject_code": "UEC521L",
+          "subject_name": "Design Using System Verilog",
+          "type": "Lecture",
+          "place": "B305",
+          "teacher": "SSK"
+        },
+        {
+          "subject_code": "UNC514L",
+          "subject_name": "Data Science Fundamentals",
+          "type": "Lecture",
+          "place": "B308",
+          "teacher": "SUR"
+        },
+        {
+          "subject_code": "UEC518L",
+          "subject_name": "Network Security",
+          "type": "Lecture",
+          "place": "F204",
+          "teacher": "NS"
+        },
+        {
+          "subject_code": "UCS531L",
+          "subject_name": "Cloud Computing",
+          "type": "Lecture",
+          "place": "LT301",
+          "teacher": "SAM"
+        },
+        {
+          "subject_code": "UCS548L",
+          "subject_name": "Foundations of Data Science",
+          "type": "Lecture",
+          "place": "LT401",
+          "teacher": "DET"
+        },
+        {
+          "subject_code": "UCS532L",
+          "subject_name": "Computer Vision",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "ST"
+        },
+        {
+          "subject_code": "UCS534L",
+          "subject_name": "Computer & Network Security",
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS537L",
+          "subject_name": "Source Code Management",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS542L",
+          "subject_name": "Ui & Ux Specialist",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS551L",
+          "subject_name": "Conversational Ai: Accelerated Data Science",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS668L",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550L",
+          "subject_name": "Network Defence",
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UMC513L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "T106",
+          "teacher": "YK"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Design Using System Verilog",
+      "code": "UEC521L",
+      "type": "Lecture",
+      "room": "B305",
+      "options": [
+        {
+          "subject_code": "UEC521L",
+          "subject_name": "Design Using System Verilog",
+          "type": "Lecture",
+          "place": "B305",
+          "teacher": "SSK"
+        },
+        {
+          "subject_code": "UNC514L",
+          "subject_name": "Data Science Fundamentals",
+          "type": "Lecture",
+          "place": "B308",
+          "teacher": "SUR"
+        },
+        {
+          "subject_code": "UEC518L",
+          "subject_name": "Network Security",
+          "type": "Lecture",
+          "place": "F204",
+          "teacher": "NS"
+        },
+        {
+          "subject_code": "UCS531L",
+          "subject_name": "Cloud Computing",
+          "type": "Lecture",
+          "place": "LT301",
+          "teacher": "SAM"
+        },
+        {
+          "subject_code": "UCS548L",
+          "subject_name": "Foundations of Data Science",
+          "type": "Lecture",
+          "place": "LT401",
+          "teacher": "DET"
+        },
+        {
+          "subject_code": "UCS532L",
+          "subject_name": "Computer Vision",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "ST"
+        },
+        {
+          "subject_code": "UCS534L",
+          "subject_name": "Computer & Network Security",
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS537L",
+          "subject_name": "Source Code Management",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS542L",
+          "subject_name": "Ui & Ux Specialist",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS551L",
+          "subject_name": "Conversational Ai: Accelerated Data Science",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS668L",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550L",
+          "subject_name": "Network Defence",
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UMC513L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "T106",
+          "teacher": "YK"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Database Management Systems",
+      "code": "UEC716L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UTA025L",
+      "code": "UTA025L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Operating Systems",
+      "code": "UNC501L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Database Management Systems",
+      "code": "UEC716L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Digital Signal Processing",
+      "code": "UEC502L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Operating Systems",
+      "code": "UNC501P",
+      "type": "Practical",
+      "room": "C327",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Operating Systems",
+      "code": "UNC501P",
+      "type": "Practical",
+      "room": "C327",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Data Science Fundamentals",
+      "code": "UNC514P",
+      "type": "Practical",
+      "room": "C326",
+      "options": [
+        {
+          "subject_code": "UNC514P",
+          "subject_name": "Data Science Fundamentals",
+          "type": "Practical",
+          "place": "C326",
+          "teacher": "SUR"
+        },
+        {
+          "subject_code": "UEC521P",
+          "subject_name": "Design Using System Verilog",
+          "type": "Practical",
+          "place": "C221",
+          "teacher": "SSK"
+        },
+        {
+          "subject_code": "UEC518P",
+          "subject_name": "Network Security",
+          "type": "Practical",
+          "place": "C202",
+          "teacher": "NS"
         }
       ]
     },
@@ -490,31 +750,31 @@
       "day": "Friday",
       "start_time": "16:20",
       "end_time": "17:10",
-      "subject": "UEC644P",
-      "code": "UEC644P",
+      "subject": "Data Science Fundamentals",
+      "code": "UNC514P",
       "type": "Practical",
-      "room": "CP-1",
+      "room": "C326",
       "options": [
         {
-          "subject_code": "UEC644P",
-          "subject_name": null,
+          "subject_code": "UNC514P",
+          "subject_name": "Data Science Fundamentals",
           "type": "Practical",
-          "place": "CP-1",
-          "teacher": "VLSI"
+          "place": "C326",
+          "teacher": "SUR"
         },
         {
-          "subject_code": "UEC635P",
-          "subject_name": "Blockchain Technology",
+          "subject_code": "UEC521P",
+          "subject_name": "Design Using System Verilog",
           "type": "Practical",
-          "place": null,
-          "teacher": "IOT"
+          "place": "C221",
+          "teacher": "SSK"
         },
         {
-          "subject_code": "UEC613P",
-          "subject_name": null,
+          "subject_code": "UEC518P",
+          "subject_name": "Network Security",
           "type": "Practical",
-          "place": null,
-          "teacher": "AI"
+          "place": "C202",
+          "teacher": "NS"
         }
       ]
     }

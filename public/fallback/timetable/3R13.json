@@ -1,291 +1,326 @@
 {
   "batch": "3R13",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
   "classes": [
     {
       "day": "Monday",
-      "start_time": "13:00",
-      "end_time": "13:50",
-      "subject": "Business Communication & Value Science-Iv",
-      "code": "UHU044L",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Industrial Psychology",
+      "code": "UHU028L",
       "type": "Lecture",
-      "room": "E101",
+      "room": "E106",
+      "options": [
+        {
+          "subject_code": "UHU028L",
+          "subject_name": "Industrial Psychology",
+          "type": "Lecture",
+          "place": "E106",
+          "teacher": "GK"
+        },
+        {
+          "subject_code": "UHU026L",
+          "subject_name": "Behavioural Ecnomics",
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SPT"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Compiler Design",
+      "code": "UCT502L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Design and Analysis of Algorithms",
+      "code": "UCT501L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Business Communication & Value Science-III",
+      "code": "UHU042L",
+      "type": "Lecture",
+      "room": "E106",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "13:50",
       "end_time": "14:40",
-      "subject": "Computer Networks",
-      "code": "UCT601L",
-      "type": "Lecture",
-      "room": "E101",
+      "subject": "Industrial Psychology",
+      "code": "UHU028P",
+      "type": "Practical",
+      "room": "E307",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "Information Security",
-      "code": "UCT602L",
-      "type": "Lecture",
-      "room": "E101",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": "Artificial Intelligence",
-      "code": "UCT603L",
-      "type": "Lecture",
-      "room": "E101",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "Advance Finance",
-      "code": "UHU046L",
-      "type": "Lecture",
-      "room": "E101",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "08:00",
-      "end_time": "08:50",
-      "subject": "Information Security",
-      "code": "UCT602P",
+      "subject": "Industrial Psychology",
+      "code": "UHU028P",
       "type": "Practical",
-      "room": "IS-2",
+      "room": "E307",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "Information Security",
-      "code": "UCT602P",
-      "type": "Practical",
-      "room": "IS-2",
-      "options": []
+      "subject": "Fundamentals of Management",
+      "code": "UHU029L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": [
+        {
+          "subject_code": "UHU029L",
+          "subject_name": "Fundamentals of Management",
+          "type": "Lecture",
+          "place": "E106",
+          "teacher": "SCB"
+        },
+        {
+          "subject_code": "UCT502L",
+          "subject_name": "Compiler Design",
+          "type": "Lecture",
+          "place": null,
+          "teacher": "SUG"
+        }
+      ]
     },
     {
       "day": "Tuesday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Data Mining & Analytics",
-      "code": "UCT633P",
-      "type": "Practical",
-      "room": "IS-2",
-      "options": []
+      "subject": "Fundamentals of Management",
+      "code": "UHU029L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": [
+        {
+          "subject_code": "UHU029L",
+          "subject_name": "Fundamentals of Management",
+          "type": "Lecture",
+          "place": "E106",
+          "teacher": "SCB"
+        },
+        {
+          "subject_code": "UCT502L",
+          "subject_name": "Compiler Design",
+          "type": "Lecture",
+          "place": null,
+          "teacher": "SUG"
+        }
+      ]
     },
     {
       "day": "Tuesday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Data Mining & Analytics",
-      "code": "UCT633P",
-      "type": "Practical",
-      "room": "IS-2",
+      "subject": "Design and Analysis of Algorithms",
+      "code": "UCT501L",
+      "type": "Lecture",
+      "room": "E106",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "13:50",
       "end_time": "14:40",
-      "subject": "Data Mining & Analytics",
-      "code": "UCT633L",
-      "type": "Lecture",
-      "room": "E101/PG AS-2",
+      "subject": "Behavioural Ecnomics",
+      "code": "UHU026P",
+      "type": "Practical",
+      "room": "E104",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "Computer Networks",
-      "code": "UCT601L",
-      "type": "Lecture",
-      "room": "E101",
+      "subject": "Behavioural Ecnomics",
+      "code": "UHU026P",
+      "type": "Practical",
+      "room": "E104",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Machine Learning",
+      "code": "UCT513T",
+      "type": "Tutorial",
+      "room": "PGAS2(L410)",
       "options": []
     },
     {
       "day": "Wednesday",
-      "start_time": "08:00",
-      "end_time": "08:50",
-      "subject": "Artificial Intelligence",
-      "code": "UCT603L",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Compiler Design",
+      "code": "UCT502L",
       "type": "Lecture",
-      "room": "E101",
+      "room": "E106",
       "options": []
     },
     {
       "day": "Wednesday",
-      "start_time": "08:50",
-      "end_time": "09:40",
-      "subject": "Computer Networks",
-      "code": "UCT601L",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Design and Analysis of Algorithms",
+      "code": "UCT501L",
       "type": "Lecture",
-      "room": "E101",
+      "room": "E106",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "Modern Web Applications",
-      "code": "UCT632L",
+      "subject": "Behavioural Ecnomics",
+      "code": "UHU026L",
       "type": "Lecture",
-      "room": "E101",
-      "options": [
-        {
-          "subject_code": "UCT632L",
-          "subject_name": "Modern Web Applications",
-          "type": "Lecture",
-          "place": "E101",
-          "teacher": "SMG"
-        },
-        {
-          "subject_code": "UCT633L",
-          "subject_name": "Data Mining & Analytics",
-          "type": "Lecture",
-          "place": "PGAS-2",
-          "teacher": "JBD"
-        }
-      ]
+      "room": "E106",
+      "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "Modern Web Applications",
-      "code": "UCT632L",
+      "subject": "Industrial Psychology",
+      "code": "UHU028L",
       "type": "Lecture",
-      "room": "E101",
-      "options": [
-        {
-          "subject_code": "UCT632L",
-          "subject_name": "Modern Web Applications",
-          "type": "Lecture",
-          "place": "E101",
-          "teacher": "SMG"
-        },
-        {
-          "subject_code": "UCT633L",
-          "subject_name": "Data Mining & Analytics",
-          "type": "Lecture",
-          "place": "PGAS-2",
-          "teacher": "JBD"
-        }
-      ]
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "Business Communication & Value Science-Iv",
-      "code": "UHU044P",
-      "type": "Practical",
-      "room": "E102",
+      "room": "E106",
       "options": []
     },
     {
-      "day": "Wednesday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Business Communication & Value Science-Iv",
-      "code": "UHU044P",
-      "type": "Practical",
-      "room": "E102",
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Business Strategy",
+      "code": "UHU030L",
+      "type": "Lecture",
+      "room": "LP105",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Business Strategy",
+      "code": "UHU030L",
+      "type": "Lecture",
+      "room": "LP105",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Computer Networks",
-      "code": "UCT601P",
-      "type": "Practical",
-      "room": "IS-1",
-      "options": []
+      "subject": "Industrial Psychology",
+      "code": "UHU028L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": [
+        {
+          "subject_code": "UHU028L",
+          "subject_name": "Industrial Psychology",
+          "type": "Lecture",
+          "place": "E106",
+          "teacher": "GK"
+        },
+        {
+          "subject_code": "UHU026L",
+          "subject_name": "Behavioural Ecnomics",
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SPT"
+        }
+      ]
     },
     {
       "day": "Thursday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Computer Networks",
-      "code": "UCT601P",
-      "type": "Practical",
-      "room": "IS-1",
-      "options": []
+      "subject": "Machine Learning",
+      "code": "UCT513L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": [
+        {
+          "subject_code": "UCT513L",
+          "subject_name": "Machine Learning",
+          "type": "Lecture",
+          "place": "E106",
+          "teacher": "SB"
+        },
+        {
+          "subject_code": "UCT512L",
+          "subject_name": "Cloud, Microservices and Application",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "SAM"
+        }
+      ]
     },
     {
       "day": "Thursday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "Advance Finance",
-      "code": "UHU046P",
+      "subject": "Design and Analysis of Algorithms",
+      "code": "UCT501P",
       "type": "Practical",
-      "room": "E310/F206",
+      "room": "PL-3(L010)",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "Advance Finance",
-      "code": "UHU046P",
+      "subject": "Design and Analysis of Algorithms",
+      "code": "UCT501P",
       "type": "Practical",
-      "room": "E310/F206",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "Information Security",
-      "code": "UCT602L",
-      "type": "Lecture",
-      "room": "E102",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Financial & Cost Accounting",
-      "code": "UHU043L",
-      "type": "Lecture",
-      "room": "E102",
+      "room": "PL-3(L010)",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "Modern Web Applications",
-      "code": "UCT632P",
+      "subject": "Cloud, Microservices and Application",
+      "code": "UCT512P",
       "type": "Practical",
-      "room": "IS-1",
+      "room": "IOT(L302)",
       "options": [
         {
-          "subject_code": "UCT632P",
-          "subject_name": "Modern Web Applications",
+          "subject_code": "UCT512P",
+          "subject_name": "Cloud, Microservices and Application",
           "type": "Practical",
-          "place": "IS-1",
-          "teacher": "SMG"
+          "place": "IOT(L302)",
+          "teacher": "SAM"
         },
         {
-          "subject_code": "UCT633P",
-          "subject_name": "Data Mining & Analytics",
+          "subject_code": "UCT513P",
+          "subject_name": "Machine Learning",
           "type": "Practical",
-          "place": "IS-2",
-          "teacher": "JBD"
+          "place": "ML(L009)",
+          "teacher": "SB"
         }
       ]
     },
@@ -293,95 +328,110 @@
       "day": "Thursday",
       "start_time": "16:20",
       "end_time": "17:10",
-      "subject": "Modern Web Applications",
-      "code": "UCT632P",
+      "subject": "Cloud, Microservices and Application",
+      "code": "UCT512P",
       "type": "Practical",
-      "room": "IS-1",
+      "room": "IOT(L302)",
       "options": [
         {
-          "subject_code": "UCT632P",
-          "subject_name": "Modern Web Applications",
+          "subject_code": "UCT512P",
+          "subject_name": "Cloud, Microservices and Application",
           "type": "Practical",
-          "place": "IS-1",
-          "teacher": "SMG"
+          "place": "IOT(L302)",
+          "teacher": "SAM"
         },
         {
-          "subject_code": "UCT633P",
-          "subject_name": "Data Mining & Analytics",
+          "subject_code": "UCT513P",
+          "subject_name": "Machine Learning",
           "type": "Practical",
-          "place": "IS-2",
-          "teacher": "JBD"
+          "place": "ML(L009)",
+          "teacher": "SB"
         }
       ]
     },
     {
       "day": "Friday",
-      "start_time": "08:00",
-      "end_time": "08:50",
-      "subject": "Information Security",
-      "code": "UCT602L",
-      "type": "Lecture",
-      "room": "E101",
-      "options": []
-    },
-    {
-      "day": "Friday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "Artificial Intelligence",
-      "code": "UCT603L",
-      "type": "Lecture",
-      "room": "E101",
+      "subject": "Cloud, Microservices and Application",
+      "code": "UCT512T",
+      "type": "Tutorial",
+      "room": "E106",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Artificial Intelligence",
-      "code": "UCT603P",
-      "type": "Practical",
-      "room": null,
+      "subject": "Fundamentals of Management",
+      "code": "UHU029L",
+      "type": "Lecture",
+      "room": "E106",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Artificial Intelligence",
-      "code": "UCT603P",
+      "subject": "Machine Learning",
+      "code": "UCT513L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": [
+        {
+          "subject_code": "UCT513L",
+          "subject_name": "Machine Learning",
+          "type": "Lecture",
+          "place": "E106",
+          "teacher": "SB"
+        },
+        {
+          "subject_code": "UCT512L",
+          "subject_name": "Cloud, Microservices and Application",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "SAM"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Compiler Design",
+      "code": "UCT502P",
       "type": "Practical",
-      "room": null,
+      "room": "SS-1 (L201)",
       "options": []
     },
     {
       "day": "Friday",
-      "start_time": "13:00",
-      "end_time": "13:50",
-      "subject": "Business Communication & Value Science-Iv",
-      "code": "UHU044L",
-      "type": "Lecture",
-      "room": "E101",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Compiler Design",
+      "code": "UCT502P",
+      "type": "Practical",
+      "room": "SS-1 (L201)",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "13:50",
       "end_time": "14:40",
-      "subject": "Financial & Cost Accounting",
-      "code": "UHU043L",
-      "type": "Lecture",
-      "room": "E101",
+      "subject": "Humanities for Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "E301",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "Advance Finance",
-      "code": "UHU046L",
-      "type": "Lecture",
-      "room": "E101",
+      "subject": "Humanities for Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "E301",
       "options": []
     }
   ]

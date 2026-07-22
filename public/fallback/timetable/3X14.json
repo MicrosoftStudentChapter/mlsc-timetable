@@ -1,0 +1,540 @@
+{
+  "batch": "3X14",
+  "semester": {
+    "label": "ODD 26-27"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UAI502L",
+      "code": "UAI502L",
+      "type": "Lecture",
+      "room": "T106",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UAI501L",
+      "code": "UAI501L",
+      "type": "Lecture",
+      "room": "T106",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Cloud Computing",
+      "code": "UCS531P",
+      "type": "Practical",
+      "room": "L208",
+      "options": [
+        {
+          "subject_code": "UCS531P",
+          "subject_name": "Cloud Computing",
+          "type": "Practical",
+          "place": "L208",
+          "teacher": "ANS"
+        },
+        {
+          "subject_code": "UCS532P",
+          "subject_name": "Computer Vision",
+          "type": "Practical",
+          "place": "L002",
+          "teacher": "ST"
+        },
+        {
+          "subject_code": "UMC513P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "L408",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS534P",
+          "subject_name": "Computer & Network Security",
+          "type": "Practical",
+          "place": "L106",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS537P",
+          "subject_name": "Source Code Management",
+          "type": "Practical",
+          "place": "L206",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS542P",
+          "subject_name": "Ui & Ux Specialist",
+          "type": "Practical",
+          "place": "L011",
+          "teacher": "SHI-RA"
+        },
+        {
+          "subject_code": "UCS668P",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Practical",
+          "place": "L102",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UCS550P",
+          "subject_name": "Network Defence",
+          "type": "Practical",
+          "place": "LT102",
+          "teacher": "ROS"
+        },
+        {
+          "subject_code": "UCS539L",
+          "subject_name": "Finance Accounting and Valuation",
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Cloud Computing",
+      "code": "UCS531P",
+      "type": "Practical",
+      "room": "L208",
+      "options": [
+        {
+          "subject_code": "UCS531P",
+          "subject_name": "Cloud Computing",
+          "type": "Practical",
+          "place": "L208",
+          "teacher": "ANS"
+        },
+        {
+          "subject_code": "UCS532P",
+          "subject_name": "Computer Vision",
+          "type": "Practical",
+          "place": "L002",
+          "teacher": "ST"
+        },
+        {
+          "subject_code": "UMC513P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "L408",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS534P",
+          "subject_name": "Computer & Network Security",
+          "type": "Practical",
+          "place": "L106",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS537P",
+          "subject_name": "Source Code Management",
+          "type": "Practical",
+          "place": "L206",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS542P",
+          "subject_name": "Ui & Ux Specialist",
+          "type": "Practical",
+          "place": "L011",
+          "teacher": "SHI-RA"
+        },
+        {
+          "subject_code": "UCS668P",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Practical",
+          "place": "L102",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UCS550P",
+          "subject_name": "Network Defence",
+          "type": "Practical",
+          "place": "LT102",
+          "teacher": "ROS"
+        },
+        {
+          "subject_code": "UCS539L",
+          "subject_name": "Finance Accounting and Valuation",
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539P",
+      "type": "Practical",
+      "room": "L208",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "18:00",
+      "end_time": "18:50",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539P",
+      "type": "Practical",
+      "room": "L208",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Conversational Ai: Accelerated Data Science",
+      "code": "UCS551P",
+      "type": "Practical",
+      "room": "LP108",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Conversational Ai: Accelerated Data Science",
+      "code": "UCS551P",
+      "type": "Practical",
+      "room": "LP108",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UAI503L",
+      "code": "UAI503L",
+      "type": "Lecture",
+      "room": "LT402",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UAI501L",
+      "code": "UAI501L",
+      "type": "Lecture",
+      "room": "LT402",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCI502L",
+      "code": "UCI502L",
+      "type": "Lecture",
+      "room": "LT402",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UAI504L",
+      "code": "UAI504L",
+      "type": "Lecture",
+      "room": "LT402",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UAI501P",
+      "code": "UAI501P",
+      "type": "Practical",
+      "room": "CG-2(L430)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UAI501P",
+      "code": "UAI501P",
+      "type": "Practical",
+      "room": "CG-2(L430)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Graph Theory and Applications",
+      "code": "UMA069L",
+      "type": "Lecture",
+      "room": "LT101/LT102/B303/F201",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Introduction to Corporate Finance",
+      "code": "UHU018L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Software Engineering",
+      "code": "UCS503L",
+      "type": "Lecture",
+      "room": "LP101",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UAI504L",
+      "code": "UAI504L",
+      "type": "Lecture",
+      "room": "LP101",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UAI502P",
+      "code": "UAI502P",
+      "type": "Practical",
+      "room": "ML(L009)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UAI502P",
+      "code": "UAI502P",
+      "type": "Practical",
+      "room": "ML(L009)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "Finance Accounting and Valuation",
+      "code": "UCS539L",
+      "type": "Lecture",
+      "room": "LP101",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Graph Theory and Applications",
+      "code": "UMA069L",
+      "type": "Lecture",
+      "room": "LT101/LT102/B303/F201",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Introduction to Corporate Finance",
+      "code": "UHU018L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UAI504P",
+      "code": "UAI504P",
+      "type": "Practical",
+      "room": "NS2(L103)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UAI504P",
+      "code": "UAI504P",
+      "type": "Practical",
+      "room": "NS2(L103)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Cloud Computing",
+      "code": "UCS531L",
+      "type": "Lecture",
+      "room": "LT303",
+      "options": [
+        {
+          "subject_code": "UCS531L",
+          "subject_name": "Cloud Computing",
+          "type": "Lecture",
+          "place": "LT303",
+          "teacher": "ANS"
+        },
+        {
+          "subject_code": "UCS532L",
+          "subject_name": "Computer Vision",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "ST"
+        },
+        {
+          "subject_code": "UCS534L",
+          "subject_name": "Computer & Network Security",
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "MAN"
+        },
+        {
+          "subject_code": "UCS537L",
+          "subject_name": "Source Code Management",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS542L",
+          "subject_name": "Ui & Ux Specialist",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "MKB"
+        },
+        {
+          "subject_code": "UCS551L",
+          "subject_name": "Conversational Ai: Accelerated Data Science",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "JS"
+        },
+        {
+          "subject_code": "UCS668L",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "JHB"
+        },
+        {
+          "subject_code": "UCS550L",
+          "subject_name": "Network Defence",
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SAL"
+        },
+        {
+          "subject_code": "UMC513L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "T106",
+          "teacher": "YK"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Software Engineering",
+      "code": "UCS503L",
+      "type": "Lecture",
+      "room": "T106",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UAI501L",
+      "code": "UAI501L",
+      "type": "Lecture",
+      "room": "T106",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UAI502L",
+      "code": "UAI502L",
+      "type": "Lecture",
+      "room": "T106",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UAI503L",
+      "code": "UAI503L",
+      "type": "Lecture",
+      "room": "T106",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Software Engineering",
+      "code": "UCS503P",
+      "type": "Practical",
+      "room": "SE2(L105)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Software Engineering",
+      "code": "UCS503P",
+      "type": "Practical",
+      "room": "SE2(L105)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Software Engineering",
+      "code": "UCS503L",
+      "type": "Lecture",
+      "room": "T106",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UAI503L",
+      "code": "UAI503L",
+      "type": "Lecture",
+      "room": "T106",
+      "options": []
+    }
+  ]
+}

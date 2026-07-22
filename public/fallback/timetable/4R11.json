@@ -1,153 +1,383 @@
 {
   "batch": "4R11",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
   "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Advanced Social, Text and Media Analytics",
+      "code": "UCT732P",
+      "type": "Practical",
+      "room": "GA(L002)",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Advanced Social, Text and Media Analytics",
+      "code": "UCT732P",
+      "type": "Practical",
+      "room": "GA(L002)",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "It Project Management",
+      "code": "UCT703L",
+      "type": "Lecture",
+      "room": "F201",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Human Resource Management",
+      "code": "UHU048L",
+      "type": "Lecture",
+      "room": "F201",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Human Resource Management",
+      "code": "UHU048P",
+      "type": "Practical",
+      "room": "E313",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Human Resource Management",
+      "code": "UHU048P",
+      "type": "Practical",
+      "room": "E313",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Usability Design of Software Applications",
+      "code": "UCT701P",
+      "type": "Practical",
+      "room": "SD(L501)",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Usability Design of Software Applications",
+      "code": "UCT701P",
+      "type": "Practical",
+      "room": "SD(L501)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Financial Management",
+      "code": "UHU047L",
+      "type": "Lecture",
+      "room": "E210",
+      "options": []
+    },
     {
       "day": "Tuesday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UCT801L",
-      "code": "UCT801L",
+      "subject": "Service Science & Service Operational Management",
+      "code": "UHU049L",
       "type": "Lecture",
-      "room": null,
-      "options": [
-        {
-          "subject_code": "UCT801L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        },
-        {
-          "subject_code": "UCS806L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        }
-      ]
+      "room": "E210",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "It Project Management",
+      "code": "UCT703L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Usability Design of Software Applications",
+      "code": "UCT701L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "It Project Management",
+      "code": "UCT703P",
+      "type": "Practical",
+      "room": "GA(L002)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "It Project Management",
+      "code": "UCT703P",
+      "type": "Practical",
+      "room": "GA(L002)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Service Science & Service Operational Management",
+      "code": "UHU049L",
+      "type": "Lecture",
+      "room": "F207",
+      "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UCT801L",
-      "code": "UCT801L",
+      "subject": "It Workshop Skylab/Matlab",
+      "code": "UCT702L",
       "type": "Lecture",
-      "room": null,
-      "options": [
-        {
-          "subject_code": "UCT801L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        },
-        {
-          "subject_code": "UCS806L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        }
-      ]
+      "room": "F207",
+      "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "UCT801P",
-      "code": "UCT801P",
+      "subject": "It Workshop Skylab/Matlab",
+      "code": "UCT702P",
       "type": "Practical",
-      "room": null,
+      "room": "ED2(L209)",
       "options": []
     },
     {
       "day": "Wednesday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "UCT802P",
-      "code": "UCT802P",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "It Workshop Skylab/Matlab",
+      "code": "UCT702P",
       "type": "Practical",
-      "room": null,
+      "room": "ED2(L209)",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "UCT802L",
-      "code": "UCT802L",
+      "subject": "Cryptology",
+      "code": "UCT723L",
       "type": "Lecture",
-      "room": null,
-      "options": [
-        {
-          "subject_code": "UCT802L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        },
-        {
-          "subject_code": "UCS813L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        }
-      ]
+      "room": "E106/PGAS-2(L410)",
+      "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "16:20",
       "end_time": "17:10",
-      "subject": "UCT802L",
-      "code": "UCT802L",
+      "subject": "Cryptology",
+      "code": "UCT723L",
       "type": "Lecture",
-      "room": null,
-      "options": [
-        {
-          "subject_code": "UCT802L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        },
-        {
-          "subject_code": "UCS813L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        }
-      ]
+      "room": "E106/PGAS-2(L410)",
+      "options": []
     },
     {
       "day": "Thursday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UCT801L",
-      "code": "UCT801L",
+      "subject": "Advanced Social, Text and Media Analytics",
+      "code": "UCT732L",
       "type": "Lecture",
-      "room": null,
+      "room": "E107",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "It Project Management",
+      "code": "UCT703L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Human Resource Management",
+      "code": "UHU048L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Financial Management",
+      "code": "UHU047T",
+      "type": "Tutorial",
+      "room": "E110",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Cryptology",
+      "code": "UCT723T",
+      "type": "Tutorial",
+      "room": "PGAS-2(L410)",
       "options": [
         {
-          "subject_code": "UCT801L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
+          "subject_code": "UCT723T",
+          "subject_name": "Cryptology",
+          "type": "Tutorial",
+          "place": "PGAS-2(L410)",
+          "teacher": "NS"
         },
         {
-          "subject_code": "UCS806L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
+          "subject_code": "UCT721T",
+          "subject_name": "Cognitive Science & Analytics",
+          "type": "Tutorial",
+          "place": "E103",
+          "teacher": "SEW"
         }
       ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Cryptology",
+      "code": "UCT723P",
+      "type": "Practical",
+      "room": "IS-2(L409)",
+      "options": [
+        {
+          "subject_code": "UCT723P",
+          "subject_name": "Cryptology",
+          "type": "Practical",
+          "place": "IS-2(L409)",
+          "teacher": "NS"
+        },
+        {
+          "subject_code": "UCT721P",
+          "subject_name": "Cognitive Science & Analytics",
+          "type": "Practical",
+          "place": "GA(L002)",
+          "teacher": "SEW"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Cryptology",
+      "code": "UCT723P",
+      "type": "Practical",
+      "room": "IS-2(L409)",
+      "options": [
+        {
+          "subject_code": "UCT723P",
+          "subject_name": "Cryptology",
+          "type": "Practical",
+          "place": "IS-2(L409)",
+          "teacher": "NS"
+        },
+        {
+          "subject_code": "UCT721P",
+          "subject_name": "Cognitive Science & Analytics",
+          "type": "Practical",
+          "place": "GA(L002)",
+          "teacher": "SEW"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Service Science & Service Operational Management",
+      "code": "UHU049L",
+      "type": "Lecture",
+      "room": "E108",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Financial Management",
+      "code": "UHU047L",
+      "type": "Lecture",
+      "room": "E108",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Advanced Social, Text and Media Analytics",
+      "code": "UCT732L",
+      "type": "Lecture",
+      "room": "E108",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Usability Design of Software Applications",
+      "code": "UCT701L",
+      "type": "Lecture",
+      "room": "E106",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Service Science & Service Operational Management",
+      "code": "UHU049P",
+      "type": "Practical",
+      "room": "E108",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Service Science & Service Operational Management",
+      "code": "UHU049P",
+      "type": "Practical",
+      "room": "E108",
+      "options": []
     }
   ]
 }

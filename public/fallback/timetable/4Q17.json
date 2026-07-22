@@ -1,152 +1,455 @@
 {
   "batch": "4Q17",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
   "classes": [
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Compiler Construction",
+      "code": "UCS802L",
+      "type": "Lecture",
+      "room": "T101",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Humanities for Engineers",
+      "code": "UHU005L",
+      "type": "Lecture",
+      "room": "T101",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Simulation and Modelling",
+      "code": "UCS751P",
+      "type": "Practical",
+      "room": "L302",
+      "options": [
+        {
+          "subject_code": "UCS751P",
+          "subject_name": "Simulation and Modelling",
+          "type": "Practical",
+          "place": "L302",
+          "teacher": "PSR"
+        },
+        {
+          "subject_code": "UCS752P",
+          "subject_name": "Augmented and Virtual Reality",
+          "type": "Practical",
+          "place": "L002",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS754P",
+          "subject_name": "Blockchain Technology and Applications",
+          "type": "Practical",
+          "place": "L408",
+          "teacher": "NRJ"
+        },
+        {
+          "subject_code": "UCS758P",
+          "subject_name": "System Provisioning and Configuration Management",
+          "type": "Practical",
+          "place": "L106",
+          "teacher": "ANJ"
+        },
+        {
+          "subject_code": "UCS750P",
+          "subject_name": "Computer Hacking and Forensic Investigation",
+          "type": "Practical",
+          "place": "L102",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS762P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "L103",
+          "teacher": "RAH"
+        },
+        {
+          "subject_code": "UCS760P",
+          "subject_name": "Edge Ai and Robotics: Reinforcement Learning",
+          "type": "Practical",
+          "place": "L312",
+          "teacher": "ABS-CRA"
+        },
+        {
+          "subject_code": "UCS748P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "L402",
+          "teacher": "RKT"
+        },
+        {
+          "subject_code": "UCS745P",
+          "subject_name": "Cloud & Devops",
+          "type": "Practical",
+          "place": "L206",
+          "teacher": "SMG"
+        },
+        {
+          "subject_code": "UCS772P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "L307",
+          "teacher": "SEW"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Simulation and Modelling",
+      "code": "UCS751P",
+      "type": "Practical",
+      "room": "L302",
+      "options": [
+        {
+          "subject_code": "UCS751P",
+          "subject_name": "Simulation and Modelling",
+          "type": "Practical",
+          "place": "L302",
+          "teacher": "PSR"
+        },
+        {
+          "subject_code": "UCS752P",
+          "subject_name": "Augmented and Virtual Reality",
+          "type": "Practical",
+          "place": "L002",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS754P",
+          "subject_name": "Blockchain Technology and Applications",
+          "type": "Practical",
+          "place": "L408",
+          "teacher": "NRJ"
+        },
+        {
+          "subject_code": "UCS758P",
+          "subject_name": "System Provisioning and Configuration Management",
+          "type": "Practical",
+          "place": "L106",
+          "teacher": "ANJ"
+        },
+        {
+          "subject_code": "UCS750P",
+          "subject_name": "Computer Hacking and Forensic Investigation",
+          "type": "Practical",
+          "place": "L102",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS762P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "L103",
+          "teacher": "RAH"
+        },
+        {
+          "subject_code": "UCS760P",
+          "subject_name": "Edge Ai and Robotics: Reinforcement Learning",
+          "type": "Practical",
+          "place": "L312",
+          "teacher": "ABS-CRA"
+        },
+        {
+          "subject_code": "UCS748P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "L402",
+          "teacher": "RKT"
+        },
+        {
+          "subject_code": "UCS745P",
+          "subject_name": "Cloud & Devops",
+          "type": "Practical",
+          "place": "L206",
+          "teacher": "SMG"
+        },
+        {
+          "subject_code": "UCS772P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "L307",
+          "teacher": "SEW"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Humanities for Engineers",
+      "code": "UHU005L",
+      "type": "Lecture",
+      "room": "T101",
+      "options": []
+    },
     {
       "day": "Tuesday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UCT801L",
-      "code": "UCT801L",
+      "subject": "Compiler Construction",
+      "code": "UCS802L",
       "type": "Lecture",
-      "room": null,
-      "options": [
-        {
-          "subject_code": "UCT801L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        },
-        {
-          "subject_code": "UCS806L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        }
-      ]
+      "room": "T101",
+      "options": []
     },
     {
-      "day": "Wednesday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "UCT801L",
-      "code": "UCT801L",
-      "type": "Lecture",
-      "room": null,
-      "options": [
-        {
-          "subject_code": "UCT801L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        },
-        {
-          "subject_code": "UCS806L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        }
-      ]
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": "UCT802L",
-      "code": "UCT802L",
-      "type": "Lecture",
-      "room": null,
-      "options": [
-        {
-          "subject_code": "UCT802L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        },
-        {
-          "subject_code": "UCS813L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        }
-      ]
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "UCT802L",
-      "code": "UCT802L",
-      "type": "Lecture",
-      "room": null,
-      "options": [
-        {
-          "subject_code": "UCT802L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        },
-        {
-          "subject_code": "UCS813L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        }
-      ]
-    },
-    {
-      "day": "Thursday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "UCT801L",
-      "code": "UCT801L",
-      "type": "Lecture",
-      "room": null,
-      "options": [
-        {
-          "subject_code": "UCT801L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        },
-        {
-          "subject_code": "UCS806L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        }
-      ]
-    },
-    {
-      "day": "Thursday",
+      "day": "Tuesday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "UCS806P",
-      "code": "UCS806P",
+      "subject": "Simulation and Modelling",
+      "code": "UCS751L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": [
+        {
+          "subject_code": "UCS751L",
+          "subject_name": "Simulation and Modelling",
+          "type": "Lecture",
+          "place": "LP106",
+          "teacher": "PSR"
+        },
+        {
+          "subject_code": "UCS752L",
+          "subject_name": "Augmented and Virtual Reality",
+          "type": "Lecture",
+          "place": "E304",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS754L",
+          "subject_name": "Blockchain Technology and Applications",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "NRJ"
+        },
+        {
+          "subject_code": "UCS758L",
+          "subject_name": "System Provisioning and Configuration Management",
+          "type": "Lecture",
+          "place": "T101",
+          "teacher": "ANJ"
+        },
+        {
+          "subject_code": "UCS750L",
+          "subject_name": "Computer Hacking and Forensic Investigation",
+          "type": "Lecture",
+          "place": "E305",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS762L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E308",
+          "teacher": "RAH"
+        },
+        {
+          "subject_code": "UCS760L",
+          "subject_name": "Edge Ai and Robotics: Reinforcement Learning",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "HMK"
+        },
+        {
+          "subject_code": "UCS748L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E210",
+          "teacher": "JYT"
+        },
+        {
+          "subject_code": "UCS745L",
+          "subject_name": "Cloud & Devops",
+          "type": "Lecture",
+          "place": "F304",
+          "teacher": "VJY"
+        },
+        {
+          "subject_code": "UCS772L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E107",
+          "teacher": "SEW"
+        },
+        {
+          "subject_code": "UMC743L",
+          "subject_name": "Quantitative and Statistical Methods for Finance",
+          "type": "Lecture",
+          "place": "LE101",
+          "teacher": "KUC"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Simulation and Modelling",
+      "code": "UCS751L",
+      "type": "Lecture",
+      "room": "LP106",
+      "options": [
+        {
+          "subject_code": "UCS751L",
+          "subject_name": "Simulation and Modelling",
+          "type": "Lecture",
+          "place": "LP106",
+          "teacher": "PSR"
+        },
+        {
+          "subject_code": "UCS752L",
+          "subject_name": "Augmented and Virtual Reality",
+          "type": "Lecture",
+          "place": "E304",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS754L",
+          "subject_name": "Blockchain Technology and Applications",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "NRJ"
+        },
+        {
+          "subject_code": "UCS758L",
+          "subject_name": "System Provisioning and Configuration Management",
+          "type": "Lecture",
+          "place": "T101",
+          "teacher": "ANJ"
+        },
+        {
+          "subject_code": "UCS750L",
+          "subject_name": "Computer Hacking and Forensic Investigation",
+          "type": "Lecture",
+          "place": "E305",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS762L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E308",
+          "teacher": "RAH"
+        },
+        {
+          "subject_code": "UCS760L",
+          "subject_name": "Edge Ai and Robotics: Reinforcement Learning",
+          "type": "Lecture",
+          "place": "E101",
+          "teacher": "HMK"
+        },
+        {
+          "subject_code": "UCS748L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E210",
+          "teacher": "JYT"
+        },
+        {
+          "subject_code": "UCS745L",
+          "subject_name": "Cloud & Devops",
+          "type": "Lecture",
+          "place": "F304",
+          "teacher": "VJY"
+        },
+        {
+          "subject_code": "UCS772L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E107",
+          "teacher": "SEW"
+        },
+        {
+          "subject_code": "UMC743L",
+          "subject_name": "Quantitative and Statistical Methods for Finance",
+          "type": "Lecture",
+          "place": "LE101",
+          "teacher": "KUC"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "Quantitative and Statistical Methods for Finance",
+      "code": "UMC743P",
       "type": "Practical",
-      "room": null,
+      "room": "L011",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "18:00",
+      "end_time": "18:50",
+      "subject": "Quantitative and Statistical Methods for Finance",
+      "code": "UMC743P",
+      "type": "Practical",
+      "room": "L011",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Humanities for Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "F302",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Humanities for Engineers",
+      "code": "UHU005P",
+      "type": "Practical",
+      "room": "F302",
       "options": []
     },
     {
       "day": "Thursday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": "UCS813P",
-      "code": "UCS813P",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Compiler Construction",
+      "code": "UCS802L",
+      "type": "Lecture",
+      "room": "T101",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Compiler Construction",
+      "code": "UCS802P",
       "type": "Practical",
-      "room": null,
+      "room": "CG-1(L429)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Compiler Construction",
+      "code": "UCS802P",
+      "type": "Practical",
+      "room": "CG-1(L429)",
       "options": []
     }
   ]

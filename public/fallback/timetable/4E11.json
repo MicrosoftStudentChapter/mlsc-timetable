@@ -1,7 +1,402 @@
 {
   "batch": "4E11",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
-  "classes": []
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "UEI744L",
+      "code": "UEI744L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": [
+        {
+          "subject_code": "UEI744L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E107",
+          "teacher": "NJS"
+        },
+        {
+          "subject_code": "UEI743L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E307",
+          "teacher": "DBM"
+        },
+        {
+          "subject_code": "UEI831L",
+          "subject_name": "Bio-Sensor and Mems",
+          "type": "Lecture",
+          "place": null,
+          "teacher": null
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Advanced Process Control",
+      "code": "UEI801P",
+      "type": "Practical",
+      "room": "PDC(C220)",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Advanced Process Control",
+      "code": "UEI801P",
+      "type": "Practical",
+      "room": "PDC(C220)",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Advanced Process Control",
+      "code": "UEI801L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UEI735L",
+      "code": "UEI735L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": [
+        {
+          "subject_code": "UEI735L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E107",
+          "teacher": "ABP"
+        },
+        {
+          "subject_code": "UEI733L",
+          "subject_name": "Embedded System Design",
+          "type": "Lecture",
+          "place": "E108",
+          "teacher": "DND"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Advanced Process Control",
+      "code": "UEI801L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Software Engineering",
+      "code": "UEI712L",
+      "type": "Lecture",
+      "room": "E103",
+      "options": [
+        {
+          "subject_code": "UEI712L",
+          "subject_name": "Software Engineering",
+          "type": "Lecture",
+          "place": "E103",
+          "teacher": "ROS"
+        },
+        {
+          "subject_code": "UEI735L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E107",
+          "teacher": "ABP"
+        },
+        {
+          "subject_code": "UEI733L",
+          "subject_name": "Embedded System Design",
+          "type": "Lecture",
+          "place": "E108",
+          "teacher": "DND"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Introduction to Cyber Security",
+      "code": "UCS002L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": [
+        {
+          "subject_code": "UCS002L",
+          "subject_name": "Introduction to Cyber Security",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "SUS"
+        },
+        {
+          "subject_code": "UMA069L",
+          "subject_name": "Graph Theory and Applications",
+          "type": "Lecture",
+          "place": "LP106",
+          "teacher": "RKS"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "UTD004L",
+      "code": "UTD004L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Software Engineering",
+      "code": "UEI712L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Advanced Process Control",
+      "code": "UEI801L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UEI735L",
+      "code": "UEI735L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": [
+        {
+          "subject_code": "UEI735L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E107",
+          "teacher": "ABP"
+        },
+        {
+          "subject_code": "UEI733L",
+          "subject_name": "Embedded System Design",
+          "type": "Lecture",
+          "place": "E108",
+          "teacher": "DND"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Introduction to Cyber Security",
+      "code": "UCS002L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": [
+        {
+          "subject_code": "UCS002L",
+          "subject_name": "Introduction to Cyber Security",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "SUS"
+        },
+        {
+          "subject_code": "UMA069L",
+          "subject_name": "Graph Theory and Applications",
+          "type": "Lecture",
+          "place": "LP106",
+          "teacher": "RKS"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UTD004L",
+      "code": "UTD004L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UEI744L",
+      "code": "UEI744L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": [
+        {
+          "subject_code": "UEI744L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E107",
+          "teacher": "NJS"
+        },
+        {
+          "subject_code": "UEI831L",
+          "subject_name": "Bio-Sensor and Mems",
+          "type": "Lecture",
+          "place": "E307",
+          "teacher": "DBM"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UEI744L",
+      "code": "UEI744L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": [
+        {
+          "subject_code": "UEI744L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E107",
+          "teacher": "NJS"
+        },
+        {
+          "subject_code": "UEI831T",
+          "subject_name": "Bio-Sensor and Mems",
+          "type": "Tutorial",
+          "place": "E307",
+          "teacher": "DBM"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Software Engineering",
+      "code": "UEI712P",
+      "type": "Practical",
+      "room": "IOT(D206B)",
+      "options": [
+        {
+          "subject_code": "UEI712P",
+          "subject_name": "Software Engineering",
+          "type": "Practical",
+          "place": "IOT(D206B)",
+          "teacher": "ROS"
+        },
+        {
+          "subject_code": "UEI733P",
+          "subject_name": "Embedded System Design",
+          "type": "Practical",
+          "place": "TFS(C225)",
+          "teacher": "DND"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Software Engineering",
+      "code": "UEI712P",
+      "type": "Practical",
+      "room": "IOT(D206B)",
+      "options": [
+        {
+          "subject_code": "UEI712P",
+          "subject_name": "Software Engineering",
+          "type": "Practical",
+          "place": "IOT(D206B)",
+          "teacher": "ROS"
+        },
+        {
+          "subject_code": "UEI733P",
+          "subject_name": "Embedded System Design",
+          "type": "Practical",
+          "place": "TFS(C225)",
+          "teacher": "DND"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Software Engineering",
+      "code": "UEI712L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Advanced Process Control",
+      "code": "UEI801T",
+      "type": "Tutorial",
+      "room": "E108",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UEI735P",
+      "code": "UEI735P",
+      "type": "Practical",
+      "room": "PE(C113)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UEI735P",
+      "code": "UEI735P",
+      "type": "Practical",
+      "room": "PE(C113)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Bio-Sensor and Mems",
+      "code": "UEI831T",
+      "type": "Tutorial",
+      "room": "?/E307",
+      "options": []
+    }
+  ]
 }

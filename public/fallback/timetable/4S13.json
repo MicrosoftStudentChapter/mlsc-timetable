@@ -1,7 +1,348 @@
 {
   "batch": "4S13",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
-  "classes": []
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Theory of Computation",
+      "code": "ULC703L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Electric Vehicle & Real Time Systems",
+      "code": "ULC603L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Smart Electric Grid and Energy Management",
+      "code": "ULC701L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Smart Electric Grid and Energy Management",
+      "code": "ULC701L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Electric Vehicle & Real Time Systems",
+      "code": "ULC603L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Theory of Computation",
+      "code": "ULC703L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Game Design and Development",
+      "code": "UCS646L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": [
+        {
+          "subject_code": "UCS646L",
+          "subject_name": "Game Design and Development",
+          "type": "Lecture",
+          "place": "B208",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS635L",
+          "subject_name": "Gpu Computing",
+          "type": "Lecture",
+          "place": "B301",
+          "teacher": "JPK"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Game Design and Development",
+      "code": "UCS646L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": [
+        {
+          "subject_code": "UCS646L",
+          "subject_name": "Game Design and Development",
+          "type": "Lecture",
+          "place": "B208",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS635L",
+          "subject_name": "Gpu Computing",
+          "type": "Lecture",
+          "place": "B301",
+          "teacher": "JPK"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Game Design and Development",
+      "code": "UCS646P",
+      "type": "Practical",
+      "room": "BMC(C323)",
+      "options": [
+        {
+          "subject_code": "UCS646P",
+          "subject_name": "Game Design and Development",
+          "type": "Practical",
+          "place": "BMC(C323)",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS635P",
+          "subject_name": "Gpu Computing",
+          "type": "Practical",
+          "place": "ISD(C223)",
+          "teacher": "JPK"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Game Design and Development",
+      "code": "UCS646P",
+      "type": "Practical",
+      "room": "BMC(C323)",
+      "options": [
+        {
+          "subject_code": "UCS646P",
+          "subject_name": "Game Design and Development",
+          "type": "Practical",
+          "place": "BMC(C323)",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS635P",
+          "subject_name": "Gpu Computing",
+          "type": "Practical",
+          "place": "ISD(C223)",
+          "teacher": "JPK"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Introduction to Cyber Security",
+      "code": "UCS002L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": [
+        {
+          "subject_code": "UCS002L",
+          "subject_name": "Introduction to Cyber Security",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "SUS"
+        },
+        {
+          "subject_code": "UMA069L",
+          "subject_name": "Graph Theory and Applications",
+          "type": "Lecture",
+          "place": "LP106",
+          "teacher": "RKS"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "UTD004L",
+      "code": "UTD004L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Electric Vehicle & Real Time Systems",
+      "code": "ULC603L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Theory of Computation",
+      "code": "ULC703L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Introduction to Cyber Security",
+      "code": "UCS002L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": [
+        {
+          "subject_code": "UCS002L",
+          "subject_name": "Introduction to Cyber Security",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "SUS"
+        },
+        {
+          "subject_code": "UMA069L",
+          "subject_name": "Graph Theory and Applications",
+          "type": "Lecture",
+          "place": "LP106",
+          "teacher": "RKS"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UTD004L",
+      "code": "UTD004L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Electric Vehicle & Real Time Systems",
+      "code": "ULC603P",
+      "type": "Practical",
+      "room": "PE(C113)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Electric Vehicle & Real Time Systems",
+      "code": "ULC603P",
+      "type": "Practical",
+      "room": "PE(C113)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Theory of Computation",
+      "code": "ULC703T",
+      "type": "Tutorial",
+      "room": "E313",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Game Design and Development",
+      "code": "UCS646P",
+      "type": "Practical",
+      "room": "BMC(C323)",
+      "options": [
+        {
+          "subject_code": "UCS646P",
+          "subject_name": "Game Design and Development",
+          "type": "Practical",
+          "place": "BMC(C323)",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS635P",
+          "subject_name": "Gpu Computing",
+          "type": "Practical",
+          "place": "ISD(C223)",
+          "teacher": "JPK"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Game Design and Development",
+      "code": "UCS646P",
+      "type": "Practical",
+      "room": "BMC(C323)",
+      "options": [
+        {
+          "subject_code": "UCS646P",
+          "subject_name": "Game Design and Development",
+          "type": "Practical",
+          "place": "BMC(C323)",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS635P",
+          "subject_name": "Gpu Computing",
+          "type": "Practical",
+          "place": "ISD(C223)",
+          "teacher": "JPK"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Smart Electric Grid and Energy Management",
+      "code": "ULC701L",
+      "type": "Lecture",
+      "room": "B208",
+      "options": []
+    }
+  ]
 }

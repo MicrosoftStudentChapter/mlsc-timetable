@@ -1,367 +1,327 @@
 {
   "batch": "2U11",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
   "classes": [
     {
       "day": "Monday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "UCC401L",
-      "code": "UCC401L",
-      "type": "Lecture",
-      "room": "F202",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "Design Of Concrete Structures",
-      "code": "UCE406L",
-      "type": "Lecture",
-      "room": "F202",
-      "options": [
-        {
-          "subject_code": "UCE406L",
-          "subject_name": "Design Of Concrete Structures",
-          "type": "Lecture",
-          "place": "F202",
-          "teacher": "HSC"
-        },
-        {
-          "subject_code": "UCC403L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        }
-      ]
-    },
-    {
-      "day": "Monday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "UCS421L",
-      "code": "UCS421L",
-      "type": "Lecture",
-      "room": "F202",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "08:50",
-      "end_time": "09:40",
-      "subject": "UCC401L",
-      "code": "UCC401L",
-      "type": "Lecture",
-      "room": "F202",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Design Of Concrete Structures",
-      "code": "UCE406L",
-      "type": "Lecture",
-      "room": "F202",
-      "options": [
-        {
-          "subject_code": "UCE406L",
-          "subject_name": "Design Of Concrete Structures",
-          "type": "Lecture",
-          "place": "F202",
-          "teacher": "HSC"
-        },
-        {
-          "subject_code": "UCC403L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": null,
-          "teacher": null
-        }
-      ]
+      "subject": "Architecture Drawing & Building Construction",
+      "code": "UCE306P",
+      "type": "Practical",
+      "room": "C218",
+      "options": []
     },
     {
-      "day": "Tuesday",
+      "day": "Monday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UCC404L",
-      "code": "UCC404L",
-      "type": "Lecture",
-      "room": "F202",
+      "subject": "Architecture Drawing & Building Construction",
+      "code": "UCE306P",
+      "type": "Practical",
+      "room": "C218",
       "options": []
     },
     {
-      "day": "Tuesday",
+      "day": "Monday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "UCC402L",
-      "code": "UCC402L",
+      "subject": "Civil Engineering Materials",
+      "code": "UCC302L",
       "type": "Lecture",
-      "room": "F202",
+      "room": "E303",
       "options": []
     },
     {
-      "day": "Tuesday",
+      "day": "Monday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "UCC401T",
-      "code": "UCC401T",
+      "subject": "UCC306L",
+      "code": "UCC306L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCC306T",
+      "code": "UCC306T",
       "type": "Tutorial",
-      "room": "F202",
+      "room": "E303",
       "options": []
     },
     {
-      "day": "Tuesday",
+      "day": "Monday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "UCC404P",
-      "code": "UCC404P",
+      "subject": "Aptitude Skills Building",
+      "code": "UTD003P",
       "type": "Practical",
-      "room": "HPC(L312)",
+      "room": "LT101",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Aptitude Skills Building",
+      "code": "UTD003P",
+      "type": "Practical",
+      "room": "LT101",
       "options": []
     },
     {
       "day": "Tuesday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "UCC404P",
-      "code": "UCC404P",
-      "type": "Practical",
-      "room": "HPC(L312)",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "08:50",
-      "end_time": "09:40",
-      "subject": "UCC403P",
-      "code": "UCC403P",
-      "type": "Practical",
-      "room": "RSF-4",
-      "options": [
-        {
-          "subject_code": "UCC403P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "RSF-4",
-          "teacher": "STR"
-        },
-        {
-          "subject_code": "UCE406P",
-          "subject_name": "Design Of Concrete Structures",
-          "type": "Practical",
-          "place": "APC-6",
-          "teacher": null
-        }
-      ]
-    },
-    {
-      "day": "Wednesday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "UCC403P",
-      "code": "UCC403P",
-      "type": "Practical",
-      "room": "RSF-4",
-      "options": [
-        {
-          "subject_code": "UCC403P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "RSF-4",
-          "teacher": "STR"
-        },
-        {
-          "subject_code": "UCE406P",
-          "subject_name": "Design Of Concrete Structures",
-          "type": "Practical",
-          "place": "APC-6",
-          "teacher": null
-        }
-      ]
+      "subject": "Architecture Drawing & Building Construction",
+      "code": "UCE306L",
+      "type": "Lecture",
+      "room": "F104",
+      "options": []
     },
     {
-      "day": "Wednesday",
+      "day": "Tuesday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UCC404L",
-      "code": "UCC404L",
+      "subject": "UCC306L",
+      "code": "UCC306L",
       "type": "Lecture",
-      "room": "E301",
+      "room": "E303",
       "options": []
     },
     {
-      "day": "Wednesday",
+      "day": "Tuesday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "UCS421L",
-      "code": "UCS421L",
+      "subject": "Optimization Techniques in Civil Engineering",
+      "code": "UMA303L",
       "type": "Lecture",
-      "room": "F202",
+      "room": "E303",
       "options": []
     },
     {
-      "day": "Wednesday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "Numerical And Statistical Computations",
-      "code": "UMA012L",
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UCC305L",
+      "code": "UCC305L",
       "type": "Lecture",
-      "room": "F202",
+      "room": "LP109",
       "options": []
     },
     {
-      "day": "Wednesday",
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Solid Mechanics",
+      "code": "UCE312P",
+      "type": "Practical",
+      "room": "LAB (W123)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "UCC401P",
-      "code": "UCC401P",
+      "subject": "Solid Mechanics",
+      "code": "UCE312P",
       "type": "Practical",
-      "room": "TRN/APC-6",
+      "room": "LAB (W123)",
       "options": []
     },
     {
       "day": "Wednesday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "UCC401P",
-      "code": "UCC401P",
-      "type": "Practical",
-      "room": "TRN/APC-6",
-      "options": []
-    },
-    {
-      "day": "Thursday",
       "start_time": "08:00",
       "end_time": "08:50",
-      "subject": "Numerical And Statistical Computations",
-      "code": "UMA012L",
-      "type": "Lecture",
-      "room": "F202",
+      "subject": "Optimization Techniques in Civil Engineering",
+      "code": "UMA303P",
+      "type": "Practical",
+      "room": "NA-1(G203)",
       "options": []
     },
     {
-      "day": "Thursday",
+      "day": "Wednesday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "UCC403T",
-      "code": "UCC403T",
+      "subject": "Optimization Techniques in Civil Engineering",
+      "code": "UMA303P",
+      "type": "Practical",
+      "room": "NA-1(G203)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Architecture Drawing & Building Construction",
+      "code": "UCE306L",
+      "type": "Lecture",
+      "room": "F104",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Civil Engineering Materials",
+      "code": "UCC302L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Optimization Techniques in Civil Engineering",
+      "code": "UMA303L",
+      "type": "Lecture",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UCC305L",
+      "code": "UCC305L",
+      "type": "Lecture",
+      "room": "LP109",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCC305T",
+      "code": "UCC305T",
       "type": "Tutorial",
-      "room": "E305",
+      "room": "LP109",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Civil Engineering Materials",
+      "code": "UCC302P",
+      "type": "Practical",
+      "room": "D122",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Civil Engineering Materials",
+      "code": "UCC302P",
+      "type": "Practical",
+      "room": "D122",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "UCC401L",
-      "code": "UCC401L",
+      "subject": "Civil Engineering Materials",
+      "code": "UCC302L",
       "type": "Lecture",
-      "room": "F202",
+      "room": "E303",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UCC403L",
-      "code": "UCC403L",
+      "subject": "UCC306L",
+      "code": "UCC306L",
       "type": "Lecture",
-      "room": "F202",
+      "room": "E303",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "UCC404L",
-      "code": "UCC404L",
+      "subject": "Optimization Techniques in Civil Engineering",
+      "code": "UMA303L",
       "type": "Lecture",
-      "room": "E305",
+      "room": "E303",
       "options": []
     },
     {
       "day": "Thursday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "UCC402L",
-      "code": "UCC402L",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UCC305L",
+      "code": "UCC305L",
       "type": "Lecture",
-      "room": "E305",
+      "room": "LP109",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "UCC402P",
-      "code": "UCC402P",
+      "subject": "UCS321P",
+      "code": "UCS321P",
       "type": "Practical",
-      "room": "TPK/RF3",
+      "room": "F104",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "UCC402P",
-      "code": "UCC402P",
+      "subject": "UCS321P",
+      "code": "UCS321P",
       "type": "Practical",
-      "room": "TPK/RF3",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "08:50",
-      "end_time": "09:40",
-      "subject": "UCS421L",
-      "code": "UCS421L",
-      "type": "Lecture",
-      "room": "F202",
+      "room": "F104",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "UCC402L",
-      "code": "UCC402L",
+      "subject": "UCS321L",
+      "code": "UCS321L",
       "type": "Lecture",
-      "room": "F201",
+      "room": "F104",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Numerical And Statistical Computations",
-      "code": "UMA012L",
+      "subject": "UCS321L",
+      "code": "UCS321L",
       "type": "Lecture",
-      "room": "F202",
+      "room": "F104",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "Numerical And Statistical Computations",
-      "code": "UMA012P",
+      "subject": "Fluid Mechanics",
+      "code": "UCE310P",
       "type": "Practical",
-      "room": "G203-NA-1",
+      "room": "H108",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "Numerical And Statistical Computations",
-      "code": "UMA012P",
+      "subject": "Fluid Mechanics",
+      "code": "UCE310P",
       "type": "Practical",
-      "room": "G203-NA-1",
+      "room": "H108",
       "options": []
     }
   ]

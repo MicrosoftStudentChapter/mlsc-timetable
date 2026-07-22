@@ -1,444 +1,248 @@
 {
   "batch": "4G12",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
   "classes": [
     {
       "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Nano-Biotechnology",
+      "code": "UBT802L",
+      "type": "Lecture",
+      "room": "F302",
+      "options": []
+    },
+    {
+      "day": "Monday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Concepts In Biomedical Instrumentation",
-      "code": "UBT832L",
+      "subject": "UBT610L",
+      "code": "UBT610L",
       "type": "Lecture",
-      "room": "F206",
+      "room": "F302",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "UBT837L",
-      "code": "UBT837L",
+      "subject": "Concepts in Biomedical Instrumentation",
+      "code": "UBT832L",
       "type": "Lecture",
-      "room": "F206",
+      "room": "F302",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "Nano-Biotechnology",
-      "code": "UBT802L",
-      "type": "Lecture",
-      "room": "F206",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": "Concepts In Biomedical Instrumentation",
-      "code": "UBT832P",
-      "type": "Practical",
-      "room": "IEE Lab",
-      "options": []
-    },
-    {
-      "day": "Monday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "Concepts In Biomedical Instrumentation",
-      "code": "UBT832P",
-      "type": "Practical",
-      "room": "IEE Lab",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "08:50",
-      "end_time": "09:40",
-      "subject": "Nano-Biotechnology",
-      "code": "UBT802L",
-      "type": "Lecture",
-      "room": "F206",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "09:40",
-      "end_time": "10:30",
-      "subject": "UBT843L",
-      "code": "UBT843L",
-      "type": "Lecture",
-      "room": "F206",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "Concepts In Biomedical Instrumentation",
-      "code": "UBT832L",
-      "type": "Lecture",
-      "room": "F206",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "Employability Development Skill",
-      "code": "UTD002T",
-      "type": "Tutorial",
-      "room": "F312",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "Employability Development Skill",
-      "code": "UTD002T",
-      "type": "Tutorial",
-      "room": "F312",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Nano-Biotechnology",
-      "code": "UBT802T",
-      "type": "Tutorial",
-      "room": "F206",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": "UBT843P",
-      "code": "UBT843P",
-      "type": "Practical",
-      "room": "GC Lab",
-      "options": [
-        {
-          "subject_code": "UBT843P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "GC Lab",
-          "teacher": "AKU"
-        },
-        {
-          "subject_code": "UBT822P",
-          "subject_name": "Environmental Biotechnology",
-          "type": "Practical",
-          "place": "Bioprocess Lab",
-          "teacher": "NL"
-        }
-      ]
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "UBT843P",
-      "code": "UBT843P",
-      "type": "Practical",
-      "room": "GC Lab",
-      "options": [
-        {
-          "subject_code": "UBT843P",
-          "subject_name": null,
-          "type": "Practical",
-          "place": "GC Lab",
-          "teacher": "AKU"
-        },
-        {
-          "subject_code": "UBT822P",
-          "subject_name": "Environmental Biotechnology",
-          "type": "Practical",
-          "place": "Bioprocess Lab",
-          "teacher": "NL"
-        }
-      ]
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "09:40",
-      "end_time": "10:30",
-      "subject": "UBT839L",
-      "code": "UBT839L",
-      "type": "Lecture",
-      "room": "F206",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "Concepts In Biomedical Instrumentation",
-      "code": "UBT832L",
-      "type": "Lecture",
-      "room": "F206",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "UBT843L",
-      "code": "UBT843L",
-      "type": "Lecture",
-      "room": "F206",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "Molecular Diagnostics",
-      "code": "UBT841P",
-      "type": "Practical",
-      "room": "Mol. Bio Lab",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Molecular Diagnostics",
-      "code": "UBT841P",
-      "type": "Practical",
-      "room": "Mol. Bio Lab",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "UBT510L",
-      "code": "UBT510L",
-      "type": "Lecture",
-      "room": "F206",
-      "options": [
-        {
-          "subject_code": "UBT510L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F206",
-          "teacher": "ND"
-        },
-        {
-          "subject_code": "UHU008L",
-          "subject_name": "Introduction To Corporate Finance",
-          "type": "Lecture",
-          "place": "F202",
-          "teacher": "ANS"
-        },
-        {
-          "subject_code": "UHU016L",
-          "subject_name": "Introductory Course In French",
-          "type": "Lecture",
-          "place": "F203",
-          "teacher": null
-        },
-        {
-          "subject_code": "UTD002L",
-          "subject_name": "Employability Development Skill",
-          "type": "Lecture",
-          "place": "F301",
-          "teacher": null
-        }
-      ]
-    },
-    {
-      "day": "Thursday",
-      "start_time": "11:20",
-      "end_time": "12:10",
       "subject": "UBT837L",
       "code": "UBT837L",
       "type": "Lecture",
-      "room": "F206",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "UBT839L",
-      "code": "UBT839L",
-      "type": "Lecture",
-      "room": "F206",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Molecular Diagnostics",
-      "code": "UBT841L",
-      "type": "Lecture",
-      "room": "F201",
-      "options": [
-        {
-          "subject_code": "UBT841L",
-          "subject_name": "Molecular Diagnostics",
-          "type": "Lecture",
-          "place": "F201",
-          "teacher": "PD"
-        },
-        {
-          "subject_code": "UBT822L",
-          "subject_name": "Environmental Biotechnology",
-          "type": "Lecture",
-          "place": "F206",
-          "teacher": "NL"
-        }
-      ]
-    },
-    {
-      "day": "Thursday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": "UBT843P",
-      "code": "UBT843P",
-      "type": "Practical",
-      "room": "GC Lab",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "UBT843P",
-      "code": "UBT843P",
-      "type": "Practical",
-      "room": "GC Lab",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "09:40",
-      "end_time": "10:30",
-      "subject": "Nano-Biotechnology",
-      "code": "UBT802L",
-      "type": "Lecture",
-      "room": "F206",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "10:30",
-      "end_time": "11:20",
-      "subject": "UBT837L",
-      "code": "UBT837L",
-      "type": "Lecture",
-      "room": "F206",
+      "room": "F302",
       "options": [
         {
           "subject_code": "UBT837L",
           "subject_name": null,
           "type": "Lecture",
-          "place": "F206",
+          "place": "F302",
           "teacher": "SDS"
         },
         {
           "subject_code": "UBT839L",
           "subject_name": null,
           "type": "Lecture",
-          "place": "F201",
-          "teacher": "SS"
+          "place": "F309",
+          "teacher": "MVR"
         }
       ]
     },
     {
-      "day": "Friday",
-      "start_time": "11:20",
-      "end_time": "12:10",
-      "subject": "UBT843L",
-      "code": "UBT843L",
-      "type": "Lecture",
-      "room": "F206",
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Concepts in Biomedical Instrumentation",
+      "code": "UBT832P",
+      "type": "Practical",
+      "room": "BMI(B213)",
       "options": []
     },
     {
-      "day": "Friday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "Molecular Diagnostics",
-      "code": "UBT841L",
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Concepts in Biomedical Instrumentation",
+      "code": "UBT832P",
+      "type": "Practical",
+      "room": "BMI(B213)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UBT844L",
+      "code": "UBT844L",
       "type": "Lecture",
-      "room": "F206",
+      "room": "F302",
       "options": [
         {
-          "subject_code": "UBT841L",
-          "subject_name": "Molecular Diagnostics",
+          "subject_code": "UBT844L",
+          "subject_name": null,
           "type": "Lecture",
-          "place": "F206",
-          "teacher": "PD"
+          "place": "F302",
+          "teacher": "DG"
         },
         {
-          "subject_code": "UBT822L",
-          "subject_name": "Environmental Biotechnology",
+          "subject_code": "UBT846L",
+          "subject_name": null,
           "type": "Lecture",
-          "place": "F201",
+          "place": "F208",
+          "teacher": "NL"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Nano-Biotechnology",
+      "code": "UBT802L",
+      "type": "Lecture",
+      "room": "F302",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Concepts in Biomedical Instrumentation",
+      "code": "UBT832L",
+      "type": "Lecture",
+      "room": "F302",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UBT610L",
+      "code": "UBT610L",
+      "type": "Lecture",
+      "room": "F302",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UBT837L",
+      "code": "UBT837L",
+      "type": "Lecture",
+      "room": "F302",
+      "options": [
+        {
+          "subject_code": "UBT837L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F302",
+          "teacher": "SDS"
+        },
+        {
+          "subject_code": "UBT839L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F208",
+          "teacher": "MVR"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UBT610L",
+      "code": "UBT610L",
+      "type": "Lecture",
+      "room": "F302",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Concepts in Biomedical Instrumentation",
+      "code": "UBT832L",
+      "type": "Lecture",
+      "room": "F302",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Nano-Biotechnology",
+      "code": "UBT802L",
+      "type": "Lecture",
+      "room": "F302",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UBT844L",
+      "code": "UBT844L",
+      "type": "Lecture",
+      "room": "F302",
+      "options": [
+        {
+          "subject_code": "UBT844L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F302",
+          "teacher": "DG"
+        },
+        {
+          "subject_code": "UBT846L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F208",
           "teacher": "NL"
         }
       ]
     },
     {
       "day": "Friday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "Environmental Biotechnology",
-      "code": "UBT822P",
-      "type": "Practical",
-      "room": "Mol. Bio Lab",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "Environmental Biotechnology",
-      "code": "UBT822P",
-      "type": "Practical",
-      "room": "Mol. Bio Lab",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "16:20",
-      "end_time": "17:10",
-      "subject": "UBT510L",
-      "code": "UBT510L",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UBT837L",
+      "code": "UBT837L",
       "type": "Lecture",
-      "room": "F206",
-      "options": [
-        {
-          "subject_code": "UBT510L",
-          "subject_name": null,
-          "type": "Lecture",
-          "place": "F206",
-          "teacher": "ND"
-        },
-        {
-          "subject_code": "UHU008L",
-          "subject_name": "Introduction To Corporate Finance",
-          "type": "Lecture",
-          "place": "F202",
-          "teacher": "ANS"
-        },
-        {
-          "subject_code": "UHU016L",
-          "subject_name": "Introductory Course In French",
-          "type": "Lecture",
-          "place": "F203",
-          "teacher": null
-        }
-      ]
+      "room": "F302/F309",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UBT844L",
+      "code": "UBT844L",
+      "type": "Lecture",
+      "room": "F302/F208",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Nano-Biotechnology",
+      "code": "UBT802T",
+      "type": "Tutorial",
+      "room": "F302",
+      "options": []
     }
   ]
 }

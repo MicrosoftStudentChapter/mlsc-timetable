@@ -1,0 +1,318 @@
+{
+  "batch": "2E13",
+  "semester": {
+    "label": "ODD 26-27"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Mathematics Signals",
+      "code": "UMA302L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Measurement Science and Techniques",
+      "code": "UES034L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Digital Electronics",
+      "code": "UEI301L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Analog Devices and Circuits",
+      "code": "UEI408L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UCS321P",
+      "code": "UCS321P",
+      "type": "Practical",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCS321P",
+      "code": "UCS321P",
+      "type": "Practical",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Analog Devices and Circuits",
+      "code": "UEI408P",
+      "type": "Practical",
+      "room": "ANALOG(B211)",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Analog Devices and Circuits",
+      "code": "UEI408P",
+      "type": "Practical",
+      "room": "ANALOG(B211)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Measurement Science and Techniques",
+      "code": "UES034T",
+      "type": "Tutorial",
+      "room": "E306",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Aptitude Skills Building",
+      "code": "UTD003L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Aptitude Skills Building",
+      "code": "UTD003L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UTA030L",
+      "code": "UTA030L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Digital Electronics",
+      "code": "UEI301L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Measurement Science and Techniques",
+      "code": "UES034L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Mathematics Signals",
+      "code": "UMA302L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Measurement Science and Techniques",
+      "code": "UES034L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Digital Electronics",
+      "code": "UEI301L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Mathematics Signals",
+      "code": "UMA302L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Analog Devices and Circuits",
+      "code": "UEI408L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UMA032T",
+      "code": "UMA032T",
+      "type": "Tutorial",
+      "room": "E303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UTA030P",
+      "code": "UTA030P",
+      "type": "Practical",
+      "room": "B216/L101",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UTA030P",
+      "code": "UTA030P",
+      "type": "Practical",
+      "room": "B216/L101",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Digital Electronics",
+      "code": "UEI301T",
+      "type": "Tutorial",
+      "room": "E308",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Analog Devices and Circuits",
+      "code": "UEI408T",
+      "type": "Tutorial",
+      "room": "E302",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Measurement Science and Techniques",
+      "code": "UES034P",
+      "type": "Practical",
+      "room": "IOT(D206B)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Measurement Science and Techniques",
+      "code": "UES034P",
+      "type": "Practical",
+      "room": "IOT(D206B)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UCS321L",
+      "code": "UCS321L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCS321L",
+      "code": "UCS321L",
+      "type": "Lecture",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Analog Devices and Circuits",
+      "code": "UEI408L",
+      "type": "Lecture",
+      "room": "D116",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Digital Electronics",
+      "code": "UEI301P",
+      "type": "Practical",
+      "room": "ANALOG(B211)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Digital Electronics",
+      "code": "UEI301P",
+      "type": "Practical",
+      "room": "ANALOG(B211)",
+      "options": []
+    }
+  ]
+}

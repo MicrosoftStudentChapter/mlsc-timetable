@@ -1,7 +1,278 @@
 {
   "batch": "4D12",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
-  "classes": []
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UMA601L",
+      "code": "UMA601L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UEE744L",
+      "code": "UEE744L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": [
+        {
+          "subject_code": "UEE744L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E107",
+          "teacher": "SP"
+        },
+        {
+          "subject_code": "UEE601L",
+          "subject_name": "Flexible Ac Transmission Systems",
+          "type": "Lecture",
+          "place": "E313",
+          "teacher": "SJ"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Electric Vehicle & Real Time Systems",
+      "code": "ULC603L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Electric Vehicle & Real Time Systems",
+      "code": "ULC603L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UEE744L",
+      "code": "UEE744L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": [
+        {
+          "subject_code": "UEE744L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E107",
+          "teacher": "SP"
+        },
+        {
+          "subject_code": "UEE601L",
+          "subject_name": "Flexible Ac Transmission Systems",
+          "type": "Lecture",
+          "place": "E108",
+          "teacher": "SJ"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UMA601T",
+      "code": "UMA601T",
+      "type": "Tutorial",
+      "room": "E105",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UEE744P",
+      "code": "UEE744P",
+      "type": "Practical",
+      "room": "PE(C113)",
+      "options": [
+        {
+          "subject_code": "UEE744P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "PE(C113)",
+          "teacher": "SP"
+        },
+        {
+          "subject_code": "UEE601L",
+          "subject_name": "Flexible Ac Transmission Systems",
+          "type": "Lecture",
+          "place": "E107",
+          "teacher": "SJ"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UEE744P",
+      "code": "UEE744P",
+      "type": "Practical",
+      "room": "PE(C113)",
+      "options": [
+        {
+          "subject_code": "UEE744P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "PE(C113)",
+          "teacher": "SP"
+        },
+        {
+          "subject_code": "UEE601L",
+          "subject_name": "Flexible Ac Transmission Systems",
+          "type": "Lecture",
+          "place": "E107",
+          "teacher": "SJ"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Introduction to Cyber Security",
+      "code": "UCS002L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": [
+        {
+          "subject_code": "UCS002L",
+          "subject_name": "Introduction to Cyber Security",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "SUS"
+        },
+        {
+          "subject_code": "UMA069L",
+          "subject_name": "Graph Theory and Applications",
+          "type": "Lecture",
+          "place": "LP106",
+          "teacher": "RKS"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "UTD004L",
+      "code": "UTD004L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Introduction to Cyber Security",
+      "code": "UCS002L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": [
+        {
+          "subject_code": "UCS002L",
+          "subject_name": "Introduction to Cyber Security",
+          "type": "Lecture",
+          "place": "LT101",
+          "teacher": "SUS"
+        },
+        {
+          "subject_code": "UMA069L",
+          "subject_name": "Graph Theory and Applications",
+          "type": "Lecture",
+          "place": "LP106",
+          "teacher": "RKS"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UTD004L",
+      "code": "UTD004L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UMA601P",
+      "code": "UMA601P",
+      "type": "Practical",
+      "room": "PSS(H220)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UMA601P",
+      "code": "UMA601P",
+      "type": "Practical",
+      "room": "PSS(H220)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Electric Vehicle & Real Time Systems",
+      "code": "ULC603P",
+      "type": "Practical",
+      "room": "PE(C113)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Electric Vehicle & Real Time Systems",
+      "code": "ULC603P",
+      "type": "Practical",
+      "room": "PE(C113)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UMA601L",
+      "code": "UMA601L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Electric Vehicle & Real Time Systems",
+      "code": "ULC603L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": []
+    }
+  ]
 }

@@ -1,347 +1,393 @@
 {
   "batch": "3D13",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
   "classes": [
     {
       "day": "Monday",
-      "start_time": "08:50",
-      "end_time": "09:40",
-      "subject": "Mathematics For Signal Processing",
-      "code": "ULC601P",
-      "type": "Practical",
-      "room": "HIGH VOLTAGE-C101",
-      "options": []
-    },
-    {
-      "day": "Monday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Mathematics For Signal Processing",
-      "code": "ULC601P",
-      "type": "Practical",
-      "room": "HIGH VOLTAGE-C101",
+      "subject": "Machine Learning Techniques",
+      "code": "ULC601L",
+      "type": "Lecture",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UEE637L",
-      "code": "UEE637L",
+      "subject": "UEE514L",
+      "code": "UEE514L",
       "type": "Lecture",
-      "room": "E306",
-      "options": []
+      "room": "E308",
+      "options": [
+        {
+          "subject_code": "UEE514L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E308",
+          "teacher": "DND"
+        },
+        {
+          "subject_code": "UEE527L",
+          "subject_name": "Restructured Power Systems",
+          "type": "Lecture",
+          "place": "E102",
+          "teacher": "SHT"
+        },
+        {
+          "subject_code": "ULC303L",
+          "subject_name": "Computer Architecture and Organization",
+          "type": "Lecture",
+          "place": "B301",
+          "teacher": "ALK"
+        }
+      ]
     },
     {
       "day": "Monday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "UEE510L",
-      "code": "UEE510L",
+      "subject": "Power Electronics",
+      "code": "UEE504L",
       "type": "Lecture",
-      "room": "E104",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "UEE614L",
-      "code": "UEE614L",
+      "subject": "Control Systems",
+      "code": "UEI501L",
       "type": "Lecture",
-      "room": "B208",
+      "room": "E102",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UEE410L",
+      "code": "UEE410L",
+      "type": "Lecture",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Monday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "Mathematics For Signal Processing",
-      "code": "ULC601L",
-      "type": "Lecture",
-      "room": "E104",
+      "subject": "UTA025P",
+      "code": "UTA025P",
+      "type": "Practical",
+      "room": "B301",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UTA025P",
+      "code": "UTA025P",
+      "type": "Practical",
+      "room": "B301",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "UEE637L",
-      "code": "UEE637L",
-      "type": "Lecture",
-      "room": "E104/F212/E306",
+      "subject": "Power Electronics",
+      "code": "UEE504P",
+      "type": "Practical",
+      "room": "PE(C113)",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Mathematics For Signal Processing",
-      "code": "ULC601P",
+      "subject": "Power Electronics",
+      "code": "UEE504P",
       "type": "Practical",
-      "room": "PSS-H203",
+      "room": "PE(C113)",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Mathematics For Signal Processing",
-      "code": "ULC601P",
+      "subject": "UEE410P",
+      "code": "UEE410P",
       "type": "Practical",
-      "room": "PSS-H203",
+      "room": "BMC(C323)",
       "options": []
     },
     {
       "day": "Tuesday",
-      "start_time": "12:10",
-      "end_time": "13:00",
-      "subject": "ULC101L",
-      "code": "ULC101L",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UEE410P",
+      "code": "UEE410P",
+      "type": "Practical",
+      "room": "BMC(C323)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Power Electronics",
+      "code": "UEE504L",
       "type": "Lecture",
-      "room": "E104",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "UEE616L",
-      "code": "UEE616L",
+      "subject": "UEE410L",
+      "code": "UEE410L",
       "type": "Lecture",
-      "room": "E104",
-      "options": []
-    },
-    {
-      "day": "Tuesday",
-      "start_time": "15:30",
-      "end_time": "16:20",
-      "subject": "UEE513L",
-      "code": "UEE513L",
-      "type": "Lecture",
-      "room": "E104",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Tuesday",
       "start_time": "16:20",
       "end_time": "17:10",
-      "subject": "Power System Protection",
-      "code": "UEE610L",
-      "type": "Lecture",
-      "room": "E104",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
-      "start_time": "08:50",
-      "end_time": "09:40",
-      "subject": "Power System Protection",
-      "code": "UEE610P",
-      "type": "Practical",
-      "room": "PSP-CD101",
+      "subject": "Control Systems",
+      "code": "UEI501T",
+      "type": "Tutorial",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "Power System Protection",
-      "code": "UEE610P",
-      "type": "Practical",
-      "room": "PSP-CD101",
+      "subject": "High Voltage Engineering",
+      "code": "UEE510L",
+      "type": "Lecture",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UEE513P",
-      "code": "UEE513P",
-      "type": "Practical",
-      "room": "PED-C113",
-      "options": []
+      "subject": "UEE514L",
+      "code": "UEE514L",
+      "type": "Lecture",
+      "room": "E308",
+      "options": [
+        {
+          "subject_code": "UEE514L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E308",
+          "teacher": "DND"
+        },
+        {
+          "subject_code": "UEE527L",
+          "subject_name": "Restructured Power Systems",
+          "type": "Lecture",
+          "place": "E102",
+          "teacher": "SHT"
+        },
+        {
+          "subject_code": "ULC303L",
+          "subject_name": "Computer Architecture and Organization",
+          "type": "Lecture",
+          "place": "B301",
+          "teacher": "ALK"
+        }
+      ]
     },
     {
       "day": "Wednesday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "UEE513P",
-      "code": "UEE513P",
-      "type": "Practical",
-      "room": "PED-C113",
+      "subject": "Machine Learning Techniques",
+      "code": "ULC601L",
+      "type": "Lecture",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "UEE637L",
-      "code": "UEE637L",
+      "subject": "Control Systems",
+      "code": "UEI501L",
       "type": "Lecture",
-      "room": "E104",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005L",
-      "type": "Lecture",
-      "room": "E104",
+      "subject": "UEI510P",
+      "code": "UEI510P",
+      "type": "Practical",
+      "room": "I&C(C217)",
       "options": []
     },
     {
       "day": "Wednesday",
       "start_time": "15:30",
       "end_time": "16:20",
-      "subject": "UEE614L",
-      "code": "UEE614L",
-      "type": "Lecture",
-      "room": "B208",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "08:00",
-      "end_time": "08:50",
-      "subject": "Mathematics For Signal Processing",
-      "code": "ULC601L",
-      "type": "Lecture",
-      "room": "E104",
+      "subject": "UEI510P",
+      "code": "UEI510P",
+      "type": "Practical",
+      "room": "I&C(C217)",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "08:50",
       "end_time": "09:40",
-      "subject": "UEE614P",
-      "code": "UEE614P",
-      "type": "Practical",
-      "room": "PDC(C220)/RENEWABLE(H218)/BMC(C323)",
+      "subject": "UTA025L",
+      "code": "UTA025L",
+      "type": "Lecture",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "UEE614P",
-      "code": "UEE614P",
-      "type": "Practical",
-      "room": "PDC(C220)/RENEWABLE(H218)/BMC(C323)",
+      "subject": "Power Electronics",
+      "code": "UEE504L",
+      "type": "Lecture",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "UEE510L",
-      "code": "UEE510L",
+      "subject": "UEE410L",
+      "code": "UEE410L",
       "type": "Lecture",
-      "room": "E104",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "11:20",
       "end_time": "12:10",
-      "subject": "Power System Protection",
-      "code": "UEE610L",
-      "type": "Lecture",
-      "room": "E104",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "UEE4514P",
       "options": []
     },
     {
       "day": "Thursday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "UEE637L",
-      "code": "UEE637L",
-      "type": "Lecture",
-      "room": "E104/F212/E306",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005P",
+      "subject": "UEE514P",
+      "code": "UEE514P",
       "type": "Practical",
-      "room": "E307",
-      "options": []
+      "room": "RT LAB(H219A)",
+      "options": [
+        {
+          "subject_code": "UEE514P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "RT LAB(H219A)",
+          "teacher": "DND"
+        },
+        {
+          "subject_code": "UEE527L",
+          "subject_name": "Restructured Power Systems",
+          "type": "Lecture",
+          "place": "E102",
+          "teacher": "SHT"
+        },
+        {
+          "subject_code": "ULC301L",
+          "subject_name": "Data Structures",
+          "type": "Lecture",
+          "place": "B301",
+          "teacher": "ALK"
+        }
+      ]
     },
     {
       "day": "Thursday",
       "start_time": "14:40",
       "end_time": "15:30",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005P",
-      "type": "Practical",
-      "room": "E307",
+      "subject": "Machine Learning Techniques",
+      "code": "ULC601L",
+      "type": "Lecture",
+      "room": "E102",
       "options": []
     },
     {
-      "day": "Friday",
-      "start_time": "08:50",
-      "end_time": "09:40",
-      "subject": "Humanities For Engineers",
-      "code": "UHU005L",
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Control Systems",
+      "code": "UEI501L",
       "type": "Lecture",
-      "room": "E104",
+      "room": "E102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "High Voltage Engineering",
+      "code": "UEE510L",
+      "type": "Lecture",
+      "room": "E102",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "09:40",
       "end_time": "10:30",
-      "subject": "UEE616L",
-      "code": "UEE616L",
-      "type": "Lecture",
-      "room": "E104",
+      "subject": "Machine Learning Techniques",
+      "code": "ULC601P",
+      "type": "Practical",
+      "room": "IOT(D206B)",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "10:30",
       "end_time": "11:20",
-      "subject": "Power System Protection",
-      "code": "UEE610L",
-      "type": "Lecture",
-      "room": "E104",
+      "subject": "Machine Learning Techniques",
+      "code": "ULC601P",
+      "type": "Practical",
+      "room": "IOT(D206B)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "High Voltage Engineering",
+      "code": "UEE510P",
+      "type": "Practical",
+      "room": "HV(C102)",
       "options": []
     },
     {
       "day": "Friday",
       "start_time": "12:10",
       "end_time": "13:00",
-      "subject": "UEE614L",
-      "code": "UEE614L",
-      "type": "Lecture",
-      "room": "B208",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "13:50",
-      "end_time": "14:40",
-      "subject": "UEE616P",
-      "code": "UEE616P",
+      "subject": "High Voltage Engineering",
+      "code": "UEE510P",
       "type": "Practical",
-      "room": "PE-C113",
-      "options": []
-    },
-    {
-      "day": "Friday",
-      "start_time": "14:40",
-      "end_time": "15:30",
-      "subject": "UEE616P",
-      "code": "UEE616P",
-      "type": "Practical",
-      "room": "PE-C113",
+      "room": "HV(C102)",
       "options": []
     }
   ]

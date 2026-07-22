@@ -1,0 +1,308 @@
+{
+  "batch": "2V14",
+  "semester": {
+    "label": "ODD 26-27"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Electronic Devices for Ics",
+      "code": "UVD301P",
+      "type": "Practical",
+      "room": "B105",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Electronic Devices for Ics",
+      "code": "UVD301P",
+      "type": "Practical",
+      "room": "B105",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Digital System Design",
+      "code": "UEC612T",
+      "type": "Tutorial",
+      "room": "F301",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Electronic Devices for Ics",
+      "code": "UVD301T",
+      "type": "Tutorial",
+      "room": "F301",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Electronic Devices for Ics",
+      "code": "UVD301L",
+      "type": "Lecture",
+      "room": "B302",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UCS321P",
+      "code": "UCS321P",
+      "type": "Practical",
+      "room": "B305",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UCS321P",
+      "code": "UCS321P",
+      "type": "Practical",
+      "room": "B305",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Aptitude Skills Building",
+      "code": "UTD003L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Aptitude Skills Building",
+      "code": "UTD003L",
+      "type": "Lecture",
+      "room": "LT101",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Optimization Techniques",
+      "code": "UMA035L",
+      "type": "Lecture",
+      "room": "B302",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UCS321L",
+      "code": "UCS321L",
+      "type": "Lecture",
+      "room": "B302",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Semiconductor Materials Synthesis and Characteriza",
+      "code": "UVD302L",
+      "type": "Lecture",
+      "room": "B302",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Electronic Devices for Ics",
+      "code": "UVD301L",
+      "type": "Lecture",
+      "room": "B302",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Digital System Design",
+      "code": "UEC612L",
+      "type": "Lecture",
+      "room": "B302",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Digital System Design",
+      "code": "UEC612P",
+      "type": "Practical",
+      "room": "C325",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Digital System Design",
+      "code": "UEC612P",
+      "type": "Practical",
+      "room": "C325",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "UTA016L",
+      "code": "UTA016L",
+      "type": "Lecture",
+      "room": "LT101/LT102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Optimization Techniques",
+      "code": "UMA035L",
+      "type": "Lecture",
+      "room": "B302",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Digital System Design",
+      "code": "UEC612L",
+      "type": "Lecture",
+      "room": "B302",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UCS321L",
+      "code": "UCS321L",
+      "type": "Lecture",
+      "room": "B302",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Semiconductor Materials Synthesis and Characteriza",
+      "code": "UVD302L",
+      "type": "Lecture",
+      "room": "B302",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UTA016P",
+      "code": "UTA016P",
+      "type": "Practical",
+      "room": "F314/B204",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UTA016P",
+      "code": "UTA016P",
+      "type": "Practical",
+      "room": "F314/B204",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Optimization Techniques",
+      "code": "UMA035P",
+      "type": "Practical",
+      "room": "NA1(G203)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Optimization Techniques",
+      "code": "UMA035P",
+      "type": "Practical",
+      "room": "NA1(G203)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Engineering Materials",
+      "code": "UES012T",
+      "type": "Tutorial",
+      "room": "F301",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Optimization Techniques",
+      "code": "UMA035L",
+      "type": "Lecture",
+      "room": "B305",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Semiconductor Materials Synthesis and Characteriza",
+      "code": "UVD302L",
+      "type": "Lecture",
+      "room": "B305",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Digital System Design",
+      "code": "UEC612L",
+      "type": "Lecture",
+      "room": "B305",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Electronic Devices for Ics",
+      "code": "UVD301L",
+      "type": "Lecture",
+      "room": "B305",
+      "options": []
+    }
+  ]
+}

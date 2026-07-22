@@ -1,0 +1,198 @@
+{
+  "batch": "4V13",
+  "semester": {
+    "label": "ODD 26-27"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UVD701L",
+      "code": "UVD701L",
+      "type": "Lecture",
+      "room": "F104",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "C334/?",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "C334/?",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UVD701L",
+      "code": "UVD701L",
+      "type": "Lecture",
+      "room": "E107",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "F303/F316",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Analog and Digital Communication Systems",
+      "code": "UEC519L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UVD701P",
+      "code": "UVD701P",
+      "type": "Practical",
+      "room": "C334",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UVD701P",
+      "code": "UVD701P",
+      "type": "Practical",
+      "room": "C334",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Analog and Digital Communication Systems",
+      "code": "UEC519P",
+      "type": "Practical",
+      "room": "B214",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Analog and Digital Communication Systems",
+      "code": "UEC519P",
+      "type": "Practical",
+      "room": "B214",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Graph Theory and Applications",
+      "code": "UMA069L",
+      "type": "Lecture",
+      "room": "LT101/LP106/B303/F201",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "UTD004L",
+      "code": "UTD004L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Analog and Digital Communication Systems",
+      "code": "UEC519L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Graph Theory and Applications",
+      "code": "UMA069L",
+      "type": "Lecture",
+      "room": "LT101/LP106/B303/F201",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UTD004L",
+      "code": "UTD004L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "F303/F304",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": "F303",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Analog and Digital Communication Systems",
+      "code": "UEC519T",
+      "type": "Tutorial",
+      "room": "B209",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Analog and Digital Communication Systems",
+      "code": "UEC519L",
+      "type": "Lecture",
+      "room": "B309",
+      "options": []
+    }
+  ]
+}

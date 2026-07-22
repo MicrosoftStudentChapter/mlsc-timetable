@@ -1,0 +1,258 @@
+{
+  "batch": "2X24",
+  "semester": {
+    "label": "ODD 26-27"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UTA016P",
+      "code": "UTA016P",
+      "type": "Practical",
+      "room": "F314/B204",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UTA016P",
+      "code": "UTA016P",
+      "type": "Practical",
+      "room": "F314/B204",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Numerical Linear Algebra",
+      "code": "UMA021L",
+      "type": "Lecture",
+      "room": "LT303",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UAI301L",
+      "code": "UAI301L",
+      "type": "Lecture",
+      "room": "LT303",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "17:10",
+      "end_time": "18:00",
+      "subject": "UTA016L",
+      "code": "UTA016L",
+      "type": "Lecture",
+      "room": "LT101/LT102",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Operating Systems",
+      "code": "UCS303L",
+      "type": "Lecture",
+      "room": "LT303",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Numerical Linear Algebra",
+      "code": "UMA021L",
+      "type": "Lecture",
+      "room": "LT303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "UAI302P",
+      "code": "UAI302P",
+      "type": "Practical",
+      "room": "AI(L307)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UAI302P",
+      "code": "UAI302P",
+      "type": "Practical",
+      "room": "AI(L307)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Operating Systems",
+      "code": "UCS303L",
+      "type": "Lecture",
+      "room": "LT303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Data Structures",
+      "code": "UCS301L",
+      "type": "Lecture",
+      "room": "LT303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UAI301L",
+      "code": "UAI301L",
+      "type": "Lecture",
+      "room": "LT303",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Numerical Linear Algebra",
+      "code": "UMA021P",
+      "type": "Practical",
+      "room": "NA2/G204",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Numerical Linear Algebra",
+      "code": "UMA021P",
+      "type": "Practical",
+      "room": "NA2/G204",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Numerical Linear Algebra",
+      "code": "UMA021L",
+      "type": "Lecture",
+      "room": "LT303",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Data Structures",
+      "code": "UCS301L",
+      "type": "Lecture",
+      "room": "LT303",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Data Structures",
+      "code": "UCS301P",
+      "type": "Practical",
+      "room": "DS2(L005)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Data Structures",
+      "code": "UCS301P",
+      "type": "Practical",
+      "room": "DS2(L005)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Operating Systems",
+      "code": "UCS303P",
+      "type": "Practical",
+      "room": "SS-1(L201)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Operating Systems",
+      "code": "UCS303P",
+      "type": "Practical",
+      "room": "SS-1(L201)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "Operating Systems",
+      "code": "UCS303L",
+      "type": "Lecture",
+      "room": "LT402",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Data Structures",
+      "code": "UCS301L",
+      "type": "Lecture",
+      "room": "LT402",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UAI301L",
+      "code": "UAI301L",
+      "type": "Lecture",
+      "room": "LT402",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UAI301P",
+      "code": "UAI301P",
+      "type": "Practical",
+      "room": "ED2(L209)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UAI301P",
+      "code": "UAI301P",
+      "type": "Practical",
+      "room": "ED2(L209)",
+      "options": []
+    }
+  ]
+}

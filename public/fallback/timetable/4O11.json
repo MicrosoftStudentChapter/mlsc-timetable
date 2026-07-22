@@ -1,7 +1,522 @@
 {
   "batch": "4O11",
   "semester": {
-    "label": "EVEN 25-26"
+    "label": "ODD 26-27"
   },
-  "classes": []
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UEC640L",
+      "code": "UEC640L",
+      "type": "Lecture",
+      "room": "B307",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Deep Learning and Applications",
+      "code": "UEC642L",
+      "type": "Lecture",
+      "room": "B307",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Big Data Analytics",
+      "code": "UEC735P",
+      "type": "Practical",
+      "room": "C202",
+      "options": [
+        {
+          "subject_code": "UEC735P",
+          "subject_name": "Big Data Analytics",
+          "type": "Practical",
+          "place": "C202",
+          "teacher": "DVG"
+        },
+        {
+          "subject_code": "UEC752P",
+          "subject_name": "Ic Fabrication Technology",
+          "type": "Practical",
+          "place": "B106",
+          "teacher": "MFD"
+        },
+        {
+          "subject_code": "UCS750P",
+          "subject_name": "Computer Hacking and Forensic Investigation",
+          "type": "Practical",
+          "place": "L102",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS762P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "L103",
+          "teacher": "RAH"
+        },
+        {
+          "subject_code": "UCS760P",
+          "subject_name": "Edge Ai and Robotics: Reinforcement Learning",
+          "type": "Practical",
+          "place": "L429",
+          "teacher": "HMK"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Big Data Analytics",
+      "code": "UEC735P",
+      "type": "Practical",
+      "room": "C202",
+      "options": [
+        {
+          "subject_code": "UEC735P",
+          "subject_name": "Big Data Analytics",
+          "type": "Practical",
+          "place": "C202",
+          "teacher": "DVG"
+        },
+        {
+          "subject_code": "UEC752P",
+          "subject_name": "Ic Fabrication Technology",
+          "type": "Practical",
+          "place": "B106",
+          "teacher": "MFD"
+        },
+        {
+          "subject_code": "UCS750P",
+          "subject_name": "Computer Hacking and Forensic Investigation",
+          "type": "Practical",
+          "place": "L102",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS762P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "L103",
+          "teacher": "RAH"
+        },
+        {
+          "subject_code": "UCS760P",
+          "subject_name": "Edge Ai and Robotics: Reinforcement Learning",
+          "type": "Practical",
+          "place": "L429",
+          "teacher": "HMK"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UEC640P",
+      "code": "UEC640P",
+      "type": "Practical",
+      "room": "C210",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UEC640P",
+      "code": "UEC640P",
+      "type": "Practical",
+      "room": "C210",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Big Data Analytics",
+      "code": "UEC735L",
+      "type": "Lecture",
+      "room": "B307",
+      "options": [
+        {
+          "subject_code": "UEC735L",
+          "subject_name": "Big Data Analytics",
+          "type": "Lecture",
+          "place": "B307",
+          "teacher": "DVG"
+        },
+        {
+          "subject_code": "UEC752L",
+          "subject_name": "Ic Fabrication Technology",
+          "type": "Lecture",
+          "place": "B209",
+          "teacher": "MFD"
+        },
+        {
+          "subject_code": "UCS751L",
+          "subject_name": "Simulation and Modelling",
+          "type": "Lecture",
+          "place": "LP106",
+          "teacher": "PSR"
+        },
+        {
+          "subject_code": "UCS752L",
+          "subject_name": "Augmented and Virtual Reality",
+          "type": "Lecture",
+          "place": "E304",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS754L",
+          "subject_name": "Blockchain Technology and Applications",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "NRJ"
+        },
+        {
+          "subject_code": "UCS758L",
+          "subject_name": "System Provisioning and Configuration Management",
+          "type": "Lecture",
+          "place": "T101",
+          "teacher": "ANJ"
+        },
+        {
+          "subject_code": "UCS750L",
+          "subject_name": "Computer Hacking and Forensic Investigation",
+          "type": "Lecture",
+          "place": "E305",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS762L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E308",
+          "teacher": "RAH"
+        },
+        {
+          "subject_code": "UCS760L",
+          "subject_name": "Edge Ai and Robotics: Reinforcement Learning",
+          "type": "Lecture",
+          "place": "T102",
+          "teacher": "HMK"
+        },
+        {
+          "subject_code": "UCS748L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E205",
+          "teacher": "RKT"
+        },
+        {
+          "subject_code": "UCS745L",
+          "subject_name": "Cloud & Devops",
+          "type": "Lecture",
+          "place": "F105",
+          "teacher": "SMG"
+        },
+        {
+          "subject_code": "UCS772L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "GEK"
+        },
+        {
+          "subject_code": "UMC743L",
+          "subject_name": "Quantitative and Statistical Methods for Finance",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "KUC"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Ic Fabrication Technology",
+      "code": "UEC752L",
+      "type": "Lecture",
+      "room": "B209",
+      "options": [
+        {
+          "subject_code": "UEC752L",
+          "subject_name": "Ic Fabrication Technology",
+          "type": "Lecture",
+          "place": "B209",
+          "teacher": "DVG"
+        },
+        {
+          "subject_code": "UCS751L",
+          "subject_name": "Simulation and Modelling",
+          "type": "Lecture",
+          "place": "LP106",
+          "teacher": "MFD"
+        },
+        {
+          "subject_code": "UCS752L",
+          "subject_name": "Augmented and Virtual Reality",
+          "type": "Lecture",
+          "place": "E304",
+          "teacher": "PSR"
+        },
+        {
+          "subject_code": "UCS754L",
+          "subject_name": "Blockchain Technology and Applications",
+          "type": "Lecture",
+          "place": "LP109",
+          "teacher": "SSH"
+        },
+        {
+          "subject_code": "UCS758L",
+          "subject_name": "System Provisioning and Configuration Management",
+          "type": "Lecture",
+          "place": "T101",
+          "teacher": "NRJ"
+        },
+        {
+          "subject_code": "UCS750L",
+          "subject_name": "Computer Hacking and Forensic Investigation",
+          "type": "Lecture",
+          "place": "E305",
+          "teacher": "ANJ"
+        },
+        {
+          "subject_code": "UCS762L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E308",
+          "teacher": "GS"
+        },
+        {
+          "subject_code": "UCS760L",
+          "subject_name": "Edge Ai and Robotics: Reinforcement Learning",
+          "type": "Lecture",
+          "place": "T102",
+          "teacher": "RAH"
+        },
+        {
+          "subject_code": "UCS748L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E205",
+          "teacher": "HMK"
+        },
+        {
+          "subject_code": "UCS745L",
+          "subject_name": "Cloud & Devops",
+          "type": "Lecture",
+          "place": "F105",
+          "teacher": "RKT"
+        },
+        {
+          "subject_code": "UCS772L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "E104",
+          "teacher": "SMG"
+        },
+        {
+          "subject_code": "UMC743L",
+          "subject_name": "Quantitative and Statistical Methods for Finance",
+          "type": "Lecture",
+          "place": "LT102",
+          "teacher": "GEK"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Big Data Analytics",
+      "code": "UEC735P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Big Data Analytics",
+      "code": "UEC735P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Big Data Analytics",
+      "code": "UEC735P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Big Data Analytics",
+      "code": "UEC735P",
+      "type": "Practical",
+      "room": "C202",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Graph Theory and Applications",
+      "code": "UMA069L",
+      "type": "Lecture",
+      "room": "LT101/LP106/B303/F201",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:00",
+      "end_time": "13:50",
+      "subject": "UTD004L",
+      "code": "UTD004L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Soft Computing",
+      "code": "UEC823L",
+      "type": "Lecture",
+      "room": "B307",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Graph Theory and Applications",
+      "code": "UMA069L",
+      "type": "Lecture",
+      "room": "LT101/LP106/B303/F201",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "UTD004L",
+      "code": "UTD004L",
+      "type": "Lecture",
+      "room": "LT102",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Deep Learning and Applications",
+      "code": "UEC642L",
+      "type": "Lecture",
+      "room": "B307",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UEC640L",
+      "code": "UEC640L",
+      "type": "Lecture",
+      "room": "B307",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Soft Computing",
+      "code": "UEC823P",
+      "type": "Practical",
+      "room": "C328",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Soft Computing",
+      "code": "UEC823P",
+      "type": "Practical",
+      "room": "C328",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "Deep Learning and Applications",
+      "code": "UEC642L",
+      "type": "Lecture",
+      "room": "B307",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "Big Data Analytics",
+      "code": "UEC735L",
+      "type": "Lecture",
+      "room": "B307",
+      "options": [
+        {
+          "subject_code": "UEC735L",
+          "subject_name": "Big Data Analytics",
+          "type": "Lecture",
+          "place": "B307",
+          "teacher": "DVG"
+        },
+        {
+          "subject_code": "UEC823L",
+          "subject_name": "Soft Computing",
+          "type": "Lecture",
+          "place": "F303",
+          "teacher": "MKA"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Deep Learning and Applications",
+      "code": "UEC642P",
+      "type": "Practical",
+      "room": "C333",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Deep Learning and Applications",
+      "code": "UEC642P",
+      "type": "Practical",
+      "room": "C333",
+      "options": []
+    }
+  ]
 }

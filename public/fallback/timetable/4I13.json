@@ -1,0 +1,680 @@
+{
+  "batch": "4I13",
+  "semester": {
+    "label": "ODD 26-27"
+  },
+  "classes": [
+    {
+      "day": "Monday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "URA731P",
+      "code": "URA731P",
+      "type": "Practical",
+      "room": "B302",
+      "options": [
+        {
+          "subject_code": "URA731P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "B302",
+          "teacher": "DMG"
+        },
+        {
+          "subject_code": "URA741P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "BAJAJ LAB",
+          "teacher": "PKW"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "URA731P",
+      "code": "URA731P",
+      "type": "Practical",
+      "room": "B302",
+      "options": [
+        {
+          "subject_code": "URA731P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "B302",
+          "teacher": "DMG"
+        },
+        {
+          "subject_code": "URA741P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "BAJAJ LAB",
+          "teacher": "PKW"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "URA753L",
+      "code": "URA753L",
+      "type": "Lecture",
+      "room": "F207",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "URA745L",
+      "code": "URA745L",
+      "type": "Lecture",
+      "room": "LP108",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Edge Ai and Robotics: Reinforcement Learning",
+      "code": "UCS760L",
+      "type": "Lecture",
+      "room": "F206",
+      "options": [
+        {
+          "subject_code": "UCS760L",
+          "subject_name": "Edge Ai and Robotics: Reinforcement Learning",
+          "type": "Lecture",
+          "place": "F206",
+          "teacher": "HMK"
+        },
+        {
+          "subject_code": "URA751L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F207",
+          "teacher": "NF"
+        },
+        {
+          "subject_code": "UME751L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F312",
+          "teacher": "AMG"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Edge Ai and Robotics: Reinforcement Learning",
+      "code": "UCS760L",
+      "type": "Lecture",
+      "room": "F206",
+      "options": [
+        {
+          "subject_code": "UCS760L",
+          "subject_name": "Edge Ai and Robotics: Reinforcement Learning",
+          "type": "Lecture",
+          "place": "F206",
+          "teacher": "HMK"
+        },
+        {
+          "subject_code": "URA751L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F207",
+          "teacher": "NF"
+        },
+        {
+          "subject_code": "UME751L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F312",
+          "teacher": "AMG"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UME752L",
+      "code": "UME752L",
+      "type": "Lecture",
+      "room": "F206",
+      "options": [
+        {
+          "subject_code": "UME752L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F206",
+          "teacher": "APH"
+        },
+        {
+          "subject_code": "URA413L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F207",
+          "teacher": "DKJ"
+        },
+        {
+          "subject_code": "URA741L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F110",
+          "teacher": "PKW"
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "URA731L",
+      "code": "URA731L",
+      "type": "Lecture",
+      "room": "B303",
+      "options": []
+    },
+    {
+      "day": "Monday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": null,
+      "code": null,
+      "type": "Unknown",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "System Modelling and Simulation",
+      "code": "UME722P",
+      "type": "Practical",
+      "room": "CAD-3(D101)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "System Modelling and Simulation",
+      "code": "UME722P",
+      "type": "Practical",
+      "room": "CAD-3(D101)",
+      "options": []
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UME752L",
+      "code": "UME752L",
+      "type": "Lecture",
+      "room": "F206",
+      "options": [
+        {
+          "subject_code": "UME752L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F206",
+          "teacher": "APH"
+        },
+        {
+          "subject_code": "URA413L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F207",
+          "teacher": "DKJ"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "URA753L",
+      "code": "URA753L",
+      "type": "Lecture",
+      "room": "F207",
+      "options": [
+        {
+          "subject_code": "URA753L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F207",
+          "teacher": "JPT"
+        },
+        {
+          "subject_code": "UME715L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F109",
+          "teacher": "ASO"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Edge Ai and Robotics: Embedded Vision",
+      "code": "UCS671L",
+      "type": "Lecture",
+      "room": "F206",
+      "options": [
+        {
+          "subject_code": "UCS671L",
+          "subject_name": "Edge Ai and Robotics: Embedded Vision",
+          "type": "Lecture",
+          "place": "F206",
+          "teacher": "HMG"
+        },
+        {
+          "subject_code": "URA745L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "CSED"
+        },
+        {
+          "subject_code": "UEI514L",
+          "subject_name": "Iot Based Systems",
+          "type": "Lecture",
+          "place": "F111",
+          "teacher": "SNK"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Edge Ai and Robotics: Embedded Vision",
+      "code": "UCS671L",
+      "type": "Lecture",
+      "room": "F206",
+      "options": [
+        {
+          "subject_code": "UCS671L",
+          "subject_name": "Edge Ai and Robotics: Embedded Vision",
+          "type": "Lecture",
+          "place": "F206",
+          "teacher": "HMG"
+        },
+        {
+          "subject_code": "URA745L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "LP108",
+          "teacher": "CSED"
+        },
+        {
+          "subject_code": "UEI514L",
+          "subject_name": "Iot Based Systems",
+          "type": "Lecture",
+          "place": "F111",
+          "teacher": "SNK"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "URA751P",
+      "code": "URA751P",
+      "type": "Practical",
+      "room": "IA(H214)",
+      "options": [
+        {
+          "subject_code": "URA751P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "IA(H214)",
+          "teacher": "MET"
+        },
+        {
+          "subject_code": "UME751P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "NF"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "URA751P",
+      "code": "URA751P",
+      "type": "Practical",
+      "room": "IA(H214)",
+      "options": [
+        {
+          "subject_code": "URA751P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": "IA(H214)",
+          "teacher": "MET"
+        },
+        {
+          "subject_code": "UME751P",
+          "subject_name": null,
+          "type": "Practical",
+          "place": null,
+          "teacher": "NF"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "Edge Ai and Robotics: Embedded Vision",
+      "code": "UCS671P",
+      "type": "Practical",
+      "room": "PL2(L008)",
+      "options": [
+        {
+          "subject_code": "UCS671P",
+          "subject_name": "Edge Ai and Robotics: Embedded Vision",
+          "type": "Practical",
+          "place": "PL2(L008)",
+          "teacher": "HMG"
+        },
+        {
+          "subject_code": "UEI514P",
+          "subject_name": "Iot Based Systems",
+          "type": "Practical",
+          "place": "RT(H219A)",
+          "teacher": "SNK"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "Edge Ai and Robotics: Embedded Vision",
+      "code": "UCS671P",
+      "type": "Practical",
+      "room": "PL2(L008)",
+      "options": [
+        {
+          "subject_code": "UCS671P",
+          "subject_name": "Edge Ai and Robotics: Embedded Vision",
+          "type": "Practical",
+          "place": "PL2(L008)",
+          "teacher": "HMG"
+        },
+        {
+          "subject_code": "UEI514P",
+          "subject_name": "Iot Based Systems",
+          "type": "Practical",
+          "place": "RT(H219A)",
+          "teacher": "SNK"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:00",
+      "end_time": "08:50",
+      "subject": "Edge Ai and Robotics: Data Centre Vision",
+      "code": "UCS668P",
+      "type": "Practical",
+      "room": "NS(L102)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "08:50",
+      "end_time": "09:40",
+      "subject": "Edge Ai and Robotics: Data Centre Vision",
+      "code": "UCS668P",
+      "type": "Practical",
+      "room": "NS(L102)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "UEE708L",
+      "code": "UEE708L",
+      "type": "Lecture",
+      "room": "F208",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "System Modelling and Simulation",
+      "code": "UME722T",
+      "type": "Tutorial",
+      "room": "F309",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "Edge Ai and Robotics: Reinforcement Learning",
+      "code": "UCS760P",
+      "type": "Practical",
+      "room": "IOT(L302)",
+      "options": []
+    },
+    {
+      "day": "Wednesday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "Edge Ai and Robotics: Reinforcement Learning",
+      "code": "UCS760P",
+      "type": "Practical",
+      "room": "IOT(L302)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "UEE703L",
+      "code": "UEE703L",
+      "type": "Lecture",
+      "room": "F207",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "System Modelling and Simulation",
+      "code": "UME722L",
+      "type": "Lecture",
+      "room": "F207",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "Edge Ai and Robotics: Data Centre Vision",
+      "code": "UCS668L",
+      "type": "Lecture",
+      "room": null,
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "Edge Ai and Robotics: Data Centre Vision",
+      "code": "UCS668L",
+      "type": "Lecture",
+      "room": "B303",
+      "options": [
+        {
+          "subject_code": "UCS668L",
+          "subject_name": "Edge Ai and Robotics: Data Centre Vision",
+          "type": "Lecture",
+          "place": "B303",
+          "teacher": "CSED"
+        },
+        {
+          "subject_code": "URA731L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": null,
+          "teacher": "CSED"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "URA751P",
+      "code": "URA751P",
+      "type": "Practical",
+      "room": "IA(214)",
+      "options": []
+    },
+    {
+      "day": "Thursday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "URA751P",
+      "code": "URA751P",
+      "type": "Practical",
+      "room": "IA(214)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "09:40",
+      "end_time": "10:30",
+      "subject": "System Modelling and Simulation",
+      "code": "UME722L",
+      "type": "Lecture",
+      "room": "F206",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "10:30",
+      "end_time": "11:20",
+      "subject": "UME708L",
+      "code": "UME708L",
+      "type": "Lecture",
+      "room": "F206",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "11:20",
+      "end_time": "12:10",
+      "subject": "URA753L",
+      "code": "URA753L",
+      "type": "Lecture",
+      "room": "F206",
+      "options": [
+        {
+          "subject_code": "URA753L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F206",
+          "teacher": "JPT"
+        },
+        {
+          "subject_code": "UME715L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F110",
+          "teacher": "ASO"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "12:10",
+      "end_time": "13:00",
+      "subject": "UME752L",
+      "code": "UME752L",
+      "type": "Lecture",
+      "room": "F206",
+      "options": [
+        {
+          "subject_code": "UME752L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F206",
+          "teacher": "APH"
+        },
+        {
+          "subject_code": "URA413L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F207",
+          "teacher": "DKJ"
+        },
+        {
+          "subject_code": "URA741L",
+          "subject_name": null,
+          "type": "Lecture",
+          "place": "F110",
+          "teacher": "PKW"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "start_time": "13:50",
+      "end_time": "14:40",
+      "subject": "UME715T",
+      "code": "UME715T",
+      "type": "Tutorial",
+      "room": "F110",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "14:40",
+      "end_time": "15:30",
+      "subject": "UME715T",
+      "code": "UME715T",
+      "type": "Tutorial",
+      "room": "F110",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "15:30",
+      "end_time": "16:20",
+      "subject": "UME708P",
+      "code": "UME708P",
+      "type": "Practical",
+      "room": "PE(C113)",
+      "options": []
+    },
+    {
+      "day": "Friday",
+      "start_time": "16:20",
+      "end_time": "17:10",
+      "subject": "UME708P",
+      "code": "UME708P",
+      "type": "Practical",
+      "room": "PE(C113)",
+      "options": []
+    }
+  ]
+}
