@@ -603,6 +603,7 @@
   font-size: 0.75rem;
   opacity: 0.6;
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .profile-batch-row {
@@ -615,6 +616,8 @@
   display: flex;
   align-items: center;
   gap: 0;
+  width: 100%;
+  min-width: 0;
   background: var(--bg-hover, rgba(255,255,255,0.03));
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -676,6 +679,29 @@
   border: none !important;
 }
 
+/* Give profile dropdowns room for long stream names instead of constraining
+   them to the width of the segment label above the input. */
+.profile-batch-segment .combobox-list {
+  left: 50%;
+  right: auto;
+  width: max-content;
+  min-width: 100%;
+  max-width: min(300px, calc(100vw - 32px));
+  transform: translateX(-50%);
+}
+
+.profile-batch-segment .combobox-option {
+  white-space: normal;
+  align-items: flex-start;
+}
+
+.profile-batch-segment .combobox-option-label {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+}
+
 .profile-batch-selected {
   display: flex;
   align-items: center;
@@ -702,6 +728,8 @@
   opacity: 0.7;
   flex: 1;
   line-height: 1.35;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .profile-batch-change {
   background: transparent;

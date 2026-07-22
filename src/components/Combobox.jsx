@@ -23,6 +23,7 @@ export default function Combobox({
   filter,
 }) {
   const [open, setOpen] = useState(false)
+  const [searching, setSearching] = useState(false)
   const [highlight, setHighlight] = useState(0)
   const wrapRef = useRef(null)
   const inputRef = useRef(null)
@@ -39,7 +40,9 @@ export default function Combobox({
   }
   const filterFn = filter ?? defaultFilter
   const q = String(value ?? '')
-  const filtered = q ? options.filter((o) => filterFn(o, q)) : options
+  // A selected value is not a search query. Only filter after the user starts
+  // editing the input; opening a populated combobox should show every option.
+  const filtered = searching && q ? options.filter((o) => filterFn(o, q)) : options
 
   useEffect(() => {
     if (!open) return
@@ -63,7 +66,17 @@ export default function Combobox({
   const select = (opt) => {
     onChange(opt.value)
     setOpen(false)
+    setSearching(false)
     inputRef.current?.blur()
+  }
+
+  const openForBrowsing = () => {
+    if (disabled) return
+    setOpen(true)
+    setSearching(false)
+    // Let the browser focus the input before selecting its current value so
+    // the next keyboard character starts a fresh search.
+    requestAnimationFrame(() => inputRef.current?.select())
   }
 
   const handleKey = (e) => {
@@ -96,11 +109,12 @@ export default function Combobox({
         className={`combobox-input ${className}`}
         value={value ?? ''}
         onChange={(e) => {
+          setSearching(true)
           onChange(e.target.value)
           setOpen(true)
         }}
-        onFocus={() => !disabled && setOpen(true)}
-        onClick={() => !disabled && setOpen(true)}
+        onFocus={openForBrowsing}
+        onClick={openForBrowsing}
         onKeyDown={handleKey}
         placeholder={placeholder}
         aria-label={ariaLabel}
