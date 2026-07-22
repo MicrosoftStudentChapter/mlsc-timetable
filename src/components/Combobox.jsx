@@ -21,6 +21,7 @@ export default function Combobox({
   popupClassName = '',
   direction = 'down',
   filter,
+  multiline = false,
 }) {
   const [open, setOpen] = useState(false)
   const [searching, setSearching] = useState(false)
@@ -103,6 +104,31 @@ export default function Combobox({
       ref={wrapRef}
       className={`combobox ${direction === 'up' ? 'is-up' : ''} ${disabled ? 'is-disabled' : ''}`}
     >
+      {multiline ? (
+        <textarea
+          ref={inputRef}
+          className={`combobox-input ${className}`}
+          value={value ?? ''}
+          onChange={(e) => {
+            setSearching(true)
+            onChange(e.target.value)
+            setOpen(true)
+          }}
+          onFocus={openForBrowsing}
+          onClick={openForBrowsing}
+          onKeyDown={handleKey}
+          placeholder={placeholder}
+          aria-label={ariaLabel}
+          disabled={disabled}
+          autoComplete="off"
+          spellCheck="false"
+          role="combobox"
+          aria-expanded={open}
+          aria-controls={listId}
+          aria-autocomplete="list"
+          rows={3}
+        />
+      ) : (
       <input
         ref={inputRef}
         type="text"
@@ -126,6 +152,7 @@ export default function Combobox({
         aria-controls={listId}
         aria-autocomplete="list"
       />
+      )}
       {open && filtered.length > 0 && (
         <ul
           ref={listRef}

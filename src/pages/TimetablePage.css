@@ -448,9 +448,43 @@
   background: #ffffff;
   color: #111827;
   border-color: rgba(0, 0, 0, 0.08);
-  min-width: 180px;
+  width: min(300px, calc(100vw - 24px));
+  min-width: 0;
+  max-width: calc(100vw - 24px);
+  box-sizing: border-box;
+  left: auto;
   right: auto;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* The navbar field is intentionally narrow, but its options contain the
+   batch hint. Center the wider popup on the field so it does not hang off
+   either side of the viewport on compact screens. */
+.tt-navbar-pill .tt-batch-popup {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+.tt-batch-popup .combobox-option {
+  align-items: flex-start;
+  white-space: normal;
+}
+
+.tt-batch-popup .combobox-option-label {
+  flex: 0 0 52px;
+  min-width: 0;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.tt-batch-popup .combobox-option-hint {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 
 .tt-batch-popup .combobox-option.is-active {

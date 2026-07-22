@@ -33,7 +33,39 @@ export function useTheme() {
     } catch (_) {}
   }, [theme])
 
-  const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
+  const toggleTheme = (event) => {
+    const updateTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
+    const startViewTransition = document.startViewTransition
+
+    if (typeof startViewTransition !== 'function' || !event) {
+      updateTheme()
+      return
+    }
+
+    const x = event.clientX
+    const y = event.clientY
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y),
+    )
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const transition = startViewTransition.call(document, updateTheme)
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: isDark
+            ? [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`]
+            : [`circle(${endRadius}px at ${x}px ${y}px)`, `circle(0px at ${x}px ${y}px)`],
+        },
+        {
+          duration: 500,
+          easing: 'ease-in-out',
+          pseudoElement: isDark ? '::view-transition-new(root)' : '::view-transition-old(root)',
+        },
+      )
+    }).catch(() => {})
+  }
 
   return { theme, toggleTheme }
 }

@@ -108,6 +108,8 @@
   --bg:           #ffffff;
   --bg-secondary: #f8fafc;
   --bg-surface:   #ffffff;
+  --bg-card:      #ffffff;
+  --bg-hover:     #f8fafc;
   --text:         #6b6375;
   --text-h:       #08060d;
   --text-muted:   rgba(11, 6, 13, 0.50);
@@ -130,6 +132,31 @@
     color            0.22s ease,
     box-shadow       0.22s ease;
 }
+
+/* Circular theme reveal used by the theme toggle. The old and new roots are
+   kept still while the clicked toggle exposes the next theme. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+[data-theme="dark"]::view-transition-old(root) {
+  z-index: 9999;
+}
+
+[data-theme="dark"]::view-transition-new(root) {
+  z-index: 1;
+}
+
 /* Opt-out: no extra transitions on media/animation elements */
 img, video, svg, canvas { transition: none; }
 

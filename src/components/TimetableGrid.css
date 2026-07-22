@@ -1676,7 +1676,8 @@ select.tt-editor-input {
     font-size: 0.78rem;
   }
   .tt-drag-btn {
-    top: 2px;
+    top: auto;
+    bottom: 2px;
     right: 2px;
     width: 14px;
     height: 14px;

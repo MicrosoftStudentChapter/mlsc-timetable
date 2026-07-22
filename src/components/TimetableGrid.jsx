@@ -445,12 +445,6 @@ function ClassCard({ entry, onEdit, onDragStart, isDarkMode, isDragging }) {
     onEdit(rect)
   }
 
-  const handlePointerDown = (e) => {
-    if (e.button != null && e.button !== 0) return
-    if (e.target.closest('.tt-edit-btn')) return
-    onDragStart?.(entry, e)
-  }
-
   const handleDragHandlePointerDown = (e) => {
     if (e.button != null && e.button !== 0) return
     e.stopPropagation()
@@ -465,7 +459,6 @@ function ClassCard({ entry, onEdit, onDragStart, isDarkMode, isDragging }) {
       style={cardStyle}
       data-type={entry.type}
       data-dragging={isDragging || undefined}
-      onPointerDown={handlePointerDown}
     >
       <button
         className="tt-edit-btn"

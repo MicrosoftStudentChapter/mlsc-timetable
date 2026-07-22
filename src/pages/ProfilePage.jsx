@@ -528,6 +528,7 @@ function ProfileInner() {
                         options={yearOptions}
                         placeholder="Select year"
                         ariaLabel="Year"
+                        multiline
                       />
                     </div>
                     <div className="profile-batch-segment">
@@ -540,6 +541,7 @@ function ProfileInner() {
                         placeholder={selectedYear ? 'Select stream' : '—'}
                         ariaLabel="Stream"
                         disabled={!selectedYear}
+                        multiline
                       />
                     </div>
                     <div className="profile-batch-segment">
@@ -552,6 +554,7 @@ function ProfileInner() {
                         placeholder={selectedStream ? 'Select batch' : '—'}
                         ariaLabel="Batch"
                         disabled={!selectedStream}
+                        multiline
                       />
                     </div>
                   </div>
