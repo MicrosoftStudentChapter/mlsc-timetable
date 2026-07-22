@@ -187,6 +187,7 @@ function CalendarSyncModal({ isOpen, onClose, currentBatch }) {
   )
 }
 
+
 export default function TimetablePage() {
   const { batch } = useParams()
   const navigate  = useNavigate()
@@ -413,19 +414,6 @@ export default function TimetablePage() {
               disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
             />
           </div>
-          <label className="tt-card-theme-picker">
-            <span className="tt-card-theme-label">Card style</span>
-            <select
-              className="tt-card-theme-select"
-              value={cardTheme}
-              onChange={(e) => setCardTheme(e.target.value)}
-              aria-label="Card style"
-            >
-              {CARD_THEMES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
-          </label>
         </div>
         {/* Follow-day alert — shown on desktop AND mobile, but only when
             the current batch has an override in the next 7 days. Component
@@ -713,4 +701,3 @@ function ExportDropdownButton({ format, label, icon, exportRef, batch, disabled 
     </div>
   )
 }
-

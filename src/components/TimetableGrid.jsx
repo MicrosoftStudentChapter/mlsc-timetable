@@ -639,16 +639,19 @@ export default function TimetableGrid({
     return DAYS.indexOf(highlightDay)
   }, [activeWeekdayIdx, highlightDay])
 
-  // Measure the day-column width so the pill can be translated in pixels
-  // (percentage-based transforms don't reliably interpolate across renders).
+  // Measure the active column's actual layout offset. Using bounding-rect
+  // widths here is incorrect when the table has CSS zoom applied on narrow
+  // screens: the rect is zoomed, while the transform is in layout pixels.
   const headerRowRef = useRef(null)
-  const [colWidth, setColWidth] = useState(0)
+  const [pillOffset, setPillOffset] = useState(0)
   useLayoutEffect(() => {
     const row = headerRowRef.current
     if (!row) return
     const measure = () => {
-      const dayCell = row.querySelector('.tt-day-header-cell')
-      if (dayCell) setColWidth(dayCell.getBoundingClientRect().width)
+      const dayCells = row.querySelectorAll('.tt-day-header-cell')
+      if (dayCells.length > 1) {
+        setPillOffset(dayCells[1].offsetLeft - dayCells[0].offsetLeft)
+      }
     }
     measure()
     const ro = new ResizeObserver(measure)
@@ -956,7 +959,7 @@ export default function TimetableGrid({
                 pillIdx is null (Saturday with no mapping, Sunday, etc.). */}
             <div
               className={`tt-day-active-pill ${pillIdx == null ? 'tt-day-active-pill--hidden' : ''}`}
-              style={{ transform: `translateX(${(pillIdx ?? 0) * colWidth}px)` }}
+              style={{ transform: `translateX(${pillIdx == null ? 0 : pillIdx * pillOffset}px)` }}
               aria-hidden="true"
             />
             <div className="tt-time-header-cell">
@@ -1188,6 +1191,7 @@ export default function TimetableGrid({
   )
 }
 
+
 // ─── SaveChangesDialog ────────────────────────────────────────────────────────
 // Deferred save UI. The grid stages every edit/add/delete/move into local
 // overrides immediately. This dialog asks the user what to do with the
@@ -1307,4 +1311,3 @@ function SaveChangesDialog({ overrides, batch, onClose }) {
     document.body
   )
 }
-
