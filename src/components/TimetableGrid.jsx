@@ -232,23 +232,24 @@ function electiveBaseCode(code) {
 // A timetable can list an elective course's OTHER components as plain,
 // standalone cells (e.g. the group cell offers UCS539L inside a slash list,
 // while UCS539P practicals sit alone later the same day). Those standalone
-// cells only apply to students who actually picked that course, so once a
-// group has a resolved choice we hide the standalone cells that belong to
-// the options the user did NOT pick.
+// cells only apply to students who actually picked that course, so they are
+// hidden by default and only revealed once the user picks that course in
+// one of the elective groups.
 function filterUnchosenElectiveClasses(entries) {
   const chosenBases = new Set()     // base codes the user picked (any group)
-  const candidateBases = new Set()  // base codes offered by resolved groups
+  const candidateBases = new Set()  // base codes offered by any elective group
   for (const entry of entries) {
     if (!electiveGroupKey(entry)) continue
-    if (!entry.electiveChoice) continue
-    chosenBases.add(electiveBaseCode(entry.electiveChoice))
     for (const option of entry.options) {
       candidateBases.add(electiveBaseCode(option.subject_code))
     }
+    if (entry.electiveChoice) {
+      chosenBases.add(electiveBaseCode(entry.electiveChoice))
+    }
   }
-  if (chosenBases.size === 0) return entries
-  // Hide = offered by some resolved group, but not chosen in ANY group (a
-  // course can appear in several groups, e.g. its lecture and its practical).
+  if (candidateBases.size === 0) return entries
+  // Hide = offered by some group, but not chosen in ANY group (a course can
+  // appear in several groups, e.g. its lecture and its practical).
   const hiddenBases = new Set(
     [...candidateBases].filter((base) => !chosenBases.has(base)),
   )
