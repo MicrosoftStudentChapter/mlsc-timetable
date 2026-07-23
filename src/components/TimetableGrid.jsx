@@ -1358,7 +1358,7 @@ export default function TimetableGrid({
           <button
             type="button"
             className="tt-peek-fab"
-            onPointerDown={(e) => { e.preventDefault(); setPeekBaseline(true) }}
+            onPointerDown={() => setPeekBaseline(true)}
             onPointerUp={() => setPeekBaseline(false)}
             onPointerLeave={() => setPeekBaseline(false)}
             onPointerCancel={() => setPeekBaseline(false)}

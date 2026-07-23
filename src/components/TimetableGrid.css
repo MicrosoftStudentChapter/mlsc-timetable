@@ -75,6 +75,7 @@
      being clipped. */
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
   border-radius: inherit;
   /* flexbox centering removed to prevent top content cropping when child overflows wrapper bounds */
 }
@@ -1479,7 +1480,7 @@ select.tt-editor-input {
   opacity: 0.60;
   z-index: 4;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  touch-action: none;
+  touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -1592,7 +1593,7 @@ select.tt-editor-input {
   font-weight: 600;
   cursor: grab;
   user-select: none;
-  touch-action: none;
+  touch-action: manipulation;
   box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   backdrop-filter: blur(10px);
