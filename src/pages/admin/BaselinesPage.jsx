@@ -65,9 +65,27 @@ function decomposeKey(key) {
   return { prefix: m[1], year: Number(m[2]), stream: m[3] }
 }
 
+function paginationItems(page, pageCount) {
+  if (pageCount <= 7) return Array.from({ length: pageCount }, (_, index) => index + 1)
+  const items = [1]
+  if (page > 4) items.push('ellipsis-left')
+  const start = Math.max(2, page - 1)
+  const end = Math.min(pageCount - 1, page + 1)
+  for (let value = start; value <= end; value += 1) items.push(value)
+  if (page < pageCount - 3) items.push('ellipsis-right')
+  items.push(pageCount)
+  return items
+}
+
+
 export default function BaselinesPage() {
   const [items, setItems] = useState([])
+  const [totalItems, setTotalItems] = useState(0)
+  const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
+  const pageCount = Math.max(1, Math.ceil(totalItems / 25))
+  const firstResult = totalItems === 0 ? 0 : (page - 1) * 25 + 1
+  const lastResult = Math.min(page * 25, totalItems)
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [removing, setRemoving] = useState(null)
@@ -96,16 +114,29 @@ export default function BaselinesPage() {
     setLoading(true)
     setError(null)
     try {
-      const data = await listBaselines()
-      setItems(Array.isArray(data) ? data : data?.items || [])
+      const data = await listBaselines({
+        q: filterQuery.trim() || undefined,
+        parity: filterParity !== 'all' ? filterParity : undefined,
+        year: filterYear !== 'all' ? filterYear : undefined,
+        stream: filterStream !== 'all' ? filterStream : undefined,
+        limit: 25,
+        offset: (page - 1) * 25,
+      })
+      setItems(data?.items || [])
+      setTotalItems(data?.count || 0)
     } catch (err) {
       setError(err)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [filterQuery, filterParity, filterYear, filterStream, page])
 
-  useEffect(() => { refresh() }, [refresh])
+  useEffect(() => { setPage(1) }, [filterQuery, filterParity, filterYear, filterStream])
+
+  useEffect(() => {
+    const timer = setTimeout(refresh, 180)
+    return () => clearTimeout(timer)
+  }, [refresh])
 
   useEffect(() => {
     let alive = true
@@ -163,39 +194,31 @@ export default function BaselinesPage() {
   const itemFacets = useMemo(() => {
     const ys = new Set()
     const ss = new Set()
-    for (const row of items) {
-      const p = decomposeKey(row.key)
-      if (!p) continue
-      ys.add(String(p.year))
-      ss.add(p.stream)
+    years.forEach((y) => {
+      ys.add(String(y.year))
+      y.streams.forEach((s) => {
+        ss.add(s.code)
+      })
+    })
+    // Fallback if years config isn't fully loaded yet
+    if (ys.size === 0) {
+      ys.add('1'); ys.add('2'); ys.add('3'); ys.add('4')
+    }
+    if (ss.size === 0) {
+      ['CS', 'ME', 'EE', 'ECE', 'A', 'B'].forEach((s) => ss.add(s))
     }
     return {
       years: Array.from(ys).sort((a, b) => Number(a) - Number(b)),
       streams: Array.from(ss).sort(),
     }
-  }, [items])
+  }, [years])
 
   const filteredItems = useMemo(() => {
-    const q = filterQuery.trim().toUpperCase()
-    const filtered = items.filter((row) => {
-      const p = decomposeKey(row.key)
-      if (filterParity !== 'all') {
-        if (!p || p.prefix !== filterParity) return false
-      }
-      if (filterYear !== 'all') {
-        if (!p || String(p.year) !== filterYear) return false
-      }
-      if (filterStream !== 'all') {
-        if (!p || p.stream !== filterStream) return false
-      }
-      if (q && !String(row.key).toUpperCase().includes(q)) return false
-      return true
-    })
     // Sort by branch/pool letter first, then by student-facing semester
     // (odd → sem 1, even → sem 2 within a year). Pool A / Pool B thus
     // render as O1A / E1A then O1B / E1B — matching the scheme review
     // dialog's tab order.
-    return filtered.sort((a, b) => {
+    return [...items].sort((a, b) => {
       const pa = decomposeKey(a.key)
       const pb = decomposeKey(b.key)
       if (!pa || !pb) return String(a.key).localeCompare(String(b.key))
@@ -204,7 +227,7 @@ export default function BaselinesPage() {
       const semB = 2 * pb.year - (pb.prefix === 'O' ? 1 : 0)
       return semA - semB
     })
-  }, [items, filterParity, filterYear, filterStream, filterQuery])
+  }, [items])
 
   const hasActiveFilters =
     filterParity !== 'all' || filterYear !== 'all' || filterStream !== 'all' || filterQuery.trim() !== ''
@@ -214,6 +237,7 @@ export default function BaselinesPage() {
     setFilterYear('all')
     setFilterStream('all')
     setFilterQuery('')
+    setPage(1)
   }
 
   function addCountField() {
@@ -621,7 +645,10 @@ export default function BaselinesPage() {
 
       <div className="admin-card">
         <div className="admin-card-header" style={{ alignItems: 'center' }}>
-          <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Baselines</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h2 className="admin-card-title" style={{ textAlign: 'left', margin: 0 }}>Baselines</h2>
+            <span className="status-pill ok">{totalItems.toLocaleString()}</span>
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {syncResult && (
               <span style={{ fontSize: 12, color: syncResult.updated > 0 ? '#34d399' : 'var(--text-muted,rgba(255,255,255,0.5))' }}>
@@ -857,6 +884,29 @@ export default function BaselinesPage() {
                   })}
                 </tbody>
               </table>
+            )}
+            {totalItems > 25 && (
+              <nav className="admin-pagination" aria-label="Baselines pages">
+                <span className="admin-pagination-summary">Showing {firstResult}–{lastResult} of {totalItems.toLocaleString()}</span>
+                <div className="admin-pagination-controls">
+                  <button type="button" className="admin-page-button admin-page-button--arrow" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={page === 1 || loading} aria-label="Previous page">‹</button>
+                  {paginationItems(page, pageCount).map((item) => typeof item === 'string' && item.startsWith('ellipsis') ? (
+                    <span className="admin-page-ellipsis" key={item}>…</span>
+                  ) : (
+                    <button
+                      type="button"
+                      className={`admin-page-button${item === page ? ' is-active' : ''}`}
+                      key={item}
+                      onClick={() => setPage(item)}
+                      disabled={loading}
+                      aria-current={item === page ? 'page' : undefined}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                  <button type="button" className="admin-page-button admin-page-button--arrow" onClick={() => setPage((value) => Math.min(pageCount, value + 1))} disabled={page >= pageCount || loading} aria-label="Next page">›</button>
+                </div>
+              </nav>
             )}
           </>
         )}

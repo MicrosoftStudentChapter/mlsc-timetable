@@ -155,8 +155,15 @@ export function clearCalendarForEmail(email) {
 }
 
 // ── Baselines ─────────────────────────────────────────────────────────
-export function listBaselines({ limit = 25, offset = 0 } = {}) {
-  return adminFetch(`/baselines?limit=${limit}&offset=${offset}`)
+export function listBaselines({ q, parity, year, stream, limit = 25, offset = 0 } = {}) {
+  const params = new URLSearchParams()
+  if (q) params.append('q', q)
+  if (parity) params.append('parity', parity)
+  if (year) params.append('year', year)
+  if (stream) params.append('stream', stream)
+  params.append('limit', limit)
+  params.append('offset', offset)
+  return adminFetch(`/baselines?${params.toString()}`)
 }
 
 export function setBaseline(key, counts, { courses, schemeSource, optionGroups, electiveCount } = {}) {
