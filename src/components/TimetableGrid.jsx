@@ -220,6 +220,46 @@ function electiveGroupKey(entry) {
   return options.map((option) => option.subject_code || '').sort().join('|')
 }
 
+// Base course code with the trailing component letter stripped:
+// UCS539P / UCS539L / UCS539T all belong to course UCS539. Codes that don't
+// match the pattern pass through unchanged so exotic labels can't collide.
+function electiveBaseCode(code) {
+  const raw = String(code || '').trim().toUpperCase()
+  const m = /^([A-Z]{2,4}\d{3})[A-Z]$/.exec(raw)
+  return m ? m[1] : raw
+}
+
+// A timetable can list an elective course's OTHER components as plain,
+// standalone cells (e.g. the group cell offers UCS539L inside a slash list,
+// while UCS539P practicals sit alone later the same day). Those standalone
+// cells only apply to students who actually picked that course, so once a
+// group has a resolved choice we hide the standalone cells that belong to
+// the options the user did NOT pick.
+function filterUnchosenElectiveClasses(entries) {
+  const chosenBases = new Set()     // base codes the user picked (any group)
+  const candidateBases = new Set()  // base codes offered by resolved groups
+  for (const entry of entries) {
+    if (!electiveGroupKey(entry)) continue
+    if (!entry.electiveChoice) continue
+    chosenBases.add(electiveBaseCode(entry.electiveChoice))
+    for (const option of entry.options) {
+      candidateBases.add(electiveBaseCode(option.subject_code))
+    }
+  }
+  if (chosenBases.size === 0) return entries
+  // Hide = offered by some resolved group, but not chosen in ANY group (a
+  // course can appear in several groups, e.g. its lecture and its practical).
+  const hiddenBases = new Set(
+    [...candidateBases].filter((base) => !chosenBases.has(base)),
+  )
+  if (hiddenBases.size === 0) return entries
+  return entries.filter((entry) => {
+    // Group cells are handled by the pick itself; never hide them.
+    if (Array.isArray(entry.options) && entry.options.length > 0) return true
+    return !hiddenBases.has(electiveBaseCode(entry.code))
+  })
+}
+
 function applyElectiveChoice(entry, option) {
   return {
     ...entry,
@@ -750,7 +790,15 @@ export default function TimetableGrid({
 
   // What the grid actually shows. While the user holds the peek button we
   // render the canonical baseline so they can compare against their edits.
-  const visibleEntries = peekBaseline ? baseClasses : entries
+  // Standalone cells that belong to elective options the user did NOT pick
+  // are hidden from the view (but stay in `entries` so edit/drag handlers
+  // and the override machinery keep seeing the full list). Admin mode always
+  // shows everything — admins must be able to fix any cell.
+  const displayEntries = useMemo(
+    () => (adminMode ? entries : filterUnchosenElectiveClasses(entries)),
+    [entries, adminMode],
+  )
+  const visibleEntries = peekBaseline ? baseClasses : displayEntries
 
   // Evening rows stay out of the normal view when there are no classes scheduled
   // during those slots. Admin mode keeps all slots available for adding/editing.
