@@ -1330,6 +1330,12 @@ body:has(.dashboard-layout) {
   .header-actions {
     display: none;
   }
+
+  .dashboard-column {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════

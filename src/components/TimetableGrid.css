@@ -1982,3 +1982,17 @@ select.tt-editor-input {
   display: block;
   margin-top: 6px;
 }
+
+@media (max-width: 768px) {
+  .tt-grid-frame {
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    margin-bottom: 80px !important;
+  }
+  .tt-grid-scroll-wrapper {
+    height: auto !important;
+    overflow-y: visible !important;
+  }
+}
+

@@ -753,15 +753,24 @@ export default function TimetableGrid({
   // render the canonical baseline so they can compare against their edits.
   const visibleEntries = peekBaseline ? baseClasses : entries
 
-  // Evening rows stay out of the normal view when the timetable has no class
-  // at or after 5:10 PM. Admin mode keeps them available for adding/editing.
+  // Evening rows stay out of the normal view when there are no classes scheduled
+  // during those slots. Admin mode keeps all slots available for adding/editing.
   const visibleTimeSlots = useMemo(() => {
-    const hasEveningClass = visibleEntries.some((entry) =>
-      entry.startTime === '17:10' || entry.startTime === '18:00'
-    )
-    return adminMode || hasEveningClass
-      ? TIME_SLOTS
-      : TIME_SLOTS.filter((slot) => slot !== '17:10' && slot !== '18:00')
+    if (adminMode) return TIME_SLOTS
+
+    // Find the latest start time of any class in the timetable
+    let maxIdx = -1
+    for (const entry of visibleEntries) {
+      const idx = TIME_SLOTS.indexOf(entry.startTime)
+      if (idx > maxIdx) maxIdx = idx
+    }
+
+    // Default: show at least up to the 16:20 slot (index 10)
+    // so we don't end up with an empty morning-only grid if there are no classes.
+    const defaultMaxIdx = 10 // 16:20 is index 10
+    const limitIdx = Math.max(defaultMaxIdx, maxIdx)
+
+    return TIME_SLOTS.slice(0, limitIdx + 1)
   }, [visibleEntries, adminMode])
 
   // When the caller swaps in new `classes` (e.g. batch switch), reload the

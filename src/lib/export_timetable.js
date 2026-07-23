@@ -65,8 +65,21 @@ function dataUrlToBlob(dataUrl) {
   return new Blob([bytes], { type: mime })
 }
 
-async function captureNode(node, aspect = null, { pixelRatio = 4 } = {}) {
+async function captureNode(node, aspect = null, options = {}) {
   if (!node) throw new Error('Nothing to export — grid not mounted yet.')
+
+  // Resolve pixelRatio dynamically to prevent browser canvas memory crashes on iOS Safari
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  const isMobile = window.innerWidth < 768 || isIOS
+
+  let pixelRatio = options.pixelRatio
+  if (pixelRatio === undefined) {
+    pixelRatio = isIOS ? 2 : (isMobile ? 2.5 : 3)
+  } else if (isIOS && pixelRatio > 2) {
+    pixelRatio = 2
+  }
+
   const { toPng } = await import('html-to-image')
   node.classList.add(EXPORTING_CLASS)
   // Wait 4 rAFs to let the forced desktop layout (off-screen) fully reflow
