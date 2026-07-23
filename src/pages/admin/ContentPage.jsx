@@ -26,6 +26,8 @@ import {
   applyCalendarPlan,
   getCurrent,
   setCurrent,
+  syncCalendarForEmail,
+  clearCalendarForEmail,
   AdminAuthError,
 } from '../../lib/admin'
 import CalendarPreviewDialog from '../../components/CalendarPreviewDialog'
@@ -127,7 +129,7 @@ function AnnouncementsCard() {
   }
 
   async function onReset() {
-    if (!window.confirm('Reset announcements to defaults? This will delete all current announcements and restore the bundled ones.')) return
+    if (!window.confirm('Clear all announcements? This cannot be undone.')) return
     setLoading(true)
     setError(null)
     try {
@@ -146,8 +148,8 @@ function AnnouncementsCard() {
         <button type="button" className="admin-card-action" onClick={refresh} disabled={loading}>
           {loading ? 'Refreshing…' : 'Refresh'}
         </button>
-        <button type="button" className="admin-card-action" style={{ color: '#f87171' }} onClick={onReset} disabled={loading}>
-          Reset
+         <button type="button" className="admin-card-action" style={{ color: '#f87171' }} onClick={onReset} disabled={loading}>
+           Clear all
         </button>
       </div>
       <p className="admin-card-sub" style={{ textAlign: 'left', marginBottom: 12 }}>
@@ -306,7 +308,7 @@ function ExamDatesCard() {
   }
 
   async function onReset() {
-    if (!window.confirm('Reset exam dates to defaults? This will delete all current exam dates and restore the bundled ones.')) return
+    if (!window.confirm('Clear all exam dates? This cannot be undone.')) return
     setLoading(true)
     setError(null)
     try {
@@ -325,8 +327,8 @@ function ExamDatesCard() {
         <button type="button" className="admin-card-action" onClick={refresh} disabled={loading}>
           {loading ? 'Refreshing…' : 'Refresh'}
         </button>
-        <button type="button" className="admin-card-action" style={{ color: '#f87171' }} onClick={onReset} disabled={loading}>
-          Reset
+         <button type="button" className="admin-card-action" style={{ color: '#f87171' }} onClick={onReset} disabled={loading}>
+           Clear all
         </button>
       </div>
       <p className="admin-card-sub" style={{ textAlign: 'left', marginBottom: 12 }}>
@@ -536,6 +538,74 @@ function TermEndDateRow() {
   )
 }
 
+function CalendarSyncTestRow() {
+  const [email, setEmail] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [result, setResult] = useState(null)
+  const [clearArmed, setClearArmed] = useState(false)
+
+  async function onSubmit(event) {
+    event.preventDefault()
+    if (!email.trim() || busy) return
+    setBusy(true)
+    setResult(null)
+    try {
+      const response = await syncCalendarForEmail(email.trim())
+      setResult(`Synced ${response.email}${response.status?.batch_code ? ` · ${response.status.batch_code}` : ''}`)
+    } catch (error) {
+      setResult(errMessage(error))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function onClear() {
+    if (!email.trim() || busy) return
+    if (!clearArmed) {
+      setClearArmed(true)
+      setResult('Click Clear again to remove this account’s MLSC calendar.')
+      return
+    }
+    setBusy(true)
+    setResult(null)
+    try {
+      const response = await clearCalendarForEmail(email.trim())
+      setResult(`Cleared ${response.email} · ${response.event_maps_cleared || 0} saved event mappings removed`)
+      setClearArmed(false)
+    } catch (error) {
+      setResult(errMessage(error))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <form className="manager-term-end" onSubmit={onSubmit}>
+      <span className="manager-term-end-label">
+        Test Google Calendar sync
+        <span className="manager-term-end-hint"> — run directly from the current database timetable</span>
+      </span>
+      <div className="manager-add" style={{ marginTop: 8 }}>
+        <input
+          type="email"
+          className="upload-input"
+          placeholder="connected Google email"
+          value={email}
+          onChange={(event) => { setEmail(event.target.value); setClearArmed(false); setResult(null) }}
+          required
+        />
+        <button type="submit" className="admin-card-action" disabled={busy || !email.trim()}>
+          {busy ? 'Syncing…' : 'Sync now'}
+        </button>
+        <button type="button" className="admin-card-action" style={{ color: '#f87171' }} onClick={onClear} disabled={busy || !email.trim()}>
+          {busy ? 'Working…' : clearArmed ? 'Confirm clear' : 'Clear'}
+        </button>
+      </div>
+      {result && <span className="manager-term-end-hint" style={{ display: 'block', marginTop: 6 }}>{result}</span>}
+    </form>
+  )
+}
+
 function TermStartDateRow() {
   const [dates, setDates] = useState({ '1': '', '2': '', '3': '', '4': '' })
   const [original, setOriginal] = useState({ '1': '', '2': '', '3': '', '4': '' })
@@ -716,6 +786,7 @@ function CalendarOverridesCard() {
       </p>
       <TermStartDateRow />
       <TermEndDateRow />
+      <CalendarSyncTestRow />
 
       {error && (
         <div className="upload-result failed" style={{ marginBottom: 10 }}>

@@ -3,6 +3,25 @@
    shadow. Mirrors the look the grid has always had.
    ───────────────────────────────────────────────────────────── */
 
+[data-card-theme="default"] {
+  --tt-elective-accent: #2563eb;
+  --tt-elective-border-color: rgba(37, 99, 235, 0.35);
+  --tt-elective-glow-color: rgba(37, 99, 235, 0.45);
+  --tt-elective-bg: linear-gradient(135deg, rgba(239, 246, 255, 0.95), rgba(219, 234, 254, 0.95));
+  --tt-elective-hover-bg: rgba(37, 99, 235, 0.08);
+  --tt-elective-shadow-color: rgba(37, 99, 235, 0.12);
+  --tt-elective-subject-color: #1e3a8a;
+}
+
+[data-theme="dark"] [data-card-theme="default"] {
+  --tt-elective-accent-dark: #3b82f6;
+  --tt-elective-border-color-dark: rgba(59, 130, 246, 0.35);
+  --tt-elective-bg-dark: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+  --tt-elective-hover-bg: rgba(59, 130, 246, 0.15);
+  --tt-elective-shadow-color: rgba(59, 130, 246, 0.25);
+  --tt-elective-subject-color-dark: #93c5fd;
+}
+
 [data-card-theme="default"] .tt-class-card {
   background-color: #ffffff;
   border-left: 3px solid #004F9E; /* inline style overrides per type */

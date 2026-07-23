@@ -149,12 +149,11 @@
   z-index: 9999;
 }
 
-[data-theme="dark"]::view-transition-old(root) {
-  z-index: 9999;
-}
-
-[data-theme="dark"]::view-transition-new(root) {
-  z-index: 1;
+/* Disable transitions during view transitions to prevent color flashes/muddy rendering */
+.no-transitions *,
+.no-transitions *::before,
+.no-transitions *::after {
+  transition: none !important;
 }
 
 /* Opt-out: no extra transitions on media/animation elements */

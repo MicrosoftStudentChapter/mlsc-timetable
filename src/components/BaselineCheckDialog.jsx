@@ -1,7 +1,7 @@
 // Modal that shows the doctor result after clicking "Check" on a baseline row.
 // Receives the full response from POST /admin/baselines/{key}/check.
 
-import { useEffect } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './BaselineCheckDialog.css'
 
@@ -30,8 +30,6 @@ export default function BaselineCheckDialog({ result, onClose }) {
     return () => document.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
-  if (!open) return null
-
   const {
     status,
     baseline_key: key,
@@ -40,7 +38,7 @@ export default function BaselineCheckDialog({ result, onClose }) {
     written = 0,
     deleted = 0,
     result: groupResult,
-  } = result
+  } = result || {}
 
   const expected = groupResult?.expected || {}
   const expectedSource = groupResult?.expected_source
@@ -50,13 +48,36 @@ export default function BaselineCheckDialog({ result, onClose }) {
 
   // Derive the sorted list of type columns from expected + outlier counts
   const typeKeys = Array.from(new Set([
-    ...Object.keys(expected).filter((k) => k !== TOTAL_KEY),
-    ...outliers.flatMap((o) => Object.keys(o.counts || {}).filter((k) => k !== TOTAL_KEY)),
+    ...Object.keys(expected).filter((k) => k !== TOTAL_KEY && isScalar(expected[k])),
+    ...outliers.flatMap((o) => Object.keys(o.counts || {}).filter((k) => k !== TOTAL_KEY && isScalar(o.counts[k]))),
   ])).sort()
 
-  const batchesWithMissing = courseCheck?.batches_with_missing || []
-  const batchesWithExtra = courseCheck?.batches_with_extra || []
-  const hasCourseIssues = batchesWithMissing.length > 0 || batchesWithExtra.length > 0
+  const hasCourseIssues = Boolean(courseCheck?.has_drift)
+  const [expandedBatches, setExpandedBatches] = useState(() => new Set())
+
+  const batchDiagnostics = useMemo(() => {
+    const byBatch = new Map()
+    for (const outlier of outliers) {
+      byBatch.set(outlier.batch, { batch: outlier.batch, outlier, course: null })
+    }
+    for (const [batch, detail] of Object.entries(courseCheck?.per_batch_detail || {})) {
+      const row = byBatch.get(batch) || { batch, outlier: null, course: null }
+      row.course = detail
+      byBatch.set(batch, row)
+    }
+    return [...byBatch.values()].sort((a, b) => a.batch.localeCompare(b.batch))
+  }, [outliers, courseCheck])
+
+  function toggleBatch(batch) {
+    setExpandedBatches((current) => {
+      const next = new Set(current)
+      if (next.has(batch)) next.delete(batch)
+      else next.add(batch)
+      return next
+    })
+  }
+
+  if (!open) return null
 
   return (
     <div className="bcd-backdrop" onClick={onClose}>
@@ -96,9 +117,9 @@ export default function BaselineCheckDialog({ result, onClose }) {
             <div className="bcd-expected">
               <span className="bcd-expected-label">Expected per batch:</span>
               {typeKeys.map((t) => (
-                expected[t] != null && <span key={t} className="bcd-expected-chip">{t} {expected[t]}</span>
+                isScalar(expected[t]) && <span key={t} className="bcd-expected-chip">{t} {expected[t]}</span>
               ))}
-              {expected[TOTAL_KEY] != null && (
+              {isScalar(expected[TOTAL_KEY]) && (
                 <span className="bcd-expected-chip bcd-expected-total">total {expected[TOTAL_KEY]}</span>
               )}
             </div>
@@ -118,26 +139,40 @@ export default function BaselineCheckDialog({ result, onClose }) {
             </div>
           )}
 
-          {/* ── Count outliers table ── */}
-          {outliers.length > 0 && (
+          {/* ── Per-batch diagnostics ── */}
+          {batchDiagnostics.length > 0 && (
             <section className="bcd-section">
-              <h3 className="bcd-section-title">Count mismatches ({outliers.length} batch{outliers.length !== 1 ? 'es' : ''})</h3>
+              <h3 className="bcd-section-title">Batch diagnostics ({batchDiagnostics.length})</h3>
               <div className="bcd-scroll">
                 <table className="bcd-table">
                   <thead>
                     <tr>
-                      <th>Batch</th>
+                      <th></th><th>Batch</th>
                       {typeKeys.map((t) => <th key={t}>{t}</th>)}
                       <th>Total</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {outliers.map((o) => (
-                      <tr key={o.batch}>
-                        <td className="bcd-mono">{o.batch}</td>
+                    {batchDiagnostics.map((diagnostic) => {
+                      const o = diagnostic.outlier
+                      const course = diagnostic.course
+                      const expanded = expandedBatches.has(diagnostic.batch)
+                      const countDeltas = o?.deltas || {}
+                      const courseDeltas = course?.course_deltas || []
+                      const missing = course?.missing_details || []
+                      const extra = course?.extra_details || []
+                      return (
+                      <Fragment key={diagnostic.batch}>
+                      <tr className="bcd-expand-row">
+                        <td>
+                          <button type="button" className="bcd-expand-btn" onClick={() => toggleBatch(diagnostic.batch)} aria-expanded={expanded}>
+                            {expanded ? '▾' : '▸'}
+                          </button>
+                        </td>
+                        <td className="bcd-mono">{diagnostic.batch}</td>
                         {typeKeys.map((t) => {
-                          const actual = o.counts?.[t] ?? 0
-                          const delta = o.deltas?.[t]
+                          const actual = o?.counts?.[t] ?? 0
+                          const delta = countDeltas[t]
                           return (
                             <td key={t}>
                               {actual}
@@ -150,66 +185,62 @@ export default function BaselineCheckDialog({ result, onClose }) {
                           )
                         })}
                         <td>
-                          {o.counts?.[TOTAL_KEY] ?? 0}
-                          {o.deltas?.[TOTAL_KEY] != null && o.deltas[TOTAL_KEY] !== 0 && (
-                            <span className={`bcd-delta ${o.deltas[TOTAL_KEY] > 0 ? 'pos' : 'neg'}`}>
-                              {' '}{sign(o.deltas[TOTAL_KEY])}
+                          {o?.counts?.[TOTAL_KEY] ?? '—'}
+                          {countDeltas[TOTAL_KEY] != null && countDeltas[TOTAL_KEY] !== 0 && (
+                            <span className={`bcd-delta ${countDeltas[TOTAL_KEY] > 0 ? 'pos' : 'neg'}`}>
+                              {' '}{sign(countDeltas[TOTAL_KEY])}
                             </span>
                           )}
                         </td>
                       </tr>
-                    ))}
+                      {expanded && (
+                        <tr className="bcd-detail-row">
+                          <td colSpan={typeKeys.length + 3}>
+                            <div className="bcd-batch-detail">
+                              <strong>What differs in {diagnostic.batch}</strong>
+                              {Object.keys(countDeltas).length > 0 && (
+                                <div className="bcd-detail-line"><b>Overall type delta:</b> {formatDeltas(countDeltas)}</div>
+                              )}
+                              {missing.length > 0 && (
+                                <div className="bcd-detail-block"><b>Missing courses:</b> {missing.map((item) => `${item.code}${item.title ? ` (${item.title})` : ''}${formatExpectedSuffix(item.expected)}`).join(', ')}</div>
+                              )}
+                              {extra.length > 0 && (
+                                <div className="bcd-detail-block"><b>Extra courses:</b> {extra.map((item) => `${item.code}${item.actual ? ` (${formatTypeCounts(item.actual)})` : ''}`).join(', ')}</div>
+                              )}
+                              {courseDeltas.length > 0 && (
+                                <div className="bcd-detail-block">
+                                  <b>Course-level differences:</b>
+                                  {courseDeltas.map((item) => (
+                                    <div key={item.code} className="bcd-course-delta-row">
+                                      <span className="bcd-mono">{item.code}</span>{item.title && <span>{item.title}</span>}
+                                      <span>expected {formatTypeCounts(item.expected)}</span>
+                                      <span>actual {formatTypeCounts(item.actual)}</span>
+                                      <strong>{formatDeltas(item.deltas)}</strong>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {Object.keys(countDeltas).length === 0 && missing.length === 0 && extra.length === 0 && courseDeltas.length === 0 && (
+                                <div className="bcd-detail-line">No detailed course data was returned for this mismatch.</div>
+                              )}
+                              {courseDeltas.length === 0 && Object.keys(countDeltas).length > 0 && (
+                                <div className="bcd-detail-line"><b>Course attribution unavailable:</b> this legacy result only contains aggregate type counts. Re-run the check after the updated backend is deployed.</div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                      </Fragment>
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>
             </section>
           )}
 
-          {/* ── Course check ── */}
-          {hasCourseIssues && (
-            <section className="bcd-section">
-              <h3 className="bcd-section-title">Course mismatches</h3>
-              {batchesWithMissing.length > 0 && (
-                <div className="bcd-course-group">
-                  <div className="bcd-course-group-label">Missing courses</div>
-                  <div className="bcd-scroll">
-                    <table className="bcd-table">
-                      <thead><tr><th>Batch</th><th>Missing codes</th></tr></thead>
-                      <tbody>
-                        {batchesWithMissing.map((row) => (
-                          <tr key={row.batch}>
-                            <td className="bcd-mono">{row.batch}</td>
-                            <td>{(row.missing || []).join(', ')}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-              {batchesWithExtra.length > 0 && (
-                <div className="bcd-course-group">
-                  <div className="bcd-course-group-label">Extra courses (not in baseline)</div>
-                  <div className="bcd-scroll">
-                    <table className="bcd-table">
-                      <thead><tr><th>Batch</th><th>Extra codes</th></tr></thead>
-                      <tbody>
-                        {batchesWithExtra.map((row) => (
-                          <tr key={row.batch}>
-                            <td className="bcd-mono">{row.batch}</td>
-                            <td>{(row.extra || []).join(', ')}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-            </section>
-          )}
-
           {/* ── All matched ── */}
-          {status === 'ok' && outliers.length === 0 && !hasCourseIssues && (
+          {status === 'ok' && batchDiagnostics.length === 0 && !hasCourseIssues && (
             <div className="bcd-all-ok">
               All {batches} batch{batches !== 1 ? 'es' : ''} match the baseline.
             </div>
@@ -244,4 +275,27 @@ export default function BaselineCheckDialog({ result, onClose }) {
       </div>
     </div>
   )
+}
+
+function formatTypeCounts(counts) {
+  return ['Lecture', 'Tutorial', 'Practical']
+    .filter((type) => counts?.[type] != null || counts?.[type] === 0)
+    .map((type) => `${type[0]} ${counts[type] ?? 0}`)
+    .join(' · ') || '—'
+}
+
+function formatDeltas(deltas) {
+  return ['Lecture', 'Tutorial', 'Practical']
+    .filter((type) => deltas?.[type] != null)
+    .map((type) => `${type[0]} ${sign(deltas[type])}`)
+    .join(' · ') || '—'
+}
+
+function formatExpectedSuffix(counts) {
+  const formatted = formatTypeCounts(counts)
+  return formatted === '—' ? '' : ` [expected ${formatted}]`
+}
+
+function isScalar(value) {
+  return value == null || typeof value === 'string' || typeof value === 'number'
 }

@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { loadCalendarOverrides } from '../lib/sidebar_feeds'
+
+const overrideFeedPromises = new Map()
 import './FollowDayBanner.css'
 
 const WEEKDAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
@@ -46,7 +48,11 @@ export default function FollowDayBanner({ batch }) {
 
   useEffect(() => {
     let alive = true
-    loadCalendarOverrides(batch).then((res) => {
+    const key = String(batch || '')
+    const pending = overrideFeedPromises.get(key) || loadCalendarOverrides(batch)
+    overrideFeedPromises.set(key, pending)
+    pending.then((res) => {
+      overrideFeedPromises.delete(key)
       if (alive) setFeed(res)
     })
     return () => {

@@ -13,6 +13,8 @@ import {
   previewScheme,
   applyScheme,
   applySchemePlan,
+  addSubject,
+  bulkSubjects,
   AdminAuthError,
 } from '../../lib/admin'
 import BaselineCheckDialog from '../../components/BaselineCheckDialog'
@@ -384,6 +386,23 @@ export default function BaselinesPage() {
     } finally {
       setSchemeBusy(false)
     }
+  }
+
+  async function addMissingSubjects(codes, plan, source) {
+    const mappings = Array.isArray(codes) && codes.every((item) => typeof item === 'object')
+      ? codes
+      : [...new Set(codes || plan.flatMap((entry) => entry.missing_subject_codes || []))].map((code) => ({ code }))
+    const courseRows = plan.flatMap((entry) => entry.courses || [])
+    const items = mappings.map((mapping) => {
+      const code = String(mapping.code || '').trim().toUpperCase()
+      const course = courseRows.find((item) => String(item.code || '').toUpperCase() === code)
+      return {
+        code,
+        name: mapping.name || course?.title || code,
+        note: `Added from ${source || 'course scheme'}`,
+      }
+    })
+    if (items.length > 0) await bulkSubjects(items)
   }
 
   // Merge checkbox lives in the dialog now, so the standalone state is
@@ -843,12 +862,13 @@ export default function BaselinesPage() {
         )}
       </div>
 
-      <SchemePreviewDialog
+        <SchemePreviewDialog
         open={schemeDialogOpen}
         preview={schemePreview}
         branchLabel={selectedBranchLabel}
         busy={schemeBusy}
-        onApply={onSchemeApplyEdited}
+          onApply={onSchemeApplyEdited}
+          onAddMissing={(codes, plan) => addMissingSubjects(codes, plan, schemeFile?.name)}
         onClose={() => setSchemeDialogOpen(false)}
       />
 

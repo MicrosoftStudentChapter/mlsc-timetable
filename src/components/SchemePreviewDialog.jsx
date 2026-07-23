@@ -54,12 +54,16 @@ export default function SchemePreviewDialog({
   branchLabel,
   busy,
   onApply,
+  onAddMissing,
   onClose,
 }) {
   const [editedPlan, setEditedPlan] = useState(() => clonePlan(preview?.plan))
   const [activeIdx, setActiveIdx] = useState(0)
   const [merge, setMerge] = useState(false)
   const [error, setError] = useState(null)
+  const [missingOpen, setMissingOpen] = useState(false)
+  const [missingBusy, setMissingBusy] = useState(false)
+  const [applyAfterMissing, setApplyAfterMissing] = useState(false)
   const dialogRef = useRef(null)
 
   // Reset local state whenever a fresh preview is fed in.
@@ -82,6 +86,8 @@ export default function SchemePreviewDialog({
   }, [open, busy, onClose])
 
   const active = editedPlan[activeIdx]
+  const activeElectives = (active?.courses || []).filter((c) => !String(c.code || '').trim())
+  const activeSubjects = (active?.courses || []).filter((c) => String(c.code || '').trim())
 
   const totalCourses = useMemo(
     () => editedPlan.reduce((sum, s) => sum + (s.courses?.length || 0), 0),
@@ -116,11 +122,23 @@ export default function SchemePreviewDialog({
 
   async function handleApply() {
     setError(null)
+    if (allMissing.length) {
+      setApplyAfterMissing(true)
+      setMissingOpen(true)
+      return
+    }
+    await applyPlan()
+  }
+
+  async function applyPlan() {
     // Only keep rows that have at least a code (empty rows are noise).
     const cleaned = editedPlan.map((sem) => ({
       baseline_key: sem.baseline_key,
       semester: sem.semester,
-      courses: (sem.courses || []).filter((c) => (c.code || '').trim()).map((c) => ({
+      option_groups: sem.option_groups,
+      elective_count: sem.elective_count,
+      missing_subject_codes: sem.missing_subject_codes,
+      courses: (sem.courses || []).map((c) => ({
         code: (c.code || '').trim().toUpperCase(),
         title: (c.title || '').trim(),
         category: (c.category || '').trim(),
@@ -128,12 +146,35 @@ export default function SchemePreviewDialog({
         T: c.T ?? '',
         P: c.P ?? '',
         Cr: c.Cr ?? '',
+        alternate_weeks: c.alternate_weeks || [],
       })),
     }))
     try {
       await onApply?.(cleaned, { merge, source: preview.source })
     } catch (err) {
       setError(err?.message || String(err))
+    }
+  }
+
+  const allMissing = [...new Set(editedPlan.flatMap((sem) => sem.missing_subject_codes || []))]
+
+  async function addMissing(codes) {
+    setMissingBusy(true)
+    try {
+      await onAddMissing?.(codes, editedPlan)
+      setEditedPlan((plan) => plan.map((sem) => ({
+        ...sem,
+        missing_subject_codes: (sem.missing_subject_codes || []).filter((code) => !codes.includes(code)),
+      })))
+      setMissingOpen(false)
+      if (applyAfterMissing) {
+        setApplyAfterMissing(false)
+        await applyPlan()
+      }
+    } catch (err) {
+      setError(err?.message || String(err))
+    } finally {
+      setMissingBusy(false)
     }
   }
 
@@ -237,6 +278,18 @@ export default function SchemePreviewDialog({
                     </span>
                   </div>
                 )}
+                {active.elective_count > 0 && (
+                  <div className="scheme-meta-row">
+                    <span className="scheme-meta-label">Electives</span>
+                    <span className="scheme-meta-value">{active.elective_count} choice{active.elective_count === 1 ? '' : 's'}</span>
+                  </div>
+                )}
+                {active.missing_subject_codes?.length > 0 && (
+                  <div className="scheme-meta-row">
+                    <span className="scheme-meta-label">Missing catalog</span>
+                    <span className="scheme-meta-value">{active.missing_subject_codes.join(', ')}</span>
+                  </div>
+                )}
               </div>
 
               <div className="scheme-table-wrap">
@@ -255,7 +308,9 @@ export default function SchemePreviewDialog({
                     </tr>
                   </thead>
                   <tbody>
-                    {(active.courses || []).map((c, cIdx) => (
+                    {activeSubjects.map((c) => {
+                      const cIdx = active.courses.indexOf(c)
+                      return (
                       <tr key={cIdx}>
                         {COURSE_FIELDS.map((f) => (
                           <td
@@ -283,7 +338,8 @@ export default function SchemePreviewDialog({
                           </button>
                         </td>
                       </tr>
-                    ))}
+                      )
+                    })}
                     <tr>
                       <td colSpan={COURSE_FIELDS.length + 1}>
                         <button type="button" className="scheme-row-add" onClick={addCourse}>
@@ -294,11 +350,54 @@ export default function SchemePreviewDialog({
                   </tbody>
                 </table>
               </div>
+              {activeElectives.length > 0 && (
+                <div className="scheme-meta" style={{ marginTop: 16 }}>
+                  <div className="scheme-meta-row">
+                    <span className="scheme-meta-label">Electives</span>
+                    <span className="scheme-meta-value">Not subject mappings; student choice</span>
+                  </div>
+                  {activeElectives.map((c, idx) => (
+                    <div className="scheme-meta-row" key={`elective-${idx}`}>
+                      <span className="scheme-meta-label">{c.category || 'Elective'}</span>
+                      <span className="scheme-meta-value">{c.title || 'Elective'} · L {c.L || '-'} · T {c.T || '-'} · P {c.P || '-'}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {active.missing_subject_codes?.length > 0 && (
+                <div className="scheme-meta" style={{ marginTop: 16 }}>
+                  <div className="scheme-meta-row">
+                    <span className="scheme-meta-label">Missing subjects</span>
+                    <span className="scheme-meta-value">{active.missing_subject_codes.join(', ')}</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="scheme-btn scheme-btn--ghost"
+                    onClick={() => { setApplyAfterMissing(false); setMissingOpen(true) }}
+                    disabled={busy}
+                  >
+                    Add missing subjects to catalog
+                  </button>
+                </div>
+              )}
+              <p className="scheme-meta-hint" style={{ marginTop: 14 }}>
+                * means the marked L/T/P contact hours run in alternate weeks.
+              </p>
             </div>
           )}
         </div>
 
         {error && <div className="scheme-dialog-error">{error}</div>}
+
+        {missingOpen && (
+          <MissingSubjectsDialog
+            codes={allMissing}
+            plan={editedPlan}
+            busy={missingBusy || busy}
+            onClose={() => { if (!missingBusy && !busy) { setApplyAfterMissing(false); setMissingOpen(false) } }}
+            onAdd={addMissing}
+          />
+        )}
 
         <footer className="scheme-dialog-footer">
           <label className="scheme-merge-label">
@@ -328,6 +427,65 @@ export default function SchemePreviewDialog({
               {busy ? 'Applying…' : `Apply to ${editedPlan.length} baseline${editedPlan.length === 1 ? '' : 's'}`}
             </button>
           </div>
+        </footer>
+      </div>
+    </div>
+  )
+}
+
+function MissingSubjectsDialog({ codes, plan, busy, onClose, onAdd }) {
+  const [selected, setSelected] = useState(() => new Set(codes))
+  const [names, setNames] = useState(() => Object.fromEntries(codes.map((code) => {
+    const course = plan.flatMap((entry) => entry.courses || [])
+      .find((item) => String(item.code || '').toUpperCase() === code)
+    return [code, course?.title || code]
+  })))
+  const details = codes.map((code) => {
+    const course = plan.flatMap((entry) => entry.courses || [])
+      .find((item) => String(item.code || '').toUpperCase() === code)
+    return { code, title: course?.title || code }
+  })
+
+  return (
+    <div className="scheme-dialog-backdrop" style={{ zIndex: 5 }} onClick={busy ? undefined : onClose}>
+      <div className="scheme-dialog" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+        <header className="scheme-dialog-header">
+          <div>
+            <h2 className="scheme-dialog-title">Missing subjects</h2>
+            <p className="scheme-dialog-sub">Select the course mappings to add to the subject catalog.</p>
+          </div>
+          <button type="button" className="scheme-dialog-close" onClick={onClose} disabled={busy} aria-label="Close">×</button>
+        </header>
+        <div className="scheme-detail" style={{ padding: 20 }}>
+          {details.map(({ code, title }) => (
+            <label key={code} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '9px 0' }}>
+              <input
+                type="checkbox"
+                checked={selected.has(code)}
+                onChange={() => setSelected((current) => {
+                  const next = new Set(current)
+                  if (next.has(code)) next.delete(code); else next.add(code)
+                  return next
+                })}
+              />
+              <span style={{ flex: 1, display: 'flex', gap: 12, alignItems: 'center' }}>
+                <code>{code}</code>
+                <input
+                  type="text"
+                  className="scheme-input"
+                  value={names[code] ?? title}
+                  onChange={(event) => setNames((current) => ({ ...current, [code]: event.target.value }))}
+                  aria-label={`Subject name for ${code}`}
+                />
+              </span>
+            </label>
+          ))}
+        </div>
+        <footer className="scheme-dialog-footer">
+          <button type="button" className="scheme-btn scheme-btn--ghost" onClick={onClose} disabled={busy}>Cancel</button>
+          <button type="button" className="scheme-btn scheme-btn--primary" onClick={() => onAdd([...selected].map((code) => ({ code, name: names[code]?.trim() || code })))} disabled={busy || selected.size === 0}>
+            {busy ? 'Adding…' : `Add ${selected.size} subject${selected.size === 1 ? '' : 's'}`}
+          </button>
         </footer>
       </div>
     </div>

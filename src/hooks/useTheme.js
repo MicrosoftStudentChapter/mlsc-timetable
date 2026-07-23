@@ -48,23 +48,32 @@ export function useTheme() {
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y),
     )
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+
+    document.documentElement.classList.add('no-transitions')
+
     const transition = startViewTransition.call(document, updateTheme)
 
     transition.ready.then(() => {
       document.documentElement.animate(
         {
-          clipPath: isDark
-            ? [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`]
-            : [`circle(${endRadius}px at ${x}px ${y}px)`, `circle(0px at ${x}px ${y}px)`],
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ],
         },
         {
-          duration: 500,
-          easing: 'ease-in-out',
-          pseudoElement: isDark ? '::view-transition-new(root)' : '::view-transition-old(root)',
+          duration: 450,
+          easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+          pseudoElement: '::view-transition-new(root)',
         },
       )
     }).catch(() => {})
+
+    transition.finished.then(() => {
+      document.documentElement.classList.remove('no-transitions')
+    }).catch(() => {
+      document.documentElement.classList.remove('no-transitions')
+    })
   }
 
   return { theme, toggleTheme }

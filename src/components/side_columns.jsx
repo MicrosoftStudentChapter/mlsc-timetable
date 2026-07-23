@@ -161,6 +161,29 @@ function useFeed(loader) {
   return state;
 }
 
+const feedCache = new Map()
+const feedPromises = new Map()
+
+function useCachedFeed(key, loader) {
+  const [state, setState] = useState(() => feedCache.get(key) || { status: 'loading', items: [] })
+  useEffect(() => {
+    if (feedCache.has(key)) {
+      setState(feedCache.get(key))
+      return undefined
+    }
+    const pending = feedPromises.get(key) || loader()
+    feedPromises.set(key, pending)
+    let alive = true
+    pending.then((result) => {
+      feedCache.set(key, result)
+      feedPromises.delete(key)
+      if (alive) setState(result)
+    })
+    return () => { alive = false }
+  }, [key, loader])
+  return state
+}
+
 export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch }) {
   // ─── Mini calendar: real current month, real today ─────
   const today = useMemo(() => new Date(), []);
@@ -176,11 +199,11 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
   // Sidebar feeds — backend with bundled fallback. Exam dates + calendar
   // overrides are filtered server-side by the currently-viewed batch
   // (year scope + subject codes / global vs year vs branch).
-  const announcements = useFeed(loadAnnouncements);
+  const announcements = useCachedFeed('announcements', loadAnnouncements);
   const examDatesLoader = useCallback(() => loadExamDates(batch), [batch]);
-  const examDates = useFeed(examDatesLoader);
+  const examDates = useCachedFeed(`exam-dates:${batch || ''}`, examDatesLoader);
   const overridesLoader = useCallback(() => loadCalendarOverrides(batch), [batch]);
-  const calendarOverrides = useFeed(overridesLoader);
+  const calendarOverrides = useCachedFeed(`calendar-overrides:${batch || ''}`, overridesLoader);
 
   // Build a fast { 'YYYY-MM-DD' → override } lookup from the loaded rows;
   // more-specific scopes (branch > year > global) shadow less-specific ones

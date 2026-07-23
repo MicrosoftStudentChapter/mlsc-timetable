@@ -15,9 +15,11 @@ import { getBackendUrl } from './backend_url'
 const TIME_SLOTS = [
   '08:00', '08:50', '09:40', '10:30', '11:20', '12:10',
   '13:00', '13:50', '14:40', '15:30', '16:20', '17:10',
+  '18:00',
 ]
 
 let _idCounter = 0
+const myTimetableRequests = new Map()
 const nextId = () => `entry-${++_idCounter}`
 const nextPairId = () => `pair-${++_idCounter}`
 
@@ -27,11 +29,12 @@ function adaptEntry(raw) {
     day: raw.day,
     startTime: raw.start_time,
     endTime: raw.end_time,
-    subject: raw.subject ?? '',
+    subject: raw.subject ?? (Array.isArray(raw.options) && raw.options.length > 1 ? '' : ''),
     code: raw.code ?? '',
     room: raw.room ?? '',
     type: raw.type ?? 'Lecture',
     options: raw.options ?? [],
+    alternateWeekStart: raw.alternate_week_start ?? null,
   }
 }
 
@@ -89,20 +92,20 @@ export async function loadTimetable(batch) {
 }
 
 // Same shape as loadTimetable, but applies the current user's overrides
-// server-side. Falls back to the canonical bundled snapshot when the backend
-// is unreachable (overrides are then necessarily empty).
+// server-side. Signed-in users must not fall back to canonical data because
+// that would briefly show a timetable without their personal changes.
 export async function loadMyTimetable(batch) {
   const baseUrl = getBackendUrl()
-  if (baseUrl) {
-    const root = baseUrl.replace(/\/$/, '')
-    const url = batch
-      ? `${root}/me/timetable?batch=${encodeURIComponent(batch)}`
-      : `${root}/me/timetable`
-    const result = await fetchTimetable(url, { headers: await authHeaders() })
-    if (result.status === 'ok' || result.status === 'not_found') return result
-  }
+  if (!baseUrl) return { status: 'error', message: 'Backend is not configured' }
   if (!batch) return { status: 'error', message: 'No batch supplied' }
-  return fetchTimetable(fallbackTimetableUrl(batch))
+  const root = baseUrl.replace(/\/$/, '')
+  const url = `${root}/me/timetable?batch=${encodeURIComponent(batch)}`
+  const key = url
+  if (myTimetableRequests.has(key)) return myTimetableRequests.get(key)
+  const request = authHeaders().then((headers) => fetchTimetable(url, { headers }))
+  myTimetableRequests.set(key, request)
+  request.finally(() => myTimetableRequests.delete(key))
+  return request
 }
 
 async function fetchTimetable(url, init = {}) {
@@ -130,6 +133,7 @@ async function fetchTimetable(url, init = {}) {
     status: 'ok',
     batch: body?.batch ?? '',
     semester: body?.semester ?? null,
+    termStartDate: body?.term_start_date ?? null,
     classes: entries,
     overridesApplied: typeof body?.overrides_applied === 'number' ? body.overrides_applied : 0,
   }

@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react'
 import { loadBatches } from '../lib/batches'
+import { clearMyOverrides, setDefaultBatch } from '../lib/me_overrides'
+import { clearOverrides } from '../lib/local_overrides'
 import Combobox from '../components/Combobox'
 import { RequireAuth } from './LoginPage'
 import { AUTH_ENABLED } from '../lib/auth'
@@ -88,6 +90,7 @@ function GoogleCalendarCard({ savedBatch }) {
   const [status, setStatus] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [syncNotice, setSyncNotice] = useState('')
   const [confirm, setConfirm] = useState(null) // {title, message, confirmLabel, danger, onConfirm}
 
   const tk = useCallback(() => getToken(), [getToken])
@@ -117,10 +120,26 @@ function GoogleCalendarCard({ savedBatch }) {
     setBusy(true)
     setError('')
     try {
-      await fn()
+      const result = await fn()
       await reload()
+      if (result?.job_id) {
+        setSyncNotice('Sync in progress…')
+        for (let attempt = 0; attempt < 60; attempt += 1) {
+          await new Promise((resolve) => setTimeout(resolve, 1000))
+          const next = await getCalendarStatus(tk)
+          setStatus(next)
+          if (next.sync_state !== 'syncing') {
+            if (next.last_error) throw new Error(next.last_error === 'invalid_grant'
+              ? 'Google access was revoked. Reconnect Google Calendar.'
+              : next.last_error)
+            setSyncNotice('Sync completed')
+            break
+          }
+        }
+      }
     } catch (err) {
       setError(err.message || `${label} failed`)
+      setSyncNotice('Sync failed')
     } finally {
       setBusy(false)
     }
@@ -129,7 +148,7 @@ function GoogleCalendarCard({ savedBatch }) {
   const handleConnect    = () => run(() => connectCalendar(tk), 'Connect')
   const handleEnable     = () => run(() => enableCalendarSync(savedBatch, tk), 'Enable')
   const handleDisable    = () => run(() => disableCalendarSync(tk), 'Disable')
-  const handleResync     = () => run(() => triggerResync(savedBatch, tk), 'Sync')
+  const handleResync     = () => { setSyncNotice('Sync queued…'); return run(() => triggerResync(savedBatch, tk), 'Sync') }
   const handleClear      = () => setConfirm({
     title: 'Clear all events?',
     message: 'This will delete all MLSC timetable events from your Google Calendar. You can resync them at any time.',
@@ -243,10 +262,12 @@ function GoogleCalendarCard({ savedBatch }) {
           <div className="gcal-info-grid">
             <span className="gcal-label">Account</span>
             <span className="gcal-value">{status.google_email}</span>
-            {lastSync && <>
+             {lastSync && <>
               <span className="gcal-label">Last synced</span>
               <span className="gcal-value">{lastSync}</span>
-            </>}
+              </>}
+            <span className="gcal-label">Sync status</span>
+            <span className="gcal-value">{status.sync_state === 'syncing' || busy ? 'In progress…' : (syncNotice || 'Ready')}</span>
             {status.batch_code && <>
               <span className="gcal-label">Syncing batch</span>
               <span className="gcal-value">{status.batch_code}</span>
@@ -255,10 +276,11 @@ function GoogleCalendarCard({ savedBatch }) {
 
           {/* Sync now — always available when connected */}
           <div className="gcal-actions">
-             <button className="gcal-btn gcal-btn--secondary" onClick={handleResync} disabled={busy || !savedBatch}>
+             <button className="gcal-btn gcal-btn--secondary" onClick={handleResync} disabled={busy || status.sync_state === 'syncing' || !savedBatch}>
               {busy ? 'Syncing…' : 'Sync now'}
             </button>
-          </div>
+           </div>
+           {(busy || status.sync_state === 'syncing') && <p className="gcal-hint">Sync is in progress. This card will update when it finishes.</p>}
 
           {/* Auto-sync toggle — separate from manual sync */}
           <div className="gcal-autosync-row">
@@ -312,6 +334,7 @@ function ProfileInner() {
   const [yearInput, setYearInput] = useState('')
   const [streamInput, setStreamInput] = useState('')
   const [batchInput, setBatchInput] = useState('')
+  const [savedBatchState, setSavedBatchState] = useState(null)
 
   const [nameInput, setNameInput] = useState('')
   const [originalName, setOriginalName] = useState('')
@@ -320,6 +343,7 @@ function ProfileInner() {
   const [savedAt, setSavedAt] = useState(null)
   const [error, setError] = useState('')
   const [signingOut, setSigningOut] = useState(false)
+  const seededUserRef = useRef(null)
 
   // Load the year→stream→batch tree once.
   useEffect(() => {
@@ -345,13 +369,15 @@ function ProfileInner() {
   // When years arrive (or saved batch changes), resolve year+stream from the
   // stored batch code so the three combos reflect it.
   useEffect(() => {
-    if (!user || years.length === 0) return
+    if (!user || years.length === 0 || seededUserRef.current === user.id) return
     const stored = user.unsafeMetadata?.batch
     if (typeof stored !== 'string' || !stored) return
     const path = findBatchPath(years, stored)
     setYearInput(path.year)
     setStreamInput(path.stream)
     setBatchInput(path.batch)
+    setSavedBatchState(stored)
+    seededUserRef.current = user.id
   }, [years, user])
 
   const selectedYear = years.find((y) => y.label === yearInput) ?? null
@@ -371,8 +397,9 @@ function ProfileInner() {
     }
   }, [selectedYear, streamInput, batchInput])
   useEffect(() => {
-    if (!selectedStream && batchInput) setBatchInput('')
-  }, [selectedStream, batchInput])
+    // Keep a selected batch while the cascading controls settle. Clearing it
+    // here made a valid new batch disappear before the form could be saved.
+  }, [selectedStream])
 
   const initials = useMemo(() => {
     const base = nameInput || user?.primaryEmailAddress?.emailAddress || '?'
@@ -385,8 +412,8 @@ function ProfileInner() {
   }, [nameInput, user])
 
   const nameDirty = nameInput.trim() !== originalName.trim()
-  const savedBatch = user?.unsafeMetadata?.batch || ''
-  const batchDirty = batchInput && batchInput !== savedBatch && batches.includes(batchInput)
+  const savedBatch = savedBatchState ?? user?.unsafeMetadata?.batch ?? ''
+  const batchDirty = batchInput && batchInput !== savedBatch
   const dirty = nameDirty || batchDirty
   const canSave = dirty && !saving
 
@@ -400,7 +427,19 @@ function ProfileInner() {
 
   async function handleSave(e) {
     e.preventDefault()
-    if (!user || !canSave) return
+    if (!user) return
+    if (!canSave) {
+      if (batchInput && batchInput !== savedBatch) {
+        setError(`Batch ${batchInput} is not ready to save yet. Please select it again.`)
+      }
+      return
+    }
+    if (batchDirty) {
+      const confirmed = window.confirm(
+        `Changing your batch from ${savedBatch || 'the current batch'} to ${batchInput} will delete all your overrides for ${savedBatch || 'the old batch'}. Continue?`,
+      )
+      if (!confirmed) return
+    }
     setSaving(true)
     setError('')
     setSavedAt(null)
@@ -411,9 +450,17 @@ function ProfileInner() {
         setOriginalName(nameInput)
       }
       if (batchDirty) {
+        // Clear both caches so the old batch cannot reappear on this device.
+        clearOverrides(savedBatch)
+        await clearMyOverrides(savedBatch)
+        const result = await setDefaultBatch(batchInput)
+        if (!result || result.default_batch !== batchInput.toUpperCase()) {
+          throw new Error('Could not save the new default batch. Please try again.')
+        }
         await user.update({
           unsafeMetadata: { ...user.unsafeMetadata, batch: batchInput },
         })
+        setSavedBatchState(batchInput)
       }
       setSavedAt(Date.now())
     } catch (err) {

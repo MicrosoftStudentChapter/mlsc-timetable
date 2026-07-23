@@ -4,6 +4,25 @@
    Demonstrates: inline SVG bg (data-URI), font swap, dashed border.
    ───────────────────────────────────────────────────────────── */
 
+[data-card-theme="paper"] {
+  --tt-elective-accent: #b45309;
+  --tt-elective-border-color: rgba(180, 83, 9, 0.4);
+  --tt-elective-glow-color: rgba(180, 83, 9, 0.5);
+  --tt-elective-bg: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  --tt-elective-hover-bg: rgba(180, 83, 9, 0.08);
+  --tt-elective-shadow-color: rgba(180, 83, 9, 0.12);
+  --tt-elective-subject-color: #78350f;
+}
+
+[data-theme="dark"] [data-card-theme="paper"] {
+  --tt-elective-accent-dark: #fbbf24;
+  --tt-elective-border-color-dark: rgba(251, 191, 36, 0.35);
+  --tt-elective-bg-dark: linear-gradient(135deg, rgba(69, 26, 3, 0.95), rgba(45, 17, 3, 0.95));
+  --tt-elective-hover-bg: rgba(251, 191, 36, 0.15);
+  --tt-elective-shadow-color: rgba(251, 191, 36, 0.25);
+  --tt-elective-subject-color-dark: #fde68a;
+}
+
 [data-card-theme="paper"] .tt-class-card {
   background-color: #fbfaf6;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12'><circle cx='1.5' cy='1.5' r='1' fill='%23d6d3c3'/></svg>");

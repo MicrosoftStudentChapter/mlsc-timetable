@@ -268,6 +268,122 @@
   padding: 20px;
 }
 
+.catalog-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+  font-size: 12px;
+  color: var(--text-muted, rgba(255,255,255,0.6));
+}
+
+.admin-pagination-summary {
+  white-space: nowrap;
+}
+
+.admin-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.admin-page-button {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 6px;
+  background: var(--bg-card, #151515);
+  color: var(--text, rgba(255,255,255,0.72));
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.admin-page-button:hover:not(:disabled) {
+  border-color: rgba(59,130,246,0.7);
+  color: var(--text-h, #fff);
+  background: rgba(59,130,246,0.12);
+}
+
+.admin-page-button.is-active {
+  border-color: #3b82f6;
+  background: #3b82f6;
+  color: #fff;
+  font-weight: 700;
+}
+
+.admin-page-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.admin-page-button--arrow {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.admin-page-ellipsis {
+  width: 20px;
+  text-align: center;
+  color: var(--text-muted, rgba(255,255,255,0.45));
+}
+
+@media (max-width: 560px) {
+  .admin-pagination {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-pagination-summary {
+    text-align: center;
+  }
+
+  .admin-pagination-controls {
+    justify-content: center;
+  }
+
+  .admin-page-button:not(.is-active):not(.admin-page-button--arrow),
+  .admin-page-ellipsis {
+    display: none;
+  }
+}
+
+.catalog-table th:nth-child(1),
+.catalog-table td:nth-child(1) {
+  width: 14%;
+}
+
+.catalog-table th:nth-child(2),
+.catalog-table td:nth-child(2) {
+  width: 46%;
+}
+
+.catalog-table th:nth-child(3),
+.catalog-table td:nth-child(3) {
+  width: 12%;
+}
+
+.catalog-table th:nth-child(4),
+.catalog-table td:nth-child(4) {
+  width: 18%;
+}
+
+.catalog-table th:nth-child(5),
+.catalog-table td:nth-child(5) {
+  width: 10%;
+  white-space: nowrap;
+}
+
 [data-theme='light'] .admin-card {
   background: #fff;
   border-color: #e6e6ea;
@@ -1654,6 +1770,57 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.fix-detail-line {
+  display: block;
+  margin-top: 3px;
+  color: var(--text-muted, rgba(255,255,255,0.58));
+  font-size: 11px;
+  line-height: 1.35;
+  white-space: normal;
+}
+[data-theme='light'] .fix-detail-line { color: #68707a; }
+.bcd-course-title {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-muted, rgba(255,255,255,0.58));
+  font-size: 11px;
+}
+.bcd-expand-btn {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-muted, rgba(255,255,255,0.7));
+  cursor: pointer;
+  font-size: 15px;
+}
+.bcd-expand-btn:hover { background: rgba(255,255,255,0.08); }
+.bcd-detail-row td {
+  padding: 0 !important;
+  background: rgba(255,255,255,0.025);
+}
+.bcd-batch-detail {
+  display: grid;
+  gap: 8px;
+  padding: 14px 18px 16px 46px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.bcd-detail-line, .bcd-detail-block { color: var(--text-muted, rgba(255,255,255,0.7)); }
+.bcd-detail-block b, .bcd-detail-line b { color: var(--text, #eee); }
+.bcd-course-delta-row {
+  display: grid;
+  grid-template-columns: 90px minmax(120px, 1fr) auto auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 5px 0;
+  color: var(--text-muted, rgba(255,255,255,0.7));
+}
+.bcd-course-delta-row strong { color: #ff7e8b; }
+[data-theme='light'] .bcd-detail-row td { background: rgba(0,0,0,0.025); }
+[data-theme='light'] .bcd-expand-btn:hover { background: rgba(0,0,0,0.06); }
+[data-theme='light'] .bcd-detail-block b, [data-theme='light'] .bcd-detail-line b { color: #222; }
 .fix-col-where { font-variant-numeric: tabular-nums; color: var(--text-muted, rgba(255,255,255,0.65)); font-size: 12px; }
 .fix-dim { color: var(--text-muted, rgba(255,255,255,0.4)); }
 .fix-col-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: nowrap; }

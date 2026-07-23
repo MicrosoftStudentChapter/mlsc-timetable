@@ -13,6 +13,25 @@
    stays usable.
    ───────────────────────────────────────────────────────────── */
 
+[data-card-theme="custom"] {
+  --tt-elective-accent: var(--ct-border, #ec4899);
+  --tt-elective-border-color: rgba(236, 72, 153, 0.35);
+  --tt-elective-glow-color: rgba(236, 72, 153, 0.45);
+  --tt-elective-bg: linear-gradient(135deg, rgba(253, 242, 248, 0.95), rgba(252, 231, 243, 0.95));
+  --tt-elective-hover-bg: rgba(236, 72, 153, 0.08);
+  --tt-elective-shadow-color: rgba(236, 72, 153, 0.12);
+  --tt-elective-subject-color: #9d174d;
+}
+
+[data-theme="dark"] [data-card-theme="custom"] {
+  --tt-elective-accent-dark: var(--ct-border, #ec4899);
+  --tt-elective-border-color-dark: rgba(236, 72, 153, 0.35);
+  --tt-elective-bg-dark: linear-gradient(135deg, rgba(80, 7, 36, 0.95), rgba(45, 3, 19, 0.95));
+  --tt-elective-hover-bg: rgba(236, 72, 153, 0.15);
+  --tt-elective-shadow-color: rgba(236, 72, 153, 0.25);
+  --tt-elective-subject-color-dark: #fbcfe8;
+}
+
 [data-card-theme="custom"] .tt-class-card {
   background-color: var(--ct-bg, #ffffff);
   background-image: var(--ct-bg-image, none);

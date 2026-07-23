@@ -128,7 +128,7 @@ export function applyOverrides(classes, overrides) {
       }
       return false
     }
-    if (ov.kind === 'edit') {
+    if (ov.kind === 'edit' || ov.kind === 'elective_pick') {
       // Edit only the first matching entry. Without this guard, a baseEntry
       // fallback could match multiple rows (e.g. after a previous override
       // moved another entry into the same slot with similar fields) and the

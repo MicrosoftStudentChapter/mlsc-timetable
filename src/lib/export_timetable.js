@@ -65,14 +65,19 @@ function dataUrlToBlob(dataUrl) {
   return new Blob([bytes], { type: mime })
 }
 
-async function captureNode(node, aspect = null, { pixelRatio = 3 } = {}) {
+async function captureNode(node, aspect = null, { pixelRatio = 4 } = {}) {
   if (!node) throw new Error('Nothing to export — grid not mounted yet.')
   const { toPng } = await import('html-to-image')
   node.classList.add(EXPORTING_CLASS)
-  // Two rAFs to let the forced desktop layout (off-screen) reflow before
-  // html-to-image walks the DOM; otherwise the capture races the reflow and
-  // dimensions come back as the still-clipped mobile viewport.
-  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+  // Wait 4 rAFs to let the forced desktop layout (off-screen) fully reflow
+  // before html-to-image walks the DOM. Two frames is often not enough on
+  // slow mobile CPUs — the third and fourth frames catch late paint flushes.
+  const waitFrames = (n) => new Promise((r) => {
+    let i = 0
+    const tick = () => { if (++i >= n) r(); else requestAnimationFrame(tick) }
+    requestAnimationFrame(tick)
+  })
+  await waitFrames(4)
 
   // Re-shape the grid itself to the target aspect (instead of letterboxing
   // afterwards). The grid widens its day columns or stretches row heights
@@ -80,15 +85,23 @@ async function captureNode(node, aspect = null, { pixelRatio = 3 } = {}) {
   const frame = node.querySelector?.('.tt-grid-frame')
   const restoreGrid = aspect && frame ? reshapeGridToAspect(frame, aspect) : null
   if (restoreGrid) {
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+    await waitFrames(4)
   }
 
   const backgroundColor = resolveBackground(node)
   try {
+    // Read the true rendered dimensions from the DOM — not getBoundingClientRect
+    // (which on mobile returns the viewport-clipped size) but the full
+    // scrollWidth / scrollHeight of the element after our CSS overrides have
+    // expanded it to desktop size. html-to-image uses these to size its canvas.
+    const captureWidth  = node.scrollWidth  || node.offsetWidth
+    const captureHeight = node.scrollHeight || node.offsetHeight
     const dataUrl = await toPng(node, {
       pixelRatio,
       cacheBust: true,
       backgroundColor,
+      width: captureWidth,
+      height: captureHeight,
       style: { transform: 'none' },
     })
     return { dataUrl, backgroundColor }

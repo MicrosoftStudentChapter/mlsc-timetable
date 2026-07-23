@@ -140,14 +140,30 @@ export function setCurrent(label, termEndDate) {
   })
 }
 
-// ── Baselines ─────────────────────────────────────────────────────────
-export function listBaselines() {
-  return adminFetch('/baselines')
+export function syncCalendarForEmail(email) {
+  return adminFetch('/admin/calendar/sync-test', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  })
 }
 
-export function setBaseline(key, counts, { courses, schemeSource } = {}) {
+export function clearCalendarForEmail(email) {
+  return adminFetch('/admin/calendar/clear-test', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  })
+}
+
+// ── Baselines ─────────────────────────────────────────────────────────
+export function listBaselines({ limit = 25, offset = 0 } = {}) {
+  return adminFetch(`/baselines?limit=${limit}&offset=${offset}`)
+}
+
+export function setBaseline(key, counts, { courses, schemeSource, optionGroups, electiveCount } = {}) {
   const body = { counts }
   if (Array.isArray(courses)) body.courses = courses
+  if (Array.isArray(optionGroups)) body.option_groups = optionGroups
+  if (Number.isInteger(electiveCount)) body.elective_count = electiveCount
   if (schemeSource) body.scheme_source = schemeSource
   return adminFetch(`/admin/baselines/${encodeURIComponent(key)}`, {
     method: 'POST',
@@ -379,11 +395,33 @@ export function applyCalendarPlan({
 }
 
 // ── Change requests ───────────────────────────────────────────────────
-export function listChangeRequests({ status, limit = 100 } = {}) {
+export function listChangeRequests({ status, limit = 25, offset = 0 } = {}) {
   const qs = new URLSearchParams()
   qs.set('limit', String(limit))
+  qs.set('offset', String(offset))
   if (status) qs.set('status', status)
   return adminFetch(`/admin/change-requests?${qs.toString()}`)
+}
+
+export function listSubjectRequests({ status = 'pending', limit = 100 } = {}) {
+  const qs = new URLSearchParams()
+  if (status) qs.set('status', status)
+  qs.set('limit', String(limit))
+  return adminFetch(`/admin/change-requests/subjects?${qs.toString()}`)
+}
+
+export function approveSubjectRequest(id, note) {
+  return adminFetch(`/admin/change-requests/subjects/${encodeURIComponent(id)}/approve`, {
+    method: 'POST',
+    body: JSON.stringify({ note: note || null }),
+  })
+}
+
+export function rejectSubjectRequest(id, note) {
+  return adminFetch(`/admin/change-requests/subjects/${encodeURIComponent(id)}/reject`, {
+    method: 'POST',
+    body: JSON.stringify({ note: note || null }),
+  })
 }
 
 export function approveChangeRequest(id, note) {
@@ -459,7 +497,7 @@ export function performRollback() {
 }
 
 // ── Parsing errors / Fix tab ─────────────────────────────────────────────
-export function listErrors({ status, uploadId, errorType, batchCode, limit } = {}) {
+export function listErrors({ status, uploadId, errorType, batchCode, limit = 25, offset = 0 } = {}) {
   const params = new URLSearchParams()
   if (status) params.set('status', status)
   if (uploadId) params.set('upload_id', uploadId)
@@ -519,11 +557,13 @@ export function patchAdminTimetable(batch, payload) {
 }
 
 // ── Subject catalog (DB-backed) ──────────────────────────────────────────
-export function listSubjects({ q, source, limit = 500 } = {}) {
+export function listSubjects({ q, source, limit = 25, offset = 0 } = {}) {
   const qs = new URLSearchParams()
   if (q) qs.set('q', q)
   if (source) qs.set('source', source)
   if (limit) qs.set('limit', String(limit))
+  qs.set('offset', String(offset))
+  if (offset) qs.set('offset', String(offset))
   const s = qs.toString()
   return adminFetch(`/admin/subjects${s ? `?${s}` : ''}`)
 }
@@ -550,6 +590,13 @@ export function deleteSubject(code, { force = false } = {}) {
 
 export function bulkSubjects(items) {
   return adminFetch('/admin/subjects/bulk', {
+    method: 'POST',
+    body: JSON.stringify({ items }),
+  })
+}
+
+export function importSubjectMapping(items) {
+  return adminFetch('/admin/subjects/import', {
     method: 'POST',
     body: JSON.stringify({ items }),
   })

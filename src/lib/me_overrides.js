@@ -14,6 +14,18 @@ import { getBackendUrl } from './backend_url'
 
 const BASE = getBackendUrl()
 
+export async function setDefaultBatch(batch) {
+  if (!BASE || !batch) return false
+  try {
+    const res = await fetch(`${BASE}/me/batch`, {
+      method: 'POST', headers: await authHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ batch }),
+    })
+    if (!res.ok) return false
+    return await res.json()
+  } catch { return false }
+}
+
 function backendDisabled() {
   return !BASE
 }
@@ -35,10 +47,11 @@ function entryToBackend(entry) {
  *   body = { kind: 'add'|'edit'|'delete'|'elective_pick', entry: ClassEntry|null }
  * Resolves true on 2xx, false otherwise (including network failures).
  */
-export async function putMyOverride({ day, startTime, kind, entry }) {
+export async function putMyOverride({ day, startTime, kind, entry, batch }) {
   if (backendDisabled()) return false
   try {
-    const url = `${BASE}/me/overrides/${encodeURIComponent(day)}/${encodeURIComponent(startTime)}`
+    const suffix = batch ? `?batch=${encodeURIComponent(batch)}` : ''
+    const url = `${BASE}/me/overrides/${encodeURIComponent(day)}/${encodeURIComponent(startTime)}${suffix}`
     const res = await fetch(url, {
       method: 'PUT',
       headers: await authHeaders({ 'Content-Type': 'application/json' }),
@@ -54,10 +67,26 @@ export async function putMyOverride({ day, startTime, kind, entry }) {
 }
 
 /** DELETE /me/overrides/{day}/{slot} — removes the user's override at that slot. */
-export async function deleteMyOverride({ day, startTime }) {
+export async function deleteMyOverride({ day, startTime, batch }) {
   if (backendDisabled()) return false
   try {
-    const url = `${BASE}/me/overrides/${encodeURIComponent(day)}/${encodeURIComponent(startTime)}`
+    const suffix = batch ? `?batch=${encodeURIComponent(batch)}` : ''
+    const url = `${BASE}/me/overrides/${encodeURIComponent(day)}/${encodeURIComponent(startTime)}${suffix}`
+    const res = await fetch(url, {
+      method: 'DELETE',
+      headers: await authHeaders(),
+    })
+    return res.ok
+  } catch {
+    return false
+  }
+}
+
+/** DELETE /me/overrides?batch=... — removes every personal override for a batch. */
+export async function clearMyOverrides(batch) {
+  if (backendDisabled() || !batch) return false
+  try {
+    const url = `${BASE}/me/overrides?batch=${encodeURIComponent(batch)}`
     const res = await fetch(url, {
       method: 'DELETE',
       headers: await authHeaders(),
@@ -74,12 +103,12 @@ export async function deleteMyOverride({ day, startTime }) {
  *
  *   record shape: { kind, day, startTime, entry?, targetId? }
  */
-export async function syncOverridesToBackend(records) {
+export async function syncOverridesToBackend(records, batch) {
   if (!records || records.length === 0 || backendDisabled()) return
   await Promise.all(records.map(async (rec) => {
     if (!rec || !rec.kind) return
     if (rec.kind === 'delete') {
-      await deleteMyOverride({ day: rec.day, startTime: rec.startTime })
+      await deleteMyOverride({ day: rec.day, startTime: rec.startTime, batch })
       return
     }
     await putMyOverride({
@@ -87,6 +116,7 @@ export async function syncOverridesToBackend(records) {
       startTime: rec.startTime,
       kind: rec.kind,
       entry: rec.entry,
+      batch,
     })
   }))
 }

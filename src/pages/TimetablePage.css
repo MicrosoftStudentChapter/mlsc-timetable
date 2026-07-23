@@ -87,7 +87,7 @@
 .tt-toolbar-row {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
   padding-top: 6px;
@@ -148,7 +148,7 @@
   box-shadow: 0 3px 12px rgba(59, 130, 246, 0.3);
 }
 
-@media (max-width: 380px) {
+@media (max-width: 480px) {
   .tt-toolbar-row {
     justify-content: center;
   }
@@ -197,9 +197,9 @@
 }
 
 .tt-export-menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
+  position: fixed;
+  top: auto;
+  right: auto;
   min-width: 175px;
   padding: 6px;
   background: #ffffff;
@@ -1229,15 +1229,21 @@
 
 /* Drop any "today/active-day" highlight from the export — the header pill,
    the column tint, the label colour, and the dot. The captured snapshot
-   should read as a neutral timetable, not as of-today. */
+   should read as a neutral timetable, not as of-today.
+   NOTE: .tt-slot-cell.tt-col-active uses the `background` shorthand (not
+   background-image), so we must reset both properties explicitly. Same
+   for the active header cell which has a separate background-color. */
 .tt-export-target.tt-exporting .tt-day-header-cell.tt-day-active,
 .tt-export-target.tt-exporting .tt-slot-cell.tt-col-active {
+  background: inherit !important;
+  background-color: inherit !important;
   background-image: none !important;
 }
 [data-theme="dark"] .tt-export-target.tt-exporting .tt-day-header-cell.tt-day-active,
 [data-theme="dark"] .tt-export-target.tt-exporting .tt-slot-cell.tt-col-active {
-  background-image: none !important;
+  background: inherit !important;
   background-color: inherit !important;
+  background-image: none !important;
 }
 .tt-export-target.tt-exporting .tt-day-header-cell.tt-day-active .tt-day-header-label {
   color: rgba(51, 51, 51, 0.45) !important;
@@ -1289,15 +1295,17 @@
      only at the bottom, and `fitToAspect` then centres the unevenly-padded
      bitmap, making the aspect padding look bottom-heavy. */
   margin: 0 !important;
+  /* Use wider columns + taller time column so the batch label fits without
+     clipping, and so the export captures at a higher resolution. */
   --col-width: 200px !important;
-  --time-col-width: 84px !important;
-  --row-height: 56px !important;
+  --time-col-width: 100px !important;
+  --row-height: 58px !important;
   --card-padding: 6px 10px !important;
   --card-border-radius: 12px !important;
   --card-font-size: 13px !important;
   --card-meta-size: 11px !important;
   --badge-font-size: 9.5px !important;
-  --header-padding: 10px 12px !important;
+  --header-padding: 10px 14px !important;
   --header-font-size: 13px !important;
   --time-font-size: 14px !important;
   --grid-line-top: 10px !important;
@@ -1333,6 +1341,36 @@
   width: var(--time-col-width) !important;
   min-width: var(--time-col-width) !important;
   max-width: var(--time-col-width) !important;
+}
+
+/* Batch label: let it overflow the corner cell so it's never cropped.
+   The cell is pinned (sticky) so overflow is safe. */
+.tt-export-target.tt-exporting .tt-time-header-cell {
+  overflow: visible !important;
+}
+
+.tt-export-target.tt-exporting .tt-batch-header-label {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  max-width: none !important;
+  font-size: var(--header-font-size) !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* html-to-image does not emulate scroll-offset during rasterisation, so
+   position:sticky elements can appear misplaced on phones where the page is
+   scrolled mid-export. Demote all sticky children to relative so they paint
+   at their natural document flow position (the grid is fully expanded for the
+   capture anyway, so stickiness is unnecessary). */
+.tt-export-target.tt-exporting .tt-grid-header-row .tt-day-header-cell,
+.tt-export-target.tt-exporting .tt-grid-header-row .tt-time-header-cell {
+  position: relative !important;
+  top: auto !important;
+}
+.tt-export-target.tt-exporting .tt-time-cell {
+  position: relative !important;
+  top: auto !important;
 }
 
 /* ── Card-text overrides for export ────────────────────────────────────────
@@ -1395,6 +1433,7 @@
   margin: auto 0 0 0 !important;
   line-height: 1.25 !important;
 }
+
 .tt-export-target.tt-exporting .tt-day-header-label {
   font-size: var(--header-font-size) !important;
   letter-spacing: 0.1em !important;
@@ -1406,7 +1445,40 @@
 .tt-export-target.tt-exporting .tt-time-period {
   font-size: calc(var(--time-font-size) * 0.7) !important;
 }
-.tt-export-target.tt-exporting .tt-batch-header-label {
-  font-size: var(--header-font-size) !important;
-  letter-spacing: 0.04em !important;
+.tt-grid-skeleton {
+  min-height: 380px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 22px;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.28);
+}
+
+.tt-grid-skeleton-head,
+.tt-grid-skeleton-body span {
+  display: block;
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.08), rgba(148, 163, 184, 0.2), rgba(148, 163, 184, 0.08));
+  background-size: 200% 100%;
+  animation: tt-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.tt-grid-skeleton-head {
+  height: 58px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.tt-grid-skeleton-body {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  padding: 28px;
+}
+
+.tt-grid-skeleton-body span {
+  height: 82px;
+  border-radius: 14px;
+}
+
+@keyframes tt-skeleton-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
 }

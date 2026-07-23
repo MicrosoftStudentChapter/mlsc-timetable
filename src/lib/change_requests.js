@@ -24,12 +24,33 @@ function entryToBackend(entry) {
     code: entry.code,
     type: entry.type,
     room: entry.room,
+    alternate_week_start: entry.alternateWeekStart ?? null,
   }
 }
 
 export function classPrefixOf(batch) {
   if (!batch || typeof batch !== 'string') return ''
   return batch.slice(0, 3).toUpperCase()
+}
+
+export async function submitSubjectRequest({ requesterBatch, code, name }) {
+  const baseUrl = getBackendUrl()
+  if (!baseUrl) throw Object.assign(new Error('Backend not configured'), { code: 'no_backend' })
+  const res = await fetch(`${baseUrl.replace(/\/$/, '')}/subject-requests`, {
+    method: 'POST',
+    headers: await authHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify({ requester_batch: requesterBatch, code, name }),
+  })
+  let body = null
+  try { body = await res.json() } catch { /* non-JSON */ }
+  if (!res.ok) {
+    const detail = body?.detail ?? body
+    throw Object.assign(new Error(detail?.error || `Request failed (${res.status})`), {
+      code: detail?.code || `http_${res.status}`,
+      status: res.status,
+    })
+  }
+  return body
 }
 
 export async function submitChangeRequest({

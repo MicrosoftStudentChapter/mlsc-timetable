@@ -66,6 +66,25 @@ function extractMissingCode(row) {
   return m ? m[1].toUpperCase() : ''
 }
 
+function baselineDetail(row) {
+  const context = row?.context || {}
+  const courseDeltas = context.course_deltas || []
+  const missing = context.missing_course_details || context.missing_courses || []
+  const extra = context.extra_course_details || context.extra_courses || []
+  const parts = []
+  if (missing.length) parts.push(`missing ${missing.map((item) => item.code || item).join(', ')}`)
+  if (extra.length) parts.push(`extra ${extra.map((item) => item.code || item).join(', ')}`)
+  if (courseDeltas.length) {
+    parts.push(courseDeltas.map((item) => {
+      const delta = Object.entries(item.deltas || {})
+        .map(([type, value]) => `${type[0]} ${value > 0 ? '+' : ''}${value}`)
+        .join(' ')
+      return `${item.code}${item.title ? ` (${item.title})` : ''}: ${delta}`
+    }).join(' · '))
+  }
+  return parts.join(' · ')
+}
+
 export default function FixPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const uploadFilter = searchParams.get('upload') || null
@@ -575,6 +594,7 @@ export default function FixPage() {
             )
           }
           const it = unit.row
+          const detail = it.error_type === 'BASELINE_MISMATCH' ? baselineDetail(it) : ''
           return (
             <div key={it.id} className="fix-row">
               <label className="fix-checkbox">
@@ -594,7 +614,10 @@ export default function FixPage() {
               <span className="fix-col-where">
                 {it.day || ''}{it.start_time ? ` ${it.start_time}` : ''}
               </span>
-              <span className="fix-col-msg" title={it.message}>{it.message}</span>
+              <span className="fix-col-msg" title={[it.message, detail].filter(Boolean).join(' · ')}>
+                {it.message}
+                {detail && <small className="fix-detail-line"><strong>Details:</strong> {detail}</small>}
+              </span>
               <span className="fix-col-actions">
                 {it.batch_code && (
                   <Link

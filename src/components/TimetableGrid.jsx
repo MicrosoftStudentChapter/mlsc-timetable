@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo, useEffect, useLayoutEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { submitChangeRequest, classPrefixOf } from '../lib/change_requests'
+import { submitChangeRequest, submitSubjectRequest, classPrefixOf } from '../lib/change_requests'
 import {
   loadOverrides,
   saveOverrides,
@@ -9,7 +9,7 @@ import {
   mergeOverride,
   reconcileOverrides,
 } from '../lib/local_overrides'
-import { syncOverridesToBackend } from '../lib/me_overrides'
+import { setDefaultBatch, syncOverridesToBackend } from '../lib/me_overrides'
 import './TimetableGrid.css'
 
 // ─── Initial timetable data (IDs injected for stable React keys) ──────────────
@@ -111,7 +111,8 @@ const TIME_SLOTS = [
   '14:40',
   '15:30',
   '16:20',
-  '17:10'
+  '17:10',
+  '18:00',
 ]
 
 // Start times only (all 12 slots are start times of classes)
@@ -182,6 +183,21 @@ function formatHour(time) {
   return `${hour}:${m.toString().padStart(2, '0')} ${period}`
 }
 
+function isAlternateActive(entry, termStartDate) {
+  if (!entry?.alternateWeekStart) return true
+  const start = alternateWeekStartForDate(termStartDate)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const week = Math.max(1, Math.floor((today - start) / 604800000) + 1)
+  return (week - entry.alternateWeekStart) % 2 === 0
+}
+
+function alternateWeekStartForDate(termStartDate) {
+  if (!termStartDate) return new Date(new Date().getFullYear(), 0, 1)
+  const start = new Date(`${termStartDate}T00:00:00`)
+  return Number.isNaN(start.getTime()) ? new Date(new Date().getFullYear(), 0, 1) : start
+}
+
 function getEndTime(startTime) {
   const idx = TIME_SLOTS.indexOf(startTime)
   if (idx >= 0 && idx < TIME_SLOTS.length - 1) return TIME_SLOTS[idx + 1]
@@ -198,9 +214,31 @@ function genRuntimePairId() {
   return `pair-rt-${Date.now()}-${Math.floor(Math.random() * 9999)}`
 }
 
+function electiveGroupKey(entry) {
+  const options = entry?.options
+  if (!Array.isArray(options) || options.length < 2) return ''
+  return options.map((option) => option.subject_code || '').sort().join('|')
+}
+
+function applyElectiveChoice(entry, option) {
+  return {
+    ...entry,
+    subject: option.subject_name || option.subject_code || entry.subject,
+    code: option.subject_code || entry.code,
+    type: option.type || entry.type,
+    room: option.place || entry.room,
+    teacher: option.teacher || entry.teacher,
+    electiveChoice: option.subject_code || null,
+  }
+}
+
+function isPersonalElectiveOverride(override) {
+  return override?.kind === 'elective_pick'
+}
+
 // ─── Editor overlay positioning ───────────────────────────────────────────────
 const EDITOR_W = 304
-const EDITOR_H = 408
+const EDITOR_H = 470
 
 function computeEditorPos(rect) {
   const vw  = window.innerWidth
@@ -230,14 +268,15 @@ function computeEditorPos(rect) {
 }
 
 // ─── CardEditor — floating portal panel ──────────────────────────────────────
-function CardEditor({ mode, entry, slot, rect, onSave, onDelete, onClose }) {
+function CardEditor({ mode, entry, slot, rect, triggerElement, onSave, onDelete, onClose }) {
   const isEdit = mode === 'edit'
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [isElectivesExpanded, setIsElectivesExpanded] = useState(true)
 
   const [form, setForm] = useState(() =>
     isEdit
-      ? { subject: entry.subject, code: entry.code, room: entry.room, type: entry.type, day: entry.day, startTime: entry.startTime }
-      : { subject: '', code: '', room: '', type: 'Lecture', day: slot.day, startTime: slot.startTime }
+       ? { subject: entry.subject, code: entry.code, room: entry.room, type: entry.type, day: entry.day, startTime: entry.startTime, alternateWeekStart: entry.alternateWeekStart ?? null, electiveChoice: entry.electiveChoice || entry.code }
+       : { subject: '', code: '', room: '', type: 'Lecture', day: slot.day, startTime: slot.startTime, alternateWeekStart: null }
   )
 
   const panelRef  = useRef(null)
@@ -260,11 +299,14 @@ function CardEditor({ mode, entry, slot, rect, onSave, onDelete, onClose }) {
   // Click-outside → close (delayed so the open-click doesn't immediately close)
   useEffect(() => {
     const onDown = (e) => {
-      if (panelRef.current && !panelRef.current.contains(e.target)) onClose()
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        if (triggerElement && triggerElement.contains(e.target)) return
+        onClose()
+      }
     }
     const id = setTimeout(() => document.addEventListener('pointerdown', onDown), 80)
     return () => { clearTimeout(id); document.removeEventListener('pointerdown', onDown) }
-  }, [onClose])
+  }, [onClose, triggerElement])
 
   const field = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }))
   const setType = (t) => setForm(f => ({ ...f, type: t }))
@@ -373,6 +415,74 @@ function CardEditor({ mode, entry, slot, rect, onSave, onDelete, onClose }) {
             {slot.day} · {formatHour(slot.startTime)}
           </p>
         )}
+
+        {Array.isArray(entry?.options) && entry.options.length > 1 && (
+          <div className="tt-editor-electives">
+            <button
+              type="button"
+              className="tt-editor-electives-toggle"
+              onClick={() => setIsElectivesExpanded(prev => !prev)}
+              aria-expanded={isElectivesExpanded}
+            >
+              <span className="tt-editor-label">Choose elective</span>
+              <svg
+                className={`tt-editor-toggle-icon${isElectivesExpanded ? ' is-expanded' : ''}`}
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            {isElectivesExpanded && (
+              <>
+                <div className="tt-editor-elective-options">
+                  {entry.options.map((option) => (
+                    <button
+                      type="button"
+                      key={option.subject_code}
+                      className={`tt-editor-elective-option${form.electiveChoice === option.subject_code ? ' is-active' : ''}`}
+                      onClick={() => setForm((current) => ({ ...current, ...applyElectiveChoice(current, option), electiveChoice: option.subject_code }))}
+                    >
+                      <strong>{option.subject_name || option.subject_code}</strong>
+                      <small>{option.subject_code}{option.place ? ` · ${option.place}` : ''}{option.teacher ? ` · ${option.teacher}` : ''}</small>
+                    </button>
+                  ))}
+                </div>
+                <small className="tt-editor-elective-help">This choice is applied to every matching elective cell in this timetable.</small>
+              </>
+            )}
+          </div>
+        )}
+
+        <label className="tt-editor-alternate">
+          <input
+            type="checkbox"
+            checked={Boolean(form.alternateWeekStart)}
+            onChange={(event) => setForm((current) => ({
+              ...current,
+              alternateWeekStart: event.target.checked ? (current.alternateWeekStart || 1) : null,
+            }))}
+          />
+          <span>
+            <strong>Alternate-week class</strong>
+            <small>Week 1 means this class runs in the first week from the term start date; week 2 means the opposite week.</small>
+          </span>
+        </label>
+        {form.alternateWeekStart && (
+          <label className="tt-editor-field tt-editor-field--full">
+            <span className="tt-editor-label">Runs from</span>
+            <select className="tt-editor-input" value={form.alternateWeekStart} onChange={(event) => setForm((current) => ({ ...current, alternateWeekStart: Number(event.target.value) }))}>
+              <option value="1">Week 1</option>
+              <option value="2">Week 2</option>
+            </select>
+          </label>
+        )}
       </div>
 
       {/* ── Actions ───────────────────────────────────────────── */}
@@ -427,8 +537,50 @@ function CardEditor({ mode, entry, slot, rect, onSave, onDelete, onClose }) {
   )
 }
 
+function ElectivePicker({ entry, rect, triggerElement, onChoose, onClose }) {
+  const pos = computeEditorPos(rect)
+  const panelRef = useRef(null)
+  useEffect(() => {
+    const close = (event) => {
+      if (panelRef.current && !panelRef.current.contains(event.target)) {
+        if (triggerElement && triggerElement.contains(event.target)) return
+        onClose()
+      }
+    }
+    const id = setTimeout(() => document.addEventListener('pointerdown', close), 80)
+    return () => { clearTimeout(id); document.removeEventListener('pointerdown', close) }
+  }, [onClose, triggerElement])
+  return createPortal(
+    <div ref={panelRef} className="tt-elective-picker" style={{ top: pos.top, left: pos.left }} role="dialog" aria-label="Choose elective">
+      <div className="tt-elective-picker-header">
+        <strong>Choose elective</strong>
+        <button type="button" onClick={onClose} aria-label="Close">×</button>
+      </div>
+      <p>Choose once and matching cells update automatically.</p>
+      <div className="tt-elective-picker-list">
+        {(entry.options || []).map((option) => (
+          <button type="button" key={option.subject_code} onClick={() => onChoose(option)}>
+            <strong>{option.subject_name || option.subject_code}</strong>
+            <span>{option.subject_code}</span>
+          </button>
+        ))}
+      </div>
+    </div>,
+    document.body,
+  )
+}
+
 // ─── ClassCard ────────────────────────────────────────────────────────────────
-function ClassCard({ entry, onEdit, onDragStart, isDarkMode, isDragging }) {
+function getCardSvgIndex(subject, code, room, type) {
+  const str = `${subject || ''}-${code || ''}-${room || ''}-${type || ''}`
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  return Math.abs(hash) % 6
+}
+
+function ClassCard({ entry, onEdit, onChooseElective, onDragStart, isDarkMode, isDragging, termStartDate }) {
   const TYPE_META = isDarkMode ? DARK_TYPE_META : LIGHT_TYPE_META
   const meta      = TYPE_META[entry.type] || TYPE_META.Lecture
   const cardStyle = {
@@ -438,11 +590,13 @@ function ClassCard({ entry, onEdit, onDragStart, isDarkMode, isDragging }) {
     '--edit-hover-color': meta.editHoverColor
   }
   const badgeStyle = { color: meta.badgeColor || meta.color, background: meta.badgeBg }
+  const isElectiveGroup = Array.isArray(entry.options) && entry.options.length > 1 && !entry.electiveChoice
 
   const handleEditClick = (e) => {
     e.stopPropagation()
-    const rect = e.currentTarget.closest('.tt-class-card').getBoundingClientRect()
-    onEdit(rect)
+    const cardEl = e.currentTarget.closest('.tt-class-card')
+    const rect = cardEl.getBoundingClientRect()
+    onEdit(rect, e.currentTarget)
   }
 
   const handleDragHandlePointerDown = (e) => {
@@ -453,18 +607,30 @@ function ClassCard({ entry, onEdit, onDragStart, isDarkMode, isDragging }) {
     onDragStart?.(entry, e, { immediate: true })
   }
 
+  const handleCardClick = (e) => {
+    if (isElectiveGroup) {
+      e.stopPropagation()
+      const rect = e.currentTarget.getBoundingClientRect()
+      onChooseElective?.(entry, rect, e.currentTarget)
+    }
+  }
+
   return (
     <div
       className="tt-class-card"
       style={cardStyle}
       data-type={entry.type}
       data-dragging={isDragging || undefined}
+      data-alternate-inactive={entry.alternateWeekStart && !isAlternateActive(entry, termStartDate) ? 'true' : undefined}
+      data-spidey-index={getCardSvgIndex(entry.subject, entry.code, entry.room, entry.type)}
+      data-elective-group={isElectiveGroup || undefined}
+      onClick={handleCardClick}
     >
       <button
         className="tt-edit-btn"
         onClick={handleEditClick}
         onPointerDown={(e) => e.stopPropagation()}
-        aria-label={`Edit ${entry.subject}`}
+        aria-label={`Edit ${isElectiveGroup ? 'elective group' : entry.subject}`}
         title="Edit class"
       >
         {/* Pencil icon */}
@@ -487,12 +653,18 @@ function ClassCard({ entry, onEdit, onDragStart, isDarkMode, isDragging }) {
           <circle cx="9" cy="19" r="1.7" /><circle cx="15" cy="19" r="1.7" />
         </svg>
       </button>
-      <span className="tt-type-badge" style={badgeStyle}>{meta.label}</span>
-      <div className="tt-card-text">
-        <p className="tt-card-subject">{entry.subject}</p>
-        <p className="tt-card-code">{entry.code}</p>
+      {!isElectiveGroup && <span className="tt-type-badge" style={badgeStyle}>{meta.label}</span>}
+      <div className={`tt-card-text${isElectiveGroup ? ' tt-card-text--elective' : ''}`}>
+        <p className="tt-card-subject">{isElectiveGroup ? 'Choose elective' : entry.subject}</p>
+        {!isElectiveGroup && <p className="tt-card-code">{entry.code}</p>}
       </div>
-      {entry.room && String(entry.room).trim() && (
+      {isElectiveGroup && <span className="tt-elective-count">{entry.options.length} choices · click to choose</span>}
+      {!isElectiveGroup && entry.alternateWeekStart && (
+        <span className="tt-alternate-label">
+          {isAlternateActive(entry, termStartDate) ? `Alternate · Week ${entry.alternateWeekStart}` : 'Not this week'}
+        </span>
+      )}
+      {!isElectiveGroup && entry.room && String(entry.room).trim() && (
         <span className="tt-card-room">{entry.room}</span>
       )}
     </div>
@@ -504,6 +676,7 @@ export default function TimetableGrid({
   currentDay,
   isDarkMode,
   classes,
+  termStartDate,
   cardTheme = 'default',
   activeWeekdayIdx,
   batch,
@@ -514,18 +687,30 @@ export default function TimetableGrid({
   adminMode = false,
   onAdminChange,
   errorCellKey,
+  isSignedIn = false,
+  hasDefaultBatch = false,
+  onReloadTimetable,
 }) {
   const resolvedIsDark = isDarkMode ?? (typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark')
   // The canonical schedule from the backend (or the bundled fallback). We
   // never mutate this — user changes live in `overrides` below.
-  const baseClasses = classes ?? INITIAL_DATA
+  // Only admin/fallback mode may use the fixture. A user timetable must stay
+  // empty until the personal API response arrives, otherwise stale sample
+  // data flashes before `/me/timetable` completes.
+  const baseClasses = classes ?? (adminMode ? INITIAL_DATA : [])
   // Per-slot user overrides (one entry per edited/added/deleted cell), loaded
   // from localStorage so they survive a reload. Submission to the backend is
   // a separate concern (see ChangeRequestPrompt).
   const [overrides, setOverrides] = useState(() =>
-    adminMode ? [] : reconcileOverrides(baseClasses, loadOverrides(batch)),
+    adminMode ? [] : reconcileOverrides(baseClasses, loadOverrides(batch)).map((ov) => {
+      const isElective = ov.entry?.electiveChoice || (Array.isArray(ov.entry?.options) && ov.entry.options.length > 1)
+      return isElective && ov.kind === 'edit' ? { ...ov, kind: 'elective_pick' } : ov
+    }),
   )
   const [editTarget, setEditTarget] = useState(null)   // { entry, rect }
+  const [electiveTarget, setElectiveTarget] = useState(null)
+  const [electiveConfirm, setElectiveConfirm] = useState(null)
+  const [defaultBatchPrompt, setDefaultBatchPrompt] = useState(null)
   const [addTarget,  setAddTarget]  = useState(null)   // { day, startTime, rect }
   const [saveOpen, setSaveOpen] = useState(false)
   const [resetOpen, setResetOpen] = useState(false)
@@ -545,17 +730,39 @@ export default function TimetableGrid({
 
   // Net diff vs canonical: round-trip edits (A→B→A) collapse to "no change"
   // so the Save FAB stays hidden when the view matches the baseline.
+  const regularOverrides = useMemo(
+    () => overrides.filter((ov) => !isPersonalElectiveOverride(ov)),
+    [overrides],
+  )
+  const personalElectiveOverrides = useMemo(
+    () => overrides.filter((ov) => isPersonalElectiveOverride(ov)),
+    [overrides],
+  )
+
   const hasNetChange = useMemo(() => {
     const sig = (arr) => arr
       .map(e => `${e.day}|${e.startTime}|${e.subject}|${e.code}|${e.type}|${e.room ?? ''}`)
       .sort()
       .join('\n')
-    return sig(baseClasses) !== sig(entries)
-  }, [baseClasses, entries])
+    const regularEntries = adminMode ? baseClasses : applyOverrides(baseClasses, regularOverrides)
+    const electiveEntries = adminMode ? baseClasses : applyOverrides(baseClasses, personalElectiveOverrides)
+    return sig(baseClasses) !== sig(regularEntries)
+  }, [baseClasses, regularOverrides, adminMode])
 
   // What the grid actually shows. While the user holds the peek button we
   // render the canonical baseline so they can compare against their edits.
   const visibleEntries = peekBaseline ? baseClasses : entries
+
+  // Evening rows stay out of the normal view when the timetable has no class
+  // at or after 5:10 PM. Admin mode keeps them available for adding/editing.
+  const visibleTimeSlots = useMemo(() => {
+    const hasEveningClass = visibleEntries.some((entry) =>
+      entry.startTime === '17:10' || entry.startTime === '18:00'
+    )
+    return adminMode || hasEveningClass
+      ? TIME_SLOTS
+      : TIME_SLOTS.filter((slot) => slot !== '17:10' && slot !== '18:00')
+  }, [visibleEntries, adminMode])
 
   // When the caller swaps in new `classes` (e.g. batch switch), reload the
   // override list for that batch, prune any that conflict with the fresh
@@ -600,11 +807,26 @@ export default function TimetableGrid({
       onAdminChange?.(next)
       return
     }
+    if (isSignedIn && !hasDefaultBatch && !defaultBatchPrompt) {
+      setDefaultBatchPrompt({ incoming: arr })
+      return
+    }
+    applyIncomingOverrides(arr)
+  }
+
+  const applyIncomingOverrides = (arr) => {
     dirtyRef.current = true
-    setOverrides(prev => arr.reduce((acc, ov) => mergeOverride(acc, ov), prev))
-    // Fire-and-forget sync to the user's backend overrides; local storage
-    // remains the render source so a slow/failed sync never blocks the UI.
-    syncOverridesToBackend(arr)
+    const normalized = arr.map((ov) => (
+      isPersonalElectiveOverride(ov) && ov.kind === 'edit'
+        ? { ...ov, kind: 'elective_pick' }
+        : ov
+    ))
+    setOverrides(prev => normalized.reduce((acc, ov) => mergeOverride(acc, ov), prev))
+    // Regular edits stay local until the user explicitly submits the Save
+    // dialog. Personal elective picks are synced immediately.
+    if (normalized.some((ov) => isPersonalElectiveOverride(ov))) {
+      syncOverridesToBackend(normalized.filter((ov) => isPersonalElectiveOverride(ov)), batch)
+    }
   }
 
   // Resolve today's highlight day
@@ -705,16 +927,23 @@ export default function TimetableGrid({
   // ── Handlers ──────────────────────────────────────────────────────────────
   const handleEditSave = (form) => {
     const target = editTarget.entry
-    const newOverrides = [{
-      kind: 'edit',
-      targetId: target.id,
-      day: form.day,
-      startTime: form.startTime,
+    const selectedOption = target.options?.find((option) => option.subject_code === form.electiveChoice)
+    const chosen = selectedOption ? applyElectiveChoice(target, selectedOption) : { ...target, ...form }
+    const matchingElectives = selectedOption
+      ? entries.filter((entry) => electiveGroupKey(entry) === electiveGroupKey(target))
+      : [target]
+    const wasUnresolvedElective = Array.isArray(target.options) && target.options.length > 1
+    const isElectivePick = Boolean(selectedOption && wasUnresolvedElective)
+    const newOverrides = matchingElectives.map((entry) => ({
+      kind: isElectivePick ? 'elective_pick' : 'edit',
+      targetId: entry.id,
+      day: entry.day === target.day && entry.id === target.id ? form.day : entry.day,
+      startTime: entry.id === target.id ? form.startTime : entry.startTime,
       // Snapshot of the canonical entry we edited; reconcileOverrides uses
       // this to detect when the official timetable has moved on.
-      baseEntry: { ...target },
-      entry: { ...target, ...form },
-    }]
+      baseEntry: { ...entry },
+      entry: entry.id === target.id ? chosen : applyElectiveChoice(entry, selectedOption),
+    }))
     // Practical pair: sync the partner row so both halves stay in lockstep.
     if (target.pairId && form.type === 'Practical') {
       const partner = entries.find(e => e.pairId === target.pairId && e.id !== target.id)
@@ -737,6 +966,24 @@ export default function TimetableGrid({
     }
     pushOverrides(newOverrides)
     setEditTarget(null)
+  }
+
+  const handleElectiveChoice = (entry, option) => {
+    const groupKey = electiveGroupKey(entry)
+    const matching = entries.filter((candidate) => electiveGroupKey(candidate) === groupKey)
+    setElectiveConfirm({ entry, option, matching })
+  }
+
+  const confirmElectiveChoice = () => {
+    if (!electiveConfirm) return
+    const { option, matching } = electiveConfirm
+    pushOverrides(matching.map((candidate) => ({
+      kind: 'elective_pick', targetId: candidate.id, day: candidate.day,
+      startTime: candidate.startTime, baseEntry: { ...candidate },
+      entry: applyElectiveChoice(candidate, option),
+    })))
+    setElectiveConfirm(null)
+    setElectiveTarget(null)
   }
 
   const handleEditDelete = () => {
@@ -969,7 +1216,7 @@ export default function TimetableGrid({
           </div>
 
           {/* ── Body rows ──────────────────────────────────────────────── */}
-          {TIME_SLOTS.map((slot) => (
+          {visibleTimeSlots.map((slot) => (
             <div key={slot} className="tt-grid-body-row">
               {/* Time label */}
               <div className="tt-time-cell">
@@ -1002,9 +1249,11 @@ export default function TimetableGrid({
                           key={entry.id}
                           entry={entry}
                           isDarkMode={resolvedIsDark}
-                          onEdit={(rect) => setEditTarget({ entry, rect })}
+                          onEdit={(rect, element) => setEditTarget(prev => (prev && prev.entry.id === entry.id) ? null : { entry, rect, element })}
+                          onChooseElective={(target, rect, element) => setElectiveTarget(prev => (prev && prev.entry.id === target.id) ? null : { entry: target, rect, element })}
                           onDragStart={handleCardDragStart}
                           isDragging={drag?.started && drag.entry.id === entry.id}
+                          termStartDate={termStartDate}
                         />
                       ))}
 
@@ -1039,6 +1288,7 @@ export default function TimetableGrid({
           mode="edit"
           entry={editTarget.entry}
           rect={editTarget.rect}
+          triggerElement={editTarget.element}
           onSave={handleEditSave}
           onDelete={handleEditDelete}
           onClose={() => setEditTarget(null)}
@@ -1052,6 +1302,46 @@ export default function TimetableGrid({
           onSave={handleAddSave}
           onClose={() => setAddTarget(null)}
         />
+      )}
+      {electiveTarget && (
+        <ElectivePicker
+          entry={electiveTarget.entry}
+          rect={electiveTarget.rect}
+          triggerElement={electiveTarget.element}
+          onChoose={(option) => handleElectiveChoice(electiveTarget.entry, option)}
+          onClose={() => setElectiveTarget(null)}
+        />
+      )}
+      {electiveConfirm && createPortal(
+        <div className="tt-elective-confirm-backdrop" role="dialog" aria-modal="true">
+          <div className="tt-elective-confirm">
+            <h3>Save elective choice?</h3>
+            <p>
+              Choose <strong>{electiveConfirm.option.subject_name || electiveConfirm.option.subject_code}</strong>?
+              This will update all matching elective cells {isSignedIn
+                ? <>and save it for your default batch (<strong>{batch}</strong>)</>
+                : 'and keep it locally on this device'}.
+            </p>
+            <div className="tt-elective-confirm-actions">
+              <button type="button" className="tt-editor-cancel-btn" onClick={() => setElectiveConfirm(null)}>Cancel</button>
+              <button type="button" className="tt-editor-save-btn" onClick={confirmElectiveChoice}>Continue</button>
+            </div>
+          </div>
+        </div>,
+        document.body,
+      )}
+      {defaultBatchPrompt && createPortal(
+        <div className="tt-elective-confirm-backdrop" role="dialog" aria-modal="true">
+          <div className="tt-elective-confirm">
+            <h3>Set {batch} as your default batch?</h3>
+            <p>Your personal edits are stored against your default batch. Set <strong>{batch}</strong> as the default to save this edit and use it across devices.</p>
+            <div className="tt-elective-confirm-actions">
+              <button type="button" className="tt-editor-cancel-btn" onClick={() => setDefaultBatchPrompt(null)}>Cancel</button>
+              <button type="button" className="tt-editor-save-btn" onClick={async () => { const result = await setDefaultBatch(batch); if (!result || result.default_batch !== batch.toUpperCase()) return; applyIncomingOverrides(defaultBatchPrompt.incoming); setDefaultBatchPrompt(null) }}>Set as default & save</button>
+            </div>
+          </div>
+        </div>,
+        document.body,
       )}
 
       {/* Floating save controls — visible only when current view differs from baseline */}
@@ -1094,7 +1384,7 @@ export default function TimetableGrid({
             className="tt-save-fab"
             onClick={() => setSaveOpen(true)}
             disabled={peekBaseline}
-            aria-label={`Save ${overrides.length} change${overrides.length === 1 ? '' : 's'}`}
+            aria-label={`Save ${regularOverrides.length} change${regularOverrides.length === 1 ? '' : 's'}`}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
@@ -1108,9 +1398,19 @@ export default function TimetableGrid({
 
       {saveOpen && (
         <SaveChangesDialog
-          overrides={overrides}
+          overrides={regularOverrides}
           batch={batch}
+          isSignedIn={isSignedIn}
           onClose={() => setSaveOpen(false)}
+          onSavedJustForMe={() => {
+            // Clear staged regular overrides locally — they're now persisted in
+            // the backend override collection and will be baked into the next
+            // /me/timetable response. Reload so baseClasses reflects the saves
+            // and the user sees their edits without a manual refresh.
+            setOverrides((current) => current.filter((ov) => isPersonalElectiveOverride(ov)))
+            dirtyRef.current = true
+            onReloadTimetable?.()
+          }}
         />
       )}
 
@@ -1192,7 +1492,7 @@ export default function TimetableGrid({
 // batch / class as change requests for admin review. Each override is
 // submitted as its own request — server-side rate limits and duplicate
 // detection apply per change.
-function SaveChangesDialog({ overrides, batch, onClose }) {
+function SaveChangesDialog({ overrides, batch, isSignedIn, onClose, onSavedJustForMe }) {
   const [status, setStatus] = useState({ kind: 'idle' })
   // 'idle' | 'submitting' | 'done' | 'error'
   const classPrefix = classPrefixOf(batch)
@@ -1205,23 +1505,46 @@ function SaveChangesDialog({ overrides, batch, onClose }) {
   const submitAll = async (scope) => {
     if (!batch) return
     setStatus({ kind: 'submitting', scope, sent: 0, total: overrides.length, errors: [] })
+
+    // Always persist to the personal override collection first so the user's
+    // view is backed even before admin review. Change requests are submitted
+    // on top; overrides are never flushed regardless of outcome.
+    if (isSignedIn) {
+      await syncOverridesToBackend(overrides, batch)
+    }
+
     let sent = 0
     const errors = []
     for (const ov of overrides) {
+      if (ov.kind === 'elective_pick') continue
       if (scope === 'class') {
         // Class scope only carries Lecture changes
         const t = ov.entry?.type ?? ov.baseEntry?.type
         if (t !== 'Lecture') continue
       }
       try {
+        const entry = ov.kind === 'delete' ? null : ov.entry
         await submitChangeRequest({
           requesterBatch: batch,
           scope,
           kind: ov.kind,
           day: ov.day,
           startTime: ov.startTime,
-          entry: ov.kind === 'delete' ? null : ov.entry,
+          entry,
         })
+        // The regular Save dialog is the point at which non-personal edits
+        // become backend change requests; they are not synced during editing.
+        if (entry?.code?.trim() && entry?.subject?.trim() && !/^U[A-Z]{2,4}\d{3,4}[LTP]?$/i.test(entry.subject.trim())) {
+          try {
+            await submitSubjectRequest({
+              requesterBatch: batch,
+              code: entry.code,
+              name: entry.subject,
+            })
+          } catch (catalogErr) {
+            if (catalogErr.code !== 'duplicate') throw catalogErr
+          }
+        }
         sent++
         setStatus(s => s.kind === 'submitting' ? { ...s, sent } : s)
       } catch (err) {
@@ -1230,7 +1553,9 @@ function SaveChangesDialog({ overrides, batch, onClose }) {
     }
     if (errors.length === 0) {
       setStatus({ kind: 'done', scope, sent })
-      setTimeout(onClose, 1400)
+      // Change requests submitted + overrides already synced to backend override
+      // collection. Clear local staged state so the Save FAB disappears.
+      setTimeout(() => { onSavedJustForMe?.(); onClose() }, 500)
     } else {
       setStatus({ kind: 'error', scope, sent, errors })
     }
@@ -1256,7 +1581,15 @@ function SaveChangesDialog({ overrides, batch, onClose }) {
                 type="button"
                 className="tt-cr-btn tt-cr-btn--ghost"
                 disabled={isSubmitting}
-                onClick={onClose}
+                onClick={async () => {
+                  // Persist regular overrides to the personal override collection
+                  // in the backend (if signed in), then clear them from staged state.
+                  if (isSignedIn) {
+                    await syncOverridesToBackend(overrides, batch)
+                  }
+                  onSavedJustForMe?.()
+                  onClose()
+                }}
               >
                 Save just for me
               </button>

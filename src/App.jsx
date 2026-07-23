@@ -16,6 +16,7 @@ import ContributorsPage from './pages/admin/ContributorsPage'
 import ChangeRequestsPage from './pages/admin/ChangeRequestsPage'
 import FixPage from './pages/admin/FixPage'
 import FixTimetablePage from './pages/admin/FixTimetablePage'
+import CatalogPage from './pages/admin/CatalogPage'
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="uploads" element={<UploadsPage />} />
         <Route path="uploads/:id" element={<UploadDetailPage />} />
         <Route path="change-requests" element={<ChangeRequestsPage />} />
+        <Route path="catalog" element={<CatalogPage />} />
         <Route path="baselines" element={<BaselinesPage />} />
         <Route path="content" element={<ContentPage />} />
         <Route path="contributors" element={<ContributorsPage />} />

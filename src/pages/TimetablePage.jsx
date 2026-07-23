@@ -5,7 +5,7 @@ import TimetableGrid from '../components/TimetableGrid'
 import Footer from '../components/Footer'
 import FollowDayBanner from '../components/FollowDayBanner'
 import { loadBatches } from '../lib/batches'
-import { loadTimetable } from '../lib/timetable'
+import { loadMyTimetable } from '../lib/timetable'
 import { exportGridAsPng, exportGridAsPdf } from '../lib/export_timetable'
 import { DashboardLayout } from '../components/side_columns'
 import { useTheme } from '../hooks/useTheme'
@@ -23,6 +23,7 @@ const CARD_THEMES = [
   { value: 'default', label: 'Default' },
   { value: 'aurora', label: 'Aurora' },
   { value: 'paper', label: 'Paper' },
+  { value: 'spiderman', label: 'Spider-Man 🕷️' },
 ]
 
 function getInitialCardTheme() {
@@ -79,7 +80,23 @@ function CalendarSyncModal({ isOpen, onClose, currentBatch }) {
 
   async function run(fn) {
     setBusy(true); setErr('')
-    try { await fn(); await reload() }
+    try {
+      const result = await fn()
+      await reload()
+      if (result?.job_id) {
+        for (let attempt = 0; attempt < 60; attempt += 1) {
+          await new Promise((resolve) => setTimeout(resolve, 1000))
+          const next = await getCalendarStatus(tk)
+          setCalStatus(next)
+          if (next.sync_state !== 'syncing') {
+            if (next.last_error) throw new Error(next.last_error === 'invalid_grant'
+              ? 'Google access was revoked. Reconnect Google Calendar.'
+              : next.last_error)
+            break
+          }
+        }
+      }
+    }
     catch (e) { setErr(e?.message || 'Failed') }
     finally { setBusy(false) }
   }
@@ -127,6 +144,7 @@ function CalendarSyncModal({ isOpen, onClose, currentBatch }) {
       <>
         <p className="csm-hint">Connect your Google account to sync <strong>{savedBatch}</strong> timetable — holidays and schedule changes update automatically.</p>
         {err && <p className="csm-error">{err}</p>}
+        {busy && <p className="csm-hint">Sync is in progress. This dialog will update when it finishes.</p>}
         <div className="csm-actions">
           <button className="csm-btn csm-btn--primary" disabled={busy} onClick={() => run(() => connectCalendar(tk))}>
             {busy ? 'Connecting…' : 'Connect Google Calendar'}
@@ -191,7 +209,7 @@ function CalendarSyncModal({ isOpen, onClose, currentBatch }) {
 export default function TimetablePage() {
   const { batch } = useParams()
   const navigate  = useNavigate()
-  const { isSignedIn } = useAuthUser()
+  const { isLoaded: authLoaded, isSignedIn } = useAuthUser()
   const { theme, toggleTheme } = useTheme()
   const isDark = theme === 'dark'
   const [cardTheme, setCardTheme] = useState(getInitialCardTheme)
@@ -311,20 +329,21 @@ export default function TimetablePage() {
 
   // Fetch this batch's timetable from the backend whenever the URL batch changes.
   useEffect(() => {
+    if (!authLoaded) return
     if (!batch) {
       setTimetableState({ status: 'idle' })
       return
     }
     let cancelled = false
     setTimetableState({ status: 'loading' })
-    loadTimetable(batch).then((result) => {
+    loadMyTimetable(batch).then((result) => {
       if (cancelled) return
       setTimetableState(result)
     })
     return () => {
       cancelled = true
     }
-  }, [batch])
+  }, [batch, authLoaded, isSignedIn])
 
   const batchOptions = useMemo(() => {
     const out = []
@@ -414,6 +433,19 @@ export default function TimetablePage() {
               disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
             />
           </div>
+          <label className="tt-card-theme-picker">
+            <span className="tt-card-theme-label">Card style</span>
+            <select
+              className="tt-card-theme-select"
+              value={cardTheme}
+              onChange={(e) => setCardTheme(e.target.value)}
+              aria-label="Card style"
+            >
+              {CARD_THEMES.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+          </label>
         </div>
         {/* Follow-day alert — shown on desktop AND mobile, but only when
             the current batch has an override in the next 7 days. Component
@@ -422,7 +454,17 @@ export default function TimetablePage() {
           <FollowDayBanner batch={batch} />
         </div>
         <div className="tt-export-target" ref={exportRef}>
-          <TimetableContent state={timetableState} batch={batch} isDark={isDark} cardTheme={cardTheme} activeWeekdayIdx={activeWeekdayIdx} />
+        <TimetableContent
+          state={authLoaded ? timetableState : { status: 'loading' }}
+          batch={batch}
+          isDark={isDark}
+          cardTheme={cardTheme}
+          activeWeekdayIdx={activeWeekdayIdx}
+          onReloadTimetable={() => {
+            if (!batch) return
+            loadMyTimetable(batch).then((result) => setTimetableState(result))
+          }}
+        />
         </div>
       </div>
 
@@ -578,9 +620,16 @@ export default function TimetablePage() {
 
 // Renders the right thing for each fetch state. Falls back to the grid's
 // hard-coded fixture when no backend is configured (dev convenience).
-function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx }) {
+function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx, onReloadTimetable }) {
   if (state.status === 'loading' || state.status === 'idle') {
-    return <div className="tt-status tt-status--loading">Loading {batch ?? 'timetable'}…</div>
+    return (
+      <div className="tt-grid-skeleton" aria-label={`Loading ${batch ?? 'timetable'}`}>
+        <div className="tt-grid-skeleton-head" />
+        <div className="tt-grid-skeleton-body">
+          {Array.from({ length: 10 }, (_, index) => <span key={index} />)}
+        </div>
+      </div>
+    )
   }
   if (state.status === 'no_backend') {
     return (
@@ -588,7 +637,7 @@ function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx })
         <div className="tt-status tt-status--warning">
           Backend not configured — showing sample data. Set <code>VITE_BACKEND_URL</code> in <code>.env</code> to load <code>{batch}</code>.
         </div>
-        <TimetableGrid isDarkMode={isDark} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} />
+        <TimetableGrid isDarkMode={isDark} termStartDate={state.termStartDate} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} />
       </>
     )
   }
@@ -613,7 +662,7 @@ function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx })
       </div>
     )
   }
-  return <TimetableGrid isDarkMode={isDark} classes={state.classes} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} />
+  return <TimetableGrid isDarkMode={isDark} classes={state.classes} termStartDate={state.termStartDate} isSignedIn={!!window.Clerk?.user} hasDefaultBatch={!!window.Clerk?.user?.unsafeMetadata?.batch} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} onReloadTimetable={onReloadTimetable} />
 }
 
 // ─── ExportDropdownButton ───────────────────────────────────────────────────
@@ -623,6 +672,36 @@ function ExportDropdownButton({ format, label, icon, exportRef, batch, disabled 
   const [busy, setBusy] = useState(null)
   const [error, setError] = useState(null)
   const wrapRef = useRef(null)
+  const [menuStyle, setMenuStyle] = useState(null)
+
+  useEffect(() => {
+    if (!open) {
+      setMenuStyle(null)
+      return undefined
+    }
+    const placeMenu = () => {
+      const button = wrapRef.current?.querySelector('.tt-quick-export-btn')
+      if (!button) return
+      const rect = button.getBoundingClientRect()
+      const width = Math.min(220, window.innerWidth - 24)
+      const gap = 6
+      const left = Math.max(12, Math.min(rect.right - width, window.innerWidth - width - 12))
+      const openUp = rect.bottom + 190 > window.innerHeight
+      setMenuStyle({
+        position: 'fixed',
+        left,
+        width,
+        ...(openUp ? { bottom: window.innerHeight - rect.top + gap } : { top: rect.bottom + gap }),
+      })
+    }
+    placeMenu()
+    window.addEventListener('resize', placeMenu)
+    window.addEventListener('scroll', placeMenu, true)
+    return () => {
+      window.removeEventListener('resize', placeMenu)
+      window.removeEventListener('scroll', placeMenu, true)
+    }
+  }, [open])
 
   useEffect(() => {
     if (!open) return
@@ -681,7 +760,7 @@ function ExportDropdownButton({ format, label, icon, exportRef, batch, disabled 
         </svg>
       </button>
       {open && (
-        <div className="tt-export-menu" role="menu">
+        <div className="tt-export-menu" role="menu" style={menuStyle || undefined}>
           <div className="tt-export-menu-header">{label} Ratio</div>
           {options.map((opt) => (
             <button

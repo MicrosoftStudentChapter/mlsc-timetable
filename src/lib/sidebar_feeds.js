@@ -5,9 +5,9 @@
 //   GET ${VITE_BACKEND_URL}/announcements -> Announcement[]
 //   GET ${VITE_BACKEND_URL}/exam-dates    -> ExamDate[]
 //
-// Both endpoints return `[]` on missing data, never an error envelope, so a
-// successful HTTP response is always usable. On network/5xx we silently fall
-// back to /public/fallback/<name>.json so the UI still has something to show.
+// Both endpoints return `[]` when no rows exist. These feeds intentionally do
+// not fall back to bundled content: an empty admin collection must render as
+// empty rather than appearing seeded on the public site.
 //
 // Return shape (both helpers):
 //   { status: 'ok' | 'fallback' | 'error', items: Array<...> }
@@ -32,25 +32,23 @@ async function fetchJsonList(url) {
   }
 }
 
-async function loadList({ apiPath, fallbackName }) {
+async function loadList({ apiPath }) {
   const live = backendUrl(apiPath)
   if (live) {
     const items = await fetchJsonList(live)
     if (items) return { status: 'ok', items }
   }
-  const fallback = await fetchJsonList(`${FALLBACK_BASE}/${fallbackName}`)
-  if (fallback) return { status: 'fallback', items: fallback }
   return { status: 'error', items: [] }
 }
 
 export function loadAnnouncements() {
-  return loadList({ apiPath: '/announcements', fallbackName: 'announcements.json' })
+  return loadList({ apiPath: '/announcements' })
 }
 
 export function loadExamDates(batch) {
   const cleaned = String(batch || '').trim()
   const qs = cleaned ? `?batch=${encodeURIComponent(cleaned)}` : ''
-  return loadList({ apiPath: `/exam-dates${qs}`, fallbackName: 'exam_dates.json' })
+  return loadList({ apiPath: `/exam-dates${qs}` })
 }
 
 export function loadCalendarOverrides(batch) {
