@@ -1213,6 +1213,21 @@ body:has(.dashboard-layout) {
     display: none;
   }
 
+  /* Phones: unlock the viewport-locked dashboard so the page scrolls as one
+     surface. On desktop the fixed layout works because the grid has its own
+     inner scroller, but on small screens the timetable is taller than the
+     viewport and `overflow: hidden` here clipped its bottom rows outright.
+     `min-height: auto` lets these flex items grow to their content, and
+     .dashboard-column (overflow-y: auto) becomes the single scroller. */
+  .dashboard-main,
+  .dashboard-content {
+    min-height: auto;
+  }
+
+  .dashboard-content {
+    overflow: visible;
+  }
+
   .hamburger-btn {
     display: flex;
   }
