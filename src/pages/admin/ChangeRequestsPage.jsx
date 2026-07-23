@@ -46,6 +46,7 @@ function fmtEntry(entry) {
 function RequestCard({ row, busy, onApprove, onReject }) {
   const [note, setNote] = useState('')
   const isPending = row.status === 'pending'
+  const requesterEmail = row.requester_email || (row.requester_id && row.requester_id.includes('@') ? row.requester_id : null)
 
   return (
     <div className="admin-card" style={{ marginBottom: 12 }}>
@@ -62,9 +63,15 @@ function RequestCard({ row, busy, onApprove, onReject }) {
       </div>
 
       <div className="cr-meta">
-        <div><span className="cr-key">Slot</span> {row.day} · {row.start_time}</div>
+        <div><span className="cr-key">Slot</span> <strong>{row.day} · {row.start_time}</strong></div>
         <div><span className="cr-key">Semester</span> {row.semester || '—'}</div>
-        <div><span className="cr-key">Requester</span> <code>{row.requester_id || 'anon'}</code></div>
+        <div>
+          <span className="cr-key">Requester</span>{' '}
+          <span className="cr-email-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            {requesterEmail || row.requester_id || 'anon'}
+          </span>
+        </div>
         <div><span className="cr-key">Created</span> {fmtDate(row.created_at)}</div>
         {row.decided_at && (
           <div><span className="cr-key">Decided</span> {fmtDate(row.decided_at)}</div>
@@ -74,8 +81,44 @@ function RequestCard({ row, busy, onApprove, onReject }) {
         )}
       </div>
 
-      <div className="cr-entry">
-        <span className="cr-key">Entry</span> {fmtEntry(row.entry)}
+      {/* ── BEFORE & AFTER DIFF COMPARISON BOX ── */}
+      <div className="cr-diff-container">
+        <div className="cr-diff-side cr-diff-before">
+          <div className="cr-diff-header">
+            <span className="cr-diff-badge before">BEFORE (Current Schedule)</span>
+          </div>
+          <div className="cr-diff-body">
+            {row.existing_entry ? (
+              fmtEntry(row.existing_entry)
+            ) : (
+              <span className="cr-diff-empty">No class currently scheduled in this slot</span>
+            )}
+          </div>
+        </div>
+
+        <div className="cr-diff-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </div>
+
+        <div className="cr-diff-side cr-diff-after">
+          <div className="cr-diff-header">
+            <span className={`cr-diff-badge after ${row.kind}`}>
+              AFTER (Proposed {row.kind?.toUpperCase()})
+            </span>
+          </div>
+          <div className="cr-diff-body">
+            {row.kind === 'delete' ? (
+              <span className="cr-diff-deleted">REMOVE / DELETE THIS CLASS</span>
+            ) : row.entry ? (
+              fmtEntry(row.entry)
+            ) : (
+              <span className="cr-diff-empty">—</span>
+            )}
+          </div>
+        </div>
       </div>
 
       {isPending && (
@@ -178,6 +221,13 @@ export default function ChangeRequestsPage() {
           <div className="cr-meta">
             <div><span className="cr-key">Code</span> <code>{row.code}</code></div>
             <div><span className="cr-key">Name</span> {row.name}</div>
+            <div>
+              <span className="cr-key">Requester</span>{' '}
+              <span className="cr-email-badge">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                {row.requester_email || (row.requester_id && row.requester_id.includes('@') ? row.requester_id : null) || row.requester_id || 'anon'}
+              </span>
+            </div>
             <div><span className="cr-key">Created</span> {fmtDate(row.created_at)}</div>
           </div>
           {row.status === 'pending' && (

@@ -11,7 +11,7 @@
 // `code` field of the error to the user when status is 4xx so they get a
 // meaningful "too many submissions" / "duplicate" message.
 
-import { authHeaders } from './identity'
+import { authHeaders, getUserEmail } from './identity'
 import { getBackendUrl } from './backend_url'
 
 function entryToBackend(entry) {
@@ -39,7 +39,12 @@ export async function submitSubjectRequest({ requesterBatch, code, name }) {
   const res = await fetch(`${baseUrl.replace(/\/$/, '')}/subject-requests`, {
     method: 'POST',
     headers: await authHeaders({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ requester_batch: requesterBatch, code, name }),
+    body: JSON.stringify({
+      requester_batch: requesterBatch,
+      code,
+      name,
+      requester_email: getUserEmail(),
+    }),
   })
   let body = null
   try { body = await res.json() } catch { /* non-JSON */ }
@@ -78,6 +83,7 @@ export async function submitChangeRequest({
         day,
         start_time: startTime,
         entry: entryToBackend(entry),
+        requester_email: getUserEmail(),
       }),
     })
   } catch (cause) {

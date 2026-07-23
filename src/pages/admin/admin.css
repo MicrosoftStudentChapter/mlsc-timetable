@@ -3071,3 +3071,119 @@
   font-size: 11.5px;
   color: var(--text-muted, rgba(255, 255, 255, 0.5));
 }
+
+/* ── Change Request Diff Comparison Box ────────────────────────────── */
+.cr-diff-container {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin: 14px 0;
+  padding: 12px;
+  background: var(--bg-hover, rgba(0, 0, 0, 0.2));
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  .cr-diff-container {
+    flex-direction: column;
+  }
+  .cr-diff-arrow {
+    transform: rotate(90deg);
+    align-self: center;
+  }
+}
+
+.cr-diff-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--card-bg, rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.06));
+}
+
+.cr-diff-before {
+  border-left: 3px solid #ef4444;
+}
+
+.cr-diff-after {
+  border-left: 3px solid #10b981;
+}
+
+.cr-diff-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.cr-diff-badge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.cr-diff-badge.before {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.cr-diff-badge.after {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.cr-diff-badge.after.delete {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.cr-diff-badge.after.edit {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.cr-diff-body {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-h, #fff);
+  line-height: 1.4;
+}
+
+.cr-diff-empty {
+  color: var(--text-muted, #94a3b8);
+  font-style: italic;
+  font-size: 12.5px;
+}
+
+.cr-diff-deleted {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.cr-diff-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted, #94a3b8);
+}
+
+.cr-email-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono, monospace);
+  font-size: 12px;
+  font-weight: 600;
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+

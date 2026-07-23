@@ -61,6 +61,17 @@ export function resetUserId() {
   }
 }
 
+export function getUserEmail() {
+  try {
+    const clerk = typeof window !== 'undefined' ? window.Clerk : null
+    const email = clerk?.user?.primaryEmailAddress?.emailAddress || clerk?.user?.emailAddresses?.[0]?.emailAddress
+    if (email) return email
+  } catch {
+    // ignore
+  }
+  return null
+}
+
 export async function getClerkToken() {
   try {
     const token = await window.Clerk?.session?.getToken()
@@ -72,6 +83,10 @@ export async function getClerkToken() {
 
 export async function authHeaders(extra = {}) {
   const headers = { 'X-User-Id': getUserId(), ...extra }
+  const email = getUserEmail()
+  if (email) {
+    headers['X-User-Email'] = email
+  }
   const token = await getClerkToken()
   if (token) {
     headers['Authorization'] = `Bearer ${token}`
