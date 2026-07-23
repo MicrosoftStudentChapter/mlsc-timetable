@@ -116,15 +116,17 @@
   position: relative;
   width: 100%;
   min-width: calc(var(--time-col-width) + 5 * var(--col-width));
-  padding-bottom: 32px;
   /* transform applied by JS */
   transform-origin: top left;
   will-change: transform;
 }
 
-.tt-grid-body-row:last-child .tt-time-cell,
-.tt-grid-body-row:last-child .tt-slot-cell {
-  padding-bottom: 24px;
+.tt-grid-table::after {
+  content: '';
+  display: block;
+  height: 60px;
+  width: 100%;
+  pointer-events: none;
 }
 
 /* Shared row template — every row uses the same column tracks, so the
