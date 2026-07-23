@@ -75,11 +75,11 @@ export default function AnalyticsPage() {
 
   // ── SVG Trend Chart Calculations ──
   const svgWidth = 700
-  const svgHeight = 220
+  const svgHeight = 360
   const padLeft = 45
-  const padRight = 20
-  const padTop = 25
-  const padBottom = 35
+  const padRight = 25
+  const padTop = 30
+  const padBottom = 45
   const graphW = svgWidth - padLeft - padRight
   const graphH = svgHeight - padTop - padBottom
 
@@ -300,10 +300,10 @@ export default function AnalyticsPage() {
           </div>
 
           {/* SVG Line / Area Graph */}
-          <div style={{ position: 'relative', width: '100%' }}>
+          <div style={{ position: 'relative', width: '100%', flex: 1, display: 'flex', alignItems: 'center' }}>
             <svg 
               viewBox={`0 0 ${svgWidth} ${svgHeight}`} 
-              style={{ width: '100%', height: 'auto', display: 'block', overflow: 'visible' }}
+              style={{ width: '100%', height: '100%', display: 'block', overflow: 'visible' }}
             >
               <defs>
                 <linearGradient id="pngGrad" x1="0" y1="0" x2="0" y2="1">
