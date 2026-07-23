@@ -1482,3 +1482,66 @@
   from { background-position: 200% 0; }
   to { background-position: -200% 0; }
 }
+
+/* ── Warning Banner ─────────────────────────────────────────────────── */
+.tt-warning-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(254, 243, 199, 0.72) 0%,
+    rgba(255, 255, 255, 0.5) 55%,
+    rgba(253, 230, 138, 0.55) 100%
+  );
+  border: 1px solid rgba(217, 119, 6, 0.2);
+  box-shadow: 0 3px 12px rgba(217, 119, 6, 0.05);
+  color: #78350f;
+  margin-bottom: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .tt-warning-banner {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.08) 0%,
+    rgba(251, 191, 36, 0.04) 100%
+  );
+  border-color: rgba(245, 158, 11, 0.2);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+  color: #fef3c7;
+}
+
+.tt-warning-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(217, 119, 6, 0.15);
+  color: #d97706;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .tt-warning-icon {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.tt-warning-text {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .tt-warning-banner {
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+}
+
