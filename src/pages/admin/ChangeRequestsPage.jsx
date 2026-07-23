@@ -79,6 +79,14 @@ function RequestCard({ row, busy, onApprove, onReject }) {
         {row.decision_note && (
           <div><span className="cr-key">Note</span> {row.decision_note}</div>
         )}
+        {row.catalog_name && (
+          <div style={{ gridColumn: '1 / -1' }}>
+            <span className="cr-key">Catalog</span>{' '}
+            <span className="cr-catalog-badge">
+              Mapped in catalog as: "{row.catalog_name}"
+            </span>
+          </div>
+        )}
       </div>
 
       {/* ── BEFORE & AFTER DIFF COMPARISON BOX ── */}
@@ -229,6 +237,13 @@ export default function ChangeRequestsPage() {
               </span>
             </div>
             <div><span className="cr-key">Created</span> {fmtDate(row.created_at)}</div>
+            {row.already_mapped && (
+              <div style={{ gridColumn: '1 / -1', marginTop: 4 }}>
+                <span className="cr-already-mapped-badge">
+                  ⚠️ Already mapped in catalog as: "{row.existing_catalog_name}" (approving will update/override name)
+                </span>
+              </div>
+            )}
           </div>
           {row.status === 'pending' && (
             <div className="cr-actions">
