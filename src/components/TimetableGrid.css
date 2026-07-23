@@ -957,6 +957,13 @@ select.tt-editor-input {
    zoom-to-fit still handles horizontal scaling, so nothing overflows. */
 @media (max-width: 768px) {
   .tt-grid-frame {
+    /* Phones: size the frame to the grid's natural (zoomed) height instead of
+       capping it at the parent's height. The desktop cap + inner scroller
+       clipped the bottom rows on mobile browsers (Android font boosting makes
+       the zoomed table taller than in desktop emulation, and nested touch
+       scrolling fights the page scroll). With no cap the whole timetable is
+       laid out and plain page scrolling reveals all of it. */
+    max-height: none;
     --row-height: 64px;
     --card-padding: 4px 8px 4px;
     --card-font-size: 12px;
@@ -965,6 +972,13 @@ select.tt-editor-input {
     --header-padding: 12px 10px;
     --header-font-size: 14px;
     --time-font-size: 16px;
+  }
+
+  /* The 60px spacer only exists so the inner scroller can clear the last row
+     on desktop; with the frame uncapped it would just render as dead space
+     inside the rounded frame. */
+  .tt-grid-table::after {
+    height: 12px;
   }
 }
 
