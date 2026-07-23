@@ -1384,8 +1384,12 @@
   border-radius: var(--card-border-radius) !important;
   padding-right: 10px !important;
   margin-bottom: 0 !important;
-  min-height: auto !important;
+  height: auto !important;
+  min-height: max-content !important;
   border-left-width: 3px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
 }
 /* Card must stretch to fill the slot stack so the room badge's
    `margin-top: auto` has vertical slack to push it to the cell bottom.
@@ -1394,6 +1398,17 @@
 .tt-export-target.tt-exporting .tt-slot-stack > .tt-class-card {
   flex: 1 1 auto !important;
 }
+
+/* Prevent flex shrinking on card text and children during export */
+.tt-export-target.tt-exporting .tt-card-text,
+.tt-export-target.tt-exporting .tt-card-subject,
+.tt-export-target.tt-exporting .tt-card-code,
+.tt-export-target.tt-exporting .tt-card-room,
+.tt-export-target.tt-exporting .tt-type-badge,
+.tt-export-target.tt-exporting .tt-alternate-label {
+  flex-shrink: 0 !important;
+}
+
 .tt-export-target.tt-exporting .tt-type-badge {
   font-size: var(--badge-font-size) !important;
   padding: 2px 6px !important;
@@ -1405,9 +1420,8 @@
 .tt-export-target.tt-exporting .tt-card-subject {
   font-size: var(--card-font-size) !important;
   font-weight: 700 !important;
-  margin: 0 0 3px 0 !important;
+  margin: 0 0 4px 0 !important;
   line-height: 1.25 !important;
-  letter-spacing: 0 !important;
   word-break: normal !important;
   overflow-wrap: break-word !important;
   white-space: normal !important;
