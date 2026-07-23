@@ -1233,16 +1233,22 @@
    NOTE: .tt-slot-cell.tt-col-active uses the `background` shorthand (not
    background-image), so we must reset both properties explicitly. Same
    for the active header cell which has a separate background-color. */
-.tt-export-target.tt-exporting .tt-day-header-cell.tt-day-active,
-.tt-export-target.tt-exporting .tt-slot-cell.tt-col-active {
-  background: inherit !important;
-  background-color: inherit !important;
+.tt-export-target.tt-exporting .tt-day-header-cell.tt-day-active {
+  background: #f8fafc !important;
   background-image: none !important;
 }
-[data-theme="dark"] .tt-export-target.tt-exporting .tt-day-header-cell.tt-day-active,
+.tt-export-target.tt-exporting .tt-slot-cell.tt-col-active {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+[data-theme="dark"] .tt-export-target.tt-exporting .tt-day-header-cell.tt-day-active {
+  background: #080808 !important;
+  background-image: none !important;
+}
 [data-theme="dark"] .tt-export-target.tt-exporting .tt-slot-cell.tt-col-active {
-  background: inherit !important;
-  background-color: inherit !important;
+  background: transparent !important;
+  background-color: transparent !important;
   background-image: none !important;
 }
 .tt-export-target.tt-exporting .tt-day-header-cell.tt-day-active .tt-day-header-label {
