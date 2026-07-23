@@ -1543,5 +1543,15 @@
     border-radius: 10px;
     font-size: 12px;
   }
+  .tt-navbar-pill .combobox {
+    position: static;
+  }
+  .tt-navbar-pill .tt-batch-popup {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    bottom: calc(100% + 8px) !important;
+    width: calc(100vw - 32px) !important;
+    max-width: 320px !important;
+  }
 }
 
