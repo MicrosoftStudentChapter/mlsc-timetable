@@ -8,6 +8,7 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [formatFilter, setFormatFilter] = useState('all')
+  const [hoveredIndex, setHoveredIndex] = useState(null)
 
   const refresh = useCallback(async () => {
     setLoading(true)
@@ -65,17 +66,78 @@ export default function AnalyticsPage() {
     )
   }
 
-  const { total_downloads = 0, format_breakdown = { png: 0, pdf: 0 }, top_batches = [], daily_trend = [], recent_downloads = [] } = data || {}
+  const { total_downloads = 0, format_breakdown = { png: 0, pdf: 0 }, top_batches = [], daily_trend = [] } = data || {}
   const totalFormat = (format_breakdown.png || 0) + (format_breakdown.pdf || 0)
   const pngPct = totalFormat > 0 ? Math.round(((format_breakdown.png || 0) / totalFormat) * 100) : 0
   const pdfPct = totalFormat > 0 ? 100 - pngPct : 0
 
-  // Calculation for peak day in daily_trend
-  const maxTrendVal = daily_trend.length > 0
-    ? Math.max(...daily_trend.map(d => (d.png || 0) + (d.pdf || 0)), 1)
-    : 1
-
   const maxBatchCount = top_batches.length > 0 ? Math.max(...top_batches.map(b => b.count), 1) : 1
+
+  // ── SVG Trend Chart Calculations ──
+  const svgWidth = 700
+  const svgHeight = 220
+  const padLeft = 45
+  const padRight = 20
+  const padTop = 25
+  const padBottom = 35
+  const graphW = svgWidth - padLeft - padRight
+  const graphH = svgHeight - padTop - padBottom
+
+  const maxValRaw = daily_trend.length > 0
+    ? Math.max(...daily_trend.map(d => (d.png || 0) + (d.pdf || 0)), 1)
+    : 5
+  // Round up maxVal to a clean step multiple (e.g. 5, 10, 20, 50, 100)
+  const maxVal = maxValRaw <= 5 ? 5 : Math.ceil(maxValRaw / 5) * 5
+
+  const trendPoints = daily_trend.map((d, i) => {
+    const x = padLeft + (daily_trend.length > 1 ? (i / (daily_trend.length - 1)) * graphW : graphW / 2)
+    const pngVal = d.png || 0
+    const pdfVal = d.pdf || 0
+    const totalVal = pngVal + pdfVal
+
+    const yPng = padTop + graphH - (pngVal / maxVal) * graphH
+    const yPdf = padTop + graphH - (pdfVal / maxVal) * graphH
+    const yTotal = padTop + graphH - (totalVal / maxVal) * graphH
+
+    return { ...d, index: i, x, yPng, yPdf, yTotal, pngVal, pdfVal, totalVal }
+  })
+
+  // Format date helper (e.g. "2026-07-05" -> "Jul 5")
+  const formatDateLabel = (dateStr) => {
+    if (!dateStr) return ''
+    const parts = dateStr.split('-')
+    if (parts.length === 3) {
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      const mIdx = parseInt(parts[1], 10) - 1
+      const day = parseInt(parts[2], 10)
+      return `${monthNames[mIdx] || parts[1]} ${day}`
+    }
+    return dateStr
+  }
+
+  // Select 5 evenly spaced X-axis labels
+  const tickIndices = []
+  if (daily_trend.length > 0) {
+    const count = Math.min(5, daily_trend.length)
+    for (let k = 0; k < count; k++) {
+      const idx = Math.floor((k / (count - 1)) * (daily_trend.length - 1))
+      if (!tickIndices.includes(idx)) tickIndices.push(idx)
+    }
+  }
+
+  // Create SVG path string for PNG line
+  const pngPathD = trendPoints.reduce((acc, p, i) => `${acc} ${i === 0 ? 'M' : 'L'} ${p.x} ${p.yPng}`, '')
+  const pngAreaD = trendPoints.length > 0
+    ? `${pngPathD} L ${trendPoints[trendPoints.length - 1].x} ${padTop + graphH} L ${trendPoints[0].x} ${padTop + graphH} Z`
+    : ''
+
+  // Create SVG path string for PDF line
+  const pdfPathD = trendPoints.reduce((acc, p, i) => `${acc} ${i === 0 ? 'M' : 'L'} ${p.x} ${p.yPdf}`, '')
+  const pdfAreaD = trendPoints.length > 0
+    ? `${pdfPathD} L ${trendPoints[trendPoints.length - 1].x} ${padTop + graphH} L ${trendPoints[0].x} ${padTop + graphH} Z`
+    : ''
+
+  const hoveredPoint = hoveredIndex != null ? trendPoints[hoveredIndex] : null
 
   return (
     <div className="analytics-container">
@@ -216,8 +278,8 @@ export default function AnalyticsPage() {
       {/* ── Main Dashboard Content Split ── */}
       <div className="analytics-split-grid">
         
-        {/* Export Activity Chart */}
-        <div className="analytics-card">
+        {/* Export Activity SVG Trend Chart */}
+        <div className="analytics-card" style={{ overflow: 'hidden' }}>
           <div className="analytics-card-head">
             <h2 className="analytics-card-title">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -227,61 +289,159 @@ export default function AnalyticsPage() {
             </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '12px', fontWeight: 600 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ width: 10, height: 10, borderRadius: 3, background: '#10b981', display: 'inline-block' }} />
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
                 <span>PNG</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ width: 10, height: 10, borderRadius: 3, background: '#3b82f6', display: 'inline-block' }} />
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#3b82f6', display: 'inline-block' }} />
                 <span>PDF</span>
               </div>
             </div>
           </div>
 
-          <div className="bar-chart-container">
-            <div className="bar-chart-bars">
-              {daily_trend.length === 0 ? (
-                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
-                  No activity recorded in this period.
-                </div>
-              ) : (
-                daily_trend.map((d) => {
-                  const pngCount = d.png || 0
-                  const pdfCount = d.pdf || 0
-                  const total = pngCount + pdfCount
-                  const pngH = Math.max(0, Math.round((pngCount / maxTrendVal) * 160))
-                  const pdfH = Math.max(0, Math.round((pdfCount / maxTrendVal) * 160))
-                  const dayNum = parseInt(d.date.slice(-2), 10)
-                  const showLabel = dayNum % 5 === 0 || dayNum === 1
+          {/* SVG Line / Area Graph */}
+          <div style={{ position: 'relative', width: '100%' }}>
+            <svg 
+              viewBox={`0 0 ${svgWidth} ${svgHeight}`} 
+              style={{ width: '100%', height: 'auto', display: 'block', overflow: 'visible' }}
+            >
+              <defs>
+                <linearGradient id="pngGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#10b981" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                </linearGradient>
+                <linearGradient id="pdfGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
 
-                  return (
-                    <div key={d.date} className="bar-col">
-                      {/* Interactive Hover Tooltip */}
-                      <div className="bar-tooltip">
-                        <div style={{ fontWeight: 700, marginBottom: 4, borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 2 }}>
-                          {d.date}
-                        </div>
-                        <div style={{ color: '#34d399' }}>PNG: <strong>{pngCount}</strong></div>
-                        <div style={{ color: '#60a5fa' }}>PDF: <strong>{pdfCount}</strong></div>
-                        <div style={{ color: '#cbd5e1', marginTop: 2, paddingTop: 2, borderTop: '1px dashed rgba(255,255,255,0.1)' }}>
-                          Total: <strong>{total}</strong>
-                        </div>
-                      </div>
+              {/* Y-Axis Horizontal Gridlines */}
+              {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => {
+                const yVal = padTop + graphH - ratio * graphH
+                const labelVal = Math.round(ratio * maxVal)
+                return (
+                  <g key={idx}>
+                    <line 
+                      x1={padLeft} 
+                      y1={yVal} 
+                      x2={svgWidth - padRight} 
+                      y2={yVal} 
+                      stroke="var(--border, rgba(255, 255, 255, 0.08))" 
+                      strokeDasharray={idx === 0 ? undefined : "3 3"} 
+                      strokeWidth="1"
+                    />
+                    <text 
+                      x={padLeft - 10} 
+                      y={yVal + 4} 
+                      fill="var(--text-muted, #94a3b8)" 
+                      fontSize="10" 
+                      textAnchor="end"
+                      fontWeight="500"
+                    >
+                      {labelVal}
+                    </text>
+                  </g>
+                )
+              })}
 
-                      {/* Stacked Bars */}
-                      <div className="bar-stack">
-                        <div className="bar-segment-pdf" style={{ height: `${pdfH}px` }} />
-                        <div className="bar-segment-png" style={{ height: `${pngH}px` }} />
-                      </div>
+              {/* PDF Area & Line */}
+              {pdfAreaD && <path d={pdfAreaD} fill="url(#pdfGrad)" />}
+              {pdfPathD && <path d={pdfPathD} fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
 
-                      {/* Date label under tick */}
-                      <span className="bar-date-label">
-                        {showLabel ? d.date.slice(5) : ''}
-                      </span>
-                    </div>
-                  )
-                })
+              {/* PNG Area & Line */}
+              {pngAreaD && <path d={pngAreaD} fill="url(#pngGrad)" />}
+              {pngPathD && <path d={pngPathD} fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
+
+              {/* X-Axis Ticks & Date Labels */}
+              {tickIndices.map((idx) => {
+                const p = trendPoints[idx]
+                if (!p) return null
+                return (
+                  <g key={idx}>
+                    <line x1={p.x} y1={padTop + graphH} x2={p.x} y2={padTop + graphH + 5} stroke="var(--border, rgba(255, 255, 255, 0.2))" strokeWidth="1" />
+                    <text 
+                      x={p.x} 
+                      y={padTop + graphH + 20} 
+                      fill="var(--text-muted, #94a3b8)" 
+                      fontSize="11" 
+                      textAnchor="middle"
+                      fontWeight="600"
+                    >
+                      {formatDateLabel(p.date)}
+                    </text>
+                  </g>
+                )
+              })}
+
+              {/* Hover Crosshair & Dots */}
+              {hoveredPoint && (
+                <g>
+                  <line 
+                    x1={hoveredPoint.x} 
+                    y1={padTop} 
+                    x2={hoveredPoint.x} 
+                    y2={padTop + graphH} 
+                    stroke="rgba(255, 255, 255, 0.2)" 
+                    strokeDasharray="4 4" 
+                    strokeWidth="1"
+                  />
+                  {/* PNG Dot */}
+                  <circle cx={hoveredPoint.x} cy={hoveredPoint.yPng} r="5" fill="#10b981" stroke="#0f172a" strokeWidth="2" />
+                  {/* PDF Dot */}
+                  <circle cx={hoveredPoint.x} cy={hoveredPoint.yPdf} r="5" fill="#3b82f6" stroke="#0f172a" strokeWidth="2" />
+                </g>
               )}
-            </div>
+
+              {/* Transparent Hover Hit Overlay Rects */}
+              {trendPoints.map((p, i) => {
+                const colW = graphW / trendPoints.length
+                return (
+                  <rect
+                    key={i}
+                    x={p.x - colW / 2}
+                    y={padTop}
+                    width={colW}
+                    height={graphH}
+                    fill="transparent"
+                    style={{ cursor: 'pointer' }}
+                    onMouseEnter={() => setHoveredIndex(i)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                  />
+                )
+              })}
+            </svg>
+
+            {/* Floating Tooltip Card */}
+            {hoveredPoint && (
+              <div 
+                className="graph-tooltip-card"
+                style={{
+                  position: 'absolute',
+                  left: `${(hoveredPoint.x / svgWidth) * 100}%`,
+                  top: '10px',
+                  transform: 'translateX(-50%)',
+                  background: 'var(--tooltip-bg, #0f172a)',
+                  color: '#fff',
+                  border: '1px solid var(--border, rgba(255,255,255,0.15))',
+                  borderRadius: '10px',
+                  padding: '8px 14px',
+                  fontSize: '12px',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                  pointerEvents: 'none',
+                  zIndex: 20
+                }}
+              >
+                <div style={{ fontWeight: 700, marginBottom: 4, borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 3, color: 'var(--text-muted)' }}>
+                  {formatDateLabel(hoveredPoint.date)} ({hoveredPoint.date})
+                </div>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <span style={{ color: '#34d399', fontWeight: 600 }}>PNG: <strong>{hoveredPoint.pngVal}</strong></span>
+                  <span style={{ color: '#60a5fa', fontWeight: 600 }}>PDF: <strong>{hoveredPoint.pdfVal}</strong></span>
+                  <span style={{ color: '#fff', fontWeight: 700, borderLeft: '1px solid rgba(255,255,255,0.15)', paddingLeft: 8 }}>Total: {hoveredPoint.totalVal}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
