@@ -115,7 +115,17 @@ async function captureNode(node, aspect = null, options = {}) {
   }
 
   const { toPng } = await import('html-to-image')
+  const currentTheme = document.documentElement.getAttribute('data-theme')
+  if (currentTheme) {
+    node.setAttribute('data-theme', currentTheme)
+  }
   node.classList.add(EXPORTING_CLASS)
+
+  // Temporarily strip today/active-day classes so html-to-image never sees them
+  const activeHeaders = Array.from(node.querySelectorAll('.tt-day-active'))
+  const activeCols = Array.from(node.querySelectorAll('.tt-col-active'))
+  activeHeaders.forEach((el) => el.classList.remove('tt-day-active'))
+  activeCols.forEach((el) => el.classList.remove('tt-col-active'))
   // Wait 4 rAFs to let the forced desktop layout (off-screen) fully reflow
   // before html-to-image walks the DOM. Two frames is often not enough on
   // slow mobile CPUs — the third and fourth frames catch late paint flushes.
@@ -153,7 +163,10 @@ async function captureNode(node, aspect = null, options = {}) {
     })
     return { dataUrl, backgroundColor }
   } finally {
+    activeHeaders.forEach((el) => el.classList.add('tt-day-active'))
+    activeCols.forEach((el) => el.classList.add('tt-col-active'))
     node.classList.remove(EXPORTING_CLASS)
+    node.removeAttribute('data-theme')
     if (restoreGrid) restoreGrid()
   }
 }
