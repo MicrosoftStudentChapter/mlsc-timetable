@@ -74,6 +74,8 @@
      when possible; anything left over falls back to scroll instead of
      being clipped. */
   overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   border-radius: inherit;
   /* flexbox centering removed to prevent top content cropping when child overflows wrapper bounds */
 }
