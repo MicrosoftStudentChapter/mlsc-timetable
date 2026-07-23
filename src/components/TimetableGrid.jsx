@@ -9,7 +9,7 @@ import {
   mergeOverride,
   reconcileOverrides,
 } from '../lib/local_overrides'
-import { setDefaultBatch, syncOverridesToBackend } from '../lib/me_overrides'
+import { setDefaultBatch, syncOverridesToBackend, clearMyOverrides } from '../lib/me_overrides'
 import './TimetableGrid.css'
 
 // ─── Initial timetable data (IDs injected for stable React keys) ──────────────
@@ -621,7 +621,7 @@ function getCardSvgIndex(subject, code, room, type) {
   return Math.abs(hash) % 6
 }
 
-function ClassCard({ entry, onEdit, onChooseElective, onDragStart, isDarkMode, isDragging, termStartDate }) {
+function ClassCard({ entry, onEdit, onChooseElective, onDismissElective, onDragStart, isDarkMode, isDragging, termStartDate }) {
   const TYPE_META = isDarkMode ? DARK_TYPE_META : LIGHT_TYPE_META
   const meta      = TYPE_META[entry.type] || TYPE_META.Lecture
   const cardStyle = {
@@ -666,6 +666,20 @@ function ClassCard({ entry, onEdit, onChooseElective, onDragStart, isDarkMode, i
       data-elective-group={isElectiveGroup || undefined}
       onClick={handleCardClick}
     >
+      {isElectiveGroup && (
+        <button
+          type="button"
+          className="tt-elective-dismiss-btn"
+          onClick={(e) => { e.stopPropagation(); onDismissElective?.(entry) }}
+          onPointerDown={(e) => e.stopPropagation()}
+          aria-label="Remove this elective block"
+          title="Not taking any of these? Remove the block"
+        >
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      )}
       <button
         className="tt-edit-btn"
         onClick={handleEditClick}
@@ -750,6 +764,7 @@ export default function TimetableGrid({
   const [editTarget, setEditTarget] = useState(null)   // { entry, rect }
   const [electiveTarget, setElectiveTarget] = useState(null)
   const [electiveConfirm, setElectiveConfirm] = useState(null)
+  const [dismissConfirm, setDismissConfirm] = useState(null)
   const [defaultBatchPrompt, setDefaultBatchPrompt] = useState(null)
   const [addTarget,  setAddTarget]  = useState(null)   // { day, startTime, rect }
   const [saveOpen, setSaveOpen] = useState(false)
@@ -796,7 +811,9 @@ export default function TimetableGrid({
   // and the override machinery keep seeing the full list). Admin mode always
   // shows everything — admins must be able to fix any cell.
   const displayEntries = useMemo(
-    () => (adminMode ? entries : filterUnchosenElectiveClasses(entries)),
+    () => (adminMode
+      ? entries
+      : filterUnchosenElectiveClasses(entries.filter((e) => !e.electiveDismissed))),
     [entries, adminMode],
   )
   const visibleEntries = peekBaseline ? baseClasses : displayEntries
@@ -1040,6 +1057,28 @@ export default function TimetableGrid({
       entry: applyElectiveChoice(candidate, option),
     })))
     setElectiveConfirm(null)
+    setElectiveTarget(null)
+  }
+
+  // Dismiss an entire elective block: the student takes none of the offered
+  // courses, so every cell of the group is hidden. Stored as an elective_pick
+  // override (personal, synced like a pick) whose entry carries the
+  // `electiveDismissed` flag that displayEntries filters on.
+  const handleDismissElective = (entry) => {
+    const groupKey = electiveGroupKey(entry)
+    const matching = entries.filter((candidate) => electiveGroupKey(candidate) === groupKey)
+    setDismissConfirm({ entry, matching })
+  }
+
+  const confirmDismissElective = () => {
+    if (!dismissConfirm) return
+    const { matching } = dismissConfirm
+    pushOverrides(matching.map((candidate) => ({
+      kind: 'elective_pick', targetId: candidate.id, day: candidate.day,
+      startTime: candidate.startTime, baseEntry: { ...candidate },
+      entry: { ...candidate, electiveDismissed: true },
+    })))
+    setDismissConfirm(null)
     setElectiveTarget(null)
   }
 
@@ -1308,6 +1347,7 @@ export default function TimetableGrid({
                           isDarkMode={resolvedIsDark}
                           onEdit={(rect, element) => setEditTarget(prev => (prev && prev.entry.id === entry.id) ? null : { entry, rect, element })}
                           onChooseElective={(target, rect, element) => setElectiveTarget(prev => (prev && prev.entry.id === target.id) ? null : { entry: target, rect, element })}
+                          onDismissElective={handleDismissElective}
                           onDragStart={handleCardDragStart}
                           isDragging={drag?.started && drag.entry.id === entry.id}
                           termStartDate={termStartDate}
@@ -1387,6 +1427,25 @@ export default function TimetableGrid({
         </div>,
         document.body,
       )}
+      {dismissConfirm && createPortal(
+        <div className="tt-elective-confirm-backdrop" role="dialog" aria-modal="true">
+          <div className="tt-elective-confirm">
+            <h3>Remove this elective block?</h3>
+            <p>
+              Not taking any of these <strong>{dismissConfirm.entry.options?.length ?? ''}</strong> courses?
+              This hides every cell of this elective block {isSignedIn
+                ? <>and saves it for your default batch (<strong>{batch}</strong>)</>
+                : 'and keeps it locally on this device'}.
+              You can bring it back anytime with the <strong>Reset</strong> button.
+            </p>
+            <div className="tt-elective-confirm-actions">
+              <button type="button" className="tt-editor-cancel-btn" onClick={() => setDismissConfirm(null)}>Cancel</button>
+              <button type="button" className="tt-editor-save-btn" onClick={confirmDismissElective}>Remove block</button>
+            </div>
+          </div>
+        </div>,
+        document.body,
+      )}
       {defaultBatchPrompt && createPortal(
         <div className="tt-elective-confirm-backdrop" role="dialog" aria-modal="true">
           <div className="tt-elective-confirm">
@@ -1402,26 +1461,28 @@ export default function TimetableGrid({
       )}
 
       {/* Floating save controls — visible only when current view differs from baseline */}
-      {!adminMode && hasNetChange && (
+      {!adminMode && (hasNetChange || personalElectiveOverrides.length > 0) && (
         <div className="tt-save-fab-group">
-          <button
-            type="button"
-            className="tt-peek-fab"
-            onPointerDown={() => setPeekBaseline(true)}
-            onPointerUp={() => setPeekBaseline(false)}
-            onPointerLeave={() => setPeekBaseline(false)}
-            onPointerCancel={() => setPeekBaseline(false)}
-            onContextMenu={(e) => e.preventDefault()}
-            aria-label="Hold to preview the original timetable"
-            title="Hold to see original"
-            data-active={peekBaseline || undefined}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-            <span>{peekBaseline ? 'Original' : 'Hold to compare'}</span>
-          </button>
+          {hasNetChange && (
+            <button
+              type="button"
+              className="tt-peek-fab"
+              onPointerDown={() => setPeekBaseline(true)}
+              onPointerUp={() => setPeekBaseline(false)}
+              onPointerLeave={() => setPeekBaseline(false)}
+              onPointerCancel={() => setPeekBaseline(false)}
+              onContextMenu={(e) => e.preventDefault()}
+              aria-label="Hold to preview the original timetable"
+              title="Hold to see original"
+              data-active={peekBaseline || undefined}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <span>{peekBaseline ? 'Original' : 'Hold to compare'}</span>
+            </button>
+          )}
           <button
             type="button"
             className="tt-reset-fab"
@@ -1436,20 +1497,22 @@ export default function TimetableGrid({
             </svg>
             <span>Reset</span>
           </button>
-          <button
-            type="button"
-            className="tt-save-fab"
-            onClick={() => setSaveOpen(true)}
-            disabled={peekBaseline}
-            aria-label={`Save ${regularOverrides.length} change${regularOverrides.length === 1 ? '' : 's'}`}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-              <polyline points="17 21 17 13 7 13 7 21" />
-              <polyline points="7 3 7 8 15 8" />
-            </svg>
-            <span>Save</span>
-          </button>
+          {hasNetChange && (
+            <button
+              type="button"
+              className="tt-save-fab"
+              onClick={() => setSaveOpen(true)}
+              disabled={peekBaseline}
+              aria-label={`Save ${regularOverrides.length} change${regularOverrides.length === 1 ? '' : 's'}`}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                <polyline points="17 21 17 13 7 13 7 21" />
+                <polyline points="7 3 7 8 15 8" />
+              </svg>
+              <span>Save</span>
+            </button>
+          )}
         </div>
       )}
 
@@ -1498,6 +1561,10 @@ export default function TimetableGrid({
                 className="tt-cr-btn tt-cr-btn--danger"
                 onClick={() => {
                   clearOverrides(batch)
+                  // Signed-in users also have synced overrides (elective picks
+                  // / dismissed blocks) server-side; clear those too or they
+                  // come back baked into the next /me/timetable response.
+                  if (isSignedIn) clearMyOverrides(batch)
                   dirtyRef.current = false
                   setOverrides([])
                   setPeekBaseline(false)

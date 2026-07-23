@@ -1897,6 +1897,68 @@ select.tt-editor-input {
   display: none;
 }
 
+/* Dismiss × — lets a student who takes none of the offered courses remove
+   the whole elective block. Mirrors the edit button's glassy footprint. */
+.tt-elective-dismiss-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: none;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: rgba(51, 51, 51, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.60;
+  transition: opacity 0.18s ease, background 0.15s ease, color 0.15s ease;
+  z-index: 4;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+/* Invisible hit-target expansion (32x32) for touch. */
+.tt-elective-dismiss-btn::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+
+.tt-class-card:hover .tt-elective-dismiss-btn {
+  opacity: 1;
+}
+
+.tt-elective-dismiss-btn:hover,
+.tt-elective-dismiss-btn:focus-visible {
+  opacity: 1;
+  background: rgba(220, 38, 38, 0.14);
+  color: #DC2626;
+}
+
+@media (hover: none) {
+  .tt-elective-dismiss-btn {
+    opacity: 0.55;
+  }
+}
+
+[data-theme="dark"] .tt-elective-dismiss-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.40);
+}
+
+[data-theme="dark"] .tt-elective-dismiss-btn:hover,
+[data-theme="dark"] .tt-elective-dismiss-btn:focus-visible {
+  background: rgba(239, 68, 68, 0.18);
+  color: #F87171;
+}
+
 .tt-elective-picker {
   position: fixed;
   z-index: 10000;
