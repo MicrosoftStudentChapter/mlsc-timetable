@@ -9,6 +9,40 @@
 // Both libs are loaded on first use so the main bundle stays lean for users
 // who never open the Save menu.
 
+import { getBackendUrl } from './backend_url'
+
+async function logDownloadEvent({ format, batch, aspect }) {
+  try {
+    const root = getBackendUrl()
+    if (!root) return
+    let aspectStr = 'fit'
+    if (aspect) {
+      // Find matching standard ratio name if possible
+      const ratio = Number(aspect)
+      if (Math.abs(ratio - 1.7777777777777777) < 0.01) aspectStr = '16-9'
+      else if (Math.abs(ratio - 1.3333333333333333) < 0.01) aspectStr = '4-3'
+      else if (Math.abs(ratio - 1.0) < 0.01) aspectStr = '1-1'
+      else if (Math.abs(ratio - 0.8) < 0.01) aspectStr = '4-5'
+      else if (Math.abs(ratio - 0.75) < 0.01) aspectStr = '3-4'
+      else if (Math.abs(ratio - 0.5625) < 0.01) aspectStr = '9-16'
+      else aspectStr = ratio.toFixed(2)
+    }
+    await fetch(`${root}/analytics/download`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        format,
+        batch,
+        aspect: aspectStr,
+      }),
+    })
+  } catch (err) {
+    console.error('Failed to log download event:', err)
+  }
+}
+
 // CSS class temporarily applied to the captured node so we can hide
 // interactive-only chrome (add buttons, hover tooltips) for the snapshot.
 const EXPORTING_CLASS = 'tt-exporting'
@@ -256,6 +290,7 @@ export async function exportGridAsPng({ node, batch, aspect = null }) {
   const captured = await captureNode(node, aspect)
   const { dataUrl } = await fitToAspect(captured.dataUrl, captured.backgroundColor, aspect)
   triggerDownload(dataUrlToBlob(dataUrl), buildFilename(batch, 'png'))
+  logDownloadEvent({ format: 'png', batch, aspect })
 }
 
 // "rgb(r, g, b)" / "rgba(r, g, b, a)" / "#rgb" / "#rrggbb" → [r, g, b]
@@ -299,6 +334,7 @@ export async function exportGridAsPdf({ node, batch, aspect = null }) {
   pdf.addImage(jpegDataUrl, 'JPEG', 0, 0, w, h, undefined, 'SLOW')
   const blob = pdf.output('blob')
   triggerDownload(blob, buildFilename(batch, 'pdf'))
+  logDownloadEvent({ format: 'pdf', batch, aspect })
 }
 
 // Round-trip a PNG data URL through a <canvas> to produce a JPEG data URL.

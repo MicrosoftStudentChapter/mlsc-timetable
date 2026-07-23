@@ -17,6 +17,7 @@ import ChangeRequestsPage from './pages/admin/ChangeRequestsPage'
 import FixPage from './pages/admin/FixPage'
 import FixTimetablePage from './pages/admin/FixTimetablePage'
 import CatalogPage from './pages/admin/CatalogPage'
+import AnalyticsPage from './pages/admin/AnalyticsPage'
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
+        <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="uploads" element={<UploadsPage />} />
         <Route path="uploads/:id" element={<UploadDetailPage />} />
         <Route path="change-requests" element={<ChangeRequestsPage />} />

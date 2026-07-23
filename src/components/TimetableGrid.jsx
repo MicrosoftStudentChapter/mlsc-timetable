@@ -621,7 +621,6 @@ function ClassCard({ entry, onEdit, onChooseElective, onDragStart, isDarkMode, i
       style={cardStyle}
       data-type={entry.type}
       data-dragging={isDragging || undefined}
-      data-alternate-inactive={entry.alternateWeekStart && !isAlternateActive(entry, termStartDate) ? 'true' : undefined}
       data-spidey-index={getCardSvgIndex(entry.subject, entry.code, entry.room, entry.type)}
       data-elective-group={isElectiveGroup || undefined}
       onClick={handleCardClick}
@@ -661,7 +660,7 @@ function ClassCard({ entry, onEdit, onChooseElective, onDragStart, isDarkMode, i
       {isElectiveGroup && <span className="tt-elective-count">{entry.options.length} choices · click to choose</span>}
       {!isElectiveGroup && entry.alternateWeekStart && (
         <span className="tt-alternate-label">
-          {isAlternateActive(entry, termStartDate) ? `Alternate · Week ${entry.alternateWeekStart}` : 'Not this week'}
+          {`Alternate · Week ${entry.alternateWeekStart}`}
         </span>
       )}
       {!isElectiveGroup && entry.room && String(entry.room).trim() && (

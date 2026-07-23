@@ -612,3 +612,8 @@ export function importSubjectMapping(items) {
 export function backfillTimetablesAgainstCatalog() {
   return adminFetch('/admin/subjects/backfill-timetables', { method: 'POST' })
 }
+
+export function getAnalytics() {
+  return adminFetch('/admin/analytics')
+}
+
