@@ -1985,14 +1985,18 @@ select.tt-editor-input {
 
 @media (max-width: 768px) {
   .tt-grid-frame {
-    max-height: none !important;
-    height: auto !important;
-    overflow: visible !important;
-    margin-bottom: 80px !important;
+    height: calc(100vh - 180px) !important;
+    max-height: 75vh !important;
+    min-height: 380px !important;
+    overflow: hidden !important;
+    margin-bottom: 24px !important;
   }
   .tt-grid-scroll-wrapper {
-    height: auto !important;
-    overflow-y: visible !important;
+    height: 100% !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x pan-y !important;
+    overscroll-behavior: contain !important;
   }
 }
 
