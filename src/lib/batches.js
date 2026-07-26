@@ -8,7 +8,13 @@ const YEAR_LABELS = {
   4: '4th Year',
 }
 
-const BATCH_RE = /^(\d)([A-Z])\d+$/
+const BATCH_RE = /^(\d)([A-Z])[A-Z0-9]+$/
+
+export const SPECIAL_BATCHES = {
+  '2UOQ': { name: 'Computer Engineering (2+2)', schemeBranch: 'C', partner: 'University of Queensland' },
+  '2UNSW': { name: 'Computer Engineering (2+2)', schemeBranch: 'C', partner: 'University of New South Wales' },
+  '2TCD': { name: 'Computer Engineering (2+2)', schemeBranch: 'C', partner: 'Trinity College Dublin' },
+}
 
 // Year 1 sorts Pool A, Pool B first, then the rest alphabetically.
 // Years 2+ are always alphabetical by stream code.
@@ -24,11 +30,22 @@ function streamSorter(year) {
   return (a, b) => a.code.localeCompare(b.code)
 }
 
-export function groupBatches(list, streamNames = {}) {
+export function groupBatches(list, streamNames = {}, specialBatches = SPECIAL_BATCHES) {
   const byYear = new Map()
   for (const code of list) {
     if (typeof code !== 'string') continue
-    const m = BATCH_RE.exec(code.trim())
+    const normalized = code.trim().toUpperCase()
+    const special = specialBatches[normalized]
+    const m = BATCH_RE.exec(normalized)
+    if (special) {
+      const year = Number(normalized[0])
+      if (!byYear.has(year)) byYear.set(year, new Map())
+      const streams = byYear.get(year)
+      const key = 'CE-2+2'
+      if (!streams.has(key)) streams.set(key, [])
+      streams.get(key).push(normalized)
+      continue
+    }
     if (!m) continue
     const year = Number(m[1])
     const alpha = m[2]
@@ -53,7 +70,11 @@ export function groupBatches(list, streamNames = {}) {
       })
     }
     if (!streams.length) continue
-    streams.sort(streamSorter(year))
+    streams.sort((a, b) => {
+      if (a.code === 'CE-2+2') return 1
+      if (b.code === 'CE-2+2') return -1
+      return streamSorter(year)(a, b)
+    })
     out.push({ year, label: YEAR_LABELS[year] ?? `Year ${year}`, streams })
   }
   return out
@@ -75,12 +96,12 @@ export async function loadBatches() {
   const baseUrl = getBackendUrl()
   if (baseUrl) {
     const list = await fetchBatchList(`${baseUrl.replace(/\/$/, '')}/batch`)
-    if (list) return groupBatches(list, fallback.streamNames)
+    if (list) return groupBatches(list, fallback.streamNames, fallback.specialBatches)
   }
   // Bundled snapshot mirrors the backend's GET /batch response shape.
   const snapshotUrl = `${import.meta.env.BASE_URL || '/'}fallback/batch.json`
   const list = await fetchBatchList(snapshotUrl)
-  if (list) return groupBatches(list, fallback.streamNames)
+  if (list) return groupBatches(list, fallback.streamNames, fallback.specialBatches)
   // Last-ditch: the pre-grouped JSON committed to src/data/.
   return fallback.years ?? []
 }

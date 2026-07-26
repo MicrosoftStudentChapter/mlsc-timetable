@@ -20,14 +20,21 @@
       "I": "Mechatronics Engineering",
       "J": "Biomedical Engineering",
       "O": "Electronics and Computer Engineering",
+      "P": "Computer Science and Engineering DeraBassi",
       "Q": "Computer Science and Engineering",
       "R": "Computer Science and Business Systems",
       "S": "Electrical and Computer Engineering",
       "U": "Civil with Computer Application",
       "V": "Electronics Engineering (VLSI Design)",
       "W": "Robotics and Artificial Intelligence",
-      "X": "Data Science and Artificial Intelligence"
+      "X": "Data Science and Artificial Intelligence",
+      "CE-2+2": "Computer Engineering (2+2)"
     }
+  },
+  "specialBatches": {
+    "2UOQ": { "name": "Computer Engineering (2+2)" },
+    "2UNSW": { "name": "Computer Engineering (2+2)" },
+    "2TCD": { "name": "Computer Engineering (2+2)" }
   },
   "years": [
     {
@@ -86,6 +93,17 @@
             "1X11", "1X12", "1X13", "1X14",
             "1X21", "1X22", "1X23", "1X24"
           ]
+        }
+      ]
+    },
+    {
+      "year": 2,
+      "label": "2nd Year",
+      "streams": [
+        {
+          "code": "CE-2+2",
+          "name": "Computer Engineering (2+2)",
+          "batches": ["2UOQ", "2UNSW", "2TCD"]
         }
       ]
     }

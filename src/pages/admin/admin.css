@@ -418,6 +418,81 @@
   cursor: not-allowed;
 }
 
+/* ── Timetable browser ─────────────────────────────────────────────────── */
+.timetable-browser {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.timetable-year {
+  overflow: hidden;
+}
+
+.timetable-browser-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px;
+  padding: 0 20px 20px;
+}
+
+.timetable-browser-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 92px;
+  padding: 13px 14px;
+  color: var(--text, rgba(255, 255, 255, 0.75));
+  text-decoration: none;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+
+.timetable-browser-item:hover {
+  border-color: rgba(59, 130, 246, 0.55);
+  background: rgba(59, 130, 246, 0.08);
+  transform: translateY(-1px);
+}
+
+.timetable-browser-item code {
+  color: var(--text-h, #fff);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.timetable-browser-item span {
+  overflow: hidden;
+  color: var(--text-muted, rgba(255, 255, 255, 0.48));
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timetable-browser-item strong {
+  margin-top: auto;
+  color: #60a5fa;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+[data-theme='light'] .timetable-browser-item {
+  background: #fff;
+  color: #45434d;
+}
+
+[data-theme='light'] .timetable-browser-item code {
+  color: #1d1c24;
+}
+
+@media (max-width: 600px) {
+  .timetable-browser-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 0 12px 12px;
+  }
+}
+
 .baseline-check-btn { color: #34d399; }
 .baseline-check-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 [data-theme='light'] .baseline-check-btn { color: #059669; }
@@ -3213,4 +3288,3 @@
   padding: 2px 8px;
   border-radius: 6px;
 }
-

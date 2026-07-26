@@ -36,6 +36,7 @@ const NAV_ITEMS = [
   { to: '/admin', label: 'Dashboard', end: true },
   { to: '/admin/analytics', label: 'Analytics' },
   { to: '/admin/fix', label: 'Fix' },
+  { to: '/admin/timetables', label: 'Timetables' },
   { to: '/admin/uploads', label: 'Uploads' },
   { to: '/admin/change-requests', label: 'Change requests' },
   { to: '/admin/catalog', label: 'Catalog' },

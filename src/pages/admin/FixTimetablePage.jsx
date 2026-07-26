@@ -47,7 +47,7 @@ function fromGridEntry(e) {
   }
 }
 
-export default function FixTimetablePage() {
+export default function FixTimetablePage({ standalone = false }) {
   const { batch } = useParams()
   const [searchParams] = useSearchParams()
   const errorId = searchParams.get('error') || null
@@ -160,9 +160,11 @@ export default function FixTimetablePage() {
     <div className="fix-edit-page">
       <div className="fix-edit-header">
         <div>
-          <Link to="/admin/fix" className="fix-back">← Back to Fix</Link>
+          <Link to={standalone ? '/admin/timetables' : '/admin/fix'} className="fix-back">
+            ← Back to {standalone ? 'Timetables' : 'Fix'}
+          </Link>
           <h1 className="fix-edit-title">
-            Edit timetable · <code>{batch}</code>
+            {standalone ? 'Browse timetable' : 'Edit timetable'} · <code>{batch}</code>
           </h1>
           {activeError && (
             <div className="fix-edit-error-callout">

@@ -81,6 +81,7 @@ export default function BatchSelector() {
       <div className="batch-fields">
         <Combobox
           className="batch-dropdown"
+          popupClassName="batch-popup"
           value={yearInput}
           onChange={setYearInput}
           options={yearOptions}
@@ -89,6 +90,7 @@ export default function BatchSelector() {
         />
         <Combobox
           className="batch-dropdown"
+          popupClassName="batch-popup"
           value={streamInput}
           onChange={setStreamInput}
           options={streamOptions}
@@ -98,6 +100,7 @@ export default function BatchSelector() {
         />
         <Combobox
           className="batch-dropdown"
+          popupClassName="batch-popup"
           value={batchInput}
           onChange={(v) => setBatchInput(v.toUpperCase())}
           options={batchOptions}

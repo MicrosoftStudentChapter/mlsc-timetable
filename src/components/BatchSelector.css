@@ -46,6 +46,34 @@
   cursor: not-allowed;
 }
 
+/* Match the profile picker: long stream names get a wider, wrapping popup
+   instead of being clipped to the width of the input. */
+.batch-popup {
+  left: 50%;
+  right: auto;
+  width: max-content;
+  min-width: 100%;
+  max-width: min(340px, calc(100vw - 32px));
+  transform: translateX(-50%);
+}
+
+.batch-popup .combobox-option {
+  align-items: flex-start;
+  white-space: normal;
+}
+
+.batch-popup .combobox-option-label,
+.batch-popup .combobox-option-hint {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+}
+
+.batch-popup .combobox-option-hint {
+  text-align: right;
+}
+
 .batch-selected {
   font-size: 0.82rem;
   color: var(--text);
