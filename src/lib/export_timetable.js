@@ -120,6 +120,7 @@ async function captureNode(node, aspect = null, options = {}) {
     node.setAttribute('data-theme', currentTheme)
   }
   node.classList.add(EXPORTING_CLASS)
+  document.body.classList.add(EXPORTING_CLASS)
 
   // Temporarily strip today/active-day classes so html-to-image never sees them
   const activeHeaders = Array.from(node.querySelectorAll('.tt-day-active'))
@@ -166,6 +167,7 @@ async function captureNode(node, aspect = null, options = {}) {
     activeHeaders.forEach((el) => el.classList.add('tt-day-active'))
     activeCols.forEach((el) => el.classList.add('tt-col-active'))
     node.classList.remove(EXPORTING_CLASS)
+    document.body.classList.remove(EXPORTING_CLASS)
     node.removeAttribute('data-theme')
     if (restoreGrid) restoreGrid()
   }

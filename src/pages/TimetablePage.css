@@ -1227,6 +1227,13 @@
 .tt-export-target.tt-exporting [data-tip]::after { display: none !important; }
 .tt-export-target.tt-exporting .tt-day-active-pill { display: none !important; }
 
+/* Hide the fixed-position Reset/Save/Peek FAB group while capturing.
+   These buttons use position:fixed so they sit outside .tt-export-target
+   yet still appear in the rasterised snapshot on mobile. The body-level
+   tt-exporting class (set by export_timetable.js) lets us target them
+   globally without touching the component. */
+body.tt-exporting .tt-save-fab-group { display: none !important; }
+
 /* Drop any "today/active-day" highlight from the export — the header pill,
    the column tint, the label colour, and the dot. The captured snapshot
    should read as a neutral timetable, not as of-today.
