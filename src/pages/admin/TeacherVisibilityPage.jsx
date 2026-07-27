@@ -13,6 +13,8 @@ export default function TeacherVisibilityPage() {
   const [selected, setSelected] = useState(new Set())
   const [saved, setSaved] = useState(new Set())
   const [query, setQuery] = useState('')
+  const [yearFilter, setYearFilter] = useState('all')
+  const [visibilityFilter, setVisibilityFilter] = useState('all')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
@@ -36,8 +38,20 @@ export default function TeacherVisibilityPage() {
 
   const filtered = useMemo(() => {
     const needle = query.trim().toUpperCase()
-    return needle ? items.filter((row) => row.batch.includes(needle)) : items
-  }, [items, query])
+    return items.filter((row) => {
+      const year = row.year || Number.parseInt(row.batch?.[0], 10) || 0
+      const enabled = selected.has(row.batch)
+      return (
+        (!needle || row.batch.includes(needle))
+        && (yearFilter === 'all' || String(year) === yearFilter)
+        && (visibilityFilter === 'all' || (visibilityFilter === 'visible' ? enabled : !enabled))
+      )
+    })
+  }, [items, query, yearFilter, visibilityFilter, selected])
+
+  const years = useMemo(() => (
+    [...new Set(items.map((row) => row.year || Number.parseInt(row.batch?.[0], 10)).filter(Boolean))].sort((a, b) => a - b)
+  ), [items])
 
   const groups = useMemo(() => {
     const byYear = new Map()
@@ -116,6 +130,21 @@ export default function TeacherVisibilityPage() {
             aria-label="Search batch codes"
           />
         </label>
+        <label className="teacher-visibility-filter">
+          <span>Year</span>
+          <select value={yearFilter} onChange={(event) => setYearFilter(event.target.value)}>
+            <option value="all">All years</option>
+            {years.map((year) => <option key={year} value={String(year)}>Year {year}</option>)}
+          </select>
+        </label>
+        <label className="teacher-visibility-filter">
+          <span>Visibility</span>
+          <select value={visibilityFilter} onChange={(event) => setVisibilityFilter(event.target.value)}>
+            <option value="all">Visible + hidden</option>
+            <option value="visible">Visible only</option>
+            <option value="hidden">Hidden only</option>
+          </select>
+        </label>
         <div className="teacher-visibility-actions">
           <button type="button" onClick={() => setVisibleRows(true)} disabled={!filtered.length || loading || saving}>
             Enable shown
@@ -125,6 +154,13 @@ export default function TeacherVisibilityPage() {
           </button>
           <button className="teacher-visibility-save" type="button" onClick={save} disabled={!dirty || loading || saving}>
             {saving ? 'Saving…' : dirty ? 'Save visibility' : 'Saved'}
+          </button>
+          <button
+            type="button"
+            disabled={!query && yearFilter === 'all' && visibilityFilter === 'all'}
+            onClick={() => { setQuery(''); setYearFilter('all'); setVisibilityFilter('all') }}
+          >
+            Clear filters
           </button>
         </div>
       </section>
