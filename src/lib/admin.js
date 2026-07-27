@@ -126,6 +126,17 @@ export function deleteAdminUser(email) {
   return adminFetch(`/admin/users/${encodeURIComponent(email)}`, { method: 'DELETE' })
 }
 
+export function getTeacherVisibility() {
+  return adminFetch('/admin/teacher-visibility')
+}
+
+export function updateTeacherVisibility(batches) {
+  return adminFetch('/admin/teacher-visibility', {
+    method: 'PUT',
+    body: JSON.stringify({ batches }),
+  })
+}
+
 // ── Semester label (current) ──────────────────────────────────────────
 export function getCurrent() {
   return adminFetch('/current')
@@ -616,4 +627,3 @@ export function backfillTimetablesAgainstCatalog() {
 export function getAnalytics() {
   return adminFetch('/admin/analytics')
 }
-

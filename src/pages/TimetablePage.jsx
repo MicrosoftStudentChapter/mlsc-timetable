@@ -672,7 +672,7 @@ function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx, o
       </div>
     )
   }
-  return <TimetableGrid isDarkMode={isDark} classes={state.classes} termStartDate={state.termStartDate} isSignedIn={!!window.Clerk?.user} hasDefaultBatch={!!window.Clerk?.user?.unsafeMetadata?.batch} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} onReloadTimetable={onReloadTimetable} />
+  return <TimetableGrid isDarkMode={isDark} classes={state.classes} termStartDate={state.termStartDate} teacherCodesVisible={state.teacherCodesVisible === true} isSignedIn={!!window.Clerk?.user} hasDefaultBatch={!!window.Clerk?.user?.unsafeMetadata?.batch} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} onReloadTimetable={onReloadTimetable} />
 }
 
 // ─── ExportDropdownButton ───────────────────────────────────────────────────

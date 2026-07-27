@@ -79,6 +79,7 @@ const INITIAL_DATA = (() => {
         ['08:00','08:50','09:40','10:30','11:20','12:10','13:00','13:50','14:40','15:30','16:20','17:10'][curSlotIdx + 1] === next.startTime &&
         next.subject === cur.subject &&
         next.code    === cur.code    &&
+        next.teacher === cur.teacher &&
         next.room    === cur.room
 
       if (nextIsConsecutive) {
@@ -309,15 +310,15 @@ function computeEditorPos(rect) {
 }
 
 // ─── CardEditor — floating portal panel ──────────────────────────────────────
-function CardEditor({ mode, entry, slot, rect, triggerElement, onSave, onDelete, onClose }) {
+function CardEditor({ mode, entry, slot, rect, triggerElement, onSave, onDelete, onClose, showTeacherField = false }) {
   const isEdit = mode === 'edit'
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [isElectivesExpanded, setIsElectivesExpanded] = useState(true)
 
   const [form, setForm] = useState(() =>
     isEdit
-       ? { subject: entry.subject, code: entry.code, room: entry.room, type: entry.type, day: entry.day, startTime: entry.startTime, alternateWeekStart: entry.alternateWeekStart ?? null, electiveChoice: entry.electiveChoice || entry.code }
-       : { subject: '', code: '', room: '', type: 'Lecture', day: slot.day, startTime: slot.startTime, alternateWeekStart: null }
+       ? { subject: entry.subject, code: entry.code, teacher: entry.teacher || '', room: entry.room, type: entry.type, day: entry.day, startTime: entry.startTime, alternateWeekStart: entry.alternateWeekStart ?? null, electiveChoice: entry.electiveChoice || entry.code }
+       : { subject: '', code: '', teacher: '', room: '', type: 'Lecture', day: slot.day, startTime: slot.startTime, alternateWeekStart: null }
   )
 
   const panelRef  = useRef(null)
@@ -429,6 +430,18 @@ function CardEditor({ mode, entry, slot, rect, triggerElement, onSave, onDelete,
             />
           </label>
         </div>
+
+        {showTeacherField && (
+          <label className="tt-editor-field tt-editor-field--full">
+            <span className="tt-editor-label">Teacher code</span>
+            <input
+              className="tt-editor-input"
+              value={form.teacher || ''}
+              onChange={field('teacher')}
+              placeholder="e.g. PKC"
+            />
+          </label>
+        )}
 
         {/* Day & time — only shown when editing (slot is implicit when adding) */}
         {isEdit && (
@@ -718,8 +731,19 @@ function ClassCard({ entry, onEdit, onChooseElective, onDismissElective, onDragS
           {`Alternate · Week ${entry.alternateWeekStart}`}
         </span>
       )}
-      {!isElectiveGroup && entry.room && String(entry.room).trim() && (
-        <span className="tt-card-room">{entry.room}</span>
+      {!isElectiveGroup && ((entry.teacher && String(entry.teacher).trim()) || (entry.room && String(entry.room).trim())) && (
+        <div className="tt-card-meta">
+          {entry.teacher && String(entry.teacher).trim() && (
+            <span className="tt-card-teacher" title={`Teacher ${entry.teacher}`}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="3" />
+                <path d="M6.5 19c.5-3.3 2.3-5 5.5-5s5 1.7 5.5 5" />
+              </svg>
+              <span>{entry.teacher}</span>
+            </span>
+          )}
+          {entry.room && String(entry.room).trim() && <span className="tt-card-room">{entry.room}</span>}
+        </div>
       )}
     </div>
   )
@@ -741,6 +765,7 @@ export default function TimetableGrid({
   adminMode = false,
   onAdminChange,
   errorCellKey,
+  teacherCodesVisible = false,
   isSignedIn = false,
   hasDefaultBatch = false,
   onReloadTimetable,
@@ -796,7 +821,7 @@ export default function TimetableGrid({
 
   const hasNetChange = useMemo(() => {
     const sig = (arr) => arr
-      .map(e => `${e.day}|${e.startTime}|${e.subject}|${e.code}|${e.type}|${e.room ?? ''}`)
+      .map(e => `${e.day}|${e.startTime}|${e.subject}|${e.code}|${e.type}|${e.teacher ?? ''}|${e.room ?? ''}`)
       .sort()
       .join('\n')
     const regularEntries = adminMode ? baseClasses : applyOverrides(baseClasses, regularOverrides)
@@ -816,7 +841,17 @@ export default function TimetableGrid({
       : filterUnchosenElectiveClasses(entries.filter((e) => !e.electiveDismissed))),
     [entries, adminMode],
   )
-  const visibleEntries = peekBaseline ? baseClasses : displayEntries
+  const unsanitizedVisibleEntries = peekBaseline ? baseClasses : displayEntries
+  const visibleEntries = useMemo(() => {
+    if (adminMode || teacherCodesVisible) return unsanitizedVisibleEntries
+    return unsanitizedVisibleEntries.map((entry) => ({
+      ...entry,
+      teacher: '',
+      options: Array.isArray(entry.options)
+        ? entry.options.map((option) => ({ ...option, teacher: null }))
+        : [],
+    }))
+  }, [unsanitizedVisibleEntries, adminMode, teacherCodesVisible])
 
   // Evening rows stay out of the normal view when there are no classes scheduled
   // during those slots. Admin mode keeps all slots available for adding/editing.
@@ -1032,6 +1067,7 @@ export default function TimetableGrid({
             ...partner,
             subject: form.subject,
             code: form.code,
+            teacher: form.teacher,
             room: form.room,
             type: form.type,
           },
@@ -1389,6 +1425,7 @@ export default function TimetableGrid({
           onSave={handleEditSave}
           onDelete={handleEditDelete}
           onClose={() => setEditTarget(null)}
+          showTeacherField={adminMode || teacherCodesVisible}
         />
       )}
       {addTarget && (
@@ -1398,6 +1435,7 @@ export default function TimetableGrid({
           rect={addTarget.rect}
           onSave={handleAddSave}
           onClose={() => setAddTarget(null)}
+          showTeacherField={adminMode || teacherCodesVisible}
         />
       )}
       {electiveTarget && (
@@ -1599,7 +1637,12 @@ export default function TimetableGrid({
               <p className="tt-card-subject">{drag.entry.subject}</p>
               <p className="tt-card-code">{drag.entry.code}</p>
             </div>
-            {drag.entry.room && <span className="tt-card-room">{drag.entry.room}</span>}
+            {(drag.entry.teacher || drag.entry.room) && (
+              <div className="tt-card-meta">
+                {drag.entry.teacher && <span className="tt-card-teacher">{drag.entry.teacher}</span>}
+                {drag.entry.room && <span className="tt-card-room">{drag.entry.room}</span>}
+              </div>
+            )}
           </div>
         </div>,
         document.body,

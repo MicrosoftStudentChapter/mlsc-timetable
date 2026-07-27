@@ -408,8 +408,7 @@
   min-height: 28px;  /* Reduced: ~20% smaller than previous 38px */
   min-width: 70px;
   /* Top stack (badge → subject → code) keeps fixed spacing so course names
-     stay aligned across the row; the location badge is pinned to the bottom
-     via `margin-top: auto`. */
+     stay aligned across the row; teacher + location are pinned at the bottom. */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -466,6 +465,38 @@
   line-height: 1.3;
 }
 
+.tt-card-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  margin: auto 0 2px;
+}
+
+.tt-card-teacher {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding-left: 2px;
+  color: rgba(30, 64, 92, 0.76);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--card-meta-size);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.tt-card-teacher svg {
+  width: calc(var(--card-meta-size) * 1.25);
+  height: calc(var(--card-meta-size) * 1.25);
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
 .tt-card-room {
   font-family: 'Montserrat', sans-serif;
   display: inline-block;
@@ -475,7 +506,7 @@
   background: rgba(51, 51, 51, 0.12);
   border-radius: 999px;
   padding: 1px calc(var(--card-meta-size) * 0.75);
-  margin: auto 0 2px 0; /* margin-top: auto pins to bottom */
+  margin: 0;
   line-height: 1.4;
   text-transform: uppercase;
 }
@@ -1100,6 +1131,10 @@ select.tt-editor-input {
 [data-theme="dark"] .tt-card-room {
   color: rgba(255, 255, 255, 0.85);
   background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .tt-card-teacher {
+  color: rgba(219, 234, 254, 0.82);
 }
 
 [data-theme="dark"] .tt-edit-btn {
@@ -2083,4 +2118,3 @@ select.tt-editor-input {
     overscroll-behavior: contain !important;
   }
 }
-

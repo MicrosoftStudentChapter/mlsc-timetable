@@ -23,7 +23,7 @@ const myTimetableRequests = new Map()
 const nextId = () => `entry-${++_idCounter}`
 const nextPairId = () => `pair-${++_idCounter}`
 
-function adaptEntry(raw) {
+function adaptEntry(raw, teacherCodesVisible = false) {
   return {
     id: nextId(),
     day: raw.day,
@@ -31,9 +31,12 @@ function adaptEntry(raw) {
     endTime: raw.end_time,
     subject: raw.subject ?? (Array.isArray(raw.options) && raw.options.length > 1 ? '' : ''),
     code: raw.code ?? '',
+    teacher: teacherCodesVisible ? (raw.teacher ?? '') : '',
     room: raw.room ?? '',
     type: raw.type ?? 'Lecture',
-    options: raw.options ?? [],
+    options: Array.isArray(raw.options)
+      ? raw.options.map((option) => (teacherCodesVisible ? option : { ...option, teacher: null }))
+      : [],
     alternateWeekStart: raw.alternate_week_start ?? null,
   }
 }
@@ -59,6 +62,7 @@ function assignPairIds(entries) {
         TIME_SLOTS[curIdx + 1] === next.startTime &&
         next.subject === cur.subject &&
         next.code === cur.code &&
+        next.teacher === cur.teacher &&
         next.room === cur.room
       if (consecutive) {
         const pid = nextPairId()
@@ -128,12 +132,14 @@ async function fetchTimetable(url, init = {}) {
     return { status: 'error', message: 'Invalid JSON from backend' }
   }
   const classes = Array.isArray(body?.classes) ? body.classes : []
-  const entries = assignPairIds(classes.map(adaptEntry))
+  const teacherCodesVisible = body?.teacher_codes_visible === true
+  const entries = assignPairIds(classes.map((entry) => adaptEntry(entry, teacherCodesVisible)))
   return {
     status: 'ok',
     batch: body?.batch ?? '',
     semester: body?.semester ?? null,
     termStartDate: body?.term_start_date ?? null,
+    teacherCodesVisible,
     classes: entries,
     overridesApplied: typeof body?.overrides_applied === 'number' ? body.overrides_applied : 0,
   }

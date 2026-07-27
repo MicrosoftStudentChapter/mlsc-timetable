@@ -19,6 +19,7 @@ import FixTimetablePage from './pages/admin/FixTimetablePage'
 import CatalogPage from './pages/admin/CatalogPage'
 import AnalyticsPage from './pages/admin/AnalyticsPage'
 import TimetablesPage from './pages/admin/TimetablesPage'
+import TeacherVisibilityPage from './pages/admin/TeacherVisibilityPage'
 
 export default function App() {
   return (
@@ -46,6 +47,7 @@ export default function App() {
         <Route path="fix/timetable/:batch" element={<FixTimetablePage />} />
         <Route path="timetables" element={<TimetablesPage />} />
         <Route path="timetables/:batch" element={<FixTimetablePage standalone />} />
+        <Route path="teacher-codes" element={<TeacherVisibilityPage />} />
       </Route>
     </Routes>
   )

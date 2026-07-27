@@ -172,6 +172,7 @@ function fingerprintEntry(e) {
   return JSON.stringify({
     subject: e.subject ?? '',
     code:    e.code    ?? '',
+    teacher: e.teacher ?? '',
     type:    e.type    ?? '',
     room:    e.room    ?? '',
     endTime: e.endTime ?? e.end_time ?? '',

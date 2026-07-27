@@ -28,6 +28,7 @@ function toGridEntry(raw) {
     endTime: raw.end_time,
     subject: raw.subject ?? '',
     code: raw.code ?? '',
+    teacher: raw.teacher ?? '',
     room: raw.room ?? '',
     type: raw.type ?? 'Lecture',
     options: raw.options ?? [],
@@ -41,6 +42,7 @@ function fromGridEntry(e) {
     end_time: e.endTime,
     subject: e.subject ?? '',
     code: e.code ?? '',
+    teacher: e.teacher ?? '',
     room: e.room ?? '',
     type: e.type ?? 'Lecture',
     options: Array.isArray(e.options) ? e.options : [],
@@ -104,7 +106,7 @@ export default function FixTimetablePage({ standalone = false }) {
   // Net diff: only enable Save when entries differ from the last-saved baseline.
   const dirty = useMemo(() => {
     const sig = (arr) => arr
-      .map((e) => `${e.day}|${e.startTime}|${e.subject}|${e.code}|${e.type}|${e.room ?? ''}`)
+      .map((e) => `${e.day}|${e.startTime}|${e.subject}|${e.code}|${e.type}|${e.teacher ?? ''}|${e.room ?? ''}`)
       .sort()
       .join('\n')
     return sig(baseline) !== sig(entries)

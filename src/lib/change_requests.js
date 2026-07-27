@@ -22,6 +22,7 @@ function entryToBackend(entry) {
     end_time: entry.endTime,
     subject: entry.subject,
     code: entry.code,
+    teacher: entry.teacher,
     type: entry.type,
     room: entry.room,
     alternate_week_start: entry.alternateWeekStart ?? null,
