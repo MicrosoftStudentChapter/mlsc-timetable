@@ -522,6 +522,7 @@ export function listErrors({ status, uploadId, errorType, batchCode, limit = 25,
   if (errorType) params.set('error_type', errorType)
   if (batchCode) params.set('batch_code', batchCode)
   if (limit) params.set('limit', String(limit))
+  if (offset) params.set('offset', String(offset))
   const qs = params.toString()
   return adminFetch(`/admin/errors${qs ? `?${qs}` : ''}`)
 }
@@ -622,6 +623,48 @@ export function importSubjectMapping(items) {
 
 export function backfillTimetablesAgainstCatalog() {
   return adminFetch('/admin/subjects/backfill-timetables', { method: 'POST' })
+}
+
+// ── Curriculum Library ────────────────────────────────────────────────
+export function listLibraryEntries({ q, branch, semester, limit = 100, offset = 0 } = {}) {
+  const qs = new URLSearchParams()
+  if (q) qs.set('q', q)
+  if (branch) qs.set('branch', branch)
+  if (semester) qs.set('semester', String(semester))
+  qs.set('limit', String(limit))
+  qs.set('offset', String(offset))
+  return adminFetch(`/admin/library?${qs.toString()}`)
+}
+
+export function getLibraryEntry(branch, semester) {
+  return adminFetch(`/admin/library/${encodeURIComponent(branch)}/${encodeURIComponent(semester)}`)
+}
+
+export function saveLibraryEntry(branch, semester, { sections, source, revision } = {}) {
+  return adminFetch(`/admin/library/${encodeURIComponent(branch)}/${encodeURIComponent(semester)}`, {
+    method: 'PUT',
+    body: JSON.stringify({ sections, source, revision }),
+  })
+}
+
+export function deleteLibraryEntry(branch, semester) {
+  return adminFetch(`/admin/library/${encodeURIComponent(branch)}/${encodeURIComponent(semester)}`, {
+    method: 'DELETE',
+  })
+}
+
+export function previewLibraryScheme({ file, branch }) {
+  const body = new FormData()
+  body.append('file', file)
+  body.append('branch', branch)
+  return adminFetch('/admin/library-import/preview', { method: 'POST', body })
+}
+
+export function applyLibraryScheme({ plan, source }) {
+  return adminFetch('/admin/library-import/apply', {
+    method: 'POST',
+    body: JSON.stringify({ plan, source }),
+  })
 }
 
 export function getAnalytics() {
