@@ -458,7 +458,7 @@ export default function TimetablePage() {
               </svg>
             </span>
             <span className="tt-warning-text">
-              Note: The source timetable spreadsheet contains discrepancies and is subject to revision.
+              Note: This timetable is parsed from the official timetable released by DOAA and is maintained as a community-driven open-source project
             </span>
           </div>
           <FollowDayBanner batch={batch} />
