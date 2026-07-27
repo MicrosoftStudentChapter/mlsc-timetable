@@ -111,10 +111,15 @@
 /* ── Nav row (sub-nav under top bar) ─────────────────────────────────── */
 .admin-subnav {
   display: flex;
+  flex-wrap: nowrap;
   gap: 4px;
   padding: 8px 28px 0;
   border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.05));
   background: var(--bg, #050505);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
 }
 
 [data-theme='light'] .admin-subnav {
@@ -123,6 +128,8 @@
 }
 
 .admin-subnav a {
+  flex: 0 0 auto;
+  white-space: nowrap;
   padding: 10px 14px;
   font-size: 13px;
   font-weight: 500;
