@@ -70,11 +70,10 @@ export function groupBatches(list, streamNames = {}, specialBatches = SPECIAL_BA
       })
     }
     if (!streams.length) continue
-    streams.sort((a, b) => {
-      if (a.code === 'CE-2+2') return 1
-      if (b.code === 'CE-2+2') return -1
-      return streamSorter(year)(a, b)
-    })
+    // "CE-2+2" sorts naturally just after the regular C stream, keeping the
+    // separate Computer Engineering (2+2) branch next to its parent scheme
+    // in both the landing selector and Profile.
+    streams.sort(streamSorter(year))
     out.push({ year, label: YEAR_LABELS[year] ?? `Year ${year}`, streams })
   }
   return out
