@@ -9,7 +9,7 @@ import {
   mergeOverride,
   reconcileOverrides,
 } from '../lib/local_overrides'
-import { setDefaultBatch, syncOverridesToBackend, clearMyOverrides } from '../lib/me_overrides'
+import { syncOverridesToBackend, clearMyOverrides } from '../lib/me_overrides'
 import './TimetableGrid.css'
 
 // ─── Initial timetable data (IDs injected for stable React keys) ──────────────
@@ -208,7 +208,10 @@ function getEndTime(startTime) {
 }
 
 function genId() {
-  return `entry-${Date.now()}-${Math.floor(Math.random() * 9999)}`
+  const token = typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.floor(Math.random() * 999999)}`
+  return `p_${token}`
 }
 
 function genRuntimePairId() {
@@ -767,7 +770,9 @@ export default function TimetableGrid({
   errorCellKey,
   teacherCodesVisible = false,
   isSignedIn = false,
-  hasDefaultBatch = false,
+  officialClasses,
+  personalRevision = 0,
+  personalOverrideCount = 0,
   onReloadTimetable,
 }) {
   const resolvedIsDark = isDarkMode ?? (typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark')
@@ -777,6 +782,7 @@ export default function TimetableGrid({
   // empty until the personal API response arrives, otherwise stale sample
   // data flashes before `/me/timetable` completes.
   const baseClasses = classes ?? (adminMode ? INITIAL_DATA : [])
+  const officialBaseClasses = officialClasses ?? baseClasses
   // Per-slot user overrides (one entry per edited/added/deleted cell), loaded
   // from localStorage so they survive a reload. Submission to the backend is
   // a separate concern (see ChangeRequestPrompt).
@@ -790,10 +796,10 @@ export default function TimetableGrid({
   const [electiveTarget, setElectiveTarget] = useState(null)
   const [electiveConfirm, setElectiveConfirm] = useState(null)
   const [dismissConfirm, setDismissConfirm] = useState(null)
-  const [defaultBatchPrompt, setDefaultBatchPrompt] = useState(null)
   const [addTarget,  setAddTarget]  = useState(null)   // { day, startTime, rect }
   const [saveOpen, setSaveOpen] = useState(false)
   const [resetOpen, setResetOpen] = useState(false)
+  const [resetStatus, setResetStatus] = useState({ kind: 'idle', message: '' })
   const [drag, setDrag] = useState(null) // { entry, originX, originY, x, y, started, rect, dropTargetKey }
   const [peekBaseline, setPeekBaseline] = useState(false)
   // Flips true on user-initiated override changes so the persist effect knows
@@ -810,24 +816,27 @@ export default function TimetableGrid({
 
   // Net diff vs canonical: round-trip edits (A→B→A) collapse to "no change"
   // so the Save FAB stays hidden when the view matches the baseline.
-  const regularOverrides = useMemo(
-    () => overrides.filter((ov) => !isPersonalElectiveOverride(ov)),
-    [overrides],
-  )
-  const personalElectiveOverrides = useMemo(
-    () => overrides.filter((ov) => isPersonalElectiveOverride(ov)),
-    [overrides],
-  )
-
   const hasNetChange = useMemo(() => {
     const sig = (arr) => arr
-      .map(e => `${e.day}|${e.startTime}|${e.subject}|${e.code}|${e.type}|${e.teacher ?? ''}|${e.room ?? ''}`)
+      .map(e => JSON.stringify({
+        id: e.id,
+        day: e.day,
+        startTime: e.startTime,
+        endTime: e.endTime,
+        subject: e.subject,
+        code: e.code,
+        type: e.type,
+        teacher: e.teacher ?? '',
+        room: e.room ?? '',
+        alternateWeekStart: e.alternateWeekStart ?? null,
+        electiveChoice: e.electiveChoice ?? null,
+        electiveDismissed: e.electiveDismissed === true,
+        options: e.options ?? [],
+      }))
       .sort()
       .join('\n')
-    const regularEntries = adminMode ? baseClasses : applyOverrides(baseClasses, regularOverrides)
-    const electiveEntries = adminMode ? baseClasses : applyOverrides(baseClasses, personalElectiveOverrides)
-    return sig(baseClasses) !== sig(regularEntries)
-  }, [baseClasses, regularOverrides, adminMode])
+    return sig(baseClasses) !== sig(entries)
+  }, [baseClasses, entries])
 
   // What the grid actually shows. While the user holds the peek button we
   // render the canonical baseline so they can compare against their edits.
@@ -841,7 +850,7 @@ export default function TimetableGrid({
       : filterUnchosenElectiveClasses(entries.filter((e) => !e.electiveDismissed))),
     [entries, adminMode],
   )
-  const unsanitizedVisibleEntries = peekBaseline ? baseClasses : displayEntries
+  const unsanitizedVisibleEntries = peekBaseline ? officialBaseClasses : displayEntries
   const visibleEntries = useMemo(() => {
     if (adminMode || teacherCodesVisible) return unsanitizedVisibleEntries
     return unsanitizedVisibleEntries.map((entry) => ({
@@ -916,10 +925,6 @@ export default function TimetableGrid({
       onAdminChange?.(next)
       return
     }
-    if (isSignedIn && !hasDefaultBatch && !defaultBatchPrompt) {
-      setDefaultBatchPrompt({ incoming: arr })
-      return
-    }
     applyIncomingOverrides(arr)
   }
 
@@ -931,11 +936,8 @@ export default function TimetableGrid({
         : ov
     ))
     setOverrides(prev => normalized.reduce((acc, ov) => mergeOverride(acc, ov), prev))
-    // Regular edits stay local until the user explicitly submits the Save
-    // dialog. Personal elective picks are synced immediately.
-    if (normalized.some((ov) => isPersonalElectiveOverride(ov))) {
-      syncOverridesToBackend(normalized.filter((ov) => isPersonalElectiveOverride(ov)), batch)
-    }
+    // Every change follows the same draft lifecycle. Nothing is considered
+    // saved until the atomic personal-save request succeeds.
   }
 
   // Resolve today's highlight day
@@ -1453,9 +1455,8 @@ export default function TimetableGrid({
             <h3>Save elective choice?</h3>
             <p>
               Choose <strong>{electiveConfirm.option.subject_name || electiveConfirm.option.subject_code}</strong>?
-              This will update all matching elective cells {isSignedIn
-                ? <>and save it for your default batch (<strong>{batch}</strong>)</>
-                : 'and keep it locally on this device'}.
+              This will update all matching elective cells in your draft. Use <strong>Save</strong> when you are ready
+              {isSignedIn ? <> to keep it for batch <strong>{batch}</strong></> : ' to keep it on this device'}.
             </p>
             <div className="tt-elective-confirm-actions">
               <button type="button" className="tt-editor-cancel-btn" onClick={() => setElectiveConfirm(null)}>Cancel</button>
@@ -1471,9 +1472,8 @@ export default function TimetableGrid({
             <h3>Remove this elective block?</h3>
             <p>
               Not taking any of these <strong>{dismissConfirm.entry.options?.length ?? ''}</strong> courses?
-              This hides every cell of this elective block {isSignedIn
-                ? <>and saves it for your default batch (<strong>{batch}</strong>)</>
-                : 'and keeps it locally on this device'}.
+              This hides every cell of this elective block in your draft. Use <strong>Save</strong> when you are ready
+              {isSignedIn ? <> to keep it for batch <strong>{batch}</strong></> : ' to keep it on this device'}.
               You can bring it back anytime with the <strong>Reset</strong> button.
             </p>
             <div className="tt-elective-confirm-actions">
@@ -1484,22 +1484,8 @@ export default function TimetableGrid({
         </div>,
         document.body,
       )}
-      {defaultBatchPrompt && createPortal(
-        <div className="tt-elective-confirm-backdrop" role="dialog" aria-modal="true">
-          <div className="tt-elective-confirm">
-            <h3>Set {batch} as your default batch?</h3>
-            <p>Your personal edits are stored against your default batch. Set <strong>{batch}</strong> as the default to save this edit and use it across devices.</p>
-            <div className="tt-elective-confirm-actions">
-              <button type="button" className="tt-editor-cancel-btn" onClick={() => setDefaultBatchPrompt(null)}>Cancel</button>
-              <button type="button" className="tt-editor-save-btn" onClick={async () => { const result = await setDefaultBatch(batch); if (!result || result.default_batch !== batch.toUpperCase()) return; applyIncomingOverrides(defaultBatchPrompt.incoming); setDefaultBatchPrompt(null) }}>Set as default & save</button>
-            </div>
-          </div>
-        </div>,
-        document.body,
-      )}
-
-      {/* Floating save controls — visible only when current view differs from baseline */}
-      {!adminMode && (hasNetChange || personalElectiveOverrides.length > 0) && (
+      {/* Draft controls and saved-personal reset are intentionally separate. */}
+      {!adminMode && (hasNetChange || personalOverrideCount > 0) && (
         <div className="tt-save-fab-group">
           {hasNetChange && (
             <button
@@ -1518,7 +1504,7 @@ export default function TimetableGrid({
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                 <circle cx="12" cy="12" r="3" />
               </svg>
-              <span>{peekBaseline ? 'Original' : 'Hold to compare'}</span>
+              <span>{peekBaseline ? 'Official' : 'Hold for official'}</span>
             </button>
           )}
           <button
@@ -1526,8 +1512,8 @@ export default function TimetableGrid({
             className="tt-reset-fab"
             onClick={() => setResetOpen(true)}
             disabled={peekBaseline}
-            aria-label="Reset all changes"
-            title="Discard local changes"
+            aria-label={hasNetChange ? 'Discard unsaved changes' : 'Restore official timetable'}
+            title={hasNetChange ? 'Discard unsaved changes' : 'Restore official timetable'}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <polyline points="1 4 1 10 7 10" />
@@ -1541,7 +1527,7 @@ export default function TimetableGrid({
               className="tt-save-fab"
               onClick={() => setSaveOpen(true)}
               disabled={peekBaseline}
-              aria-label={`Save ${regularOverrides.length} change${regularOverrides.length === 1 ? '' : 's'}`}
+              aria-label={`Save ${overrides.length} change${overrides.length === 1 ? '' : 's'}`}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
@@ -1556,17 +1542,15 @@ export default function TimetableGrid({
 
       {saveOpen && (
         <SaveChangesDialog
-          overrides={regularOverrides}
+          overrides={overrides}
           batch={batch}
           isSignedIn={isSignedIn}
+          personalRevision={personalRevision}
           onClose={() => setSaveOpen(false)}
-          onSavedJustForMe={() => {
-            // Clear staged regular overrides locally — they're now persisted in
-            // the backend override collection and will be baked into the next
-            // /me/timetable response. Reload so baseClasses reflects the saves
-            // and the user sees their edits without a manual refresh.
-            setOverrides((current) => current.filter((ov) => isPersonalElectiveOverride(ov)))
-            dirtyRef.current = true
+          onPersonalSaved={() => {
+            clearOverrides(batch)
+            dirtyRef.current = false
+            setOverrides([])
             onReloadTimetable?.()
           }}
         />
@@ -1581,35 +1565,55 @@ export default function TimetableGrid({
           onClick={(e) => { if (e.target === e.currentTarget) setResetOpen(false) }}
         >
           <div className="tt-cr-card tt-cr-card--compact">
-            <h3 className="tt-cr-title">Reset changes?</h3>
+            <h3 className="tt-cr-title">
+              {hasNetChange ? 'Discard unsaved changes?' : 'Restore official timetable?'}
+            </h3>
             <p className="tt-cr-sub">
-              This discards all your local edits for batch <strong>{batch}</strong> and
-              restores the original timetable. This action can&apos;t be undone.
+              {hasNetChange
+                ? <>This removes the current unsaved draft for <strong>{batch}</strong>. Your previously saved personal timetable stays intact.</>
+                : <>This removes all saved personal customizations for <strong>{batch}</strong> and restores the official timetable.</>}
             </p>
+            {resetStatus.kind === 'error' && <p className="tt-cr-error">{resetStatus.message}</p>}
             <div className="tt-cr-actions tt-cr-actions--end">
               <button
                 type="button"
                 className="tt-cr-btn tt-cr-btn--ghost"
-                onClick={() => setResetOpen(false)}
+                disabled={resetStatus.kind === 'submitting'}
+                onClick={() => { setResetStatus({ kind: 'idle', message: '' }); setResetOpen(false) }}
               >
                 Cancel
               </button>
               <button
                 type="button"
                 className="tt-cr-btn tt-cr-btn--danger"
-                onClick={() => {
-                  clearOverrides(batch)
-                  // Signed-in users also have synced overrides (elective picks
-                  // / dismissed blocks) server-side; clear those too or they
-                  // come back baked into the next /me/timetable response.
-                  if (isSignedIn) clearMyOverrides(batch)
-                  dirtyRef.current = false
-                  setOverrides([])
-                  setPeekBaseline(false)
-                  setResetOpen(false)
+                disabled={resetStatus.kind === 'submitting'}
+                onClick={async () => {
+                  if (hasNetChange) {
+                    clearOverrides(batch)
+                    dirtyRef.current = false
+                    setOverrides([])
+                    setPeekBaseline(false)
+                    setResetOpen(false)
+                    return
+                  }
+                  setResetStatus({ kind: 'submitting', message: '' })
+                  try {
+                    await clearMyOverrides(batch, { expectedRevision: personalRevision })
+                    clearOverrides(batch)
+                    dirtyRef.current = false
+                    setOverrides([])
+                    setPeekBaseline(false)
+                    setResetOpen(false)
+                    setResetStatus({ kind: 'idle', message: '' })
+                    onReloadTimetable?.()
+                  } catch (err) {
+                    setResetStatus({ kind: 'error', message: err?.message || 'Could not restore the official timetable.' })
+                  }
                 }}
               >
-                Discard changes
+                {resetStatus.kind === 'submitting'
+                  ? 'Restoring…'
+                  : hasNetChange ? 'Discard draft' : 'Restore official'}
               </button>
             </div>
           </div>
@@ -1659,30 +1663,47 @@ export default function TimetableGrid({
 // batch / class as change requests for admin review. Each override is
 // submitted as its own request — server-side rate limits and duplicate
 // detection apply per change.
-function SaveChangesDialog({ overrides, batch, isSignedIn, onClose, onSavedJustForMe }) {
+function SaveChangesDialog({ overrides, batch, isSignedIn, personalRevision, onClose, onPersonalSaved }) {
   const [status, setStatus] = useState({ kind: 'idle' })
-  // 'idle' | 'submitting' | 'done' | 'error'
+  const [changes] = useState(() => overrides)
   const classPrefix = classPrefixOf(batch)
 
-  const hasLecture = useMemo(() => overrides.some(ov => {
+  const hasLecture = useMemo(() => changes.some(ov => {
     const t = ov.entry?.type ?? ov.baseEntry?.type
     return t === 'Lecture'
-  }), [overrides])
+  }), [changes])
+
+  const persistPersonal = async () => syncOverridesToBackend(
+    changes,
+    batch,
+    { expectedRevision: personalRevision },
+  )
+
+  const savePersonalOnly = async () => {
+    setStatus({ kind: 'submitting', scope: 'personal', sent: 0, total: changes.length, errors: [] })
+    try {
+      await persistPersonal()
+      onPersonalSaved?.()
+      onClose()
+    } catch (err) {
+      setStatus({ kind: 'error', scope: 'personal', sent: 0, errors: [{ code: err.code, message: err.message }] })
+    }
+  }
 
   const submitAll = async (scope) => {
     if (!batch) return
-    setStatus({ kind: 'submitting', scope, sent: 0, total: overrides.length, errors: [] })
+    setStatus({ kind: 'submitting', scope, sent: 0, total: changes.length, errors: [] })
 
-    // Always persist to the personal override collection first so the user's
-    // view is backed even before admin review. Change requests are submitted
-    // on top; overrides are never flushed regardless of outcome.
-    if (isSignedIn) {
-      await syncOverridesToBackend(overrides, batch)
+    try {
+      await persistPersonal()
+    } catch (err) {
+      setStatus({ kind: 'error', scope: 'personal', sent: 0, errors: [{ code: err.code, message: err.message }] })
+      return
     }
 
     let sent = 0
     const errors = []
-    for (const ov of overrides) {
+    for (const ov of changes) {
       if (ov.kind === 'elective_pick') continue
       if (scope === 'class') {
         // Class scope only carries Lecture changes
@@ -1695,8 +1716,9 @@ function SaveChangesDialog({ overrides, batch, isSignedIn, onClose, onSavedJustF
           requesterBatch: batch,
           scope,
           kind: ov.kind,
-          day: ov.day,
-          startTime: ov.startTime,
+          day: ov.kind === 'add' ? ov.day : (ov.baseEntry?.day ?? ov.day),
+          startTime: ov.kind === 'add' ? ov.startTime : (ov.baseEntry?.startTime ?? ov.startTime),
+          targetId: ov.targetId ?? null,
           entry,
         })
         // The regular Save dialog is the point at which non-personal edits
@@ -1709,7 +1731,7 @@ function SaveChangesDialog({ overrides, batch, isSignedIn, onClose, onSavedJustF
               name: entry.subject,
             })
           } catch (catalogErr) {
-            if (catalogErr.code !== 'duplicate') throw catalogErr
+            if (!['duplicate', 'already_mapped'].includes(catalogErr.code)) throw catalogErr
           }
         }
         sent++
@@ -1718,25 +1740,26 @@ function SaveChangesDialog({ overrides, batch, isSignedIn, onClose, onSavedJustF
         errors.push({ ov, code: err.code, message: err.message })
       }
     }
+    // Personal persistence succeeded independently of community submission.
+    // Clear the draft even when one review request is rejected/rate-limited.
+    onPersonalSaved?.()
     if (errors.length === 0) {
       setStatus({ kind: 'done', scope, sent })
-      // Change requests submitted + overrides already synced to backend override
-      // collection. Clear local staged state so the Save FAB disappears.
-      setTimeout(() => { onSavedJustForMe?.(); onClose() }, 500)
+      setTimeout(onClose, 700)
     } else {
-      setStatus({ kind: 'error', scope, sent, errors })
+      setStatus({ kind: 'partial', scope, sent, errors })
     }
   }
 
   const isSubmitting = status.kind === 'submitting'
-  const lectureCount = overrides.filter(ov => (ov.entry?.type ?? ov.baseEntry?.type) === 'Lecture').length
+  const lectureCount = changes.filter(ov => (ov.entry?.type ?? ov.baseEntry?.type) === 'Lecture').length
 
   return createPortal(
     <div className="tt-cr-backdrop" role="dialog" aria-modal="true" aria-label="Save changes">
       <div className="tt-cr-card">
-        <h3 className="tt-cr-title">Save {overrides.length} change{overrides.length === 1 ? '' : 's'}</h3>
+        <h3 className="tt-cr-title">Save {changes.length} change{changes.length === 1 ? '' : 's'}</h3>
         <p className="tt-cr-sub">
-          Your edits are already saved locally for batch <strong>{batch}</strong>. Choose how to share them:
+          Save your draft for <strong>{batch}</strong>{isSignedIn ? ' so it follows your account' : ' for this browser identity'}, or also send it for admin review.
         </p>
 
         {status.kind === 'done' ? (
@@ -1748,17 +1771,9 @@ function SaveChangesDialog({ overrides, batch, isSignedIn, onClose, onSavedJustF
                 type="button"
                 className="tt-cr-btn tt-cr-btn--ghost"
                 disabled={isSubmitting}
-                onClick={async () => {
-                  // Persist regular overrides to the personal override collection
-                  // in the backend (if signed in), then clear them from staged state.
-                  if (isSignedIn) {
-                    await syncOverridesToBackend(overrides, batch)
-                  }
-                  onSavedJustForMe?.()
-                  onClose()
-                }}
+                onClick={savePersonalOnly}
               >
-                Save just for me
+                {isSubmitting && status.scope === 'personal' ? 'Saving…' : 'Save just for me'}
               </button>
               <button
                 type="button"
@@ -1789,13 +1804,20 @@ function SaveChangesDialog({ overrides, batch, isSignedIn, onClose, onSavedJustF
                 ? 'Batch sends every change. Class only sends Lecture changes — Practical/Tutorial stay personal.'
                 : 'An admin will review batch submissions before they go live.'}
             </p>
-            {status.kind === 'error' && (
+            {['error', 'partial'].includes(status.kind) && (
               <p className="tt-cr-error">
-                Submitted {status.sent}/{overrides.length}. {status.errors.length} failed
+                {status.scope === 'personal'
+                  ? `Nothing was cleared: ${status.errors[0]?.message || 'personal save failed'}`
+                  : `Saved for you. Submitted ${status.sent}; ${status.errors.length} review request${status.errors.length === 1 ? '' : 's'} failed`}
                 {status.errors[0]?.code === 'rate_limited' && ' — rate limit hit, try again later.'}
                 {status.errors[0]?.code === 'duplicate' && ' — some were duplicates of pending requests.'}
-                {!['rate_limited', 'duplicate'].includes(status.errors[0]?.code) && '.'}
+                {status.errors[0]?.code === 'revision_conflict' && ' — reload the timetable and retry.'}
               </p>
+            )}
+            {status.kind === 'partial' && (
+              <div className="tt-cr-actions tt-cr-actions--end">
+                <button type="button" className="tt-cr-btn tt-cr-btn--ghost" onClick={onClose}>Close</button>
+              </div>
             )}
           </>
         )}

@@ -176,6 +176,10 @@ function fingerprintEntry(e) {
     type:    e.type    ?? '',
     room:    e.room    ?? '',
     endTime: e.endTime ?? e.end_time ?? '',
+    alternateWeekStart: e.alternateWeekStart ?? e.alternate_week_start ?? null,
+    electiveChoice: e.electiveChoice ?? e.elective_choice ?? null,
+    electiveDismissed: e.electiveDismissed === true || e.elective_dismissed === true,
+    options: Array.isArray(e.options) ? e.options : [],
   })
 }
 
@@ -188,9 +192,8 @@ function fingerprintEntry(e) {
  *   - edit / delete: keep only if some canonical entry at that slot still
  *     matches the recorded `baseEntry` fingerprint. If the slot's canonical
  *     content has changed, the admin's update wins.
- *   - add: keep only if the slot is still empty in the canonical view.
- *     If something has appeared there, drop the local add to avoid two
- *     classes stacked in the same cell.
+ *   - add: keep unless that same stable personal id is already present in the
+ *     backend view. Different classes may legitimately share a slot.
  *   - overrides without a `baseEntry` (legacy / migrated) are kept; we
  *     can't decide for them.
  *
@@ -204,25 +207,69 @@ export function reconcileOverrides(classes, overrides) {
     if (!bySlot.has(k)) bySlot.set(k, [])
     bySlot.get(k).push(e)
   }
-  const kept = overrides.filter(ov => {
-    if (!ov || !ov.kind) return false
-    if (ov.kind === 'add') {
-      const slotEntries = bySlot.get(`${ov.day}|${ov.startTime}`) ?? []
-      return slotEntries.length === 0
+  let changed = false
+  const kept = []
+  for (const ov of overrides) {
+    if (!ov || !ov.kind) {
+      changed = true
+      continue
     }
-    if (ov.kind === 'edit' || ov.kind === 'delete') {
-      if (!ov.baseEntry) return true
+    if (ov.kind === 'add') {
+      const personalId = ov.addId ?? ov.entry?.id
+      if (personalId && (classes ?? []).some(entry => entry.id === personalId)) {
+        changed = true
+        continue
+      }
+      kept.push(ov)
+      continue
+    }
+    if (ov.kind === 'edit' || ov.kind === 'elective_pick' || ov.kind === 'delete') {
+      const currentTarget = (classes ?? []).find(entry => entry.id === ov.targetId)
+      if (!ov.baseEntry) {
+        if (currentTarget) {
+          kept.push(ov)
+          continue
+        }
+        const slotMatches = bySlot.get(`${ov.day}|${ov.startTime}`) ?? []
+        if (slotMatches.length !== 1) {
+          changed = true
+          continue
+        }
+        const targetId = slotMatches[0].id
+        kept.push({
+          ...ov,
+          targetId,
+          entry: ov.entry ? { ...ov.entry, id: targetId } : ov.entry,
+        })
+        changed = true
+        continue
+      }
       const baseFp = fingerprintEntry(ov.baseEntry)
       // For drag-moved edits, ov.day/startTime is the NEW slot but the base
       // entry still lives at its original slot in the canonical data — look
       // it up by baseEntry.day/startTime, not by the override's slot.
       const baseKey = `${ov.baseEntry.day}|${ov.baseEntry.startTime}`
       const baseSlotEntries = bySlot.get(baseKey) ?? []
-      return baseSlotEntries.some(e => fingerprintEntry(e) === baseFp)
+      const matched = baseSlotEntries.find(e => fingerprintEntry(e) === baseFp)
+      if (!matched) {
+        changed = true
+        continue
+      }
+      if (matched.id !== ov.targetId) {
+        kept.push({
+          ...ov,
+          targetId: matched.id,
+          entry: ov.entry ? { ...ov.entry, id: matched.id } : ov.entry,
+        })
+        changed = true
+      } else {
+        kept.push(ov)
+      }
+      continue
     }
-    return true
-  })
-  return kept.length === overrides.length ? overrides : kept
+    kept.push(ov)
+  }
+  return changed ? kept : overrides
 }
 
 /**
@@ -238,9 +285,9 @@ export function mergeOverride(existing, incoming) {
   const list = Array.isArray(existing) ? [...existing] : []
   if (!incoming || !incoming.kind) return list
 
-  if (incoming.kind === 'edit' && incoming.targetId != null) {
+  if ((incoming.kind === 'edit' || incoming.kind === 'elective_pick') && incoming.targetId != null) {
     const idx = list.findIndex(o =>
-      o.kind === 'edit' && o.targetId === incoming.targetId,
+      (o.kind === 'edit' || o.kind === 'elective_pick') && o.targetId === incoming.targetId,
     )
     if (idx >= 0) {
       // Keep the ORIGINAL baseEntry so it always points at the canonical
@@ -274,7 +321,7 @@ export function mergeOverride(existing, incoming) {
       return list
     }
     const pruned = list.filter(o =>
-      !(o.kind === 'edit' && o.targetId === incoming.targetId),
+      !((o.kind === 'edit' || o.kind === 'elective_pick') && o.targetId === incoming.targetId),
     )
     pruned.push(incoming)
     return pruned

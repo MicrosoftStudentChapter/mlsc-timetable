@@ -1130,12 +1130,14 @@ export default function ContentPage() {
   return (
     <div className="admin-page">
       <header className="admin-page-header">
-        <h1 className="admin-page-title">Content</h1>
-        <p className="admin-page-sub">
-          Manages what appears on the public sidebar &amp; timetable pages:
-          announcements, exam dates, and the mini-calendar's holiday /
-          follow-day overrides.
-        </p>
+        <div>
+          <h1 className="admin-page-title">Content</h1>
+          <p className="admin-page-sub">
+            Manages what appears on the public sidebar &amp; timetable pages:
+            announcements, exam dates, and the mini-calendar's holiday /
+            follow-day overrides.
+          </p>
+        </div>
       </header>
 
       <div className="admin-grid-2">

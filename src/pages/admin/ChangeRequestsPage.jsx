@@ -217,7 +217,13 @@ export default function ChangeRequestsPage() {
   }), [items, status])
 
   return (
-    <>
+    <div className="admin-page change-requests-page">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Change requests</h1>
+          <p className="admin-page-sub">Review timetable corrections and subject-catalog submissions before publishing them.</p>
+        </div>
+      </div>
       {subjectItems.map((row) => (
         <div className="admin-card" style={{ marginBottom: 12 }} key={`subject-${row.id}`}>
           <div className="admin-card-header" style={{ alignItems: 'center' }}>
@@ -308,6 +314,6 @@ export default function ChangeRequestsPage() {
           onReject={(id, note) => decide(id, note, rejectChangeRequest)}
         />
       ))}
-    </>
+    </div>
   )
 }

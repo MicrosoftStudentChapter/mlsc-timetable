@@ -65,6 +65,7 @@ export async function submitChangeRequest({
   kind,
   day,
   startTime,
+  targetId = null,
   entry = null,
 }) {
   const baseUrl = getBackendUrl()
@@ -83,6 +84,7 @@ export async function submitChangeRequest({
         kind,
         day,
         start_time: startTime,
+        target_id: targetId,
         entry: entryToBackend(entry),
         requester_email: getUserEmail(),
       }),

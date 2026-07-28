@@ -138,6 +138,12 @@ export default function AnalyticsPage() {
     : ''
 
   const hoveredPoint = hoveredIndex != null ? trendPoints[hoveredIndex] : null
+  const tooltipXPercent = hoveredPoint ? (hoveredPoint.x / svgWidth) * 100 : 50
+  const tooltipTranslateX = tooltipXPercent >= 78
+    ? '-100%'
+    : tooltipXPercent <= 22
+      ? '0'
+      : '-50%'
 
   return (
     <div className="analytics-container">
@@ -418,9 +424,9 @@ export default function AnalyticsPage() {
                 className="graph-tooltip-card"
                 style={{
                   position: 'absolute',
-                  left: `${(hoveredPoint.x / svgWidth) * 100}%`,
+                  left: `${tooltipXPercent}%`,
                   top: '10px',
-                  transform: 'translateX(-50%)',
+                  transform: `translateX(${tooltipTranslateX})`,
                   background: 'var(--tooltip-bg, #0f172a)',
                   color: '#fff',
                   border: '1px solid var(--border, rgba(255,255,255,0.15))',

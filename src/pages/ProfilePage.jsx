@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react'
 import { loadBatches } from '../lib/batches'
-import { clearMyOverrides, setDefaultBatch } from '../lib/me_overrides'
-import { clearOverrides } from '../lib/local_overrides'
+import { setDefaultBatch } from '../lib/me_overrides'
 import Combobox from '../components/Combobox'
 import { RequireAuth } from './LoginPage'
 import { AUTH_ENABLED } from '../lib/auth'
@@ -436,7 +435,7 @@ function ProfileInner() {
     }
     if (batchDirty) {
       const confirmed = window.confirm(
-        `Changing your batch from ${savedBatch || 'the current batch'} to ${batchInput} will delete all your overrides for ${savedBatch || 'the old batch'}. Continue?`,
+        `Change your default batch from ${savedBatch || 'the current batch'} to ${batchInput}? Your personal timetables for other batches will be kept.`,
       )
       if (!confirmed) return
     }
@@ -450,9 +449,6 @@ function ProfileInner() {
         setOriginalName(nameInput)
       }
       if (batchDirty) {
-        // Clear both caches so the old batch cannot reappear on this device.
-        clearOverrides(savedBatch)
-        await clearMyOverrides(savedBatch)
         const result = await setDefaultBatch(batchInput)
         if (!result || result.default_batch !== batchInput.toUpperCase()) {
           throw new Error('Could not save the new default batch. Please try again.')

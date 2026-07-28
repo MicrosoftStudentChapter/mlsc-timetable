@@ -702,7 +702,14 @@ export default function Dashboard() {
   ]
 
   return (
-    <>
+    <div className="admin-page dashboard-page">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Dashboard</h1>
+          <p className="admin-page-sub">Timetable ingestion, data quality, and semester configuration at a glance.</p>
+        </div>
+      </div>
+
       <nav className="dash-section-nav" aria-label="Dashboard sections">
         {NAV.map((item) => (
           <button
@@ -759,6 +766,6 @@ export default function Dashboard() {
           <AccuracyDonut pct={pct} />
         </div>
       </section>
-    </>
+    </div>
   )
 }

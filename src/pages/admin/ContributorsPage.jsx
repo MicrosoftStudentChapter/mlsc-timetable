@@ -119,7 +119,13 @@ export default function ContributorsPage() {
   }
 
   return (
-    <>
+    <div className="admin-page contributors-page">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Contributors</h1>
+          <p className="admin-page-sub">Manage the verified GitHub contributors shown on the public timetable site.</p>
+        </div>
+      </div>
       <div className="admin-card" style={{ marginBottom: 16 }}>
         <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Add a contributor</h2>
         <p className="admin-card-sub" style={{ textAlign: 'left' }}>
@@ -256,6 +262,6 @@ export default function ContributorsPage() {
           </table>
         )}
       </div>
-    </>
+    </div>
   )
 }

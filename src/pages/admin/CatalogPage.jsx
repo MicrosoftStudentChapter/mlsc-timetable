@@ -170,11 +170,17 @@ export default function CatalogPage() {
   }
 
   return (
-    <div>
+    <div className="admin-page catalog-page">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Subject catalog</h1>
+          <p className="admin-page-sub">Maintain the canonical course-code and course-name mappings used across the timetable.</p>
+        </div>
+      </div>
       <div className="admin-card" style={{ marginBottom: 16 }}>
         <div className="admin-card-header" style={{ alignItems: 'center' }}>
           <div>
-            <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Subject catalog</h2>
+            <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Add or import subjects</h2>
             <p className="admin-card-sub" style={{ textAlign: 'left', margin: 0 }}>
               Course-code to course-name mappings used by timetables and Google Calendar.
             </p>

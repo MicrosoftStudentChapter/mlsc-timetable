@@ -25,7 +25,7 @@ const nextPairId = () => `pair-${++_idCounter}`
 
 function adaptEntry(raw, teacherCodesVisible = false) {
   return {
-    id: nextId(),
+    id: raw.class_id || nextId(),
     day: raw.day,
     startTime: raw.start_time,
     endTime: raw.end_time,
@@ -134,6 +134,9 @@ async function fetchTimetable(url, init = {}) {
   const classes = Array.isArray(body?.classes) ? body.classes : []
   const teacherCodesVisible = body?.teacher_codes_visible === true
   const entries = assignPairIds(classes.map((entry) => adaptEntry(entry, teacherCodesVisible)))
+  const canonicalClasses = Array.isArray(body?.canonical_classes)
+    ? assignPairIds(body.canonical_classes.map((entry) => adaptEntry(entry, teacherCodesVisible)))
+    : entries
   return {
     status: 'ok',
     batch: body?.batch ?? '',
@@ -141,6 +144,10 @@ async function fetchTimetable(url, init = {}) {
     termStartDate: body?.term_start_date ?? null,
     teacherCodesVisible,
     classes: entries,
+    canonicalClasses,
     overridesApplied: typeof body?.overrides_applied === 'number' ? body.overrides_applied : 0,
+    personalRevision: typeof body?.personal_revision === 'number' ? body.personal_revision : 0,
+    customizationSource: body?.customization_source || 'none',
+    staleOverrideIds: Array.isArray(body?.stale_override_ids) ? body.stale_override_ids : [],
   }
 }

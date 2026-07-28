@@ -214,6 +214,13 @@ body {
   box-sizing: border-box;
 }
 
+/* The admin workspace needs more horizontal room than the public timetable.
+   Keep the public site at its existing reading width and widen only admin. */
+body:has(.admin-app) #root {
+  width: min(100%, 1920px);
+  max-width: none;
+}
+
 h1,
 h2 {
   font-family: var(--heading);

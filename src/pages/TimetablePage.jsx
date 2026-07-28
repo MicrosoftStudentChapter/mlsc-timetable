@@ -469,6 +469,7 @@ export default function TimetablePage() {
           batch={batch}
           isDark={isDark}
           cardTheme={cardTheme}
+          isSignedIn={isSignedIn}
           activeWeekdayIdx={activeWeekdayIdx}
           onReloadTimetable={() => {
             if (!batch) return
@@ -630,7 +631,7 @@ export default function TimetablePage() {
 
 // Renders the right thing for each fetch state. Falls back to the grid's
 // hard-coded fixture when no backend is configured (dev convenience).
-function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx, onReloadTimetable }) {
+function TimetableContent({ state, batch, isDark, cardTheme, isSignedIn, activeWeekdayIdx, onReloadTimetable }) {
   if (state.status === 'loading' || state.status === 'idle') {
     return (
       <div className="tt-grid-skeleton" aria-label={`Loading ${batch ?? 'timetable'}`}>
@@ -672,7 +673,7 @@ function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx, o
       </div>
     )
   }
-  return <TimetableGrid isDarkMode={isDark} classes={state.classes} termStartDate={state.termStartDate} teacherCodesVisible={state.teacherCodesVisible === true} isSignedIn={!!window.Clerk?.user} hasDefaultBatch={!!window.Clerk?.user?.unsafeMetadata?.batch} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} onReloadTimetable={onReloadTimetable} />
+  return <TimetableGrid isDarkMode={isDark} classes={state.classes} officialClasses={state.canonicalClasses} personalRevision={state.personalRevision} personalOverrideCount={state.overridesApplied} termStartDate={state.termStartDate} teacherCodesVisible={state.teacherCodesVisible === true} isSignedIn={isSignedIn} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} onReloadTimetable={onReloadTimetable} />
 }
 
 // ─── ExportDropdownButton ───────────────────────────────────────────────────
