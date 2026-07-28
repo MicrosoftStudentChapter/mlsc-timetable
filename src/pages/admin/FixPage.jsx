@@ -85,6 +85,34 @@ function baselineDetail(row) {
   return parts.join(' · ')
 }
 
+const CURRICULUM_TYPES = new Set([
+  'SUBJECT_NOT_IN_LIBRARY',
+  'ELECTIVE_SECTION_CONFLICT',
+  'ELECTIVE_OPTION_SET_MISMATCH',
+])
+
+function curriculumDetail(row) {
+  const context = row?.context || {}
+  const parts = []
+  const votes = context.section_votes || {}
+  if (Object.keys(votes).length) {
+    parts.push(`votes ${Object.entries(votes).map(([section, count]) => `${section} ${count}`).join(', ')}`)
+  }
+  if ((context.missing_codes || []).length) parts.push(`missing ${context.missing_codes.join(', ')}`)
+  if ((context.extra_codes || []).length) parts.push(`extra ${context.extra_codes.join(', ')}`)
+  const key = context.resolved_library_key || context.library_key
+  if (key) parts.push(`Library ${key}`)
+  return parts.join(' · ')
+}
+
+function curriculumLibraryUrl(row) {
+  const context = row?.context || {}
+  const key = context.resolved_library_key || context.library_key || ''
+  const match = /^(.+):S(\d+)$/.exec(key)
+  if (!match) return '/admin/library'
+  return `/admin/library?branch=${encodeURIComponent(match[1])}&semester=${encodeURIComponent(match[2])}`
+}
+
 export default function FixPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const uploadFilter = searchParams.get('upload') || null
@@ -594,7 +622,9 @@ export default function FixPage() {
             )
           }
           const it = unit.row
-          const detail = it.error_type === 'BASELINE_MISMATCH' ? baselineDetail(it) : ''
+          const detail = it.error_type === 'BASELINE_MISMATCH'
+            ? baselineDetail(it)
+            : CURRICULUM_TYPES.has(it.error_type) ? curriculumDetail(it) : ''
           return (
             <div key={it.id} className="fix-row">
               <label className="fix-checkbox">
@@ -619,6 +649,14 @@ export default function FixPage() {
                 {detail && <small className="fix-detail-line"><strong>Details:</strong> {detail}</small>}
               </span>
               <span className="fix-col-actions">
+                {CURRICULUM_TYPES.has(it.error_type) && (
+                  <Link
+                    to={curriculumLibraryUrl(it)}
+                    className="fix-action fix-action-catalog"
+                  >
+                    Open Library ↗
+                  </Link>
+                )}
                 {it.batch_code && (
                   <Link
                     to={`/admin/fix/timetable/${encodeURIComponent(it.batch_code)}?error=${encodeURIComponent(it.id)}`}

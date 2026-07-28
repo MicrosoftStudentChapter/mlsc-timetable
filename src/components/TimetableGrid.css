@@ -436,6 +436,8 @@
 .tt-type-badge {
   font-family: 'Montserrat', sans-serif;
   display: inline-block;
+  color: var(--type-badge-color, #195484);
+  background: var(--type-badge-bg, rgba(75, 121, 166, 0.2));
   font-size: var(--badge-font-size);
   font-weight: 700;
   letter-spacing: 0.08em;

@@ -24,12 +24,13 @@ const nextId = () => `entry-${++_idCounter}`
 const nextPairId = () => `pair-${++_idCounter}`
 
 function adaptEntry(raw, teacherCodesVisible = false) {
+  const requiresSelection = raw.requires_selection === true
   return {
     id: raw.class_id || nextId(),
     day: raw.day,
     startTime: raw.start_time,
     endTime: raw.end_time,
-    subject: raw.subject ?? (Array.isArray(raw.options) && raw.options.length > 1 ? '' : ''),
+    subject: raw.subject ?? (requiresSelection ? '' : ''),
     code: raw.code ?? '',
     teacher: teacherCodesVisible ? (raw.teacher ?? '') : '',
     room: raw.room ?? '',
@@ -38,6 +39,11 @@ function adaptEntry(raw, teacherCodesVisible = false) {
       ? raw.options.map((option) => (teacherCodesVisible ? option : { ...option, teacher: null }))
       : [],
     alternateWeekStart: raw.alternate_week_start ?? null,
+    electiveChoice: raw.electiveChoice ?? raw.elective_choice ?? null,
+    electiveDismissed: raw.electiveDismissed === true || raw.elective_dismissed === true,
+    curriculumSection: raw.curriculum_section ?? null,
+    requiresSelection,
+    electiveGroupId: raw.elective_group_id ?? null,
   }
 }
 

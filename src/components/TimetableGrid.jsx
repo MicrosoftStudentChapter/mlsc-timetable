@@ -220,7 +220,9 @@ function genRuntimePairId() {
 
 function electiveGroupKey(entry) {
   const options = entry?.options
-  if (!Array.isArray(options) || options.length < 2) return ''
+  if (!Array.isArray(options) || options.length === 0) return ''
+  if (entry.electiveGroupId) return entry.electiveGroupId
+  if (options.length < 2) return ''
   return options.map((option) => option.subject_code || '').sort().join('|')
 }
 
@@ -274,6 +276,20 @@ function applyElectiveChoice(entry, option) {
     room: option.place || entry.room,
     teacher: option.teacher || entry.teacher,
     electiveChoice: option.subject_code || null,
+    electiveDismissed: false,
+  }
+}
+
+function applyElectiveChoiceAcrossGroup(entry, selectedOption) {
+  const selectedBase = electiveBaseCode(selectedOption?.subject_code)
+  const localOption = (entry.options || []).find(
+    option => electiveBaseCode(option.subject_code) === selectedBase,
+  )
+  if (localOption) return applyElectiveChoice(entry, localOption)
+  return {
+    ...entry,
+    electiveChoice: selectedOption?.subject_code || null,
+    electiveDismissed: true,
   }
 }
 
@@ -473,7 +489,7 @@ function CardEditor({ mode, entry, slot, rect, triggerElement, onSave, onDelete,
           </p>
         )}
 
-        {Array.isArray(entry?.options) && entry.options.length > 1 && (
+        {Array.isArray(entry?.options) && entry.options.length > 0 && entry.requiresSelection && (
           <div className="tt-editor-electives">
             <button
               type="button"
@@ -642,12 +658,14 @@ function ClassCard({ entry, onEdit, onChooseElective, onDismissElective, onDragS
   const meta      = TYPE_META[entry.type] || TYPE_META.Lecture
   const cardStyle = {
     '--card-bg': meta.bg,
+    '--type-badge-bg': meta.badgeBg,
+    '--type-badge-color': meta.badgeColor || meta.color,
     borderLeft: meta.borderLeft || `3px solid ${meta.color}`,
     '--edit-hover-bg': meta.editHoverBg,
     '--edit-hover-color': meta.editHoverColor
   }
-  const badgeStyle = { color: meta.badgeColor || meta.color, background: meta.badgeBg }
-  const isElectiveGroup = Array.isArray(entry.options) && entry.options.length > 1 && !entry.electiveChoice
+  const isElectiveGroup = Array.isArray(entry.options) && entry.options.length > 0 &&
+    (entry.requiresSelection || entry.options.length > 1) && !entry.electiveChoice
 
   const handleEditClick = (e) => {
     e.stopPropagation()
@@ -723,12 +741,16 @@ function ClassCard({ entry, onEdit, onChooseElective, onDismissElective, onDragS
           <circle cx="9" cy="19" r="1.7" /><circle cx="15" cy="19" r="1.7" />
         </svg>
       </button>
-      {!isElectiveGroup && <span className="tt-type-badge" style={badgeStyle}>{meta.label}</span>}
+      {!isElectiveGroup && <span className="tt-type-badge">{meta.label}</span>}
       <div className={`tt-card-text${isElectiveGroup ? ' tt-card-text--elective' : ''}`}>
         <p className="tt-card-subject">{isElectiveGroup ? 'Choose elective' : entry.subject}</p>
         {!isElectiveGroup && <p className="tt-card-code">{entry.code}</p>}
       </div>
-      {isElectiveGroup && <span className="tt-elective-count">{entry.options.length} choices · click to choose</span>}
+      {isElectiveGroup && (
+        <span className="tt-elective-count">
+          {entry.options.length} {entry.options.length === 1 ? 'choice' : 'choices'} · click to choose
+        </span>
+      )}
       {!isElectiveGroup && entry.alternateWeekStart && (
         <span className="tt-alternate-label">
           {`Alternate · Week ${entry.alternateWeekStart}`}
@@ -788,7 +810,8 @@ export default function TimetableGrid({
   // a separate concern (see ChangeRequestPrompt).
   const [overrides, setOverrides] = useState(() =>
     adminMode ? [] : reconcileOverrides(baseClasses, loadOverrides(batch)).map((ov) => {
-      const isElective = ov.entry?.electiveChoice || (Array.isArray(ov.entry?.options) && ov.entry.options.length > 1)
+      const isElective = ov.entry?.electiveChoice || ov.entry?.requiresSelection ||
+        (Array.isArray(ov.entry?.options) && ov.entry.options.length > 1)
       return isElective && ov.kind === 'edit' ? { ...ov, kind: 'elective_pick' } : ov
     }),
   )
@@ -1043,7 +1066,8 @@ export default function TimetableGrid({
     const matchingElectives = selectedOption
       ? entries.filter((entry) => electiveGroupKey(entry) === electiveGroupKey(target))
       : [target]
-    const wasUnresolvedElective = Array.isArray(target.options) && target.options.length > 1
+    const wasUnresolvedElective = Array.isArray(target.options) && target.options.length > 0 &&
+      (target.requiresSelection || target.options.length > 1)
     const isElectivePick = Boolean(selectedOption && wasUnresolvedElective)
     const newOverrides = matchingElectives.map((entry) => ({
       kind: isElectivePick ? 'elective_pick' : 'edit',
@@ -1053,7 +1077,7 @@ export default function TimetableGrid({
       // Snapshot of the canonical entry we edited; reconcileOverrides uses
       // this to detect when the official timetable has moved on.
       baseEntry: { ...entry },
-      entry: entry.id === target.id ? chosen : applyElectiveChoice(entry, selectedOption),
+      entry: entry.id === target.id ? chosen : applyElectiveChoiceAcrossGroup(entry, selectedOption),
     }))
     // Practical pair: sync the partner row so both halves stay in lockstep.
     if (target.pairId && form.type === 'Practical') {
@@ -1092,7 +1116,7 @@ export default function TimetableGrid({
     pushOverrides(matching.map((candidate) => ({
       kind: 'elective_pick', targetId: candidate.id, day: candidate.day,
       startTime: candidate.startTime, baseEntry: { ...candidate },
-      entry: applyElectiveChoice(candidate, option),
+      entry: applyElectiveChoiceAcrossGroup(candidate, option),
     })))
     setElectiveConfirm(null)
     setElectiveTarget(null)
@@ -1660,9 +1684,31 @@ export default function TimetableGrid({
 // Deferred save UI. The grid stages every edit/add/delete/move into local
 // overrides immediately. This dialog asks the user what to do with the
 // accumulated changes: keep them just for themselves, or propose them to the
-// batch / class as change requests for admin review. Each override is
-// submitted as its own request — server-side rate limits and duplicate
-// detection apply per change.
+// batch / class for admin review. A name-only edit is routed to the catalog
+// queue instead of also creating a timetable change request.
+function catalogCodeOf(value) {
+  const cleaned = String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '')
+  return cleaned.length > 1 && ['L', 'T', 'P'].includes(cleaned.at(-1))
+    ? cleaned.slice(0, -1)
+    : cleaned
+}
+
+function isSubjectNameOnlyChange(override) {
+  if (override?.kind !== 'edit' || !override.baseEntry || !override.entry) return false
+  const before = override.baseEntry
+  const after = override.entry
+  if (!after.code?.trim() || !after.subject?.trim()) return false
+  if (catalogCodeOf(before.code) !== catalogCodeOf(after.code)) return false
+  if (String(before.subject || '').trim() === String(after.subject || '').trim()) return false
+  const timetableFields = [
+    'day', 'startTime', 'endTime', 'code', 'teacher', 'type', 'room',
+    'alternateWeekStart', 'options',
+  ]
+  return timetableFields.every((field) => (
+    JSON.stringify(before[field] ?? null) === JSON.stringify(after[field] ?? null)
+  ))
+}
+
 function SaveChangesDialog({ overrides, batch, isSignedIn, personalRevision, onClose, onPersonalSaved }) {
   const [status, setStatus] = useState({ kind: 'idle' })
   const [changes] = useState(() => overrides)
@@ -1702,7 +1748,9 @@ function SaveChangesDialog({ overrides, batch, isSignedIn, personalRevision, onC
     }
 
     let sent = 0
+    let verified = 0
     const errors = []
+    const submittedCatalogCodes = new Set()
     for (const ov of changes) {
       if (ov.kind === 'elective_pick') continue
       if (scope === 'class') {
@@ -1712,6 +1760,28 @@ function SaveChangesDialog({ overrides, batch, isSignedIn, personalRevision, onC
       }
       try {
         const entry = ov.kind === 'delete' ? null : ov.entry
+        if (isSubjectNameOnlyChange(ov)) {
+          const catalogCode = catalogCodeOf(entry.code)
+          if (submittedCatalogCodes.has(catalogCode)) {
+            verified++
+            continue
+          }
+          submittedCatalogCodes.add(catalogCode)
+          try {
+            const result = await submitSubjectRequest({
+              requesterBatch: batch,
+              code: catalogCode,
+              name: entry.subject,
+            })
+            if (result.created === false) verified++
+            else sent++
+          } catch (catalogErr) {
+            if (catalogErr.code === 'duplicate') verified++
+            else throw catalogErr
+          }
+          setStatus(s => s.kind === 'submitting' ? { ...s, sent } : s)
+          continue
+        }
         await submitChangeRequest({
           requesterBatch: batch,
           scope,
@@ -1721,19 +1791,6 @@ function SaveChangesDialog({ overrides, batch, isSignedIn, personalRevision, onC
           targetId: ov.targetId ?? null,
           entry,
         })
-        // The regular Save dialog is the point at which non-personal edits
-        // become backend change requests; they are not synced during editing.
-        if (entry?.code?.trim() && entry?.subject?.trim() && !/^U[A-Z]{2,4}\d{3,4}[LTP]?$/i.test(entry.subject.trim())) {
-          try {
-            await submitSubjectRequest({
-              requesterBatch: batch,
-              code: entry.code,
-              name: entry.subject,
-            })
-          } catch (catalogErr) {
-            if (!['duplicate', 'already_mapped'].includes(catalogErr.code)) throw catalogErr
-          }
-        }
         sent++
         setStatus(s => s.kind === 'submitting' ? { ...s, sent } : s)
       } catch (err) {
@@ -1744,10 +1801,10 @@ function SaveChangesDialog({ overrides, batch, isSignedIn, personalRevision, onC
     // Clear the draft even when one review request is rejected/rate-limited.
     onPersonalSaved?.()
     if (errors.length === 0) {
-      setStatus({ kind: 'done', scope, sent })
+      setStatus({ kind: 'done', scope, sent, verified })
       setTimeout(onClose, 700)
     } else {
-      setStatus({ kind: 'partial', scope, sent, errors })
+      setStatus({ kind: 'partial', scope, sent, verified, errors })
     }
   }
 
@@ -1763,7 +1820,12 @@ function SaveChangesDialog({ overrides, batch, isSignedIn, personalRevision, onC
         </p>
 
         {status.kind === 'done' ? (
-          <p className="tt-cr-success">Submitted {status.sent} change{status.sent === 1 ? '' : 's'} for review — thanks!</p>
+          <p className="tt-cr-success">
+            {status.sent > 0
+              ? `Submitted ${status.sent} request${status.sent === 1 ? '' : 's'} for review.`
+              : 'No new review request was needed.'}
+            {status.verified > 0 && ` ${status.verified} subject mapping${status.verified === 1 ? '' : 's'} already matched or had a pending request.`}
+          </p>
         ) : (
           <>
             <div className="tt-cr-actions">

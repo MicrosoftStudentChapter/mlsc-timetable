@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import Combobox from '../../components/Combobox'
 import { loadBatches } from '../../lib/batches'
 import {
@@ -105,9 +106,12 @@ async function loadSubjectCatalog() {
 }
 
 export default function LibraryPage() {
+  const [searchParams] = useSearchParams()
+  const initialBranch = (searchParams.get('branch') || '').trim().toUpperCase()
+  const initialSemester = (searchParams.get('semester') || '').trim()
   const [branches, setBranches] = useState([])
-  const [branch, setBranch] = useState('')
-  const [semester, setSemester] = useState('')
+  const [branch, setBranch] = useState(initialBranch)
+  const [semester, setSemester] = useState(initialSemester)
   const [entries, setEntries] = useState([])
   const [catalog, setCatalog] = useState([])
   const [catalogCount, setCatalogCount] = useState(0)
@@ -127,7 +131,11 @@ export default function LibraryPage() {
   const [pdfBranch, setPdfBranch] = useState('')
   const [pdfBusy, setPdfBusy] = useState(false)
   const [pdfPreview, setPdfPreview] = useState(null)
+  const [previewEditorKey, setPreviewEditorKey] = useState(null)
+  const [previewAdd, setPreviewAdd] = useState({ kind: 'core', code: '' })
+  const [openSavedBranches, setOpenSavedBranches] = useState(() => new Set())
   const entryRequest = useRef(0)
+  const queryEntryOpened = useRef(false)
 
   const refresh = useCallback(async () => {
     const data = await listLibraryEntries({ limit: 500 })
@@ -177,6 +185,12 @@ export default function LibraryPage() {
     }
   }
 
+  useEffect(() => {
+    if (loading || queryEntryOpened.current || !initialBranch || !initialSemester) return
+    queryEntryOpened.current = true
+    openEntry(initialBranch, initialSemester)
+  }, [loading, initialBranch, initialSemester])
+
   const subjectByCode = useMemo(
     () => new Map(catalog.map((subject) => [subject.code, subject])),
     [catalog],
@@ -205,6 +219,30 @@ export default function LibraryPage() {
       return item.key.toUpperCase().includes(query) || branchName.toUpperCase().includes(query)
     })
   }, [branches, entries, entryQuery])
+  const savedEntryGroups = useMemo(() => {
+    const grouped = new Map()
+    for (const item of visibleEntries) {
+      if (!grouped.has(item.branch)) grouped.set(item.branch, [])
+      grouped.get(item.branch).push(item)
+    }
+    return [...grouped].map(([code, items]) => ({
+      code,
+      name: branches.find((option) => option.code === code)?.name || code,
+      items: items.slice().sort((a, b) => a.semester - b.semester),
+      subjectCount: items.reduce((sum, item) => sum + item.subject_count, 0),
+    }))
+  }, [branches, visibleEntries])
+  const previewCodes = useMemo(() => new Set(
+    (pdfPreview?.plan || []).flatMap((item) => (
+      item.sections || []
+    ).flatMap((section) => section.subject_codes || [])),
+  ), [pdfPreview])
+  const previewMissingSubjects = useMemo(() => (
+    pdfPreview?.missing_subjects || []
+  ).filter((subject) => previewCodes.has(subject.code)), [pdfPreview, previewCodes])
+  const activePreviewItem = useMemo(() => (
+    pdfPreview?.plan?.find((item) => item.key === previewEditorKey) || null
+  ), [pdfPreview, previewEditorKey])
 
   function addSection(kind) {
     if (!kind || sections.some((section) => section.kind === kind)) return
@@ -237,6 +275,56 @@ export default function LibraryPage() {
     )))
   }
 
+  function toggleSavedBranch(code) {
+    setOpenSavedBranches((current) => {
+      const next = new Set(current)
+      if (next.has(code)) next.delete(code)
+      else next.add(code)
+      return next
+    })
+  }
+
+  function updatePreviewItem(key, transform) {
+    setPdfPreview((current) => current ? {
+      ...current,
+      plan: current.plan.map((item) => item.key === key ? transform(item) : item),
+    } : current)
+  }
+
+  function movePreviewCourse(key, code, nextKind) {
+    updatePreviewItem(key, (item) => {
+      const sections = (item.sections || []).map((section) => ({
+        ...section,
+        subject_codes: (section.subject_codes || []).filter((value) => value !== code),
+      }))
+      const target = sections.find((section) => section.kind === nextKind)
+      if (target) target.subject_codes.push(code)
+      else sections.push({ kind: nextKind, subject_codes: [code] })
+      sections.sort((a, b) => SECTION_ORDER.indexOf(a.kind) - SECTION_ORDER.indexOf(b.kind))
+      return { ...item, sections }
+    })
+  }
+
+  function removePreviewCourse(key, code) {
+    updatePreviewItem(key, (item) => ({
+      ...item,
+      sections: (item.sections || []).map((section) => ({
+        ...section,
+        subject_codes: (section.subject_codes || []).filter((value) => value !== code),
+      })),
+    }))
+  }
+
+  function addPreviewCourse() {
+    if (!activePreviewItem || !previewAdd.code || !subjectByCode.has(previewAdd.code)) return
+    const alreadyUsed = (activePreviewItem.sections || []).some(
+      (section) => (section.subject_codes || []).includes(previewAdd.code),
+    )
+    if (alreadyUsed) return
+    movePreviewCourse(activePreviewItem.key, previewAdd.code, previewAdd.kind)
+    setPreviewAdd((current) => ({ ...current, code: '' }))
+  }
+
   async function save() {
     if (!branch || !semester || saving || inheritedFrom) return
     setSaving(true)
@@ -262,7 +350,7 @@ export default function LibraryPage() {
   }
 
   async function removeEntry() {
-    if (!revision || !window.confirm(`Delete Library entry ${configuredKey}? Baselines will not be changed.`)) return
+    if (!revision || !window.confirm(`Delete Library entry ${configuredKey}?`)) return
     setSaving(true)
     setError(null)
     try {
@@ -296,7 +384,7 @@ export default function LibraryPage() {
   }
 
   async function addMissingSubjects() {
-    const missing = pdfPreview?.missing_subjects || []
+    const missing = previewMissingSubjects
     if (!missing.length || pdfBusy) return
     setPdfBusy(true)
     setError(null)
@@ -307,7 +395,11 @@ export default function LibraryPage() {
       const subjectData = await loadSubjectCatalog()
       setCatalog(subjectData?.items || [])
       setCatalogCount(subjectData?.count || 0)
-      setPdfPreview((current) => ({ ...current, missing_subjects: [] }))
+      const addedCodes = new Set(missing.map((item) => item.code))
+      setPdfPreview((current) => ({
+        ...current,
+        missing_subjects: (current.missing_subjects || []).filter((item) => !addedCodes.has(item.code)),
+      }))
     } catch (err) {
       setError(err)
     } finally {
@@ -316,7 +408,7 @@ export default function LibraryPage() {
   }
 
   async function applyPdf() {
-    if (!pdfPreview?.plan?.length || pdfPreview.missing_subjects?.length || pdfBusy) return
+    if (!pdfPreview?.plan?.length || previewMissingSubjects.length || pdfBusy) return
     const overwriteCount = pdfPreview.plan.filter((item) => item.would_overwrite).length
     if (overwriteCount > 0 && !window.confirm(
       `This import will replace ${overwriteCount} existing Library entr${overwriteCount === 1 ? 'y' : 'ies'}. Continue?`,
@@ -326,8 +418,9 @@ export default function LibraryPage() {
     try {
       const result = await applyLibraryScheme({ plan: pdfPreview.plan, source: pdfPreview.source })
       if (result.errors?.length) throw new Error(result.errors.map((row) => `${row.key || row.index}: ${row.error}`).join('; '))
-      setNotice(`Imported ${result.written.length} Library entr${result.written.length === 1 ? 'y' : 'ies'}. Baselines were not changed.`)
+      setNotice(`Imported ${result.written.length} Library entr${result.written.length === 1 ? 'y' : 'ies'}.`)
       setPdfPreview(null)
+      setPreviewEditorKey(null)
       setPdfFile(null)
       await refresh()
     } catch (err) {
@@ -343,7 +436,7 @@ export default function LibraryPage() {
         <div>
           <span className="library-eyebrow">Academic setup</span>
           <h1 className="admin-page-title">Curriculum Library</h1>
-          <p className="admin-page-sub">Build the subject structure students follow. Class-count baselines stay separate.</p>
+          <p className="admin-page-sub">Build and review the subject structure students follow.</p>
         </div>
         <div className="library-hero-stats" aria-label="Library summary">
           <div><strong>{entries.length}</strong><span>curricula</span></div>
@@ -546,7 +639,6 @@ export default function LibraryPage() {
             <p className="admin-card-sub">Preview a course scheme before adding it to the Library.</p>
           </div>
         </div>
-        <div className="library-info-strip">Library only · Baseline counts will not be changed</div>
         <form className="library-import-form" onSubmit={previewPdf}>
           <select value={pdfBranch} onChange={(event) => setPdfBranch(event.target.value)}>
             <option value="">Target branch…</option>
@@ -564,28 +656,35 @@ export default function LibraryPage() {
             <div className="library-import-summary">
               <strong>{pdfPreview.entry_count} Library entries</strong>
               <span>{pdfPreview.source}</span>
-              <span>{pdfPreview.missing_subjects.length} missing catalog subjects</span>
+              <span>{previewMissingSubjects.length} missing catalog subjects</span>
             </div>
             <div className="library-import-plan">
               {pdfPreview.plan.map((item) => (
-                <div key={item.key}>
+                <button
+                  type="button"
+                  key={item.key}
+                  onClick={() => {
+                    setPreviewEditorKey(item.key)
+                    setPreviewAdd({ kind: 'core', code: '' })
+                  }}
+                >
                   <code>{item.key}</code>
                   <span>{item.sections.reduce((sum, section) => sum + section.subject_codes.length, 0)} subjects</span>
                   {item.would_overwrite && <small className="library-overwrite">Replaces existing entry with {item.existing_subject_count} subjects</small>}
-                  <small>Baseline suggestion: {Object.entries(item.baseline_suggestion || {}).map(([type, count]) => `${type} ${count}`).join(' · ') || 'none'}</small>
-                </div>
+                  <small>Review courses and edit sections →</small>
+                </button>
               ))}
             </div>
-            {pdfPreview.missing_subjects.length > 0 && (
+            {previewMissingSubjects.length > 0 && (
               <div className="library-missing">
                 <strong>Missing from Catalog</strong>
-                <p>{pdfPreview.missing_subjects.map((item) => item.code).join(', ')}</p>
+                <p>{previewMissingSubjects.map((item) => item.code).join(', ')}</p>
                 <button type="button" onClick={addMissingSubjects} disabled={pdfBusy}>Add missing subjects to Catalog</button>
               </div>
             )}
             <div className="library-import-actions">
-              <button type="button" onClick={() => setPdfPreview(null)} disabled={pdfBusy}>Cancel preview</button>
-              <button className="upload-btn" type="button" onClick={applyPdf} disabled={pdfBusy || pdfPreview.missing_subjects.length > 0}>Apply to Library</button>
+              <button type="button" onClick={() => { setPdfPreview(null); setPreviewEditorKey(null) }} disabled={pdfBusy}>Cancel preview</button>
+              <button className="upload-btn" type="button" onClick={applyPdf} disabled={pdfBusy || previewMissingSubjects.length > 0}>Apply to Library</button>
             </div>
           </div>
         )}
@@ -621,23 +720,191 @@ export default function LibraryPage() {
         {entries.length === 0 ? <div className="manager-empty">No Library entries configured yet.</div> : visibleEntries.length === 0 ? (
           <div className="manager-empty">No saved entries match “{entryQuery}”.</div>
         ) : (
-          <div className="library-entry-grid">
-            {visibleEntries.map((item) => (
-              <button
-                type="button"
-                key={item.key}
-                className={configuredKey === item.key ? 'is-active' : ''}
-                onClick={() => { setBranch(item.branch); setSemester(String(item.semester)); openEntry(item.branch, item.semester); document.getElementById('library-editor')?.scrollIntoView({ behavior: 'smooth' }) }}
-              >
-                <code>{item.key}</code>
-                <span>{item.subject_count} subjects</span>
-                <small>{item.sections.length} sections · revision {item.revision}</small>
-              </button>
-            ))}
+          <div className="library-entry-stacks">
+            {savedEntryGroups.map((group) => {
+              const isOpen = Boolean(entryQuery.trim()) || openSavedBranches.has(group.code) || group.code === branch
+              return (
+                <section className={`library-entry-stack${isOpen ? ' is-open' : ''}`} key={group.code}>
+                  <button
+                    type="button"
+                    className="library-entry-stack-head"
+                    onClick={() => toggleSavedBranch(group.code)}
+                    aria-expanded={isOpen}
+                  >
+                    <span className="library-entry-stack-caret">›</span>
+                    <span>
+                      <strong>{group.code}</strong>
+                      <small>{group.name}</small>
+                    </span>
+                    <span className="library-entry-stack-meta">
+                      {group.items.length} semester{group.items.length === 1 ? '' : 's'} · {group.subjectCount} subjects
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="library-entry-grid">
+                      {group.items.map((item) => (
+                        <button
+                          type="button"
+                          key={item.key}
+                          className={configuredKey === item.key ? 'is-active' : ''}
+                          onClick={() => { setBranch(item.branch); setSemester(String(item.semester)); openEntry(item.branch, item.semester); document.getElementById('library-editor')?.scrollIntoView({ behavior: 'smooth' }) }}
+                        >
+                          <code>Semester {item.semester}</code>
+                          <span>{item.subject_count} subjects</span>
+                          <small>{item.sections.length} sections · revision {item.revision}</small>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              )
+            })}
           </div>
         )}
         </section>
       </div>
+      {activePreviewItem && (
+        <PreviewEntryModal
+          item={activePreviewItem}
+          catalogOptions={catalogOptions}
+          subjectByCode={subjectByCode}
+          previewAdd={previewAdd}
+          setPreviewAdd={setPreviewAdd}
+          onAdd={addPreviewCourse}
+          onMove={(code, kind) => movePreviewCourse(activePreviewItem.key, code, kind)}
+          onRemove={(code) => removePreviewCourse(activePreviewItem.key, code)}
+          onClose={() => setPreviewEditorKey(null)}
+        />
+      )}
+    </div>
+  )
+}
+
+function PreviewEntryModal({
+  item,
+  catalogOptions,
+  subjectByCode,
+  previewAdd,
+  setPreviewAdd,
+  onAdd,
+  onMove,
+  onRemove,
+  onClose,
+}) {
+  const usedCodes = new Set(
+    (item.sections || []).flatMap((section) => section.subject_codes || []),
+  )
+  const extractedByCode = new Map(
+    (item.extracted_courses || [])
+      .filter((course) => course.code)
+      .map((course) => [course.code, course]),
+  )
+  const extractedLabels = (item.extracted_courses || []).filter((course) => !course.code)
+  const addOptions = catalogOptions.filter((option) => !usedCodes.has(option.value))
+
+  return (
+    <div className="library-preview-modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <section
+        className="library-preview-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="library-preview-title"
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <header className="library-preview-modal-head">
+          <div>
+            <span>PDF extraction</span>
+            <h2 id="library-preview-title">{item.key}</h2>
+            <p>Review the extracted courses and correct their Library sections before applying.</p>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Close preview editor">×</button>
+        </header>
+
+        <div className="library-preview-modal-summary">
+          <span><strong>{usedCodes.size}</strong> courses</span>
+          <span><strong>{(item.sections || []).length}</strong> sections</span>
+          {item.would_overwrite && <span className="is-warning">Will replace {item.existing_subject_count} saved courses</span>}
+        </div>
+
+        <div className="library-preview-sections">
+          {(item.sections || []).map((section) => (
+            <article key={section.kind}>
+              <header>
+                <strong>{SECTION_META[section.kind]?.label || section.kind}</strong>
+                <span>{(section.subject_codes || []).length}</span>
+              </header>
+              {(section.subject_codes || []).length === 0 ? (
+                <p className="library-preview-empty">No extracted courses in this section.</p>
+              ) : (
+                <div className="library-preview-course-list">
+                  {section.subject_codes.map((code) => {
+                    const extracted = extractedByCode.get(code)
+                    const subject = subjectByCode.get(code)
+                    return (
+                      <div className="library-preview-course" key={code}>
+                        <div>
+                          <code>{code}</code>
+                          <span>{subject?.name || extracted?.title || 'Not found in Subject Catalog'}</span>
+                          {extracted?.category && <small>PDF category: {extracted.category}</small>}
+                          {extracted?.credits && <small>Credits: {extracted.credits}</small>}
+                        </div>
+                        <select
+                          value={section.kind}
+                          onChange={(event) => onMove(code, event.target.value)}
+                          aria-label={`Move ${code} to another section`}
+                        >
+                          {SECTION_ORDER.map((kind) => (
+                            <option value={kind} key={kind}>{SECTION_META[kind].label}</option>
+                          ))}
+                        </select>
+                        <button type="button" onClick={() => onRemove(code)} aria-label={`Remove ${code}`}>×</button>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+
+        {extractedLabels.length > 0 && (
+          <div className="library-preview-labels">
+            <strong>Detected section labels</strong>
+            {extractedLabels.map((course, index) => (
+              <span key={`${course.title}:${index}`}>
+                {course.title} → {SECTION_META[course.section]?.label || course.section}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className="library-preview-add">
+          <div>
+            <strong>Add a catalog course</strong>
+            <span>Use this if the PDF missed a row or extracted the wrong code.</span>
+          </div>
+          <select
+            value={previewAdd.kind}
+            onChange={(event) => setPreviewAdd((current) => ({ ...current, kind: event.target.value }))}
+          >
+            {SECTION_ORDER.map((kind) => <option value={kind} key={kind}>{SECTION_META[kind].label}</option>)}
+          </select>
+          <Combobox
+            value={previewAdd.code}
+            onChange={(value) => setPreviewAdd((current) => ({ ...current, code: value }))}
+            options={addOptions}
+            placeholder="Search Subject Catalog…"
+            ariaLabel="Add a course to this preview"
+            direction="up"
+          />
+          <button type="button" onClick={onAdd} disabled={!subjectByCode.has(previewAdd.code)}>Add course</button>
+        </div>
+
+        <footer className="library-preview-modal-foot">
+          <span>Changes update this preview only until you apply the import.</span>
+          <button type="button" className="upload-btn" onClick={onClose}>Done</button>
+        </footer>
+      </section>
     </div>
   )
 }

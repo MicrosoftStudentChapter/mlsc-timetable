@@ -32,12 +32,12 @@
 }
 
 [data-card-theme="default"] .tt-class-card::before {
-  background-color: var(--card-bg);
+  background-color: var(--tt-default-card-bg, var(--card-bg));
 }
 
 [data-card-theme="default"] .tt-class-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.09);
+  box-shadow: 0 7px 18px var(--tt-default-shadow, rgba(15, 23, 42, 0.14));
 }
 
 [data-card-theme="default"] .tt-type-badge {
@@ -45,6 +45,43 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--tt-default-badge-color, #ffffff);
+  background: var(--tt-default-badge-bg, #2563eb);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 1px 3px rgba(15, 23, 42, 0.2);
+}
+
+/* Keep three visually separate layers like the Spider-Man cards: a muted card
+   surface, a strong type badge, and a dark location badge. */
+[data-card-theme="default"] .tt-class-card[data-type="Lecture"] {
+  --tt-default-card-bg: #dbeafe;
+  --tt-default-badge-bg: #2563eb;
+  --tt-default-badge-color: #ffffff;
+  --tt-default-meta: #1e5790;
+  --tt-default-room-bg: #0b182b;
+  --tt-default-room-color: #bfdbfe;
+  --tt-default-shadow: rgba(37, 99, 235, 0.2);
+}
+
+[data-card-theme="default"] .tt-class-card[data-type="Tutorial"] {
+  --tt-default-card-bg: #ede9fe;
+  --tt-default-badge-bg: #7c3aed;
+  --tt-default-badge-color: #ffffff;
+  --tt-default-meta: #5b35a5;
+  --tt-default-room-bg: #171126;
+  --tt-default-room-color: #ddd6fe;
+  --tt-default-shadow: rgba(124, 58, 237, 0.2);
+}
+
+[data-card-theme="default"] .tt-class-card[data-type="Practical"] {
+  --tt-default-card-bg: #d7f0ec;
+  --tt-default-badge-bg: #0f766e;
+  --tt-default-badge-color: #ffffff;
+  --tt-default-meta: #245f5a;
+  --tt-default-room-bg: #102422;
+  --tt-default-room-color: #99f6e4;
+  --tt-default-shadow: rgba(15, 118, 110, 0.2);
 }
 
 [data-card-theme="default"] .tt-card-subject {
@@ -56,28 +93,43 @@
 [data-card-theme="default"] .tt-card-code {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  color: rgba(51, 51, 51, 0.56);
+  color: var(--tt-default-meta, rgba(51, 51, 51, 0.68));
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
+[data-card-theme="default"] .tt-card-teacher {
+  color: var(--tt-default-meta, #225f8f);
+}
+
 [data-card-theme="default"] .tt-card-room {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  color: rgba(51, 51, 51, 0.68);
-  background: rgba(51, 51, 51, 0.12);
+  font-weight: 700;
+  color: var(--tt-default-room-color, #ffffff);
+  background: var(--tt-default-room-bg, #111827);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
   border-radius: 999px;
   text-transform: uppercase;
+}
+
+[data-card-theme="default"] .tt-edit-btn,
+[data-card-theme="default"] .tt-drag-btn {
+  color: rgba(15, 23, 42, 0.72);
+  background: rgba(255, 255, 255, 0.58);
 }
 
 /* Dark-mode pairing */
 [data-theme="dark"] [data-card-theme="default"] .tt-class-card {
   background-color: #0f1419;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 [data-theme="dark"] [data-card-theme="default"] .tt-class-card:hover {
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+  box-shadow:
+    0 8px 22px var(--tt-default-shadow, rgba(0, 0, 0, 0.58)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
 [data-theme="dark"] [data-card-theme="default"] .tt-card-subject {
@@ -85,10 +137,53 @@
 }
 
 [data-theme="dark"] [data-card-theme="default"] .tt-card-code {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--tt-default-meta-dark, rgba(255, 255, 255, 0.68));
+}
+
+[data-theme="dark"] [data-card-theme="default"] .tt-card-teacher {
+  color: var(--tt-default-meta-dark, rgba(219, 234, 254, 0.86));
 }
 
 [data-theme="dark"] [data-card-theme="default"] .tt-card-room {
-  color: rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--tt-default-room-color, #ffffff);
+  background: var(--tt-default-room-bg, #05080d);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] [data-card-theme="default"] .tt-edit-btn,
+[data-theme="dark"] [data-card-theme="default"] .tt-drag-btn {
+  color: rgba(255, 255, 255, 0.76);
+  background: rgba(2, 6, 23, 0.28);
+}
+
+[data-theme="dark"] [data-card-theme="default"] .tt-class-card[data-type="Lecture"] {
+  --tt-default-card-bg: #172f52;
+  --tt-default-badge-bg: #3b82f6;
+  --tt-default-badge-color: #ffffff;
+  --tt-default-meta-dark: #93c5fd;
+  --tt-default-room-color: #93c5fd;
+  --tt-default-room-bg: #060b14;
+  --tt-default-shadow: rgba(37, 99, 235, 0.3);
+}
+
+[data-theme="dark"] [data-card-theme="default"] .tt-class-card[data-type="Tutorial"] {
+  --tt-default-card-bg: #2d2446;
+  --tt-default-badge-bg: #8b5cf6;
+  --tt-default-badge-color: #ffffff;
+  --tt-default-meta-dark: #c4b5fd;
+  --tt-default-room-color: #c4b5fd;
+  --tt-default-room-bg: #090711;
+  --tt-default-shadow: rgba(124, 58, 237, 0.3);
+}
+
+[data-theme="dark"] [data-card-theme="default"] .tt-class-card[data-type="Practical"] {
+  --tt-default-card-bg: #183d3d;
+  --tt-default-badge-bg: #14b8a6;
+  --tt-default-badge-color: #042f2e;
+  --tt-default-meta-dark: #99f6e4;
+  --tt-default-room-color: #99f6e4;
+  --tt-default-room-bg: #061311;
+  --tt-default-shadow: rgba(20, 184, 166, 0.28);
 }

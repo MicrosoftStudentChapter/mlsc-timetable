@@ -175,19 +175,71 @@ body:has(.dashboard-layout) {
 
 .calendar-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .calendar-header .card-title {
   margin: 0;
 }
 
+.calendar-month-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 7px;
+}
+
+.calendar-month-arrow,
 .calendar-month-year {
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.calendar-month-arrow {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6B7280;
+  flex: 0 0 auto;
+}
+
+.calendar-month-arrow:hover,
+.calendar-month-arrow:focus-visible {
+  background: rgba(99, 102, 241, 0.1);
+  color: #4338CA;
+}
+
+.calendar-month-year {
+  min-width: 112px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-align: center;
   font-size: 12px;
   font-weight: 600;
   color: #c9d6ef;
+  white-space: nowrap;
+}
+
+.calendar-month-year:not(.is-current):hover,
+.calendar-month-year:not(.is-current):focus-visible {
+  background: rgba(99, 102, 241, 0.08);
+  color: #4338CA;
+}
+
+.calendar-month-arrow:focus-visible,
+.calendar-month-year:focus-visible {
+  outline: 2px solid rgba(99, 102, 241, 0.55);
+  outline-offset: 1px;
 }
 
 .mini-calendar {
@@ -924,10 +976,10 @@ body:has(.dashboard-layout) {
   transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase);
 }
 
-/* ── Card titles + calendar header row: fade in/out alongside
+/* ── Card titles + calendar heading: fade in/out alongside
    container resize. Kept in their natural top-left position throughout.
-   The calendar's heading row (title + "June 2026") is grouped here so
-   it transitions identically to "Announcements" / "Exam Dates".
+   The month controls live inside `.mini-calendar`, so they follow the
+   calendar grid during the collapsed-sidebar transition.
    COLLAPSE: Phase 2 (delayed fade out). EXPAND: Phase 1 (immediate fade in). */
 .card-title,
 .calendar-header {
@@ -1409,6 +1461,18 @@ body:has(.dashboard-layout) {
 /* ─── Mini Calendar ──────────────────────────────────────────── */
 [data-theme="dark"] .calendar-month-year {
   color: rgba(255, 255, 255, 0.65); /* secondary text color */
+}
+
+[data-theme="dark"] .calendar-month-arrow {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+[data-theme="dark"] .calendar-month-arrow:hover,
+[data-theme="dark"] .calendar-month-arrow:focus-visible,
+[data-theme="dark"] .calendar-month-year:not(.is-current):hover,
+[data-theme="dark"] .calendar-month-year:not(.is-current):focus-visible {
+  background: rgba(59, 130, 246, 0.16);
+  color: #BFDBFE;
 }
 
 [data-theme="dark"] .calendar-weekday {

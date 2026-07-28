@@ -46,6 +46,12 @@ const IconChevron = () => (
   </svg>
 );
 
+const IconCalendarArrow = ({ direction }) => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points={direction === 'next' ? '9 6 15 12 9 18' : '15 6 9 12 15 18'} />
+  </svg>
+);
+
 // ─── Calendar weekday-mapping ─────────────────────────────────────────
 // Header order is Mon-Sun. Indices: 0=M 1=T 2=W 3=T 4=F 5=S 6=S.
 // A date can "follow" any weekday's timetable (e.g. a Saturday running
@@ -185,11 +191,15 @@ function useCachedFeed(key, loader) {
 }
 
 export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch }) {
-  // ─── Mini calendar: real current month, real today ─────
+  // ─── Mini calendar ──────────────────────────────────────
   const today = useMemo(() => new Date(), []);
-  const year = today.getFullYear();
-  const month = today.getMonth();              // 0-indexed
+  const [visibleMonth, setVisibleMonth] = useState(
+    () => new Date(today.getFullYear(), today.getMonth(), 1),
+  );
+  const year = visibleMonth.getFullYear();
+  const month = visibleMonth.getMonth();        // 0-indexed
   const todayDate = today.getDate();
+  const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstWeekdayIdx = toMonSunIdx(new Date(year, month, 1).getDay());
 
@@ -213,10 +223,24 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
     [calendarOverrides.items],
   );
 
-  // weekday header column to highlight: hovered day's mapping if any,
-  // else today's mapping
-  const activeDay = hoveredDay ?? todayDate;
-  const activeWeekdayIdx = weekdayIdxFor(year, month, activeDay, overrideMap);
+  // Weekday header column to highlight: hovered day's mapping if any,
+  // otherwise today's mapping only while the current month is visible.
+  const activeDay = hoveredDay ?? (isCurrentMonth ? todayDate : null);
+  const activeWeekdayIdx = activeDay == null
+    ? null
+    : weekdayIdxFor(year, month, activeDay, overrideMap);
+
+  const changeMonth = (offset) => {
+    setHoveredDay(null);
+    setVisibleMonth((current) => (
+      new Date(current.getFullYear(), current.getMonth() + offset, 1)
+    ));
+  };
+
+  const showCurrentMonth = () => {
+    setHoveredDay(null);
+    setVisibleMonth(new Date(today.getFullYear(), today.getMonth(), 1));
+  };
 
   // Whole-section dropdowns: collapsed by default so the sidebar feels calm
   // on arrival; users opt in by clicking the section header.
@@ -369,9 +393,37 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
           <span className="card-icon"><IconCalendar /></span>
           <div className="calendar-header">
             <h3 className="card-title">Calendar</h3>
-            <span className="calendar-month-year">{`${MONTH_NAMES[month]} ${year}`}</span>
           </div>
           <div className="mini-calendar">
+            <div className="calendar-month-controls" aria-label="Calendar month navigation">
+              <button
+                type="button"
+                className="calendar-month-arrow"
+                onClick={() => changeMonth(-1)}
+                aria-label="Previous month"
+                title="Previous month"
+              >
+                <IconCalendarArrow direction="previous" />
+              </button>
+              <button
+                type="button"
+                className={`calendar-month-year ${isCurrentMonth ? 'is-current' : ''}`}
+                onClick={showCurrentMonth}
+                aria-label={`${MONTH_NAMES[month]} ${year}. Go to current month`}
+                title={isCurrentMonth ? 'Current month' : 'Go to current month'}
+              >
+                {`${MONTH_NAMES[month]} ${year}`}
+              </button>
+              <button
+                type="button"
+                className="calendar-month-arrow"
+                onClick={() => changeMonth(1)}
+                aria-label="Next month"
+                title="Next month"
+              >
+                <IconCalendarArrow direction="next" />
+              </button>
+            </div>
             <div className="calendar-weekdays">
               {MON_SUN.map((label, idx) => (
                 <span
@@ -390,7 +442,7 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                 if (cell.blank) {
                   return <span key={cell.key} className="calendar-day calendar-day--blank" />;
                 }
-                const isToday = cell.day === todayDate;
+                const isToday = isCurrentMonth && cell.day === todayDate;
                 const isHovered = cell.day === hoveredDay;
                 const override = overrideMap.get(ymdKey(year, month, cell.day));
                 const KIND_CLASS = {

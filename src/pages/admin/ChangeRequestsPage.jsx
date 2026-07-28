@@ -8,9 +8,6 @@ import {
   listChangeRequests,
   approveChangeRequest,
   rejectChangeRequest,
-  listSubjectRequests,
-  approveSubjectRequest,
-  rejectSubjectRequest,
   AdminAuthError,
 } from '../../lib/admin'
 import './admin.css'
@@ -170,7 +167,6 @@ export default function ChangeRequestsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(null)
-  const [subjectItems, setSubjectItems] = useState([])
 
   const refresh = useCallback(async () => {
     setLoading(true)
@@ -187,24 +183,12 @@ export default function ChangeRequestsPage() {
 
   useEffect(() => { refresh() }, [refresh])
 
-  const refreshSubjects = useCallback(async () => {
-    try {
-      const data = await listSubjectRequests({ status: status || undefined })
-      setSubjectItems(data?.items || [])
-    } catch (err) {
-      setError(err)
-    }
-  }, [status])
-
-  useEffect(() => { refreshSubjects() }, [refreshSubjects])
-
   async function decide(id, note, fn) {
     setBusy(id)
     setError(null)
     try {
       await fn(id, note?.trim() || undefined)
       await refresh()
-      await refreshSubjects()
     } catch (err) {
       setError(err)
     } finally {
@@ -221,44 +205,9 @@ export default function ChangeRequestsPage() {
       <div className="admin-page-header">
         <div>
           <h1 className="admin-page-title">Change requests</h1>
-          <p className="admin-page-sub">Review timetable corrections and subject-catalog submissions before publishing them.</p>
+          <p className="admin-page-sub">Review timetable corrections before publishing them.</p>
         </div>
       </div>
-      {subjectItems.map((row) => (
-        <div className="admin-card" style={{ marginBottom: 12 }} key={`subject-${row.id}`}>
-          <div className="admin-card-header" style={{ alignItems: 'center' }}>
-            <h3 className="admin-card-title" style={{ textAlign: 'left', fontSize: 16, margin: 0 }}>
-              SUBJECT CATALOG · {row.requester_batch}
-            </h3>
-            <span className={`status-pill ${row.status === 'approved' ? 'ok' : row.status === 'rejected' ? 'failed' : 'partial'}`}>{row.status}</span>
-          </div>
-          <div className="cr-meta">
-            <div><span className="cr-key">Code</span> <code>{row.code}</code></div>
-            <div><span className="cr-key">Name</span> {row.name}</div>
-            <div>
-              <span className="cr-key">Requester</span>{' '}
-              <span className="cr-email-badge">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                {row.requester_email || (row.requester_id && row.requester_id.includes('@') ? row.requester_id : null) || row.requester_id || 'anon'}
-              </span>
-            </div>
-            <div><span className="cr-key">Created</span> {fmtDate(row.created_at)}</div>
-            {row.already_mapped && (
-              <div style={{ gridColumn: '1 / -1', marginTop: 4 }}>
-                <span className="cr-already-mapped-badge">
-                  ⚠️ Already mapped in catalog as: "{row.existing_catalog_name}" (approving will update/override name)
-                </span>
-              </div>
-            )}
-          </div>
-          {row.status === 'pending' && (
-            <div className="cr-actions">
-              <button type="button" className="upload-btn" onClick={() => decide(row.id, '', approveSubjectRequest)} disabled={busy} style={{ background: '#16a34a', marginRight: 8 }}>Approve and add</button>
-              <button type="button" className="upload-btn" onClick={() => decide(row.id, '', rejectSubjectRequest)} disabled={busy} style={{ background: '#dc2626' }}>Reject</button>
-            </div>
-          )}
-        </div>
-      ))}
       <div className="admin-card" style={{ marginBottom: 12 }}>
         <div className="admin-card-header" style={{ alignItems: 'center' }}>
           <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Change requests</h2>

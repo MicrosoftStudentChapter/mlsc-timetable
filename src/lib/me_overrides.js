@@ -36,6 +36,11 @@ function entryToBackend(entry, targetId) {
   }
   delete out.id
   delete out.pairId
+  // Live Curriculum Library projection fields are response metadata, not
+  // personal data. The backend recalculates them on every timetable read.
+  delete out.curriculumSection
+  delete out.requiresSelection
+  delete out.electiveGroupId
   return out
 }
 
