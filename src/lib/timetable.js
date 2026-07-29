@@ -11,6 +11,7 @@
 
 import { authHeaders } from './identity'
 import { getBackendUrl } from './backend_url'
+import { isFirstYearBatch } from './batches'
 
 const TIME_SLOTS = [
   '08:00', '08:50', '09:40', '10:30', '11:20', '12:10',
@@ -83,8 +84,11 @@ const FALLBACK_BASE = `${import.meta.env.BASE_URL || '/'}fallback`.replace(/\/+$
 const fallbackTimetableUrl = (batch) =>
   `${FALLBACK_BASE}/timetable/${encodeURIComponent(batch)}.json`
 
-// status: 'ok' | 'not_found' | 'error' | 'no_backend'
+// status: 'ok' | 'not_found' | 'coming_soon' | 'error' | 'no_backend'
 export async function loadTimetable(batch) {
+  if (isFirstYearBatch(batch)) {
+    return { status: 'coming_soon', batch: String(batch || '').toUpperCase() }
+  }
   const baseUrl = getBackendUrl()
   if (baseUrl) {
     const url = `${baseUrl.replace(/\/$/, '')}/timetable/${encodeURIComponent(batch)}`
@@ -99,6 +103,9 @@ export async function loadTimetable(batch) {
 // server-side. Signed-in users must not fall back to canonical data because
 // that would briefly show a timetable without their personal changes.
 export async function loadMyTimetable(batch) {
+  if (isFirstYearBatch(batch)) {
+    return { status: 'coming_soon', batch: String(batch || '').toUpperCase() }
+  }
   const baseUrl = getBackendUrl()
   if (!baseUrl) return { status: 'error', message: 'Backend is not configured' }
   if (!batch) return { status: 'error', message: 'No batch supplied' }
@@ -121,6 +128,17 @@ async function fetchTimetable(url, init = {}) {
   }
   if (res.status === 404) {
     return { status: 'not_found' }
+  }
+  if (res.status === 503) {
+    try {
+      const body = await res.clone().json()
+      const code = body?.code ?? body?.detail?.code
+      if (code === 'first_year_timetable_unavailable') {
+        return { status: 'coming_soon', batch: body?.batch ?? body?.detail?.batch ?? '' }
+      }
+    } catch {
+      // Fall through to the normal HTTP error below.
+    }
   }
   if (!res.ok) {
     return { status: 'error', message: `Backend returned ${res.status}` }

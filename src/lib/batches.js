@@ -16,6 +16,11 @@ export const SPECIAL_BATCHES = {
   '2TCD': { name: 'Computer Engineering (2+2)', schemeBranch: 'C', partner: 'Trinity College Dublin' },
 }
 
+export function isFirstYearBatch(value) {
+  const normalized = String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '')
+  return normalized.startsWith('1')
+}
+
 // Year 1 sorts Pool A, Pool B first, then the rest alphabetically.
 // Years 2+ are always alphabetical by stream code.
 function streamSorter(year) {
