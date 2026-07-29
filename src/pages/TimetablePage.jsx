@@ -4,7 +4,7 @@ import Combobox from '../components/Combobox'
 import TimetableGrid from '../components/TimetableGrid'
 import Footer from '../components/Footer'
 import FollowDayBanner from '../components/FollowDayBanner'
-import { loadBatches } from '../lib/batches'
+import { isFirstYearBatch, loadBatches } from '../lib/batches'
 import { loadMyTimetable } from '../lib/timetable'
 import { exportGridAsPng, exportGridAsPdf } from '../lib/export_timetable'
 import { DashboardLayout } from '../components/side_columns'
@@ -229,6 +229,7 @@ export default function TimetablePage() {
   )
   const [calendarStatus, setCalendarStatus] = useState(null)
   const [calendarModalOpen, setCalendarModalOpen] = useState(false)
+  const firstYearUnavailable = isFirstYearBatch(batch)
 
   useEffect(() => {
     getCalendarConfigured().then((d) => {
@@ -332,6 +333,10 @@ export default function TimetablePage() {
       setTimetableState({ status: 'idle' })
       return
     }
+    if (firstYearUnavailable) {
+      setTimetableState({ status: 'coming_soon', batch })
+      return
+    }
     let cancelled = false
     setTimetableState({ status: 'loading' })
     loadMyTimetable(batch).then((result) => {
@@ -341,14 +346,17 @@ export default function TimetablePage() {
     return () => {
       cancelled = true
     }
-  }, [batch, authLoaded, isSignedIn])
+  }, [batch, authLoaded, isSignedIn, firstYearUnavailable])
 
   const batchOptions = useMemo(() => {
     const out = []
     for (const { label, streams } of years) {
       for (const { name, batches } of streams) {
         for (const code of batches) {
-          out.push({ value: code, hint: `${label} \u2014 ${name}` })
+          out.push({
+            value: code,
+            hint: `${label} \u2014 ${name}${isFirstYearBatch(code) ? ' · Coming soon' : ''}`,
+          })
         }
       }
     }
@@ -448,7 +456,7 @@ export default function TimetablePage() {
         {/* Follow-day alert — shown on desktop AND mobile, but only when
             the current batch has an override in the next 7 days. Component
             returns null when there's nothing to surface. */}
-        <div className="tt-follow-day-row">
+        {!firstYearUnavailable && <div className="tt-follow-day-row">
           <div className="tt-warning-banner" role="alert">
             <span className="tt-warning-icon" aria-hidden="true">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -462,7 +470,7 @@ export default function TimetablePage() {
             </span>
           </div>
           <FollowDayBanner batch={batch} />
-        </div>
+        </div>}
         <div className="tt-export-target" ref={exportRef}>
         <TimetableContent
           state={authLoaded ? timetableState : { status: 'loading' }}
@@ -527,7 +535,7 @@ export default function TimetablePage() {
             {/* Group 1: timetable-focused */}
             <div className="tt-action-group">
               {/* Google Calendar — hidden when not configured */}
-              {calendarConfigured && (
+              {calendarConfigured && !firstYearUnavailable && (
                 <div className="tt-tip-wrap" data-tip={
                   calendarStatus?.connected && calendarStatus?.enabled
                     ? 'Calendar sync active'
@@ -640,6 +648,18 @@ function TimetableContent({ state, batch, isDark, cardTheme, isSignedIn, activeW
           {Array.from({ length: 10 }, (_, index) => <span key={index} />)}
         </div>
       </div>
+    )
+  }
+  if (state.status === 'coming_soon') {
+    return (
+      <section className="tt-coming-soon" role="status" aria-live="polite">
+        <span className="tt-coming-soon-mark" aria-hidden="true">01</span>
+        <p className="tt-coming-soon-kicker">First-year timetable</p>
+        <h2>Coming soon</h2>
+        <p>
+          The timetable for Batch <strong>{batch}</strong> is being prepared and will be available here shortly.
+        </p>
+      </section>
     )
   }
   if (state.status === 'no_backend') {

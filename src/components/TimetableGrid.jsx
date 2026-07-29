@@ -289,11 +289,15 @@ function electiveGroupKey(entry) {
 }
 
 // Base course code with the trailing component letter stripped:
-// UCS539P / UCS539L / UCS539T all belong to course UCS539. Codes that don't
-// match the pattern pass through unchanged so exotic labels can't collide.
+// UCS539P / UCS539L / UCS539T all belong to course UCS539. We grab the course
+// number (letters + 3 digits) wherever it appears and drop the trailing
+// component letter + anything after it. This tolerates real-world annotations
+// the source spreadsheet bakes into the code, e.g.
+// "UCS539L(Upto 04:20 PM)" → "UCS539". Codes with no course number pass
+// through unchanged so exotic labels ("LAB", room names) can't collide.
 function electiveBaseCode(code) {
   const raw = String(code || '').trim().toUpperCase()
-  const m = /^([A-Z]{2,4}\d{3})[A-Z]$/.exec(raw)
+  const m = /([A-Z]{2,4}\d{3})/.exec(raw)
   return m ? m[1] : raw
 }
 
