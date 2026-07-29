@@ -432,12 +432,12 @@ export default function TimetablePage() {
             />
           </div>
           <label className="tt-card-theme-picker">
-            <span className="tt-card-theme-label">Card style</span>
+            <span className="tt-card-theme-label">Card</span>
             <select
               className="tt-card-theme-select"
               value={cardTheme}
               onChange={(e) => setCardTheme(e.target.value)}
-              aria-label="Card style"
+              aria-label="Card"
             >
               {CARD_THEMES.map((t) => (
                 <option key={t.value} value={t.value}>{t.label}</option>

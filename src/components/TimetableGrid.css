@@ -124,18 +124,23 @@
 .tt-grid-table::after {
   content: '';
   display: block;
-  height: 60px;
+  height: 12px;
   width: 100%;
   pointer-events: none;
 }
 
-/* Shared row template — every row uses the same column tracks, so the
-   header and every body row stay perfectly aligned. */
+/* Header and body use the same column tracks so every split class cell stays
+   aligned with its weekday and time slot. */
 .tt-grid-header-row,
-.tt-grid-body-row {
+.tt-grid-body {
   display: grid;
   grid-template-columns: var(--time-col-width) repeat(5, minmax(var(--col-width), 1fr));
   min-width: calc(var(--time-col-width) + 5 * var(--col-width));
+}
+
+.tt-grid-body {
+  position: relative;
+  grid-auto-rows: minmax(var(--row-height), auto);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -315,7 +320,7 @@
   background: rgba(0, 79, 158, 0.03);
 }
 
-.tt-grid-header-row + .tt-grid-body-row .tt-slot-cell {
+.tt-slot-cell[data-first-row="true"] {
   padding-top: calc(var(--row-height) * 0.4);
   min-height: calc(var(--row-height) * 1.3);
 }
@@ -336,12 +341,12 @@
 }
 
 /* Adjust line positions for the first row */
-.tt-grid-header-row + .tt-grid-body-row .tt-slot-cell::before {
+.tt-slot-cell[data-first-row="true"]::before {
   top: calc(var(--grid-line-top) + var(--row-height) * 0.3);
 }
 
 /* Push the first-row time label down so it aligns with the lowered grid line */
-.tt-grid-header-row + .tt-grid-body-row .tt-time-label {
+.tt-time-cell[data-first-row="true"] .tt-time-label {
   top: calc(var(--grid-line-top) + var(--row-height) * 0.3);
 }
 
@@ -364,7 +369,7 @@
 }
 
 /* Adjust circle position for the first row */
-.tt-grid-header-row + .tt-grid-body-row .tt-time-cell::after {
+.tt-time-cell[data-first-row="true"]::after {
   top: calc(var(--grid-line-top) + var(--row-height) * 0.3 - 4px);
 }
 
@@ -480,7 +485,7 @@
   align-items: center;
   gap: 3px;
   padding-left: 2px;
-  color: rgba(30, 64, 92, 0.76);
+  color: #9f1239;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: var(--card-meta-size);
   font-weight: 700;
@@ -996,7 +1001,10 @@ select.tt-editor-input {
        the zoomed table taller than in desktop emulation, and nested touch
        scrolling fights the page scroll). With no cap the whole timetable is
        laid out and plain page scrolling reveals all of it. */
+    height: auto;
     max-height: none;
+    min-height: 0;
+    overflow: visible;
     --row-height: 64px;
     --card-padding: 4px 8px 4px;
     --card-font-size: 12px;
@@ -1012,6 +1020,13 @@ select.tt-editor-input {
      inside the rounded frame. */
   .tt-grid-table::after {
     height: 12px;
+  }
+
+  .tt-grid-scroll-wrapper {
+    height: auto;
+    overflow: visible;
+    touch-action: auto;
+    overscroll-behavior: auto;
   }
 }
 
@@ -1136,7 +1151,7 @@ select.tt-editor-input {
 }
 
 [data-theme="dark"] .tt-card-teacher {
-  color: rgba(219, 234, 254, 0.82);
+  color: #fda4af;
 }
 
 [data-theme="dark"] .tt-edit-btn {
@@ -1746,18 +1761,93 @@ select.tt-editor-input {
     height: 14px;
   }
 }
-.tt-class-card[data-alternate-inactive='true'] {
-  opacity: 0.42;
-  filter: grayscale(0.7);
-}
-
 .tt-alternate-label {
-  display: block;
-  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  font-size: var(--card-meta-size);
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #f59e0b;
-  margin-top: 2px;
+  line-height: 1.3;
+  color: #4338ca;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  border-radius: 5px;
+  padding: 2px 6px;
+  margin: 0 0 5px;
+}
+
+.tt-alternate-label-export {
+  display: none;
+}
+
+/* The status adds a full metadata row. Let the affected timetable row grow
+   instead of squeezing its teacher/location details against the lower edge. */
+.tt-class-card[data-alternate-state] {
+  min-height: calc(var(--row-height) + 10px);
+  padding-bottom: 7px;
+}
+
+/* Alternate classes stay visible so the user understands that the slot is
+   intentionally periodic. Inactive weeks and completed occurrences use
+   different treatments; the active occurrence remains visually normal. */
+.tt-class-card[data-alternate-state='next-week'],
+.tt-class-card[data-alternate-state='future'] {
+  opacity: 1;
+  filter: none;
+}
+
+.tt-class-card[data-alternate-state='next-week'] .tt-alternate-label,
+.tt-class-card[data-alternate-state='future'] .tt-alternate-label {
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.tt-class-card[data-alternate-state='this-week'] .tt-alternate-label {
+  color: #166534;
+  background: rgba(34, 197, 94, 0.14);
+  border-color: rgba(34, 197, 94, 0.24);
+}
+
+.tt-class-card[data-alternate-state='in-progress'] .tt-alternate-label {
+  color: #92400e;
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.34);
+}
+
+.tt-class-card[data-alternate-state='completed'] {
+  opacity: 0.56;
+  filter: grayscale(0.55) saturate(0.45);
+}
+
+.tt-class-card[data-alternate-state='completed'] .tt-alternate-label {
+  color: #475569;
+  background: rgba(100, 116, 139, 0.15);
+  border-color: rgba(100, 116, 139, 0.24);
+}
+
+[data-theme='dark'] .tt-class-card[data-alternate-state='next-week'] .tt-alternate-label,
+[data-theme='dark'] .tt-class-card[data-alternate-state='future'] .tt-alternate-label {
+  color: #bfdbfe;
+}
+
+[data-theme='dark'] .tt-class-card[data-alternate-state='this-week'] .tt-alternate-label {
+  color: #bbf7d0;
+}
+
+[data-theme='dark'] .tt-class-card[data-alternate-state='in-progress'] .tt-alternate-label {
+  color: #fde68a;
+}
+
+[data-theme='dark'] .tt-class-card[data-alternate-state='completed'] .tt-alternate-label {
+  color: #cbd5e1;
+}
+
+[data-theme='dark'] .tt-class-card[data-alternate-state='schedule'] .tt-alternate-label {
+  color: #ddd6fe;
+  background: rgba(139, 92, 246, 0.16);
+  border-color: rgba(167, 139, 250, 0.3);
 }
 .tt-editor-alternate {
   display: flex;
@@ -2102,21 +2192,4 @@ select.tt-editor-input {
 .tt-editor-elective-help {
   display: block;
   margin-top: 6px;
-}
-
-@media (max-width: 768px) {
-  .tt-grid-frame {
-    height: calc(100vh - 180px) !important;
-    max-height: 75vh !important;
-    min-height: 380px !important;
-    overflow: hidden !important;
-    margin-bottom: 24px !important;
-  }
-  .tt-grid-scroll-wrapper {
-    height: 100% !important;
-    overflow: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    touch-action: pan-x pan-y !important;
-    overscroll-behavior: contain !important;
-  }
 }

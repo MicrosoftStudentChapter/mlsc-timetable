@@ -5,7 +5,8 @@
 
 [data-card-theme="spiderman"] .tt-class-card {
   position: relative;
-  border-radius: 14px;
+  border-radius: 10px;
+  padding: 6px 22px 6px 10px;
   font-family: 'Montserrat', 'Inter', sans-serif;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
               box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
@@ -265,10 +266,18 @@
 
 /* ─── Child Elements Styling Overrides ─── */
 [data-card-theme="spiderman"] .tt-type-badge {
+  display: inline-block;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  border-radius: 5px;
+  padding: 2px 6px;
   z-index: 1;
+}
+
+[data-card-theme="spiderman"] .tt-card-text {
+  margin: 7px 0;
+  padding-left: 0;
 }
 
 [data-card-theme="spiderman"] .tt-card-subject {
@@ -289,9 +298,20 @@
 
 [data-card-theme="spiderman"] .tt-card-room {
   font-weight: 700;
-  border-radius: 6px;
+  border-radius: 5px;
+  padding: 2px 7px;
   letter-spacing: 0.04em;
   z-index: 1;
+}
+
+/* Match the Default card's information hierarchy without changing any
+   Spider-Man palette values: teacher/location sit below a full-width divider. */
+[data-card-theme="spiderman"] .tt-card-meta {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding-top: 7px;
+  border-top: 1px solid color-mix(in srgb, currentColor 11%, transparent);
 }
 
 /* 1. Lectures: Red card + Solid Black Room Badge */
@@ -349,4 +369,3 @@
 [data-card-theme="spiderman"] .tt-class-card[data-elective-group='true']::after {
   display: none !important;
 }
-

@@ -10,6 +10,7 @@ import {
   getLibraryEntry,
   listLibraryEntries,
   listSubjects,
+  publishLibraryEntry,
   previewLibraryScheme,
   saveLibraryEntry,
 } from '../../lib/admin'
@@ -27,6 +28,14 @@ const SECTION_ORDER = Object.keys(SECTION_META)
 const ALL_SEMESTER_BRANCHES = new Set(['G', 'J', 'R', 'X'])
 const POOL_BRANCHES = new Set(['POOL-A', 'POOL-B', 'POOL-C', 'POOL-D'])
 const emptySections = () => [{ kind: 'core', subject_codes: [] }]
+const emptyPublication = () => ({
+  status: 'draft',
+  published: false,
+  hasUnpublishedChanges: false,
+  publishedRevision: 0,
+  publishedSubjectCount: 0,
+  publishedAt: null,
+})
 
 function messageOf(error) {
   if (error instanceof AdminAuthError) return error.detail?.error || error.message
@@ -119,6 +128,8 @@ export default function LibraryPage() {
   const [revision, setRevision] = useState(0)
   const [source, setSource] = useState(null)
   const [inheritedFrom, setInheritedFrom] = useState(null)
+  const [publication, setPublication] = useState(emptyPublication)
+  const [draftDirty, setDraftDirty] = useState(false)
   const [addInputs, setAddInputs] = useState({})
   const [loading, setLoading] = useState(true)
   const [entryLoading, setEntryLoading] = useState(false)
@@ -141,6 +152,31 @@ export default function LibraryPage() {
     const data = await listLibraryEntries({ limit: 500 })
     setEntries(data?.items || [])
   }, [])
+
+  function applyEntry(item) {
+    setSections(normalizeSections(item.sections))
+    setRevision(item.revision || 0)
+    setSource(item.source || null)
+    setInheritedFrom(item.inherited_from || null)
+    setPublication({
+      status: item.status || 'draft',
+      published: item.published === true,
+      hasUnpublishedChanges: item.has_unpublished_changes === true,
+      publishedRevision: item.published_revision || 0,
+      publishedSubjectCount: item.published_subject_count || 0,
+      publishedAt: item.published_at || null,
+    })
+    setDraftDirty(false)
+  }
+
+  function resetEntry() {
+    setSections(emptySections())
+    setRevision(0)
+    setSource(null)
+    setInheritedFrom(null)
+    setPublication(emptyPublication())
+    setDraftDirty(false)
+  }
 
   useEffect(() => {
     let alive = true
@@ -168,17 +204,11 @@ export default function LibraryPage() {
     try {
       const item = await getLibraryEntry(nextBranch, Number(nextSemester))
       if (request !== entryRequest.current) return
-      setSections(normalizeSections(item.sections))
-      setRevision(item.revision || 0)
-      setSource(item.source || null)
-      setInheritedFrom(item.inherited_from || null)
+      applyEntry(item)
     } catch (err) {
       if (request !== entryRequest.current) return
       if (err instanceof AdminAuthError && err.status === 404) {
-        setSections(emptySections())
-        setRevision(0)
-        setSource(null)
-        setInheritedFrom(null)
+        resetEntry()
       } else setError(err)
     } finally {
       if (request === entryRequest.current) setEntryLoading(false)
@@ -211,6 +241,13 @@ export default function LibraryPage() {
   const semesterOptions = semestersForBranch(branch)
   const selectedBranch = branches.find((item) => item.code === branch)
   const selectedSubjectCount = usedCodes.size
+  const publicationStatus = draftDirty && publication.published
+    ? 'changes_pending'
+    : publication.status
+  const publicationLabel = publicationStatus === 'published'
+    ? 'Published'
+    : publicationStatus === 'changes_pending' ? 'Unpublished changes' : 'Draft only'
+  const publishedEntryCount = entries.filter((item) => item.published).length
   const visibleEntries = useMemo(() => {
     const query = entryQuery.trim().toUpperCase()
     if (!query) return entries
@@ -248,6 +285,7 @@ export default function LibraryPage() {
     if (!kind || sections.some((section) => section.kind === kind)) return
     setSections((current) => [...current, { kind, subject_codes: [] }]
       .sort((a, b) => SECTION_ORDER.indexOf(a.kind) - SECTION_ORDER.indexOf(b.kind)))
+    setDraftDirty(true)
   }
 
   function removeSection(kind) {
@@ -255,6 +293,7 @@ export default function LibraryPage() {
     const section = sections.find((item) => item.kind === kind)
     if (section?.subject_codes.length && !window.confirm(`Remove ${SECTION_META[kind].label} and its courses?`)) return
     setSections((current) => current.filter((item) => item.kind !== kind))
+    setDraftDirty(true)
   }
 
   function addCourse(kind, code) {
@@ -265,6 +304,7 @@ export default function LibraryPage() {
         : section
     )))
     setAddInputs((current) => ({ ...current, [kind]: '' }))
+    setDraftDirty(true)
   }
 
   function removeCourse(kind, code) {
@@ -273,6 +313,7 @@ export default function LibraryPage() {
         ? { ...section, subject_codes: section.subject_codes.filter((item) => item !== code) }
         : section
     )))
+    setDraftDirty(true)
   }
 
   function toggleSavedBranch(code) {
@@ -336,11 +377,27 @@ export default function LibraryPage() {
         revision,
       })
       const item = result.item
-      setSections(normalizeSections(item.sections))
-      setRevision(item.revision)
-      setSource(item.source || null)
-      setInheritedFrom(item.inherited_from || null)
-      setNotice(`Saved ${item.key} with ${item.subject_count} subject${item.subject_count === 1 ? '' : 's'}.`)
+      applyEntry(item)
+      setNotice(`Saved draft ${item.key} with ${item.subject_count} subject${item.subject_count === 1 ? '' : 's'}. Student timetables were not changed.`)
+      await refresh()
+    } catch (err) {
+      setError(err)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function publish() {
+    if (!branch || !semester || !revision || saving || inheritedFrom || draftDirty || selectedSubjectCount === 0) return
+    const action = publication.published ? 'update the live curriculum' : 'activate Library rules for student timetables'
+    if (!window.confirm(`Publish ${configuredKey} and ${action}?`)) return
+    setSaving(true)
+    setError(null)
+    setNotice('')
+    try {
+      const result = await publishLibraryEntry(branch, Number(semester), { revision })
+      applyEntry(result.item)
+      setNotice(`Published ${result.item.key}. Student timetables and Library Fix checks now use revision ${result.item.published_revision}.`)
       await refresh()
     } catch (err) {
       setError(err)
@@ -355,10 +412,7 @@ export default function LibraryPage() {
     setError(null)
     try {
       await deleteLibraryEntry(branch, Number(semester))
-      setSections(emptySections())
-      setRevision(0)
-      setSource(null)
-      setInheritedFrom(null)
+      resetEntry()
       setNotice(`Deleted ${configuredKey}.`)
       await refresh()
     } catch (err) {
@@ -418,7 +472,7 @@ export default function LibraryPage() {
     try {
       const result = await applyLibraryScheme({ plan: pdfPreview.plan, source: pdfPreview.source })
       if (result.errors?.length) throw new Error(result.errors.map((row) => `${row.key || row.index}: ${row.error}`).join('; '))
-      setNotice(`Imported ${result.written.length} Library entr${result.written.length === 1 ? 'y' : 'ies'}.`)
+      setNotice(`Imported ${result.written.length} Library draft${result.written.length === 1 ? '' : 's'}. Review and publish each entry when ready.`)
       setPdfPreview(null)
       setPreviewEditorKey(null)
       setPdfFile(null)
@@ -440,6 +494,7 @@ export default function LibraryPage() {
         </div>
         <div className="library-hero-stats" aria-label="Library summary">
           <div><strong>{entries.length}</strong><span>curricula</span></div>
+          <div><strong>{publishedEntryCount}</strong><span>published</span></div>
           <div><strong>{catalogCount}</strong><span>catalog subjects</span></div>
         </div>
       </header>
@@ -473,17 +528,11 @@ export default function LibraryPage() {
                 if (!value) {
                   entryRequest.current += 1
                   setSemester('')
-                  setSections(emptySections())
-                  setRevision(0)
-                  setSource(null)
-                  setInheritedFrom(null)
+                  resetEntry()
                 } else if (semesterInvalid) {
                   entryRequest.current += 1
                   setSemester('')
-                  setSections(emptySections())
-                  setRevision(0)
-                  setSource(null)
-                  setInheritedFrom(null)
+                  resetEntry()
                 } else if (semester) openEntry(value, semester)
               }}
               disabled={loading}
@@ -502,10 +551,7 @@ export default function LibraryPage() {
                 setSemester(value)
                 if (!value) {
                   entryRequest.current += 1
-                  setSections(emptySections())
-                  setRevision(0)
-                  setSource(null)
-                  setInheritedFrom(null)
+                  resetEntry()
                 } else openEntry(branch, value)
               }}
               disabled={!branch}
@@ -544,8 +590,18 @@ export default function LibraryPage() {
               <p>
                 {inheritedFrom
                   ? `Automatically inherited from ${inheritedFrom}`
-                  : revision ? `Revision ${revision}${source ? ` · imported from ${source}` : ''}` : 'New Library entry'}
+                  : revision ? `Draft revision ${revision}${source ? ` · imported from ${source}` : ''}` : 'New Library draft'}
               </p>
+              {!inheritedFrom && (
+                <div className={`library-publication-status library-publication-status--${publicationStatus}`}>
+                  <strong>{publicationLabel}</strong>
+                  <span>
+                    {publication.published
+                      ? `Live revision ${publication.publishedRevision} · ${publication.publishedSubjectCount} subjects`
+                      : 'Student timetables continue using the original parser output'}
+                  </span>
+                </div>
+              )}
             </div>
             <div className="library-editor-summary" aria-label="Current curriculum summary">
               <span><strong>{selectedSubjectCount}</strong> subjects</span>
@@ -556,7 +612,18 @@ export default function LibraryPage() {
               {!inheritedFrom && revision > 0 && <button type="button" className="library-danger" onClick={removeEntry} disabled={saving}>Delete</button>}
               {!inheritedFrom && (
                 <button type="button" className="upload-btn" onClick={save} disabled={saving || entryLoading}>
-                  {saving ? 'Saving…' : revision ? 'Save Library' : 'Create Library'}
+                  {saving ? 'Saving…' : revision ? 'Save draft' : 'Create draft'}
+                </button>
+              )}
+              {!inheritedFrom && revision > 0 && (
+                <button
+                  type="button"
+                  className="library-publish"
+                  onClick={publish}
+                  disabled={saving || entryLoading || draftDirty || selectedSubjectCount === 0 || (publication.published && !publication.hasUnpublishedChanges)}
+                  title={draftDirty ? 'Save the draft before publishing' : selectedSubjectCount === 0 ? 'Add at least one subject before publishing' : ''}
+                >
+                  {publication.published && !publication.hasUnpublishedChanges ? 'Published' : publication.published ? 'Publish update' : 'Publish'}
                 </button>
               )}
               {inheritedFrom && <span className="library-inherited-badge">Inherited · read only</span>}
@@ -636,7 +703,7 @@ export default function LibraryPage() {
           <span className="library-step library-step--muted">02</span>
           <div>
             <h2 className="admin-card-title">Import from PDF</h2>
-            <p className="admin-card-sub">Preview a course scheme before adding it to the Library.</p>
+            <p className="admin-card-sub">Preview a course scheme and save it as a draft. Imports never publish automatically.</p>
           </div>
         </div>
         <form className="library-import-form" onSubmit={previewPdf}>
@@ -684,7 +751,7 @@ export default function LibraryPage() {
             )}
             <div className="library-import-actions">
               <button type="button" onClick={() => { setPdfPreview(null); setPreviewEditorKey(null) }} disabled={pdfBusy}>Cancel preview</button>
-              <button className="upload-btn" type="button" onClick={applyPdf} disabled={pdfBusy || previewMissingSubjects.length > 0}>Apply to Library</button>
+              <button className="upload-btn" type="button" onClick={applyPdf} disabled={pdfBusy || previewMissingSubjects.length > 0}>Save as drafts</button>
             </div>
           </div>
         )}
@@ -752,6 +819,9 @@ export default function LibraryPage() {
                           <code>Semester {item.semester}</code>
                           <span>{item.subject_count} subjects</span>
                           <small>{item.sections.length} sections · revision {item.revision}</small>
+                          <em className={`library-entry-status library-entry-status--${item.status || 'draft'}`}>
+                            {item.status === 'published' ? 'Published' : item.status === 'changes_pending' ? 'Unpublished changes' : 'Draft'}
+                          </em>
                         </button>
                       ))}
                     </div>

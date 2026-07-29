@@ -171,6 +171,13 @@ body:has(.dashboard-layout) {
 .calendar-card {
   display: flex;
   flex-direction: column;
+  flex: 0 0 auto;
+  height: auto;
+  min-height: max-content;
+  overflow: visible;
+  /* Height is content-driven, so normal card spacing is sufficient once the
+     calendar is prevented from shrinking. */
+  padding-bottom: 18px;
 }
 
 .calendar-header {
@@ -245,6 +252,8 @@ body:has(.dashboard-layout) {
 .mini-calendar {
   display: flex;
   flex-direction: column;
+  flex: 0 0 auto;
+  overflow: visible;
   gap: 4px;
 }
 
@@ -277,6 +286,12 @@ body:has(.dashboard-layout) {
 }
 
 .calendar-day {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  appearance: none;
+  background: transparent;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 500;
   color: #6B7280;
@@ -287,6 +302,12 @@ body:has(.dashboard-layout) {
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
+}
+
+button.calendar-day:focus-visible,
+.calendar-day--selected {
+  outline: 2px solid rgba(99, 102, 241, 0.72);
+  outline-offset: 1px;
 }
 
 .calendar-day--blank {
@@ -351,6 +372,91 @@ body:has(.dashboard-layout) {
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.55);
 }
 
+/* Tapping a marked date opens a compact, persistent explanation. Hover
+   titles remain useful on desktop, while this panel gives touch users the
+   same information without relying on a hover state. */
+.calendar-date-detail {
+  --calendar-detail-accent: #6366F1;
+  margin-top: 7px;
+  padding: 9px 10px 8px;
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-left: 3px solid var(--calendar-detail-accent);
+  border-radius: 9px;
+  background: rgba(99, 102, 241, 0.06);
+  color: #111827;
+  text-align: left;
+}
+
+.calendar-date-detail--holiday { --calendar-detail-accent: #EF4444; }
+.calendar-date-detail--follow_day { --calendar-detail-accent: #6366F1; }
+.calendar-date-detail--mst { --calendar-detail-accent: #F59E0B; }
+.calendar-date-detail--est { --calendar-detail-accent: #A855F7; }
+.calendar-date-detail--assessment { --calendar-detail-accent: #14B8A6; }
+.calendar-date-detail--frosh { --calendar-detail-accent: #EC4899; }
+
+.calendar-date-detail-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+
+.calendar-date-detail-head > div {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.calendar-date-detail-head strong {
+  color: #111827;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.calendar-date-detail-head > div > span {
+  color: var(--calendar-detail-accent);
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.calendar-date-detail .calendar-legend-swatch {
+  margin-top: 1px;
+}
+
+.calendar-date-detail p {
+  margin: 6px 22px 0 19px;
+  color: #6B7280;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.calendar-date-detail-close {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #6B7280;
+  cursor: pointer;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.calendar-date-detail-close:hover,
+.calendar-date-detail-close:focus-visible {
+  background: rgba(15, 23, 42, 0.08);
+  color: #111827;
+}
+
 /* ─── Dim Sat/Sun without any override ─────────────────────────────────────
    Weekends normally have no classes. Muting them makes it visually
    obvious that they're not class days without stealing attention from
@@ -369,13 +475,15 @@ body:has(.dashboard-layout) {
    Tiny key below the mini-calendar explaining the cell colours. */
 .calendar-legend {
   display: flex;
+  flex: 0 0 auto;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 12px;
   margin-top: 10px;
-  padding-top: 8px;
+  padding: 8px 0 0;
   border-top: 1px dashed rgba(0, 0, 0, 0.06);
   font-size: 10.5px;
+  line-height: 1.45;
   color: #6B7280;
 }
 
@@ -1221,7 +1329,9 @@ body:has(.dashboard-layout) {
   transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   padding: 24px;
   box-sizing: border-box;
-  overflow-y: auto;
+  /* SidebarContent already owns the drawer's one vertical scroller. Keeping
+     the drawer itself scrollable creates a second nested gesture surface. */
+  overflow: hidden;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   display: flex;
@@ -1261,16 +1371,33 @@ body:has(.dashboard-layout) {
    The card look itself is already applied globally on `.dashboard-header`;
    here we only adjust its layout and sizing for narrow widths. */
 @media (max-width: 768px) {
+  /* Mobile uses native document scrolling. Desktop deliberately locks the
+     document and delegates scrolling to the timetable/sidebar regions, but
+     that model creates nested touch scrollers on a phone. */
+  body:has(.dashboard-layout) #root {
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
+  }
+
+  body:has(.dashboard-layout) {
+    height: auto;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .dashboard-layout {
+    height: auto;
+    min-height: 100dvh;
+  }
+
   .dashboard-sidebar {
     display: none;
   }
 
-  /* Phones: unlock the viewport-locked dashboard so the page scrolls as one
-     surface. On desktop the fixed layout works because the grid has its own
-     inner scroller, but on small screens the timetable is taller than the
-     viewport and `overflow: hidden` here clipped its bottom rows outright.
-     `min-height: auto` lets these flex items grow to their content, and
-     .dashboard-column (overflow-y: auto) becomes the single scroller. */
+  /* Let the document own vertical scrolling; these flex descendants must be
+     allowed to grow to the timetable's natural height. */
   .dashboard-main,
   .dashboard-content {
     min-height: auto;
@@ -1399,9 +1526,7 @@ body:has(.dashboard-layout) {
   }
 
   .dashboard-column {
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
   }
 }
 
@@ -1531,6 +1656,36 @@ body:has(.dashboard-layout) {
 }
 [data-theme="dark"] .calendar-day.today.calendar-day--follow {
   box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.55);
+}
+
+[data-theme="dark"] button.calendar-day:focus-visible,
+[data-theme="dark"] .calendar-day--selected {
+  outline-color: rgba(147, 197, 253, 0.9);
+}
+
+[data-theme="dark"] .calendar-date-detail {
+  border-color: rgba(255, 255, 255, 0.08);
+  border-left-color: var(--calendar-detail-accent);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .calendar-date-detail-head strong {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .calendar-date-detail p {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+[data-theme="dark"] .calendar-date-detail-close {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="dark"] .calendar-date-detail-close:hover,
+[data-theme="dark"] .calendar-date-detail-close:focus-visible {
+  background: rgba(255, 255, 255, 0.09);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 /* Dark dim + legend */
@@ -1733,9 +1888,9 @@ body:has(.dashboard-layout) {
 }
 
 .section-scroll {
-  max-height: 260px;
-  overflow-y: auto;
-  padding-right: 4px;
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
 }
 
 .feed-list {

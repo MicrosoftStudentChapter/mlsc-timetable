@@ -1311,7 +1311,7 @@
   --col-width: 200px !important;
   --time-col-width: 100px !important;
   --row-height: 58px !important;
-  --card-padding: 6px 10px !important;
+  --card-padding: 6px 4px !important;
   --card-border-radius: 12px !important;
   --card-font-size: 13px !important;
   --card-meta-size: 11px !important;
@@ -1331,13 +1331,32 @@
 }
 
 .tt-export-target.tt-exporting .tt-grid-table {
-  width: max-content !important;
-  min-width: 0 !important;
+  width: calc(var(--time-col-width) + 5 * var(--col-width)) !important;
+  min-width: calc(var(--time-col-width) + 5 * var(--col-width)) !important;
+  max-width: calc(var(--time-col-width) + 5 * var(--col-width)) !important;
   transform: none !important;
   /* JS applies an inline `zoom: <fraction>` to fit the grid to narrow
      viewports; if we don't override it here, exports on phones render at
      the shrunk (~0.6x) size and look microscopic. */
   zoom: 1 !important;
+}
+
+.tt-export-target.tt-exporting .tt-grid-table::after {
+  display: none !important;
+  height: 0 !important;
+}
+
+/* Export tracks must be exact-width columns. The on-screen grid uses `1fr`
+   so it can stretch across the viewport; under intrinsic `max-content`
+   export sizing those flexible tracks grew wider than their cards and
+   produced empty vertical gutters between weekdays. */
+.tt-export-target.tt-exporting .tt-grid-header-row,
+.tt-export-target.tt-exporting .tt-grid-body {
+  grid-template-columns: var(--time-col-width) repeat(5, var(--col-width)) !important;
+  width: calc(var(--time-col-width) + 5 * var(--col-width)) !important;
+  min-width: calc(var(--time-col-width) + 5 * var(--col-width)) !important;
+  max-width: calc(var(--time-col-width) + 5 * var(--col-width)) !important;
+  column-gap: 0 !important;
 }
 
 .tt-export-target.tt-exporting .tt-day-header-cell,
@@ -1418,6 +1437,33 @@
 .tt-export-target.tt-exporting .tt-type-badge,
 .tt-export-target.tt-exporting .tt-alternate-label {
   flex-shrink: 0 !important;
+}
+
+/* Exports are a reusable schedule, not a snapshot of the current week. Keep
+   alternate cards at full strength and print their fixed recurrence rule. */
+.tt-export-target.tt-exporting .tt-class-card[data-alternate-state] {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.tt-export-target.tt-exporting .tt-alternate-label-screen {
+  display: none !important;
+}
+
+.tt-export-target.tt-exporting .tt-alternate-label-export {
+  display: inline !important;
+}
+
+.tt-export-target.tt-exporting .tt-alternate-label {
+  color: #4338ca !important;
+  background: rgba(99, 102, 241, 0.12) !important;
+  border-color: rgba(99, 102, 241, 0.22) !important;
+}
+
+[data-theme='dark'] .tt-export-target.tt-exporting .tt-alternate-label {
+  color: #ddd6fe !important;
+  background: rgba(139, 92, 246, 0.16) !important;
+  border-color: rgba(167, 139, 250, 0.3) !important;
 }
 
 .tt-export-target.tt-exporting .tt-type-badge {
@@ -1579,4 +1625,3 @@
     max-width: 320px !important;
   }
 }
-

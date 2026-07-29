@@ -647,6 +647,13 @@ export function saveLibraryEntry(branch, semester, { sections, source, revision 
   })
 }
 
+export function publishLibraryEntry(branch, semester, { revision } = {}) {
+  return adminFetch(`/admin/library/${encodeURIComponent(branch)}/${encodeURIComponent(semester)}/publish`, {
+    method: 'POST',
+    body: JSON.stringify({ revision }),
+  })
+}
+
 export function deleteLibraryEntry(branch, semester) {
   return adminFetch(`/admin/library/${encodeURIComponent(branch)}/${encodeURIComponent(semester)}`, {
     method: 'DELETE',

@@ -184,19 +184,81 @@ function formatHour(time) {
   return `${hour}:${m.toString().padStart(2, '0')} ${period}`
 }
 
-function isAlternateActive(entry, termStartDate) {
-  if (!entry?.alternateWeekStart) return true
-  const start = alternateWeekStartForDate(termStartDate)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const week = Math.max(1, Math.floor((today - start) / 604800000) + 1)
-  return (week - entry.alternateWeekStart) % 2 === 0
+function alternateWeekStartForDate(termStartDate) {
+  if (!termStartDate) return null
+  const start = new Date(`${termStartDate}T00:00:00`)
+  return Number.isNaN(start.getTime()) ? null : start
 }
 
-function alternateWeekStartForDate(termStartDate) {
-  if (!termStartDate) return new Date(new Date().getFullYear(), 0, 1)
-  const start = new Date(`${termStartDate}T00:00:00`)
-  return Number.isNaN(start.getTime()) ? new Date(new Date().getFullYear(), 0, 1) : start
+function localDaySerial(date) {
+  return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+}
+
+function mondayForDate(date) {
+  const monday = new Date(date)
+  monday.setHours(0, 0, 0, 0)
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7))
+  return monday
+}
+
+function dateWithTime(date, time) {
+  const result = new Date(date)
+  const [hours, minutes] = String(time || '00:00').split(':').map(Number)
+  result.setHours(Number.isFinite(hours) ? hours : 0, Number.isFinite(minutes) ? minutes : 0, 0, 0)
+  return result
+}
+
+function alternateClassStatus(entry, termStartDate, now = new Date(), displayEndTime = null) {
+  const alternateWeekStart = Number(entry?.alternateWeekStart)
+  if (alternateWeekStart !== 1 && alternateWeekStart !== 2) return null
+
+  const termStart = alternateWeekStartForDate(termStartDate)
+  const dayIndex = DAYS.indexOf(entry.day)
+  if (!termStart || dayIndex < 0) {
+    return { state: 'schedule', label: `Every other week · W${alternateWeekStart}` }
+  }
+
+  // Match Google Calendar ingestion: week 1 is the first occurrence of this
+  // weekday on or after the configured term start date.
+  const firstOccurrence = new Date(termStart)
+  const targetJsDay = dayIndex + 1 // Monday=1 … Friday=5
+  firstOccurrence.setDate(
+    firstOccurrence.getDate() + ((targetJsDay - firstOccurrence.getDay() + 7) % 7),
+  )
+
+  const currentMonday = mondayForDate(now)
+  const thisWeekOccurrence = new Date(currentMonday)
+  thisWeekOccurrence.setDate(currentMonday.getDate() + dayIndex)
+  const occurrenceOffset = Math.round(
+    (localDaySerial(thisWeekOccurrence) - localDaySerial(firstOccurrence)) / 604800000,
+  )
+  const occurrenceNumber = occurrenceOffset + 1
+  const isActiveThisWeek = occurrenceNumber >= 1 &&
+    occurrenceNumber % 2 === alternateWeekStart % 2
+
+  if (!isActiveThisWeek) {
+    let nextActiveNumber = Math.max(1, occurrenceNumber + (occurrenceNumber >= 1 ? 1 : 0))
+    while (nextActiveNumber % 2 !== alternateWeekStart % 2) nextActiveNumber += 1
+    const nextActiveDate = new Date(firstOccurrence)
+    nextActiveDate.setDate(firstOccurrence.getDate() + (nextActiveNumber - 1) * 7)
+    const weeksAway = Math.max(1, Math.round(
+      (localDaySerial(mondayForDate(nextActiveDate)) - localDaySerial(currentMonday)) / 604800000,
+    ))
+    return {
+      state: weeksAway === 1 ? 'next-week' : 'future',
+      label: weeksAway === 1 ? 'Class next week' : `Class in ${weeksAway} weeks`,
+    }
+  }
+
+  const classStart = dateWithTime(thisWeekOccurrence, entry.startTime)
+  const classEnd = dateWithTime(
+    thisWeekOccurrence,
+    displayEndTime || entry.endTime || getEndTime(entry.startTime),
+  )
+
+  if (now >= classEnd) return { state: 'completed', label: 'No class next week' }
+  if (now >= classStart) return { state: 'in-progress', label: 'Class now' }
+  return { state: 'this-week', label: 'Class this week' }
 }
 
 function getEndTime(startTime) {
@@ -653,7 +715,17 @@ function getCardSvgIndex(subject, code, room, type) {
   return Math.abs(hash) % 6
 }
 
-function ClassCard({ entry, onEdit, onChooseElective, onDismissElective, onDragStart, isDarkMode, isDragging, termStartDate }) {
+function ClassCard({
+  entry,
+  onEdit,
+  onChooseElective,
+  onDismissElective,
+  onDragStart,
+  isDarkMode,
+  isDragging,
+  termStartDate,
+  alternateNow,
+}) {
   const TYPE_META = isDarkMode ? DARK_TYPE_META : LIGHT_TYPE_META
   const meta      = TYPE_META[entry.type] || TYPE_META.Lecture
   const cardStyle = {
@@ -666,6 +738,9 @@ function ClassCard({ entry, onEdit, onChooseElective, onDismissElective, onDragS
   }
   const isElectiveGroup = Array.isArray(entry.options) && entry.options.length > 0 &&
     (entry.requiresSelection || entry.options.length > 1) && !entry.electiveChoice
+  const alternateStatus = isElectiveGroup
+    ? null
+    : alternateClassStatus(entry, termStartDate, alternateNow)
 
   const handleEditClick = (e) => {
     e.stopPropagation()
@@ -698,6 +773,7 @@ function ClassCard({ entry, onEdit, onChooseElective, onDismissElective, onDragS
       data-dragging={isDragging || undefined}
       data-spidey-index={getCardSvgIndex(entry.subject, entry.code, entry.room, entry.type)}
       data-elective-group={isElectiveGroup || undefined}
+      data-alternate-state={alternateStatus?.state || undefined}
       onClick={handleCardClick}
     >
       {isElectiveGroup && (
@@ -751,9 +827,12 @@ function ClassCard({ entry, onEdit, onChooseElective, onDismissElective, onDragS
           {entry.options.length} {entry.options.length === 1 ? 'choice' : 'choices'} · click to choose
         </span>
       )}
-      {!isElectiveGroup && entry.alternateWeekStart && (
+      {alternateStatus && (
         <span className="tt-alternate-label">
-          {`Alternate · Week ${entry.alternateWeekStart}`}
+          <span className="tt-alternate-label-screen">{alternateStatus.label}</span>
+          <span className="tt-alternate-label-export">
+            {`Every other week · W${entry.alternateWeekStart}`}
+          </span>
         </span>
       )}
       {!isElectiveGroup && ((entry.teacher && String(entry.teacher).trim()) || (entry.room && String(entry.room).trim())) && (
@@ -884,6 +963,21 @@ export default function TimetableGrid({
         : [],
     }))
   }, [unsanitizedVisibleEntries, adminMode, teacherCodesVisible])
+
+  const hasAlternateEntries = useMemo(
+    () => visibleEntries.some((entry) => [1, 2].includes(Number(entry.alternateWeekStart))),
+    [visibleEntries],
+  )
+  const [alternateNow, setAlternateNow] = useState(() => new Date())
+
+  // Alternate cards change state when their scheduled time ends. Refreshing
+  // once per minute keeps the message accurate without running a timer for
+  // timetables that have no alternate-week classes.
+  useEffect(() => {
+    if (!hasAlternateEntries) return undefined
+    const timer = window.setInterval(() => setAlternateNow(new Date()), 60000)
+    return () => window.clearInterval(timer)
+  }, [hasAlternateEntries])
 
   // Evening rows stay out of the normal view when there are no classes scheduled
   // during those slots. Admin mode keeps all slots available for adding/editing.
@@ -1058,6 +1152,30 @@ export default function TimetableGrid({
     return map
   }, [visibleEntries])
 
+  const dragDropKeys = useMemo(() => {
+    const keys = new Set()
+    if (!drag?.started || !drag.dropTargetKey) return keys
+    if (drag.entry?.pairId && drag.entry.type === 'Practical') {
+      const separator = drag.dropTargetKey.lastIndexOf('|')
+      const day = drag.dropTargetKey.slice(0, separator)
+      const startTime = drag.dropTargetKey.slice(separator + 1)
+      if (drag.entry.day === day && drag.entry.startTime === startTime) return keys
+      const nextSlot = TIME_SLOTS[TIME_SLOTS.indexOf(startTime) + 1]
+      if (!nextSlot) return keys
+      const destinationOccupied = entries.some((entry) => (
+        entry.pairId !== drag.entry.pairId &&
+        entry.day === day &&
+        (entry.startTime === startTime || entry.startTime === nextSlot)
+      ))
+      if (destinationOccupied) return keys
+      keys.add(drag.dropTargetKey)
+      keys.add(`${day}|${nextSlot}`)
+      return keys
+    }
+    keys.add(drag.dropTargetKey)
+    return keys
+  }, [drag, entries])
+
   // ── Handlers ──────────────────────────────────────────────────────────────
   const handleEditSave = (form) => {
     const target = editTarget.entry
@@ -1079,25 +1197,70 @@ export default function TimetableGrid({
       baseEntry: { ...entry },
       entry: entry.id === target.id ? chosen : applyElectiveChoiceAcrossGroup(entry, selectedOption),
     }))
-    // Practical pair: sync the partner row so both halves stay in lockstep.
-    if (target.pairId && form.type === 'Practical') {
+    // A paired practical is displayed as two cards but remains one logical
+    // class for editing, so both consecutive records stay in sync.
+    if (target.pairId) {
       const partner = entries.find(e => e.pairId === target.pairId && e.id !== target.id)
-      if (partner) {
-        newOverrides.push({
+      if (partner && form.type === 'Practical') {
+        const nextSlot = TIME_SLOTS[TIME_SLOTS.indexOf(form.startTime) + 1]
+        if (!nextSlot) {
+          alert('Practicals require two consecutive slots.')
+          return
+        }
+        const destinationOccupied = entries.some((entry) => (
+          entry.pairId !== target.pairId &&
+          entry.day === form.day &&
+          (entry.startTime === form.startTime || entry.startTime === nextSlot)
+        ))
+        if (destinationOccupied) {
+          alert('Both destination slots must be empty for a practical.')
+          return
+        }
+
+        const targetOverrideIdx = newOverrides.findIndex((override) => override.targetId === target.id)
+        if (targetOverrideIdx >= 0) {
+          newOverrides[targetOverrideIdx] = {
+            ...newOverrides[targetOverrideIdx],
+            day: form.day,
+            startTime: form.startTime,
+            entry: { ...chosen, day: form.day, startTime: form.startTime, endTime: nextSlot },
+          }
+        }
+
+        const partnerOverride = {
           kind: 'edit',
           targetId: partner.id,
-          day: partner.day,
-          startTime: partner.startTime,
+          day: form.day,
+          startTime: nextSlot,
           baseEntry: { ...partner },
           entry: {
             ...partner,
+            day: form.day,
+            startTime: nextSlot,
+            endTime: getEndTime(nextSlot),
             subject: form.subject,
             code: form.code,
             teacher: form.teacher,
             room: form.room,
             type: form.type,
           },
-        })
+        }
+        const partnerOverrideIdx = newOverrides.findIndex((override) => override.targetId === partner.id)
+        if (partnerOverrideIdx >= 0) newOverrides[partnerOverrideIdx] = partnerOverride
+        else newOverrides.push(partnerOverride)
+      } else if (partner) {
+        // Converting a two-slot practical into Lecture/Tutorial leaves a
+        // single class at the selected start time and removes its continuation.
+        const partnerOverride = {
+          kind: 'delete',
+          targetId: partner.id,
+          day: partner.day,
+          startTime: partner.startTime,
+          baseEntry: { ...partner },
+        }
+        const partnerOverrideIdx = newOverrides.findIndex((override) => override.targetId === partner.id)
+        if (partnerOverrideIdx >= 0) newOverrides[partnerOverrideIdx] = partnerOverride
+        else newOverrides.push(partnerOverride)
       }
     }
     pushOverrides(newOverrides)
@@ -1294,13 +1457,46 @@ export default function TimetableGrid({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drag?.pointerId])
 
-  const applyDrop = (sourceEntry, day, startTime) => {
+  function applyDrop(sourceEntry, day, startTime) {
     // Always read the latest rendered entries via ref — `entries` from
     // closure can lag if the user fires a new drag before React has flushed
     // the previous drop's state update.
     const liveEntries = entriesRef.current
     const source = liveEntries.find(e => e.id === sourceEntry.id) ?? sourceEntry
     if (source.day === day && source.startTime === startTime) return
+
+    if (source.pairId && source.type === 'Practical') {
+      const pair = liveEntries
+        .filter((entry) => entry.pairId === source.pairId && entry.type === 'Practical')
+        .sort((a, b) => TIME_SLOTS.indexOf(a.startTime) - TIME_SLOTS.indexOf(b.startTime))
+      const nextSlot = TIME_SLOTS[TIME_SLOTS.indexOf(startTime) + 1]
+      if (pair.length !== 2 || !nextSlot) return
+
+      const destinationOccupied = liveEntries.some((entry) => (
+        entry.pairId !== source.pairId &&
+        entry.day === day &&
+        (entry.startTime === startTime || entry.startTime === nextSlot)
+      ))
+      if (destinationOccupied) return
+
+      pushOverrides(pair.map((entry, index) => {
+        const targetStart = index === 0 ? startTime : nextSlot
+        return {
+          kind: 'edit',
+          targetId: entry.id,
+          day,
+          startTime: targetStart,
+          baseEntry: { ...entry },
+          entry: {
+            ...entry,
+            day,
+            startTime: targetStart,
+            endTime: index === 0 ? nextSlot : getEndTime(nextSlot),
+          },
+        }
+      }))
+      return
+    }
 
     // Anything else currently rendered in the target slot.
     const targets = liveEntries.filter(
@@ -1373,35 +1569,46 @@ export default function TimetableGrid({
             ))}
           </div>
 
-          {/* ── Body rows ──────────────────────────────────────────────── */}
-          {visibleTimeSlots.map((slot) => (
-            <div key={slot} className="tt-grid-body-row">
-              {/* Time label */}
-              <div className="tt-time-cell">
-                <span className="tt-time-label">
-                  {formatHour(slot).split(' ')[0]}
-                  <span className="tt-time-period">{formatHour(slot).split(' ')[1]}</span>
-                </span>
-              </div>
+          {/* ── Body grid ────────────────────────────────────────────────
+              Time/day cells share one CSS grid so every split class card
+              stays aligned with the same row tracks. */}
+          <div className="tt-grid-body">
+            {visibleTimeSlots.flatMap((slot, rowIndex) => {
+              const gridRow = rowIndex + 1
+              const isFirstRow = rowIndex === 0
+              const timeCell = (
+                <div
+                  key={`time-${slot}`}
+                  className="tt-time-cell"
+                  data-first-row={isFirstRow || undefined}
+                  style={{ gridColumn: 1, gridRow }}
+                >
+                  <span className="tt-time-label">
+                    {formatHour(slot).split(' ')[0]}
+                    <span className="tt-time-period">{formatHour(slot).split(' ')[1]}</span>
+                  </span>
+                </div>
+              )
 
-              {/* Day slot cells */}
-              {DAYS.map((day) => {
+              const dayCells = DAYS.map((day, dayIndex) => {
                 const slotEntries = dataMap[day]?.[slot] || []
-                const isActive    = day === highlightDay
-                const slotKey     = `${day}|${slot}`
-                const isDropTarget = drag?.started && drag.dropTargetKey === slotKey && !(drag.entry.day === day && drag.entry.startTime === slot)
+                const isActive = day === highlightDay
+                const slotKey = `${day}|${slot}`
+                const isSourceSlot = drag?.entry.day === day && drag.entry.startTime === slot
+                const isDropTarget = dragDropKeys.has(slotKey) && !isSourceSlot
                 const isErrorCell = adminMode && errorCellKey && errorCellKey === slotKey
                 return (
                   <div
-                    key={day}
+                    key={`${day}-${slot}`}
                     className={`tt-slot-cell ${isActive ? 'tt-col-active' : ''}`}
                     data-day={day}
                     data-start-time={slot}
+                    data-first-row={isFirstRow || undefined}
                     data-drop-target={isDropTarget || undefined}
                     data-error-cell={isErrorCell || undefined}
+                    style={{ gridColumn: dayIndex + 2, gridRow }}
                   >
                     <div className="tt-slot-stack">
-                      {/* Existing class cards */}
                       {slotEntries.map((entry) => (
                         <ClassCard
                           key={entry.id}
@@ -1413,10 +1620,10 @@ export default function TimetableGrid({
                           onDragStart={handleCardDragStart}
                           isDragging={drag?.started && drag.entry.id === entry.id}
                           termStartDate={termStartDate}
+                          alternateNow={alternateNow}
                         />
                       ))}
 
-                      {/* Add button — only in empty slots */}
                       {slotEntries.length === 0 && (
                         <button
                           className="tt-add-btn"
@@ -1434,9 +1641,11 @@ export default function TimetableGrid({
                     </div>
                   </div>
                 )
-              })}
-            </div>
-          ))}
+              })
+
+              return [timeCell, ...dayCells]
+            })}
+          </div>
 
         </div>
       </div>
@@ -1649,6 +1858,7 @@ export default function TimetableGrid({
       {drag?.started && createPortal(
         <div
           className="tt-card-drag-ghost"
+          data-card-theme={cardTheme}
           style={{
             position: 'fixed',
             left: drag.x - drag.rect.offsetX,

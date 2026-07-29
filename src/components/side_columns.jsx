@@ -60,6 +60,15 @@ const IconCalendarArrow = ({ direction }) => (
 // Per-date overrides are now loaded from the backend
 // (`/calendar-overrides?batch=<code>`) — see `loadCalendarOverrides`.
 const MON_SUN = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const WEEKDAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const CALENDAR_KIND_LABELS = {
+  holiday: 'Holiday',
+  follow_day: 'Different timetable',
+  mst: 'MST week',
+  est: 'EST week',
+  assessment: 'Assessment',
+  frosh: 'Frosh',
+};
 
 const pad2 = (n) => String(n).padStart(2, '0');
 const ymdKey = (y, m, d) => `${y}-${pad2(m + 1)}-${pad2(d)}`;
@@ -103,6 +112,22 @@ function weekdayIdxFor(year, month, day, overrideMap) {
   }
   const jsDay = new Date(year, month, day).getDay();
   return defaultWeekdayIdx(toMonSunIdx(jsDay));
+}
+
+function calendarOverridePresentation(override) {
+  if (!override) return null;
+  if (override.kind === 'follow_day') {
+    const followedDay = WEEKDAY_NAMES[override.follows_day] || 'another day';
+    return {
+      label: `Follows ${followedDay}`,
+      detail: override.reason || `Classes follow ${followedDay}'s timetable.`,
+    };
+  }
+  const label = CALENDAR_KIND_LABELS[override.kind] || 'Schedule update';
+  return {
+    label,
+    detail: override.reason || (override.kind === 'holiday' ? 'No classes scheduled.' : label),
+  };
 }
 
 const MONTH_NAMES = [
@@ -205,6 +230,7 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
 
   // hovered day → number (1..daysInMonth) or null
   const [hoveredDay, setHoveredDay] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(null);
 
   // Sidebar feeds — backend with bundled fallback. Exam dates + calendar
   // overrides are filtered server-side by the currently-viewed batch
@@ -225,13 +251,14 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
 
   // Weekday header column to highlight: hovered day's mapping if any,
   // otherwise today's mapping only while the current month is visible.
-  const activeDay = hoveredDay ?? (isCurrentMonth ? todayDate : null);
+  const activeDay = hoveredDay ?? selectedDay ?? (isCurrentMonth ? todayDate : null);
   const activeWeekdayIdx = activeDay == null
     ? null
     : weekdayIdxFor(year, month, activeDay, overrideMap);
 
   const changeMonth = (offset) => {
     setHoveredDay(null);
+    setSelectedDay(null);
     setVisibleMonth((current) => (
       new Date(current.getFullYear(), current.getMonth() + offset, 1)
     ));
@@ -239,8 +266,22 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
 
   const showCurrentMonth = () => {
     setHoveredDay(null);
+    setSelectedDay(null);
     setVisibleMonth(new Date(today.getFullYear(), today.getMonth(), 1));
   };
+
+  const selectedOverride = selectedDay == null
+    ? null
+    : overrideMap.get(ymdKey(year, month, selectedDay));
+  const selectedPresentation = calendarOverridePresentation(selectedOverride);
+  const selectedDateLabel = selectedDay == null
+    ? ''
+    : new Date(year, month, selectedDay).toLocaleDateString('en-IN', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
 
   // Whole-section dropdowns: collapsed by default so the sidebar feels calm
   // on arrival; users opt in by clicking the section header.
@@ -460,33 +501,42 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                 const jsDay = new Date(year, month, cell.day).getDay();
                 const isWeekend = jsDay === 0 || jsDay === 6;
                 const dimClass = (isWeekend && !override) ? 'calendar-day--dim' : '';
-                // Human-readable tooltip.
-                let title;
+                const presentation = calendarOverridePresentation(override);
+                const cellDateLabel = new Date(year, month, cell.day).toLocaleDateString('en-IN', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                });
+                const title = presentation
+                  ? `${presentation.label}${presentation.detail !== presentation.label ? ` · ${presentation.detail}` : ''}`
+                  : (isWeekend ? 'No classes' : undefined);
+                const className = `calendar-day ${isToday ? 'today' : ''} ${isHovered ? 'hovered' : ''} ${selectedDay === cell.day ? 'calendar-day--selected' : ''} ${overrideClass} ${dimClass}`;
                 if (override) {
-                  if (override.kind === 'holiday') {
-                    title = override.reason ? `Holiday · ${override.reason}` : 'Holiday';
-                  } else if (override.kind === 'follow_day') {
-                    const label = MON_SUN[override.follows_day] || '?';
-                    const long = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'][override.follows_day] || label;
-                    title = override.reason
-                      ? `Follows ${long} · ${override.reason}`
-                      : `Follows ${long}`;
-                  } else if (override.kind === 'mst') {
-                    title = override.reason || 'MST week';
-                  } else if (override.kind === 'est') {
-                    title = override.reason || 'EST week';
-                  } else if (override.kind === 'assessment') {
-                    title = override.reason || 'Assessment / Evaluation week';
-                  } else if (override.kind === 'frosh') {
-                    title = override.reason || 'Frosh';
-                  }
-                } else if (isWeekend) {
-                  title = 'No classes';
+                  return (
+                    <button
+                      type="button"
+                      key={cell.key}
+                      className={className}
+                      onMouseEnter={() => setHoveredDay(cell.day)}
+                      onFocus={() => setHoveredDay(cell.day)}
+                      onBlur={() => setHoveredDay(null)}
+                      onClick={() => {
+                        setHoveredDay(null);
+                        setSelectedDay((current) => current === cell.day ? null : cell.day);
+                      }}
+                      title={title}
+                      aria-label={`${cellDateLabel}. ${title}`}
+                      aria-expanded={selectedDay === cell.day}
+                    >
+                      {cell.day}
+                    </button>
+                  );
                 }
                 return (
                   <span
                     key={cell.key}
-                    className={`calendar-day ${isToday ? 'today' : ''} ${isHovered ? 'hovered' : ''} ${overrideClass} ${dimClass}`}
+                    className={className}
                     onMouseEnter={() => setHoveredDay(cell.day)}
                     title={title}
                   >
@@ -495,6 +545,35 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                 );
               })}
             </div>
+            {selectedOverride && selectedPresentation && (
+              <div
+                className={`calendar-date-detail calendar-date-detail--${selectedOverride.kind}`}
+                role="status"
+                aria-live="polite"
+              >
+                <div className="calendar-date-detail-head">
+                  <span
+                    className={`calendar-legend-swatch calendar-legend-swatch--${selectedOverride.kind === 'follow_day' ? 'follow' : selectedOverride.kind}`}
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <strong>{selectedDateLabel}</strong>
+                    <span>{selectedPresentation.label}</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="calendar-date-detail-close"
+                    onClick={() => setSelectedDay(null)}
+                    aria-label="Close calendar date details"
+                  >
+                    ×
+                  </button>
+                </div>
+                {selectedPresentation.detail !== selectedPresentation.label && (
+                  <p>{selectedPresentation.detail}</p>
+                )}
+              </div>
+            )}
             {/* Legend — only shows swatches for kinds actually visible
                 this month. "Today" is always shown. */}
             <div className="calendar-legend" aria-label="Calendar legend">
