@@ -65,6 +65,38 @@ function safeMonthSummary(value) {
   return days
 }
 
+function monthDateRange(year, month) {
+  const normalizedYear = Number(year)
+  const normalizedMonth = Number(month)
+  const lastDay = new Date(normalizedYear, normalizedMonth, 0).getDate()
+  const monthPart = String(normalizedMonth).padStart(2, '0')
+  return {
+    start: `${normalizedYear}-${monthPart}-01`,
+    end: `${normalizedYear}-${monthPart}-${String(lastDay).padStart(2, '0')}`,
+  }
+}
+
+function addMlscEventFlags(days, events, range) {
+  const nextDays = { ...days }
+  for (const event of events) {
+    const start = event?.startDate > range.start ? event.startDate : range.start
+    const end = event?.endDate && event.endDate < range.end ? event.endDate : range.end
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || !/^\d{4}-\d{2}-\d{2}$/.test(end) || start > end) continue
+
+    const cursor = new Date(`${start}T00:00:00Z`)
+    const last = new Date(`${end}T00:00:00Z`)
+    while (cursor <= last) {
+      const date = cursor.toISOString().slice(0, 10)
+      nextDays[date] = {
+        ...(nextDays[date] || { hasEvent: true, hasConflict: false, count: 1 }),
+        hasMlscEvent: true,
+      }
+      cursor.setUTCDate(cursor.getUTCDate() + 1)
+    }
+  }
+  return nextDays
+}
+
 function safeEvent(value) {
   if (!value || typeof value !== 'object') return null
   const id = String(value._id || '').trim()
@@ -91,11 +123,27 @@ export async function loadTentativeCalendarMonth(year, month) {
   if (cached) return cached
   if (monthRequests.has(key)) return monthRequests.get(key)
 
-  const request = fetchCalendarJson(`/api/events/calendar/${Number(year)}/${Number(month)}`)
-    .then((data) => writeCache(monthCache, key, {
-      status: 'ok',
-      days: safeMonthSummary(data),
-    }, MONTH_CACHE_TTL))
+  const range = monthDateRange(year, month)
+  const mlscQuery = new URLSearchParams({
+    search: 'MLSC',
+    startDate: range.start,
+    endDate: range.end,
+  })
+  const request = Promise.allSettled([
+    fetchCalendarJson(`/api/events/calendar/${Number(year)}/${Number(month)}`),
+    fetchCalendarJson(`/api/events?${mlscQuery.toString()}`),
+  ])
+    .then(([summaryResult, mlscResult]) => {
+      if (summaryResult.status === 'rejected') throw summaryResult.reason
+      const days = safeMonthSummary(summaryResult.value)
+      const mlscEvents = mlscResult.status === 'fulfilled' && Array.isArray(mlscResult.value)
+        ? mlscResult.value.map(safeEvent).filter(Boolean)
+        : []
+      return writeCache(monthCache, key, {
+        status: 'ok',
+        days: addMlscEventFlags(days, mlscEvents, range),
+      }, MONTH_CACHE_TTL)
+    })
     .catch(() => ({ status: 'error', days: {} }))
     .finally(() => monthRequests.delete(key))
 
@@ -121,4 +169,3 @@ export async function loadTentativeCalendarDate(date) {
   dateRequests.set(key, request)
   return request
 }
-

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './side_columns.css';
 import { loadAnnouncements, loadExamDates, loadCalendarOverrides } from '../lib/sidebar_feeds';
@@ -255,7 +255,7 @@ function useCachedFeed(key, loader) {
   return state
 }
 
-export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch }) {
+export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch, showLogo = false }) {
   // ─── Mini calendar ──────────────────────────────────────
   const today = useMemo(() => new Date(), []);
   const [visibleMonth, setVisibleMonth] = useState(
@@ -270,7 +270,7 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
 
   // hovered day → number (1..daysInMonth) or null
   const [hoveredDay, setHoveredDay] = useState(null);
-  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(() => today.getDate());
 
   // Sidebar feeds — backend with bundled fallback. Exam dates + calendar
   // overrides are filtered server-side by the currently-viewed batch
@@ -285,16 +285,49 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
   // Only the compact month summary is loaded here; full records are deferred
   // until the user opens a date.
   const campusMonthKey = `${year}-${month + 1}`;
+  const todayKey = useMemo(
+    () => ymdKey(today.getFullYear(), today.getMonth(), today.getDate()),
+    [today],
+  );
   const [campusMonthState, setCampusMonthState] = useState({
     key: '',
     status: 'loading',
     days: {},
   });
-  const [campusDateStates, setCampusDateStates] = useState({});
+  const [campusDateStates, setCampusDateStates] = useState(() => ({
+    [todayKey]: { status: 'loading', items: [] },
+  }));
+  const preserveSelectionForNextMonth = useRef(false);
+  useEffect(() => {
+    let alive = true;
+    loadTentativeCalendarDate(todayKey).then((result) => {
+      if (alive) {
+        setCampusDateStates((current) => ({ ...current, [todayKey]: result }));
+      }
+    });
+    return () => { alive = false; };
+  }, [todayKey]);
   useEffect(() => {
     let alive = true;
     loadTentativeCalendarMonth(year, month + 1).then((result) => {
-      if (alive) setCampusMonthState({ key: campusMonthKey, ...result });
+      if (!alive) return;
+      setCampusMonthState({ key: campusMonthKey, ...result });
+
+      if (!preserveSelectionForNextMonth.current) return;
+      preserveSelectionForNextMonth.current = false;
+      const firstEventDate = Object.keys(result.days || {}).sort()[0];
+      if (!firstEventDate) return;
+
+      setSelectedDay(Number(firstEventDate.slice(-2)));
+      setCampusDateStates((current) => ({
+        ...current,
+        [firstEventDate]: { status: 'loading', items: current[firstEventDate]?.items || [] },
+      }));
+      loadTentativeCalendarDate(firstEventDate).then((dateResult) => {
+        if (alive) {
+          setCampusDateStates((current) => ({ ...current, [firstEventDate]: dateResult }));
+        }
+      });
     });
     return () => { alive = false; };
   }, [campusMonthKey, month, year]);
@@ -319,6 +352,7 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
 
   const changeMonth = (offset) => {
     setHoveredDay(null);
+    preserveSelectionForNextMonth.current = selectedDay != null;
     setSelectedDay(null);
     setVisibleMonth((current) => (
       new Date(current.getFullYear(), current.getMonth() + offset, 1)
@@ -327,6 +361,8 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
 
   const showCurrentMonth = () => {
     setHoveredDay(null);
+    if (isCurrentMonth) return;
+    preserveSelectionForNextMonth.current = selectedDay != null;
     setSelectedDay(null);
     setVisibleMonth(new Date(today.getFullYear(), today.getMonth(), 1));
   };
@@ -351,7 +387,7 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
       year: 'numeric',
     });
 
-  const requestCampusDate = (dateKey) => {
+  const requestCampusDate = useCallback((dateKey) => {
     setCampusDateStates((current) => ({
       ...current,
       [dateKey]: { status: 'loading', items: current[dateKey]?.items || [] },
@@ -359,16 +395,14 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
     loadTentativeCalendarDate(dateKey).then((result) => {
       setCampusDateStates((current) => ({ ...current, [dateKey]: result }));
     });
-  };
+  }, []);
 
   const selectCalendarDay = (day, hasCampusEvents) => {
     setHoveredDay(null);
-    if (selectedDay === day) {
-      setSelectedDay(null);
-      return;
-    }
+    preserveSelectionForNextMonth.current = false;
     setSelectedDay(day);
-    if (hasCampusEvents) requestCampusDate(ymdKey(year, month, day));
+    const dateKey = ymdKey(year, month, day);
+    if (hasCampusEvents && !campusDateStates[dateKey]) requestCampusDate(dateKey);
   };
 
   // Whole-section dropdowns: collapsed by default so the sidebar feels calm
@@ -389,14 +423,15 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
 
   return (
     <div className={`sidebar-inner ${collapsed ? 'sidebar-inner--collapsed' : ''}`}>
-      {/* Fixed header */}
-      <div className="sidebar-header">
-        <Link to="/" className="sidebar-logo-container" aria-label="Go to home">
-          <div className="logo-img-wrapper">
-            <img src="/MLSC-logo.png" alt="MLSC Logo" className="sidebar-logo-img" />
-          </div>
-        </Link>
-      </div>
+      {showLogo && (
+        <div className="sidebar-header">
+          <Link to="/" className="sidebar-logo-container" aria-label="Go to home">
+            <div className="logo-img-wrapper">
+              <img src="/MLSC-logo.png" alt="MLSC Logo" className="sidebar-logo-img" />
+            </div>
+          </Link>
+        </div>
+      )}
 
       {/* Scrollable middle */}
       <div className="sidebar-scroll">
@@ -577,6 +612,7 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                 const override = overrideMap.get(dateKey);
                 const campusSummary = campusEventDays[dateKey];
                 const hasCampusEvents = Boolean(campusSummary?.hasEvent && campusSummary.count > 0);
+                const hasMlscEvent = Boolean(campusSummary?.hasMlscEvent);
                 const KIND_CLASS = {
                   holiday: 'calendar-day--holiday',
                   follow_day: 'calendar-day--follow',
@@ -603,42 +639,30 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                   ? `${presentation.label}${presentation.detail !== presentation.label ? ` · ${presentation.detail}` : ''}`
                   : (isWeekend ? 'No classes' : undefined);
                 const campusTitle = hasCampusEvents
-                  ? `${campusSummary.count} campus event${campusSummary.count === 1 ? '' : 's'}${campusSummary.hasConflict ? ' · scheduling conflict' : ''}`
+                  ? `${campusSummary.count} campus event${campusSummary.count === 1 ? '' : 's'}${hasMlscEvent ? ' · includes MLSC' : ''}${campusSummary.hasConflict ? ' · scheduling conflict' : ''}`
                   : '';
                 const title = [academicTitle, campusTitle].filter(Boolean).join(' · ') || undefined;
-                const className = `calendar-day ${isToday ? 'today' : ''} ${isHovered ? 'hovered' : ''} ${selectedDay === cell.day ? 'calendar-day--selected' : ''} ${overrideClass} ${dimClass} ${hasCampusEvents ? 'calendar-day--campus-event' : ''} ${campusSummary?.hasConflict ? 'calendar-day--campus-conflict' : ''}`;
-                if (override || hasCampusEvents) {
-                  return (
-                    <button
-                      type="button"
-                      key={cell.key}
-                      className={className}
-                      data-campus-event-count={hasCampusEvents ? campusSummary.count : undefined}
-                      onMouseEnter={() => setHoveredDay(cell.day)}
-                      onFocus={() => setHoveredDay(cell.day)}
-                      onBlur={() => setHoveredDay(null)}
-                      onClick={() => selectCalendarDay(cell.day, hasCampusEvents)}
-                      title={title}
-                      aria-label={`${cellDateLabel}. ${title}`}
-                      aria-expanded={selectedDay === cell.day}
-                    >
-                      {cell.day}
-                    </button>
-                  );
-                }
+                const className = `calendar-day ${isToday ? 'today' : ''} ${isHovered ? 'hovered' : ''} ${selectedDay === cell.day ? 'calendar-day--selected' : ''} ${overrideClass} ${dimClass} ${hasCampusEvents ? 'calendar-day--campus-event' : ''} ${hasMlscEvent ? 'calendar-day--mlsc-event' : ''} ${campusSummary?.hasConflict ? 'calendar-day--campus-conflict' : ''}`;
                 return (
-                  <span
+                  <button
+                    type="button"
                     key={cell.key}
                     className={className}
+                    data-campus-event-count={hasCampusEvents ? campusSummary.count : undefined}
                     onMouseEnter={() => setHoveredDay(cell.day)}
+                    onFocus={() => setHoveredDay(cell.day)}
+                    onBlur={() => setHoveredDay(null)}
+                    onClick={() => selectCalendarDay(cell.day, hasCampusEvents)}
                     title={title}
+                    aria-label={title ? `${cellDateLabel}. ${title}` : cellDateLabel}
+                    aria-pressed={selectedDay === cell.day}
                   >
                     {cell.day}
-                  </span>
+                  </button>
                 );
               })}
             </div>
-            {selectedDay != null && (selectedPresentation || selectedCampusSummary) && (
+            {selectedDay != null && (
               <div
                 className={`calendar-date-detail calendar-date-detail--${selectedOverride?.kind || 'campus'}`}
                 role="status"
@@ -655,8 +679,8 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                       {[
                         selectedPresentation?.label,
                         selectedCampusSummary
-                          ? `${selectedCampusSummary.count} campus event${selectedCampusSummary.count === 1 ? '' : 's'}`
-                          : '',
+                          ? `${selectedCampusSummary.count} campus event${selectedCampusSummary.count === 1 ? '' : 's'}${selectedCampusSummary.hasMlscEvent ? ' · MLSC' : ''}`
+                          : (campusMonthState.key !== campusMonthKey ? 'Checking campus events…' : 'No campus events'),
                       ].filter(Boolean).join(' · ')}
                     </span>
                   </div>
@@ -709,6 +733,11 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                     )}
                   </div>
                 )}
+                {!selectedCampusSummary && campusMonthState.key === campusMonthKey && (
+                  <div className="campus-event-details">
+                    <span className="campus-event-empty">No campus events on this date.</span>
+                  </div>
+                )}
               </div>
             )}
             {/* Legend — only shows swatches for kinds actually visible
@@ -718,10 +747,16 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                 <span className="calendar-legend-swatch calendar-legend-swatch--today" aria-hidden="true" />
                 Today
               </span>
-              {Object.keys(campusEventDays).length > 0 && (
+              {Object.values(campusEventDays).some((summary) => !summary.hasMlscEvent) && (
                 <span className="calendar-legend-item">
                   <span className="calendar-legend-swatch calendar-legend-swatch--campus" aria-hidden="true" />
                   Campus event
+                </span>
+              )}
+              {Object.values(campusEventDays).some((summary) => summary.hasMlscEvent) && (
+                <span className="calendar-legend-item">
+                  <span className="calendar-legend-swatch calendar-legend-swatch--mlsc" aria-hidden="true" />
+                  MLSC event
                 </span>
               )}
               {(() => {
@@ -852,7 +887,7 @@ export function DashboardLayout({ children, footer, onActiveWeekdayChange, heade
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
-          <SidebarContent batch={batch} />
+          <SidebarContent batch={batch} showLogo />
         </div>
       </div>
 

@@ -91,6 +91,41 @@ body:has(.dashboard-layout) {
 .sidebar-footer .profile-card {
   margin-top: 0;
   margin-bottom: 0;
+  padding: 10px 14px;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+}
+
+/* Keep the sidebar identity row isolated from the similarly named styles on
+   /profile. Those page-level rules are intentionally much larger and would
+   otherwise turn this compact footer into a vertical profile hero. */
+.sidebar-footer .profile-avatar {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-width: 1px;
+  box-shadow: none;
+}
+
+.sidebar-footer .profile-info {
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.sidebar-footer .profile-name {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.sidebar-footer .profile-subtitle {
+  flex: 0 1 auto;
+  max-width: 45%;
+  margin-top: 0;
 }
 
 /* Logo Section */
@@ -169,8 +204,10 @@ body:has(.dashboard-layout) {
 
 /* Mini Calendar */
 .calendar-card {
-  --calendar-campus-accent: #0078D4;
-  --calendar-campus-accent-soft: rgba(0, 120, 212, 0.11);
+  --calendar-campus-accent: #10B981;
+  --calendar-campus-accent-soft: rgba(16, 185, 129, 0.11);
+  --calendar-mlsc-accent: #0078D4;
+  --calendar-mlsc-accent-soft: rgba(0, 120, 212, 0.11);
   display: flex;
   flex-direction: column;
   flex: 0 0 auto;
@@ -410,9 +447,17 @@ button.calendar-day:focus-visible {
   background: #F97316;
 }
 
+.calendar-day--mlsc-event::after {
+  background: var(--calendar-mlsc-accent);
+}
+
 .calendar-day.today.calendar-day--campus-event::after {
-  background: #BAE6FD;
+  background: #D1FAE5;
   box-shadow: 0 0 0 1px rgba(30, 64, 175, 0.35);
+}
+
+.calendar-day.today.calendar-day--mlsc-event::after {
+  background: #BAE6FD;
 }
 
 /* Tapping a marked date opens a compact, persistent explanation. Hover
@@ -515,6 +560,15 @@ button.calendar-day:focus-visible {
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
+}
+
+/* In the fixed desktop sidebar, keep the legend above the pinned student
+   card and let only the event records scroll. The hamburger drawer retains
+   the original 250px list because it owns a separate full-height scroller. */
+@media (min-width: 769px) {
+  .dashboard-sidebar:not(.dashboard-sidebar--collapsed) .campus-event-list {
+    max-height: clamp(120px, 20dvh, 190px);
+  }
 }
 
 .campus-event-item {
@@ -707,6 +761,20 @@ button.calendar-day:focus-visible {
   inset: 3px;
   border-radius: 50%;
   background: var(--calendar-campus-accent);
+}
+
+.calendar-legend-swatch--mlsc {
+  position: relative;
+  border: 1px solid rgba(0, 120, 212, 0.48);
+  background: var(--calendar-mlsc-accent-soft);
+}
+
+.calendar-legend-swatch--mlsc::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--calendar-mlsc-accent);
 }
 
 /* ─── MST / EST / Assessment cells + swatches ─────────────────────────
@@ -1786,8 +1854,10 @@ button.calendar-day:focus-visible {
 }
 
 [data-theme="dark"] .calendar-card {
-  --calendar-campus-accent: #38BDF8;
-  --calendar-campus-accent-soft: rgba(56, 189, 248, 0.13);
+  --calendar-campus-accent: #34D399;
+  --calendar-campus-accent-soft: rgba(52, 211, 153, 0.13);
+  --calendar-mlsc-accent: #38BDF8;
+  --calendar-mlsc-accent-soft: rgba(56, 189, 248, 0.13);
 }
 
 [data-theme="dark"] .dashboard-card:hover {
@@ -1887,9 +1957,17 @@ button.calendar-day:focus-visible {
   background: #FB923C;
 }
 
+[data-theme="dark"] .calendar-day--mlsc-event::after {
+  background: var(--calendar-mlsc-accent);
+}
+
 [data-theme="dark"] .calendar-day.today.calendar-day--campus-event::after {
-  background: #E0F2FE;
+  background: #D1FAE5;
   box-shadow: 0 0 0 1px rgba(30, 64, 175, 0.4);
+}
+
+[data-theme="dark"] .calendar-day.today.calendar-day--mlsc-event::after {
+  background: #BAE6FD;
 }
 
 [data-theme="dark"] button.calendar-day:focus-visible {
