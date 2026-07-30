@@ -120,7 +120,6 @@
 }
 
 [data-card-theme="default"] .tt-card-meta {
-  width: 100%;
   padding-top: 7px;
   border-top: 1px solid rgba(15, 23, 42, 0.09);
 }

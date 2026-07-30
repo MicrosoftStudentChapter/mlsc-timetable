@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { useParams, useNavigate } from 'react-router-dom'
 import Combobox from '../components/Combobox'
 import TimetableGrid from '../components/TimetableGrid'
@@ -22,6 +23,7 @@ const CARD_THEME_KEY = 'mlsc-card-theme'
 const CARD_THEMES = [
   { value: 'default', label: 'Default' },
   { value: 'spiderman', label: 'Spider-Man 🕷️' },
+  { value: 'batman', label: 'Batman 🦇' },
 ]
 
 function getInitialCardTheme() {
@@ -403,56 +405,28 @@ export default function TimetablePage() {
       batch={batch}
       onActiveWeekdayChange={setActiveWeekdayIdx}
       footer={<Footer />}
+      headerActions={(
+        <TimetableToolbar
+          variant="header"
+          exportRef={exportRef}
+          batch={batch}
+          disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
+          cardTheme={cardTheme}
+          onCardThemeChange={setCardTheme}
+        />
+      )}
     >
       <div className="tt-content">
-        {/* Top Control Toolbar Row — permanent across desktop and mobile */}
-        <div className="tt-toolbar-row">
-          <div className="tt-toolbar-actions">
-            <ExportDropdownButton
-              format="png"
-              label="PNG"
-              icon={
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <polyline points="21 15 16 10 5 21"/>
-                </svg>
-              }
-              exportRef={exportRef}
-              batch={batch}
-              disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
-            />
-            <ExportDropdownButton
-              format="pdf"
-              label="PDF"
-              icon={
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13"/>
-                  <line x1="16" y1="17" x2="8" y2="17"/>
-                  <polyline points="10 9 9 9 8 9"/>
-                </svg>
-              }
-              exportRef={exportRef}
-              batch={batch}
-              disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
-            />
-          </div>
-          <label className="tt-card-theme-picker">
-            <span className="tt-card-theme-label">Card</span>
-            <select
-              className="tt-card-theme-select"
-              value={cardTheme}
-              onChange={(e) => setCardTheme(e.target.value)}
-              aria-label="Card"
-            >
-              {CARD_THEMES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
-          </label>
-        </div>
+        {/* DashboardLayout hides its header actions on mobile, so this compact
+            mirror keeps exports and card selection available below it. */}
+        <TimetableToolbar
+          variant="mobile"
+          exportRef={exportRef}
+          batch={batch}
+          disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
+          cardTheme={cardTheme}
+          onCardThemeChange={setCardTheme}
+        />
         {/* Follow-day alert — shown on desktop AND mobile, but only when
             the current batch has an override in the next 7 days. Component
             returns null when there's nothing to surface. */}
@@ -637,6 +611,58 @@ export default function TimetablePage() {
   )
 }
 
+function TimetableToolbar({ variant, exportRef, batch, disabled, cardTheme, onCardThemeChange }) {
+  return (
+    <div className={`tt-toolbar-row tt-toolbar-row--${variant}`}>
+      <div className="tt-toolbar-actions">
+        <ExportDropdownButton
+          format="png"
+          label="PNG"
+          icon={(
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+          )}
+          exportRef={exportRef}
+          batch={batch}
+          disabled={disabled}
+        />
+        <ExportDropdownButton
+          format="pdf"
+          label="PDF"
+          icon={(
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+          )}
+          exportRef={exportRef}
+          batch={batch}
+          disabled={disabled}
+        />
+      </div>
+      <label className="tt-card-theme-picker">
+        <span className="tt-card-theme-label">Card</span>
+        <select
+          className="tt-card-theme-select"
+          value={cardTheme}
+          onChange={(event) => onCardThemeChange(event.target.value)}
+          aria-label="Card"
+        >
+          {CARD_THEMES.map((theme) => (
+            <option key={theme.value} value={theme.value}>{theme.label}</option>
+          ))}
+        </select>
+      </label>
+    </div>
+  )
+}
+
 // Renders the right thing for each fetch state. Falls back to the grid's
 // hard-coded fixture when no backend is configured (dev convenience).
 function TimetableContent({ state, batch, isDark, cardTheme, isSignedIn, activeWeekdayIdx, onReloadTimetable }) {
@@ -703,6 +729,7 @@ function ExportDropdownButton({ format, label, icon, exportRef, batch, disabled 
   const [busy, setBusy] = useState(null)
   const [error, setError] = useState(null)
   const wrapRef = useRef(null)
+  const menuRef = useRef(null)
   const [menuStyle, setMenuStyle] = useState(null)
 
   useEffect(() => {
@@ -737,7 +764,11 @@ function ExportDropdownButton({ format, label, icon, exportRef, batch, disabled 
   useEffect(() => {
     if (!open) return
     const onDown = (e) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false)
+      if (
+        wrapRef.current
+        && !wrapRef.current.contains(e.target)
+        && !menuRef.current?.contains(e.target)
+      ) setOpen(false)
     }
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
     document.addEventListener('pointerdown', onDown)
@@ -790,8 +821,8 @@ function ExportDropdownButton({ format, label, icon, exportRef, batch, disabled 
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </button>
-      {open && (
-        <div className="tt-export-menu" role="menu" style={menuStyle || undefined}>
+      {open && menuStyle && createPortal(
+        <div ref={menuRef} className="tt-export-menu" role="menu" style={menuStyle}>
           <div className="tt-export-menu-header">{label} Ratio</div>
           {options.map((opt) => (
             <button
@@ -806,7 +837,8 @@ function ExportDropdownButton({ format, label, icon, exportRef, batch, disabled 
             </button>
           ))}
           {error && <p className="tt-export-menu-error">{error}</p>}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   )

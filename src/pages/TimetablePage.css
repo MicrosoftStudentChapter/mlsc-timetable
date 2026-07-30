@@ -80,10 +80,9 @@
   display: none;
 }
 
-/* Mobile-only card-style picker row — the picker in the header is hidden
-   on mobile via .header-actions display:none, so mirror it here below the
-   header. Hidden on desktop where the header still shows the picker. */
-/* ── Top Control Toolbar Row — permanent across desktop and mobile ── */
+/* Desktop controls live inside the welcome header, making the header and
+   notice the only two rows above the timetable. The mirrored mobile row is
+   revealed only when DashboardLayout hides header actions. */
 .tt-toolbar-row {
   display: flex;
   align-items: center;
@@ -94,6 +93,18 @@
   margin: -6px 0 14px;
   position: relative;
   z-index: 50;
+}
+
+.tt-toolbar-row--header {
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  padding: 0;
+  margin: 0;
+  gap: 14px;
+}
+
+.tt-toolbar-row--mobile {
+  display: none;
 }
 
 .tt-toolbar-actions {
@@ -148,10 +159,14 @@
   box-shadow: 0 3px 12px rgba(59, 130, 246, 0.3);
 }
 
-@media (max-width: 480px) {
-  .tt-toolbar-row {
+@media (max-width: 768px) {
+  .tt-toolbar-row--mobile {
+    display: flex;
+    margin: -2px 0 12px;
+    padding-top: 0;
     justify-content: center;
   }
+
   .tt-toolbar-actions {
     justify-content: center;
   }
@@ -200,6 +215,7 @@
   position: fixed;
   top: auto;
   right: auto;
+  box-sizing: border-box;
   min-width: 175px;
   padding: 6px;
   background: #ffffff;

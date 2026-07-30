@@ -30,6 +30,8 @@ body:has(.dashboard-layout) {
 
 /* Base Layout */
 .dashboard-layout {
+  --dashboard-footer-height: calc(4.7rem + 1px);
+  --dashboard-main-gutter: 24px;
   display: flex;
   height: 100vh;
   height: 100dvh;
@@ -45,7 +47,9 @@ body:has(.dashboard-layout) {
   flex-shrink: 0;
   background: #eef1f5;
   border-right: 1px solid rgba(0, 0, 0, 0.06);
-  padding: 24px;
+  /* The main footer is flush with the viewport bottom. Reserve its exact
+     height inside the sidebar too so the profile card shares its centerline. */
+  padding: 24px 24px 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -81,11 +85,49 @@ body:has(.dashboard-layout) {
   padding-right: 2px;
 }
 
+/* The desktop sidebar and timetable share the same vertical content track.
+   Keeping the sidebar middle as a flex column lets the calendar consume the
+   space left by the two compact sections above it. */
+@media (min-width: 769px) {
+  .dashboard-sidebar .sidebar-scroll {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 .sidebar-footer {
   flex-shrink: 0;
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Desktop sidebar footer mirrors the 73px main footer instead of sitting
+   above the sidebar's old 24px bottom padding. The drawer keeps its original
+   spacing because it is not inside .dashboard-sidebar. */
+.dashboard-sidebar .sidebar-footer {
+  /* Footer.css uses 1.625rem block padding plus the inherited 1.45rem line
+     box. Mirroring that computed height keeps both centers aligned at every
+     root font-size breakpoint. */
+  height: var(--dashboard-footer-height);
+  min-height: var(--dashboard-footer-height);
+  box-sizing: border-box;
+  margin-top: 0;
+  padding-top: 0;
+  display: flex;
+  align-items: center;
+}
+
+.dashboard-sidebar .sidebar-footer .profile-card {
+  width: 100%;
+}
+
+/* Lock both sides to the same footer box so their 1px top dividers form one
+   continuous horizontal rule across the complete dashboard. */
+.dashboard-column > .footer {
+  height: var(--dashboard-footer-height);
+  min-height: var(--dashboard-footer-height);
+  box-sizing: border-box;
 }
 
 .sidebar-footer .profile-card {
@@ -126,6 +168,21 @@ body:has(.dashboard-layout) {
   flex: 0 1 auto;
   max-width: 45%;
   margin-top: 0;
+  margin-left: 2px;
+  padding-left: 10px;
+  position: relative;
+}
+
+.sidebar-footer .profile-subtitle::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.22);
+  transform: translateY(-50%);
 }
 
 /* Logo Section */
@@ -210,13 +267,52 @@ body:has(.dashboard-layout) {
   --calendar-mlsc-accent-soft: rgba(0, 120, 212, 0.11);
   display: flex;
   flex-direction: column;
-  flex: 0 0 auto;
+  flex: 0 1 auto;
   height: auto;
   min-height: max-content;
   overflow: visible;
   /* Height is content-driven, so normal card spacing is sufficient once the
      calendar is prevented from shrinking. */
   padding-bottom: 18px;
+}
+
+@media (min-width: 769px) {
+  .dashboard-sidebar:not(.dashboard-sidebar--collapsed) .calendar-card {
+    flex: 1 1 auto;
+    /* Retain the collapsed pill's floor while the inner calendar reveals;
+       otherwise the card briefly dips below 60px at expansion start. */
+    min-height: 60px;
+    /* Match the timetable frame's bottom edge: both columns now reserve the
+       same responsive main-content gutter above their aligned footers. */
+    margin-bottom: var(--dashboard-main-gutter);
+    overflow: hidden;
+  }
+
+  .dashboard-sidebar:not(.dashboard-sidebar--collapsed) .calendar-card .mini-calendar {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 1000px;
+  }
+
+  .dashboard-sidebar:not(.dashboard-sidebar--collapsed) .calendar-date-detail {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+  }
+
+  .dashboard-sidebar:not(.dashboard-sidebar--collapsed) .calendar-date-detail .campus-event-details {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+  }
+
+  .dashboard-sidebar:not(.dashboard-sidebar--collapsed) .calendar-date-detail .campus-event-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+  }
 }
 
 .calendar-header {
@@ -255,7 +351,7 @@ body:has(.dashboard-layout) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #6B7280;
+  color: #475569;
   flex: 0 0 auto;
 }
 
@@ -272,7 +368,7 @@ body:has(.dashboard-layout) {
   text-align: center;
   font-size: 12px;
   font-weight: 600;
-  color: #c9d6ef;
+  color: #334155;
   white-space: nowrap;
 }
 
@@ -302,7 +398,7 @@ body:has(.dashboard-layout) {
   text-align: center;
   font-size: 10px;
   font-weight: 700;
-  color: #99b3e8;
+  color: #64748B;
   margin-bottom: 4px;
 }
 
@@ -314,7 +410,7 @@ body:has(.dashboard-layout) {
 }
 
 .calendar-weekday.active {
-  color: #6366F1;
+  color: #2563EB;
 }
 
 .calendar-grid {
@@ -333,7 +429,7 @@ body:has(.dashboard-layout) {
   font-family: inherit;
   font-size: 11px;
   font-weight: 500;
-  color: #6B7280;
+  color: #475569;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -458,6 +554,51 @@ button.calendar-day:focus-visible {
 
 .calendar-day.today.calendar-day--mlsc-event::after {
   background: #BAE6FD;
+}
+
+/* Portalled day tooltip: fixed viewport coordinates keep it attached to the
+   hovered date even when the sidebar clips, scrolls, or changes width. */
+.calendar-day-tooltip {
+  position: fixed;
+  z-index: 2600;
+  width: max-content;
+  max-width: min(220px, calc(100vw - 24px));
+  padding: 6px 8px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 7px;
+  background: #111827;
+  color: #F8FAFC;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+}
+
+.calendar-day-tooltip::after {
+  content: '';
+  position: absolute;
+  left: calc(50% + var(--calendar-tooltip-arrow-offset, 0px));
+  bottom: -4px;
+  width: 7px;
+  height: 7px;
+  background: inherit;
+  border-right: 1px solid rgba(15, 23, 42, 0.12);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+[data-theme="dark"] .calendar-day-tooltip {
+  border-color: rgba(255, 255, 255, 0.13);
+  background: #F8FAFC;
+  color: #0F172A;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .calendar-day-tooltip::after {
+  border-color: rgba(255, 255, 255, 0.13);
 }
 
 /* Tapping a marked date opens a compact, persistent explanation. Hover
@@ -608,7 +749,7 @@ button.calendar-day:focus-visible {
 .campus-event-society {
   display: block;
   margin-top: 2px;
-  color: #6B7280;
+  color: #64748B;
   font-size: 9px;
   line-height: 1.35;
 }
@@ -638,7 +779,7 @@ button.calendar-day:focus-visible {
   display: -webkit-box;
   overflow: hidden;
   margin: 6px 0 0;
-  color: #6B7280;
+  color: #4B5563;
   font-size: 9px;
   line-height: 1.4;
   -webkit-box-orient: vertical;
@@ -648,7 +789,7 @@ button.calendar-day:focus-visible {
 .campus-event-loading,
 .campus-event-error,
 .campus-event-empty {
-  color: #6B7280;
+  color: #4B5563;
   font-size: 9.5px;
   line-height: 1.4;
 }
@@ -696,12 +837,19 @@ button.calendar-day:focus-visible {
    overrides. Weekends WITH a follow_day override skip this class and
    keep their blue ring. */
 .calendar-day--dim {
-  color: rgba(107, 114, 128, 0.45);
+  color: #94A3B8;
 }
 .calendar-day--dim:hover,
 .calendar-day--dim.hovered {
   background: rgba(99, 102, 241, 0.06);
-  color: rgba(107, 114, 128, 0.7);
+  color: #64748B;
+}
+
+/* A selected event on Saturday/Sunday must remain legible instead of
+   inheriting the extra-muted weekend text treatment. */
+.calendar-day--selected.calendar-day--dim {
+  color: #475569;
+  font-weight: 600;
 }
 
 /* ─── Legend ───────────────────────────────────────────────────────────
@@ -717,7 +865,7 @@ button.calendar-day:focus-visible {
   border-top: 1px dashed rgba(0, 0, 0, 0.06);
   font-size: 10.5px;
   line-height: 1.45;
-  color: #6B7280;
+  color: #475569;
 }
 
 .calendar-legend-item {
@@ -923,7 +1071,7 @@ button.calendar-day:focus-visible {
 
 .profile-subtitle {
   font-size: 11px;
-  color: #9CA3AF;
+  color: #64748B;
   line-height: 1.2;
   margin-top: 2px;
   overflow: hidden;
@@ -953,11 +1101,12 @@ button.calendar-day:focus-visible {
   /* Roomy padding on wide desktops; shrinks progressively on narrower
      viewports so the grid gets more horizontal real estate and the JS
      zoom-to-fit doesn't have to shrink content as aggressively. */
-  padding: 24px;
+  padding: var(--dashboard-main-gutter);
   overflow: visible;
-}@media (max-width: 1280px) { .dashboard-main { padding: 18px; } }
-@media (max-width: 1024px) { .dashboard-main { padding: 14px; } }
-@media (max-width: 768px)  { .dashboard-main { padding: 10px; } }
+}
+@media (max-width: 1280px) { .dashboard-layout { --dashboard-main-gutter: 18px; } }
+@media (max-width: 1024px) { .dashboard-layout { --dashboard-main-gutter: 14px; } }
+@media (max-width: 768px)  { .dashboard-layout { --dashboard-main-gutter: 10px; } }
 
 /* Header Section styling — fancy card look on desktop AND mobile. */
 .dashboard-header {
@@ -1268,7 +1417,7 @@ button.calendar-day:focus-visible {
 }
 .dashboard-sidebar--collapsed {
   width: 72px;
-  padding: 24px 10px;
+  padding: 24px 10px 0;
   transition: width var(--sb-phase) var(--sb-ease),
               padding var(--sb-phase) var(--sb-ease);
 }
@@ -1283,24 +1432,38 @@ button.calendar-day:focus-visible {
 }
 
 .sidebar-logo-container,
-.logo-img-wrapper,
 .dashboard-card {
   transition: padding var(--sb-phase) var(--sb-ease),
               margin var(--sb-phase) var(--sb-ease),
-              border-radius var(--sb-phase) var(--sb-ease),
-              width var(--sb-phase) var(--sb-ease),
+              border-radius var(--sb-phase) var(--sb-ease);
+}
+.logo-img-wrapper {
+  transition: width var(--sb-phase) var(--sb-ease),
               height var(--sb-phase) var(--sb-ease),
-              gap var(--sb-phase) var(--sb-ease);
+              margin var(--sb-phase) var(--sb-ease);
 }
 .dashboard-sidebar--collapsed .sidebar-logo-container,
-.dashboard-sidebar--collapsed .logo-img-wrapper,
 .dashboard-sidebar--collapsed .dashboard-card {
   transition: padding var(--sb-phase) var(--sb-ease),
               margin var(--sb-phase) var(--sb-ease),
-              border-radius var(--sb-phase) var(--sb-ease),
-              width var(--sb-phase) var(--sb-ease),
+              border-radius var(--sb-phase) var(--sb-ease);
+}
+.dashboard-sidebar--collapsed .logo-img-wrapper {
+  transition: width var(--sb-phase) var(--sb-ease),
               height var(--sb-phase) var(--sb-ease),
-              gap var(--sb-phase) var(--sb-ease);
+              margin var(--sb-phase) var(--sb-ease);
+}
+
+/* Keep the calendar in the same flex formatting context in both states.
+   Only its grow factor changes, so it contracts continuously instead of
+   snapping from a flex column back to normal block layout mid-animation. */
+@media (min-width: 769px) {
+  .dashboard-sidebar .calendar-card {
+    transition: flex-grow var(--sb-phase) var(--sb-ease),
+                padding var(--sb-phase) var(--sb-ease),
+                margin var(--sb-phase) var(--sb-ease),
+                border-radius var(--sb-phase) var(--sb-ease);
+  }
 }
 
 /* ── Body content: fade with the resize; reveal slightly after it starts. */
@@ -2058,6 +2221,10 @@ button.calendar-day:focus-visible {
   color: rgba(255, 255, 255, 0.65); /* secondary text color */
 }
 
+[data-theme="dark"] .sidebar-footer .profile-subtitle::before {
+  background: rgba(255, 255, 255, 0.16);
+}
+
 /* ─── Main panel ─────────────────────────────────────────────── */
 [data-theme="dark"] .dashboard-main {
   background: #050505;
@@ -2154,6 +2321,7 @@ button.calendar-day:focus-visible {
 /* The whole card collapses; header (title row) is the trigger,
    body holds an internally-scrollable list. */
 .section-card {
+  flex: 0 0 auto;
   padding: 0;
   overflow: hidden;
 }

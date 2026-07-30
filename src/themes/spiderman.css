@@ -76,9 +76,9 @@
 
 /* 1. Lectures: Classic Spidey (Red Background + Black Badge) */
 [data-card-theme="spiderman"] .tt-class-card[data-type="Lecture"] {
-  background-color: #ffebeb;
+  background-color: #efa6b2;
   border: 1px solid rgba(229, 9, 20, 0.08);
-  border-left: 4px solid #e50914;
+  border-left: 4px solid #e50914 !important;
   box-shadow: 0 2px 8px rgba(229, 9, 20, 0.04);
 }
 [data-card-theme="spiderman"] .tt-class-card[data-type="Lecture"]::before {
@@ -88,8 +88,8 @@
   filter: brightness(0.2) saturate(0.2); /* Classic Spidey Black/charcoal spider */
 }
 [data-card-theme="spiderman"] .tt-class-card[data-type="Lecture"] .tt-type-badge {
-  color: #e50914;
-  background: rgba(229, 9, 20, 0.08);
+  color: #ffe4e6;
+  background: #991b1b;
 }
 [data-card-theme="spiderman"] .tt-class-card[data-type="Lecture"] .tt-card-subject {
   color: #1e1b4b;
@@ -97,9 +97,9 @@
 
 /* 2. Tutorials: Miles Morales (Charcoal Background + Red Badge) */
 [data-card-theme="spiderman"] .tt-class-card[data-type="Tutorial"] {
-  background-color: #f4f4f5;
+  background-color: #bfc5ce;
   border: 1px solid rgba(24, 24, 27, 0.08);
-  border-left: 4px solid #e50914;
+  border-left: 4px solid #1f2937 !important;
   box-shadow: 0 2px 8px rgba(24, 24, 27, 0.04);
 }
 [data-card-theme="spiderman"] .tt-class-card[data-type="Tutorial"]::before {
@@ -109,18 +109,18 @@
   filter: brightness(0.2) saturate(0.2); /* Dark charcoal/black spider */
 }
 [data-card-theme="spiderman"] .tt-class-card[data-type="Tutorial"] .tt-type-badge {
-  color: #e50914;
-  background: rgba(229, 9, 20, 0.08);
+  color: #fecaca;
+  background: #27272a;
 }
 [data-card-theme="spiderman"] .tt-class-card[data-type="Tutorial"] .tt-card-subject {
   color: #18181b;
 }
 
-/* 3. Practicals: Iron Spider (Gold Background + Gold Accent - Tony Stark Theme) */
+/* 3. Practicals: Iron Spider (Copper-red Background + Gold Accent) */
 [data-card-theme="spiderman"] .tt-class-card[data-type="Practical"] {
-  background-color: #ffebeb;
+  background-color: #dfa487;
   border: 1px solid rgba(217, 119, 6, 0.08);
-  border-left: 4px solid #d97706;
+  border-left: 4px solid #d97706 !important;
   box-shadow: 0 2px 8px rgba(217, 119, 6, 0.04);
 }
 [data-card-theme="spiderman"] .tt-class-card[data-type="Practical"]::before {
@@ -130,8 +130,8 @@
   filter: hue-rotate(15deg) saturate(2.5) brightness(0.9); /* Gold spider */
 }
 [data-card-theme="spiderman"] .tt-class-card[data-type="Practical"] .tt-type-badge {
-  color: #d97706;
-  background: rgba(217, 119, 6, 0.08);
+  color: #ffedd5;
+  background: #9a3412;
 }
 [data-card-theme="spiderman"] .tt-class-card[data-type="Practical"] .tt-card-subject {
   color: #451a03;
@@ -144,7 +144,7 @@
 [data-theme="dark"] [data-card-theme="spiderman"] .tt-class-card[data-type="Lecture"] {
   background-color: #3d1216;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-left-color: #ef4444;
+  border-left-color: #ef4444 !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 [data-theme="dark"] [data-card-theme="spiderman"] .tt-class-card[data-type="Lecture"]::before {
@@ -172,7 +172,7 @@
 [data-theme="dark"] [data-card-theme="spiderman"] .tt-class-card[data-type="Tutorial"] {
   background-color: #121215;
   border: 1px solid rgba(255, 255, 255, 0.04);
-  border-left-color: #ef4444; /* Miles Morales signature red slash */
+  border-left-color: #ef4444 !important; /* Miles Morales signature red slash */
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 [data-theme="dark"] [data-card-theme="spiderman"] .tt-class-card[data-type="Tutorial"]::before {
@@ -200,7 +200,7 @@
 [data-theme="dark"] [data-card-theme="spiderman"] .tt-class-card[data-type="Practical"] {
   background-color: #4c0606;
   border: 1px solid rgba(255, 255, 255, 0.04);
-  border-left-color: #ffd700;
+  border-left-color: #ffd700 !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 [data-theme="dark"] [data-card-theme="spiderman"] .tt-class-card[data-type="Practical"]::before {
@@ -304,19 +304,27 @@
   z-index: 1;
 }
 
+/* Web-blue keeps teacher codes distinct from the theme's red card accents. */
+[data-card-theme="spiderman"] .tt-card-teacher {
+  color: #075985;
+}
+
+[data-theme="dark"] [data-card-theme="spiderman"] .tt-card-teacher {
+  color: #7dd3fc;
+}
+
 /* Match the Default card's information hierarchy without changing any
    Spider-Man palette values: teacher/location sit below a full-width divider. */
 [data-card-theme="spiderman"] .tt-card-meta {
   position: relative;
   z-index: 1;
-  width: 100%;
   padding-top: 7px;
   border-top: 1px solid color-mix(in srgb, currentColor 11%, transparent);
 }
 
 /* 1. Lectures: Red card + Solid Black Room Badge */
 [data-card-theme="spiderman"] .tt-class-card[data-type="Lecture"] .tt-card-code {
-  color: rgba(229, 9, 20, 0.65);
+  color: #7f1d1d;
 }
 [data-card-theme="spiderman"] .tt-class-card[data-type="Lecture"] .tt-card-room {
   color: #ffffff;
@@ -331,7 +339,7 @@
 
 /* 2. Tutorials: Charcoal card + Solid Red Room Badge */
 [data-card-theme="spiderman"] .tt-class-card[data-type="Tutorial"] .tt-card-code {
-  color: rgba(229, 9, 20, 0.65);
+  color: #3f3f46;
 }
 [data-card-theme="spiderman"] .tt-class-card[data-type="Tutorial"] .tt-card-room {
   color: #ffffff;
@@ -346,7 +354,7 @@
 
 /* 3. Practicals: Iron Spider card + Solid Gold Room Badge */
 [data-card-theme="spiderman"] .tt-class-card[data-type="Practical"] .tt-card-code {
-  color: rgba(217, 119, 6, 0.65);
+  color: #7c2d12;
 }
 [data-card-theme="spiderman"] .tt-class-card[data-type="Practical"] .tt-card-room {
   color: #ffffff;

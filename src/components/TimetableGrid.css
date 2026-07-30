@@ -477,6 +477,10 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 3px;
+  /* Shared card geometry: the right side reserves extra room for edit/drag
+     controls, so extend metadata dividers into that space. Themes only own
+     the divider colour; its balanced 14px edge spacing stays consistent. */
+  width: calc(100% + 9px);
   margin: auto 0 2px;
 }
 
@@ -1039,6 +1043,83 @@ select.tt-editor-input {
     touch-action: auto;
     overscroll-behavior: auto;
   }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT MODE CONTRAST
+   Keep card fills theme-owned while giving the timetable scaffold enough
+   definition to remain readable against the white page.
+   ═══════════════════════════════════════════════════════════════ */
+[data-theme="light"] .tt-grid-frame::before {
+  border-color: rgba(71, 85, 105, 0.58);
+}
+
+[data-theme="light"] .tt-time-header-cell,
+[data-theme="light"] .tt-day-header-cell {
+  background: #F8FAFC;
+  border-bottom-color: rgba(71, 85, 105, 0.18);
+}
+
+[data-theme="light"] .tt-time-header-cell {
+  border-right-color: rgba(71, 85, 105, 0.15);
+}
+
+[data-theme="light"] .tt-day-header-cell.tt-day-active {
+  background-color: #F8FAFC;
+  background-image: linear-gradient(rgba(37, 99, 235, 0.07), rgba(37, 99, 235, 0.07));
+}
+
+[data-theme="light"] .tt-batch-header-label {
+  color: #475569;
+}
+
+[data-theme="light"] .tt-day-header-label {
+  color: #64748B;
+}
+
+[data-theme="light"] .tt-day-header-cell.tt-day-active .tt-day-header-label {
+  color: #005EA8;
+}
+
+[data-theme="light"] .tt-time-cell {
+  background: #F8FAFC;
+  border-right-color: rgba(71, 85, 105, 0.15);
+}
+
+[data-theme="light"] .tt-time-label {
+  color: #1F2937;
+}
+
+[data-theme="light"] .tt-slot-cell::before {
+  background: rgba(71, 85, 105, 0.14);
+}
+
+[data-theme="light"] .tt-slot-cell.tt-col-active {
+  background: rgba(37, 99, 235, 0.045);
+}
+
+[data-theme="light"] .tt-add-btn,
+[data-theme="light"] .tt-add-btn--mini {
+  color: #64748B;
+  opacity: 0.46;
+}
+
+[data-theme="light"] .tt-slot-cell:hover .tt-add-btn,
+[data-theme="light"] .tt-slot-cell:hover .tt-add-btn--mini {
+  opacity: 0.78;
+}
+
+[data-theme="light"] .tt-edit-btn,
+[data-theme="light"] .tt-drag-btn {
+  color: #475569;
+  background: rgba(248, 250, 252, 0.78);
+  opacity: 0.76;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.14);
+}
+
+[data-theme="light"] .tt-watermark-logo {
+  opacity: 0.36;
 }
 
 

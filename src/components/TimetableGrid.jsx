@@ -784,13 +784,23 @@ function ElectivePicker({ entry, rect, triggerElement, onChoose, onClose }) {
 }
 
 // ─── ClassCard ────────────────────────────────────────────────────────────────
-function getCardSvgIndex(subject, code, room, type) {
+function getCardSvgHash(subject, code, room, type) {
   const str = `${subject || ''}-${code || ''}-${room || ''}-${type || ''}`
   let hash = 0
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash)
   }
-  return Math.abs(hash) % 6
+  return Math.abs(hash)
+}
+
+function getCardSvgIndex(subject, code, room, type) {
+  return getCardSvgHash(subject, code, room, type) % 6
+}
+
+const BATMAN_CHARACTER_INDICES = [0, 1, 2, 4, 5]
+function getBatmanCharacterIndex(subject, code, room, type) {
+  const hash = getCardSvgHash(subject, code, room, type)
+  return BATMAN_CHARACTER_INDICES[hash % BATMAN_CHARACTER_INDICES.length]
 }
 
 function ClassCard({
@@ -851,6 +861,7 @@ function ClassCard({
       data-type={entry.type}
       data-dragging={isDragging || undefined}
       data-spidey-index={getCardSvgIndex(entry.subject, entry.code, entry.room, entry.type)}
+      data-batman-index={getBatmanCharacterIndex(entry.subject, entry.code, entry.room, entry.type)}
       data-elective-group={isElectiveGroup || undefined}
       data-elective-unresolved={isUnresolvedCurriculumElective || undefined}
       data-alternate-state={alternateStatus?.state || undefined}
@@ -1180,25 +1191,7 @@ export default function TimetableGrid({
     return DAYS.indexOf(highlightDay)
   }, [activeWeekdayIdx, highlightDay])
 
-  // Measure the active column's actual layout offset. Using bounding-rect
-  // widths here is incorrect when the table has CSS zoom applied on narrow
-  // screens: the rect is zoomed, while the transform is in layout pixels.
   const headerRowRef = useRef(null)
-  const [pillOffset, setPillOffset] = useState(0)
-  useLayoutEffect(() => {
-    const row = headerRowRef.current
-    if (!row) return
-    const measure = () => {
-      const dayCells = row.querySelectorAll('.tt-day-header-cell')
-      if (dayCells.length > 1) {
-        setPillOffset(dayCells[1].offsetLeft - dayCells[0].offsetLeft)
-      }
-    }
-    measure()
-    const ro = new ResizeObserver(measure)
-    ro.observe(row)
-    return () => ro.disconnect()
-  }, [])
 
   // ── Body-only zoom-to-fit ───────────────────────────────────────────────
   // Scale the grid down when the frame is narrower than the grid's target
@@ -1230,9 +1223,20 @@ export default function TimetableGrid({
       setBodyZoom((prev) => (Math.abs(prev - k) < 0.005 ? prev : Math.round(k * 1000) / 1000))
     }
     measure()
-    const ro = new ResizeObserver(measure)
+    let settleTimer = null
+    const scheduleMeasure = () => {
+      window.clearTimeout(settleTimer)
+      // Sidebar resizing used to update React on every animation frame,
+      // forcing the full timetable to render dozens of times. Let CSS resize
+      // fluidly, then update zoom once the width has settled.
+      settleTimer = window.setTimeout(measure, 90)
+    }
+    const ro = new ResizeObserver(scheduleMeasure)
     ro.observe(frame)
-    return () => ro.disconnect()
+    return () => {
+      ro.disconnect()
+      window.clearTimeout(settleTimer)
+    }
   }, [])
 
   // Build day → slot → entries lookup from live state
@@ -1680,7 +1684,7 @@ export default function TimetableGrid({
                 pillIdx is null (Saturday with no mapping, Sunday, etc.). */}
             <div
               className={`tt-day-active-pill ${pillIdx == null ? 'tt-day-active-pill--hidden' : ''}`}
-              style={{ transform: `translateX(${pillIdx == null ? 0 : pillIdx * pillOffset}px)` }}
+              style={{ transform: `translateX(${pillIdx == null ? 0 : pillIdx * 100}%)` }}
               aria-hidden="true"
             />
             <div className="tt-time-header-cell">

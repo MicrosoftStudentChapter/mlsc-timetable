@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo, useCallback, useRef, memo } from 'react';
+import { useState, useEffect, useLayoutEffect, useMemo, useCallback, useRef, memo } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import './side_columns.css';
 import { loadAnnouncements, loadExamDates, loadCalendarOverrides } from '../lib/sidebar_feeds';
@@ -270,7 +271,51 @@ export const SidebarContent = memo(function SidebarContent({ onActiveWeekdayChan
 
   // hovered day → number (1..daysInMonth) or null
   const [hoveredDay, setHoveredDay] = useState(null);
+  const [dayTooltip, setDayTooltip] = useState(null);
+  const dayTooltipRef = useRef(null);
   const [selectedDay, setSelectedDay] = useState(() => today.getDate());
+
+  const showDayTooltip = useCallback((day, text, element) => {
+    setHoveredDay(day);
+    if (!text || !element) {
+      setDayTooltip(null);
+      return;
+    }
+    const rect = element.getBoundingClientRect();
+    setDayTooltip({
+      day,
+      text,
+      anchorX: rect.left + rect.width / 2,
+      left: rect.left + rect.width / 2,
+      arrowOffset: 0,
+      top: Math.max(8, rect.top - 8),
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    const tooltip = dayTooltipRef.current;
+    if (!dayTooltip || !tooltip) return;
+    const halfWidth = tooltip.offsetWidth / 2;
+    const edgeGap = 8;
+    const left = Math.min(
+      window.innerWidth - halfWidth - edgeGap,
+      Math.max(halfWidth + edgeGap, dayTooltip.anchorX),
+    );
+    const arrowOffset = dayTooltip.anchorX - left;
+    if (Math.abs(left - dayTooltip.left) < 0.5 && Math.abs(arrowOffset - dayTooltip.arrowOffset) < 0.5) return;
+    setDayTooltip((current) => current && ({ ...current, left, arrowOffset }));
+  }, [dayTooltip]);
+
+  useEffect(() => {
+    if (!dayTooltip) return undefined;
+    const hideTooltip = () => setDayTooltip(null);
+    window.addEventListener('resize', hideTooltip);
+    window.addEventListener('scroll', hideTooltip, true);
+    return () => {
+      window.removeEventListener('resize', hideTooltip);
+      window.removeEventListener('scroll', hideTooltip, true);
+    };
+  }, [dayTooltip]);
 
   // Sidebar feeds — backend with bundled fallback. Exam dates + calendar
   // overrides are filtered server-side by the currently-viewed batch
@@ -352,6 +397,7 @@ export const SidebarContent = memo(function SidebarContent({ onActiveWeekdayChan
 
   const changeMonth = (offset) => {
     setHoveredDay(null);
+    setDayTooltip(null);
     preserveSelectionForNextMonth.current = selectedDay != null;
     setSelectedDay(null);
     setVisibleMonth((current) => (
@@ -361,6 +407,7 @@ export const SidebarContent = memo(function SidebarContent({ onActiveWeekdayChan
 
   const showCurrentMonth = () => {
     setHoveredDay(null);
+    setDayTooltip(null);
     if (isCurrentMonth) return;
     preserveSelectionForNextMonth.current = selectedDay != null;
     setSelectedDay(null);
@@ -399,6 +446,7 @@ export const SidebarContent = memo(function SidebarContent({ onActiveWeekdayChan
 
   const selectCalendarDay = (day, hasCampusEvents) => {
     setHoveredDay(null);
+    setDayTooltip(null);
     preserveSelectionForNextMonth.current = false;
     setSelectedDay(day);
     const dateKey = ymdKey(year, month, day);
@@ -600,7 +648,10 @@ export const SidebarContent = memo(function SidebarContent({ onActiveWeekdayChan
             </div>
             <div
               className="calendar-grid"
-              onMouseLeave={() => setHoveredDay(null)}
+              onMouseLeave={() => {
+                setHoveredDay(null);
+                setDayTooltip(null);
+              }}
             >
               {cells.map((cell) => {
                 if (cell.blank) {
@@ -649,11 +700,20 @@ export const SidebarContent = memo(function SidebarContent({ onActiveWeekdayChan
                     key={cell.key}
                     className={className}
                     data-campus-event-count={hasCampusEvents ? campusSummary.count : undefined}
-                    onMouseEnter={() => setHoveredDay(cell.day)}
-                    onFocus={() => setHoveredDay(cell.day)}
-                    onBlur={() => setHoveredDay(null)}
+                    onMouseEnter={(event) => showDayTooltip(cell.day, title, event.currentTarget)}
+                    onFocus={(event) => {
+                      if (event.currentTarget.matches(':focus-visible')) {
+                        showDayTooltip(cell.day, title, event.currentTarget);
+                      } else {
+                        setHoveredDay(cell.day);
+                      }
+                    }}
+                    onBlur={() => {
+                      setHoveredDay(null);
+                      setDayTooltip(null);
+                    }}
                     onClick={() => selectCalendarDay(cell.day, hasCampusEvents)}
-                    title={title}
+                    aria-describedby={title && dayTooltip?.day === cell.day ? 'calendar-day-tooltip' : undefined}
                     aria-label={title ? `${cellDateLabel}. ${title}` : cellDateLabel}
                     aria-pressed={selectedDay === cell.day}
                   >
@@ -662,6 +722,22 @@ export const SidebarContent = memo(function SidebarContent({ onActiveWeekdayChan
                 );
               })}
             </div>
+            {dayTooltip && typeof document !== 'undefined' && createPortal(
+              <div
+                id="calendar-day-tooltip"
+                className="calendar-day-tooltip"
+                role="tooltip"
+                ref={dayTooltipRef}
+                style={{
+                  left: dayTooltip.left,
+                  top: dayTooltip.top,
+                  '--calendar-tooltip-arrow-offset': `${dayTooltip.arrowOffset}px`,
+                }}
+              >
+                {dayTooltip.text}
+              </div>,
+              document.body,
+            )}
             {selectedDay != null && (
               <div
                 className={`calendar-date-detail calendar-date-detail--${selectedOverride?.kind || 'campus'}`}

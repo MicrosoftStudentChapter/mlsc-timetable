@@ -1,0 +1,325 @@
+/* ─── Batman Theme ─────────────────────────────────────────────
+   Gotham-inspired card surfaces with deterministic comic artwork.
+   The palette is deliberately restrained: yellow is reserved for the
+   Bat-Signal lecture treatment and practical location emphasis, while
+   slate separates tutorials and practicals.
+   ───────────────────────────────────────────────────────────── */
+
+[data-card-theme="batman"] {
+  --tt-elective-accent: #eab308;
+  --tt-elective-border-color: rgba(234, 179, 8, 0.38);
+  --tt-elective-glow-color: rgba(234, 179, 8, 0.24);
+  --tt-elective-bg: linear-gradient(135deg, #fffbeb, #f8fafc);
+  --tt-elective-hover-bg: rgba(234, 179, 8, 0.08);
+  --tt-elective-shadow-color: rgba(120, 113, 108, 0.12);
+  --tt-elective-subject-color: #1c1917;
+}
+
+[data-theme="dark"] [data-card-theme="batman"] {
+  --tt-elective-accent-dark: #facc15;
+  --tt-elective-border-color-dark: rgba(250, 204, 21, 0.38);
+  --tt-elective-bg-dark: linear-gradient(135deg, #1c1706, #0b1120);
+  --tt-elective-hover-bg: rgba(250, 204, 21, 0.1);
+  --tt-elective-shadow-color: rgba(0, 0, 0, 0.35);
+  --tt-elective-subject-color-dark: #f3f4f6;
+}
+
+[data-card-theme="batman"] .tt-class-card[data-type] {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  border-left: 4px solid var(--batman-border) !important;
+  border-radius: 10px;
+  background: var(--batman-bg);
+  box-shadow:
+    0 2px 7px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.44);
+  padding: 6px 22px 6px 10px;
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Stable artwork choice: the index is derived from class content in JSX, so
+   a course keeps the same illustration after refreshes and exports. */
+[data-card-theme="batman"] .tt-class-card[data-type]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.1;
+  background-position: 88% 48%;
+  background-repeat: no-repeat;
+  background-size: 54% 82%;
+  filter: var(--batman-art-filter, none);
+  transition: opacity 0.2s ease, transform 0.24s ease, filter 0.2s ease;
+}
+
+[data-card-theme="batman"] .tt-class-card[data-batman-index="0"]::before {
+  background-image: url('/batman/batman_0.svg');
+}
+
+[data-card-theme="batman"] .tt-class-card[data-batman-index="1"]::before {
+  background-image: url('/batman/batman_1.svg');
+}
+
+[data-card-theme="batman"] .tt-class-card[data-batman-index="2"]::before {
+  background-image: url('/batman/batman_2.svg');
+}
+
+[data-card-theme="batman"] .tt-class-card[data-batman-index="4"]::before {
+  background-image: url('/batman/batman_4.svg');
+}
+
+[data-card-theme="batman"] .tt-class-card[data-batman-index="5"]::before {
+  background-image: url('/batman/batman_5.svg');
+}
+
+/* Keep the emblem as a small top-left signature only. It is deliberately
+   excluded from the large character-art rotation above. */
+[data-card-theme="batman"] .tt-class-card[data-type]::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  z-index: -1;
+  width: 58px;
+  height: 58px;
+  pointer-events: none;
+  opacity: 0.07;
+  background: url('/batman/batman_3.svg') center / contain no-repeat;
+  filter: var(--batman-art-filter, none);
+  transform: translate(-6px, -6px) rotate(-10deg) scale(0.88);
+  transform-origin: center;
+  transition:
+    opacity 0.22s ease,
+    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-card-theme="batman"] .tt-class-card[data-type]:hover {
+  transform: none;
+  box-shadow:
+    0 2px 7px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.44);
+}
+
+[data-card-theme="batman"] .tt-class-card[data-type]:hover::before {
+  opacity: 0.2;
+  transform: scale(1.025);
+  filter:
+    var(--batman-art-filter, none)
+    drop-shadow(1px 0 0 color-mix(in srgb, var(--batman-border) 85%, transparent))
+    drop-shadow(-1px 0 0 color-mix(in srgb, var(--batman-border) 85%, transparent))
+    drop-shadow(0 1px 0 color-mix(in srgb, var(--batman-border) 85%, transparent))
+    drop-shadow(0 -1px 0 color-mix(in srgb, var(--batman-border) 85%, transparent));
+}
+
+[data-card-theme="batman"] .tt-class-card[data-type]:hover::after {
+  opacity: 0.14;
+  transform: translate(5px, 5px) rotate(0deg) scale(1.04);
+}
+
+[data-card-theme="batman"] .tt-type-badge {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 5px;
+  color: var(--batman-badge-color);
+  background: var(--batman-badge-bg);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--batman-border) 16%, transparent);
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+[data-card-theme="batman"] .tt-card-text {
+  position: relative;
+  z-index: 1;
+  margin: 7px 0;
+  padding-left: 0;
+}
+
+[data-card-theme="batman"] .tt-card-subject {
+  color: var(--batman-subject);
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+[data-card-theme="batman"] .tt-card-code {
+  color: var(--batman-code);
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+[data-card-theme="batman"] .tt-card-meta {
+  position: relative;
+  z-index: 1;
+  padding-top: 7px;
+  border-top: 1px solid color-mix(in srgb, var(--batman-subject) 10%, transparent);
+}
+
+[data-card-theme="batman"] .tt-card-teacher {
+  color: #9f1239;
+}
+
+[data-card-theme="batman"] .tt-card-room {
+  position: relative;
+  z-index: 1;
+  padding: 2px 7px;
+  border-radius: 5px;
+  color: var(--batman-room-color);
+  background: var(--batman-room-bg);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+[data-card-theme="batman"] .tt-edit-btn,
+[data-card-theme="batman"] .tt-drag-btn {
+  color: color-mix(in srgb, var(--batman-subject) 72%, transparent);
+  background: color-mix(in srgb, var(--batman-bg) 72%, transparent);
+}
+
+/* Light mode ─────────────────────────────────────────────────── */
+[data-card-theme="batman"] .tt-class-card[data-type="Lecture"] {
+  --batman-bg: #fde68a;
+  --batman-border: #eab308;
+  --batman-badge-bg: rgba(234, 179, 8, 0.1);
+  --batman-badge-color: #854d0e;
+  --batman-subject: #1c1917;
+  --batman-code: #a16207;
+  --batman-room-bg: #1c1917;
+  --batman-room-color: #eab308;
+}
+
+[data-card-theme="batman"] .tt-class-card[data-type="Tutorial"] {
+  --batman-bg: #cbd5e1;
+  --batman-border: #334155;
+  --batman-badge-bg: #e2e8f0;
+  --batman-badge-color: #334155;
+  --batman-subject: #0f172a;
+  --batman-code: #334155;
+  --batman-room-bg: #1e293b;
+  --batman-room-color: #f8fafc;
+}
+
+[data-card-theme="batman"] .tt-class-card[data-type="Practical"] {
+  --batman-bg: #d4d4d8;
+  --batman-border: #475569;
+  --batman-badge-bg: rgba(71, 85, 105, 0.1);
+  --batman-badge-color: #334155;
+  --batman-subject: #1e293b;
+  --batman-code: #475569;
+  --batman-room-bg: #eab308;
+  --batman-room-color: #1c1917;
+}
+
+/* Dark mode ──────────────────────────────────────────────────── */
+[data-theme="dark"] [data-card-theme="batman"] .tt-class-card {
+  --batman-art-filter: invert(1);
+  border-color: rgba(255, 255, 255, 0.055);
+  border-left-color: var(--batman-border) !important;
+  box-shadow:
+    0 3px 11px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+[data-theme="dark"] [data-card-theme="batman"] .tt-class-card::before {
+  opacity: 0.075;
+}
+
+[data-theme="dark"] [data-card-theme="batman"] .tt-class-card::after {
+  opacity: 0.055;
+}
+
+[data-theme="dark"] [data-card-theme="batman"] .tt-class-card:hover {
+  box-shadow:
+    0 3px 11px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+[data-theme="dark"] [data-card-theme="batman"] .tt-class-card:hover::before {
+  opacity: 0.2;
+}
+
+[data-theme="dark"] [data-card-theme="batman"] .tt-class-card:hover::after {
+  opacity: 0.18;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-card-theme="batman"] .tt-class-card[data-type]::after,
+  [data-card-theme="batman"] .tt-class-card[data-type]:hover::after {
+    transform: translate(5px, 5px);
+    transition: opacity 0.15s ease;
+  }
+}
+
+[data-theme="dark"] [data-card-theme="batman"] .tt-card-teacher {
+  color: #fda4af;
+}
+
+/* TimetableGrid's shared dark-mode rules load after the theme bundle. Keep
+   Batman's requested dark palette authoritative for these three fields. */
+[data-theme="dark"] [data-card-theme="batman"] .tt-card-subject {
+  color: var(--batman-subject);
+}
+
+[data-theme="dark"] [data-card-theme="batman"] .tt-card-code {
+  color: var(--batman-code);
+}
+
+[data-theme="dark"] [data-card-theme="batman"] .tt-card-room {
+  color: var(--batman-room-color);
+  background: var(--batman-room-bg);
+}
+
+[data-theme="dark"] [data-card-theme="batman"] .tt-class-card[data-type="Lecture"] {
+  --batman-bg: #1c1706;
+  --batman-border: #facc15;
+  --batman-badge-bg: rgba(250, 204, 21, 0.15);
+  --batman-badge-color: #fde047;
+  --batman-subject: #f3f4f6;
+  --batman-code: rgba(243, 244, 246, 0.65);
+  --batman-room-bg: #000000;
+  --batman-room-color: #facc15;
+}
+
+[data-theme="dark"] [data-card-theme="batman"] .tt-class-card[data-type="Tutorial"] {
+  --batman-bg: #0b1120;
+  --batman-border: #64748b;
+  --batman-badge-bg: #cbd5e1;
+  --batman-badge-color: #1e293b;
+  --batman-subject: #f3f4f6;
+  --batman-code: rgba(243, 244, 246, 0.65);
+  --batman-room-bg: #020617;
+  --batman-room-color: #94a3b8;
+}
+
+[data-theme="dark"] [data-card-theme="batman"] .tt-class-card[data-type="Practical"] {
+  --batman-bg: #18181b;
+  --batman-border: #a1a1aa;
+  --batman-badge-bg: rgba(250, 204, 21, 0.15);
+  --batman-badge-color: #fde047;
+  --batman-subject: #f3f4f6;
+  --batman-code: rgba(243, 244, 246, 0.65);
+  --batman-room-bg: #facc15;
+  --batman-room-color: #18181b;
+}
+
+/* Choice placeholders stay quiet and readable; artwork belongs to resolved
+   course cards only. */
+[data-card-theme="batman"] .tt-class-card[data-elective-group="true"]::before,
+[data-card-theme="batman"] .tt-class-card[data-elective-group="true"]::after {
+  display: none;
+}
