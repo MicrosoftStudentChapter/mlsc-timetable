@@ -10,6 +10,7 @@ import {
   reconcileOverrides,
 } from '../lib/local_overrides'
 import { syncOverridesToBackend, clearMyOverrides } from '../lib/me_overrides'
+import ElectiveOnboarding from './ElectiveOnboarding'
 import './TimetableGrid.css'
 
 // ─── Initial timetable data (IDs injected for stable React keys) ──────────────
@@ -301,6 +302,74 @@ function electiveBaseCode(code) {
   return m ? m[1] : raw
 }
 
+const CURRICULUM_SECTION_LABELS = {
+  elective_1: 'Elective 1',
+  elective_2: 'Elective 2',
+  elective_3: 'Elective 3',
+  elective_4: 'Elective 4',
+  general_elective: 'General Elective',
+}
+
+const CURRICULUM_SECTION_ORDER = ['elective_1', 'elective_2', 'elective_3', 'elective_4', 'general_elective']
+
+function isUnresolvedLibraryElective(entry) {
+  return Boolean(
+    entry?.electiveGroupId &&
+    CURRICULUM_SECTION_LABELS[entry?.curriculumSection] &&
+    !entry?.electiveChoice,
+  )
+}
+
+function libraryElectiveGroups(entries) {
+  const groups = new Map()
+  for (const entry of entries || []) {
+    const key = electiveGroupKey(entry)
+    const section = entry?.curriculumSection
+    if (!key || !entry?.electiveGroupId || !CURRICULUM_SECTION_LABELS[section]) continue
+    if (!groups.has(key)) {
+      groups.set(key, {
+        key,
+        section,
+        label: CURRICULUM_SECTION_LABELS[section],
+        entries: [],
+        optionsByBase: new Map(),
+        selectedBase: '',
+        dismissed: true,
+      })
+    }
+    const group = groups.get(key)
+    group.entries.push(entry)
+    if (!entry.electiveDismissed) group.dismissed = false
+    if (entry.electiveChoice) group.selectedBase = electiveBaseCode(entry.electiveChoice)
+    for (const option of entry.options || []) {
+      const baseCode = electiveBaseCode(option.subject_code)
+      if (!baseCode) continue
+      const current = group.optionsByBase.get(baseCode)
+      if (!current || (!current.subject_name && option.subject_name)) {
+        group.optionsByBase.set(baseCode, { ...option, baseCode })
+      }
+    }
+  }
+
+  return [...groups.values()]
+    .map(({ optionsByBase, ...group }) => ({
+      ...group,
+      options: [...optionsByBase.values()].sort((left, right) => (
+        String(left.subject_name || left.subject_code || '').localeCompare(
+          String(right.subject_name || right.subject_code || ''),
+          undefined,
+          { sensitivity: 'base' },
+        )
+      )),
+    }))
+    .filter((group) => group.options.length > 0)
+    .sort((left, right) => {
+      const leftRank = CURRICULUM_SECTION_ORDER.indexOf(left.section)
+      const rightRank = CURRICULUM_SECTION_ORDER.indexOf(right.section)
+      return leftRank - rightRank || left.label.localeCompare(right.label)
+    })
+}
+
 // A timetable can list an elective course's OTHER components as plain,
 // standalone cells (e.g. the group cell offers UCS539L inside a slash list,
 // while UCS539P practicals sit alone later the same day). Those standalone
@@ -372,13 +441,18 @@ function computeEditorPos(rect) {
   const vh  = window.innerHeight
   const gap = 12
 
+  const withAvailableHeight = (position) => ({
+    ...position,
+    maxHeight: Math.max(0, vh - position.top - gap),
+  })
+
   // On small screens, centre horizontally and position near the trigger vertically
   if (vw < 640) {
     const w = Math.min(EDITOR_W, vw - gap * 2)
     let top = rect.bottom + gap
     if (top + EDITOR_H > vh - gap) top = Math.max(gap, rect.top - EDITOR_H - gap)
     top = Math.max(gap, Math.min(vh - EDITOR_H - gap, top))
-    return { top, left: Math.max(gap, (vw - w) / 2), width: w }
+    return withAvailableHeight({ top, left: Math.max(gap, (vw - w) / 2), width: w })
   }
 
   // Desktop: prefer right side, fall back to left
@@ -391,7 +465,7 @@ function computeEditorPos(rect) {
   if (top + EDITOR_H > vh - gap) top = Math.max(gap, vh - EDITOR_H - gap)
   top = Math.max(gap, top)
 
-  return { top, left, width: EDITOR_W }
+  return withAvailableHeight({ top, left, width: EDITOR_W })
 }
 
 // ─── CardEditor — floating portal panel ──────────────────────────────────────
@@ -451,7 +525,7 @@ function CardEditor({ mode, entry, slot, rect, triggerElement, onSave, onDelete,
     <div
       ref={panelRef}
       className="tt-editor-overlay"
-      style={{ top: pos.top, left: pos.left, width: pos.width }}
+      style={{ top: pos.top, left: pos.left, width: pos.width, maxHeight: pos.maxHeight }}
       role="dialog"
       aria-modal="true"
       aria-label={isEdit ? 'Edit class' : 'Add class'}
@@ -742,6 +816,7 @@ function ClassCard({
   }
   const isElectiveGroup = Array.isArray(entry.options) && entry.options.length > 0 &&
     (entry.requiresSelection || entry.options.length > 1) && !entry.electiveChoice
+  const isUnresolvedCurriculumElective = isUnresolvedLibraryElective(entry)
   const alternateStatus = isElectiveGroup
     ? null
     : alternateClassStatus(entry, termStartDate, alternateNow)
@@ -777,6 +852,7 @@ function ClassCard({
       data-dragging={isDragging || undefined}
       data-spidey-index={getCardSvgIndex(entry.subject, entry.code, entry.room, entry.type)}
       data-elective-group={isElectiveGroup || undefined}
+      data-elective-unresolved={isUnresolvedCurriculumElective || undefined}
       data-alternate-state={alternateStatus?.state || undefined}
       onClick={handleCardClick}
     >
@@ -902,6 +978,7 @@ export default function TimetableGrid({
   const [electiveTarget, setElectiveTarget] = useState(null)
   const [electiveConfirm, setElectiveConfirm] = useState(null)
   const [dismissConfirm, setDismissConfirm] = useState(null)
+  const [electiveOnboardingOpen, setElectiveOnboardingOpen] = useState(false)
   const [addTarget,  setAddTarget]  = useState(null)   // { day, startTime, rect }
   const [saveOpen, setSaveOpen] = useState(false)
   const [resetOpen, setResetOpen] = useState(false)
@@ -919,6 +996,7 @@ export default function TimetableGrid({
     () => (adminMode ? baseClasses : applyOverrides(baseClasses, overrides)),
     [baseClasses, overrides, adminMode],
   )
+  const curriculumElectiveGroups = useMemo(() => libraryElectiveGroups(entries), [entries])
 
   // Net diff vs canonical: round-trip edits (A→B→A) collapse to "no change"
   // so the Save FAB stays hidden when the view matches the baseline.
@@ -947,16 +1025,30 @@ export default function TimetableGrid({
   // What the grid actually shows. While the user holds the peek button we
   // render the canonical baseline so they can compare against their edits.
   // Standalone cells that belong to elective options the user did NOT pick
-  // are hidden from the view (but stay in `entries` so edit/drag handlers
-  // and the override machinery keep seeing the full list). Admin mode always
-  // shows everything — admins must be able to fix any cell.
+  // and unresolved Library group placeholders are hidden from the student
+  // grid. Selection now lives in the Dynamic Island; repeating a choice card
+  // in every affected slot only adds noise. The entries remain in state so
+  // onboarding and overrides retain the complete option data. Admin mode
+  // always shows everything so admins can inspect and repair source cells.
   const displayEntries = useMemo(
     () => (adminMode
       ? entries
-      : filterUnchosenElectiveClasses(entries.filter((e) => !e.electiveDismissed))),
+      : filterUnchosenElectiveClasses(
+          entries,
+        ).filter((entry) => !entry.electiveDismissed && !isUnresolvedLibraryElective(entry))),
     [entries, adminMode],
   )
-  const unsanitizedVisibleEntries = peekBaseline ? officialBaseClasses : displayEntries
+  const studentOfficialEntries = useMemo(
+    () => filterUnchosenElectiveClasses(
+      officialBaseClasses,
+    ).filter((entry) => !entry.electiveDismissed && !isUnresolvedLibraryElective(entry)),
+    [officialBaseClasses],
+  )
+  const unsanitizedVisibleEntries = peekBaseline && adminMode
+    ? officialBaseClasses
+    : peekBaseline
+      ? studentOfficialEntries
+      : displayEntries
   const visibleEntries = useMemo(() => {
     if (adminMode || teacherCodesVisible) return unsanitizedVisibleEntries
     return unsanitizedVisibleEntries.map((entry) => ({
@@ -995,9 +1087,11 @@ export default function TimetableGrid({
       if (idx > maxIdx) maxIdx = idx
     }
 
-    // Default: show at least up to the 16:20 slot (index 10)
-    // so we don't end up with an empty morning-only grid if there are no classes.
-    const defaultMaxIdx = 10 // 16:20 is index 10
+    // Default: show at least up to the 17:10 slot (index 11). This keeps the
+    // standard academic day visible even when the final row is empty and
+    // avoids an overly short morning-only grid. Actual 18:00 classes still
+    // extend the grid by one more slot automatically.
+    const defaultMaxIdx = 11 // 17:10 is index 11
     const limitIdx = Math.max(defaultMaxIdx, maxIdx)
 
     return TIME_SLOTS.slice(0, limitIdx + 1)
@@ -1287,6 +1381,35 @@ export default function TimetableGrid({
     })))
     setElectiveConfirm(null)
     setElectiveTarget(null)
+  }
+
+  const applyCurriculumElectiveChoices = async (selections, groups) => {
+    const electiveOverrides = []
+    for (const group of groups) {
+      const selectedBase = selections[group.key]
+      const option = group.options.find((candidate) => candidate.baseCode === selectedBase)
+      if (!option) continue
+      const matching = entries.filter((candidate) => electiveGroupKey(candidate) === group.key)
+      electiveOverrides.push(...matching.map((candidate) => ({
+        kind: 'elective_pick',
+        targetId: candidate.id,
+        day: candidate.day,
+        startTime: candidate.startTime,
+        baseEntry: { ...candidate },
+        entry: applyElectiveChoiceAcrossGroup(candidate, option),
+      })))
+    }
+    if (electiveOverrides.length === 0) return
+
+    // The existing local override cache is the immediate source for guests
+    // and the optimistic cache for signed-in users.
+    applyIncomingOverrides(electiveOverrides)
+    if (!isSignedIn) return
+
+    // Persist just the chosen groups. The backend merges these operations
+    // into the revisioned document, preserving unrelated personal changes.
+    await syncOverridesToBackend(electiveOverrides, batch, { expectedRevision: personalRevision })
+    await onReloadTimetable?.()
   }
 
   // Dismiss an entire elective block: the student takes none of the offered
@@ -1619,7 +1742,13 @@ export default function TimetableGrid({
                           entry={entry}
                           isDarkMode={resolvedIsDark}
                           onEdit={(rect, element) => setEditTarget(prev => (prev && prev.entry.id === entry.id) ? null : { entry, rect, element })}
-                          onChooseElective={(target, rect, element) => setElectiveTarget(prev => (prev && prev.entry.id === target.id) ? null : { entry: target, rect, element })}
+                          onChooseElective={(target, rect, element) => {
+                            if (target.electiveGroupId && target.curriculumSection) {
+                              setElectiveOnboardingOpen(true)
+                              return
+                            }
+                            setElectiveTarget(prev => (prev && prev.entry.id === target.id) ? null : { entry: target, rect, element })
+                          }}
                           onDismissElective={handleDismissElective}
                           onDragStart={handleCardDragStart}
                           isDragging={drag?.started && drag.entry.id === entry.id}
@@ -1653,6 +1782,18 @@ export default function TimetableGrid({
 
         </div>
       </div>
+
+      {!adminMode && curriculumElectiveGroups.length > 0 && (
+        <ElectiveOnboarding
+          key={batch}
+          batch={batch}
+          groups={curriculumElectiveGroups}
+          isSignedIn={isSignedIn}
+          open={electiveOnboardingOpen}
+          onOpenChange={setElectiveOnboardingOpen}
+          onApply={applyCurriculumElectiveChoices}
+        />
+      )}
 
       {/* ── Editor portals ────────────────────────────────────────────── */}
       {editTarget && (

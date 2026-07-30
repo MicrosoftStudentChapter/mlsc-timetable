@@ -3,6 +3,7 @@
 // these to flag drifted batches.
 
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { adminConfirm } from '../../lib/adminConfirm'
 import {
   listBaselines,
   setBaseline,
@@ -294,7 +295,13 @@ export default function BaselinesPage() {
   }
 
   async function onRemove(key) {
-    if (!window.confirm(`Delete baseline ${key}?`)) return
+    if (!await adminConfirm({
+      title: `Delete baseline ${key}?`,
+      message: 'Future ingests will no longer validate this curriculum group against the saved class counts.',
+      detail: 'This action cannot be undone.',
+      confirmLabel: 'Delete baseline',
+      tone: 'danger',
+    })) return
     setRemoving(key)
     try {
       await deleteBaseline(key)

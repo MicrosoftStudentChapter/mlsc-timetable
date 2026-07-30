@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTheme } from '../../hooks/useTheme'
 import { useAdminSession } from '../../hooks/useAdminSession'
+import { AdminConfirmHost } from '../../components/AdminConfirmDialog'
 import AccessDenied from './AccessDenied'
 import './admin.css'
 
@@ -170,6 +171,7 @@ export default function AdminLayout() {
           <Outlet />
         </main>
       </div>
+      <AdminConfirmHost />
     </div>
   )
 }

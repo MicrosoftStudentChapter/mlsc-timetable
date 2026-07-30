@@ -480,8 +480,8 @@ export default function TimetablePage() {
           isSignedIn={isSignedIn}
           activeWeekdayIdx={activeWeekdayIdx}
           onReloadTimetable={() => {
-            if (!batch) return
-            loadMyTimetable(batch).then((result) => setTimetableState(result))
+            if (!batch) return Promise.resolve()
+            return loadMyTimetable(batch).then((result) => setTimetableState(result))
           }}
         />
         </div>

@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Combobox from '../../components/Combobox'
+import { adminConfirm } from '../../lib/adminConfirm'
 import { loadBatches } from '../../lib/batches'
 import {
   AdminAuthError,
   addSubject,
   applyLibraryScheme,
+  bulkLibraryEntries,
   deleteLibraryEntry,
   getLibraryEntry,
   listLibraryEntries,
@@ -21,6 +23,7 @@ const SECTION_META = {
   elective_1: { label: 'Elective 1', description: 'Courses offered in the first elective slot.' },
   elective_2: { label: 'Elective 2', description: 'Courses offered in the second elective slot.' },
   elective_3: { label: 'Elective 3', description: 'Courses offered in the third elective slot.' },
+  elective_4: { label: 'Elective 4', description: 'Courses offered in the fourth elective slot.' },
   general_elective: { label: 'General Elective', description: 'Institute or open elective choices.' },
 }
 
@@ -98,6 +101,147 @@ function semesterRuleForBranch(branch) {
   return 'Pool-following branch · Semesters 3–8'
 }
 
+function importSemestersForBranch(branch) {
+  if (branch === 'POOL') return [1, 2]
+  return semestersForBranch(branch)
+}
+
+function importTargets(branch, semester) {
+  const value = Number(semester)
+  if (!value) return []
+  if (branch === 'POOL') {
+    return [
+      { branch: 'POOL-A', semester: value },
+      { branch: 'POOL-B', semester: 3 - value },
+    ]
+  }
+  return [{ branch, semester: value }]
+}
+
+function subjectCountOfSections(sections) {
+  return (sections || []).reduce((sum, section) => sum + (section.subject_codes || []).length, 0)
+}
+
+function assignElectiveTableToPreview(current, tableId, rawTarget, existingEntries) {
+  if (!current) return current
+  const sourceTable = (current.elective_tables || []).find((table) => table.id === tableId)
+  if (!sourceTable) return current
+  const codes = (sourceTable.sections || []).flatMap((section) => section.subject_codes || [])
+  const plan = (current.plan || []).map((item) => ({
+    ...item,
+    sections: (item.sections || []).map((section) => ({
+      ...section,
+      subject_codes: [...(section.subject_codes || [])],
+    })),
+    extracted_courses: [...(item.extracted_courses || [])],
+    _elective_assignments: { ...(item._elective_assignments || {}) },
+  }))
+
+  // Remove the table's previous assignment and restore any course section it
+  // displaced in that entry before applying its new target.
+  for (let index = plan.length - 1; index >= 0; index -= 1) {
+    const item = plan[index]
+    const assignment = item._elective_assignments?.[tableId]
+    if (!assignment) continue
+    item.sections = item.sections.map((section) => ({
+      ...section,
+      subject_codes: section.subject_codes.filter((code) => !assignment.codes.includes(code)),
+    }))
+    for (const [code, previousKind] of Object.entries(assignment.previous_sections || {})) {
+      if (!previousKind) continue
+      let section = item.sections.find((candidate) => candidate.kind === previousKind)
+      if (!section) {
+        section = { kind: previousKind, subject_codes: [] }
+        item.sections.push(section)
+      }
+      if (!section.subject_codes.includes(code)) section.subject_codes.push(code)
+    }
+    delete item._elective_assignments[tableId]
+    item.sections.sort((left, right) => SECTION_ORDER.indexOf(left.kind) - SECTION_ORDER.indexOf(right.kind))
+    if (item._generated_for_elective_assignment && subjectCountOfSections(item.sections) === 0) {
+      plan.splice(index, 1)
+    }
+  }
+
+  const nextTarget = rawTarget === 'skip' ? 'skip' : (rawTarget ? Number(rawTarget) : null)
+  if (Number.isInteger(nextTarget)) {
+    for (const target of importTargets(current.branch, nextTarget)) {
+      const key = `${target.branch}:S${target.semester}`
+      let item = plan.find((candidate) => candidate.key === key)
+      if (!item) {
+        const existing = existingEntries.find((candidate) => candidate.key === key)
+        item = {
+          key,
+          branch: target.branch,
+          semester: target.semester,
+          sections: existing
+            ? (existing.sections || []).map((section) => ({
+                kind: section.kind,
+                subject_codes: [...(section.subject_codes || [])],
+              }))
+            : [{ kind: 'core', subject_codes: [] }],
+          source: current.source,
+          extracted_courses: [],
+          would_overwrite: Boolean(existing),
+          existing_subject_count: existing?.subject_count || 0,
+          _generated_for_elective_assignment: !existing,
+          _elective_assignments: {},
+          _selected: true,
+        }
+        plan.push(item)
+      }
+      const previousSections = Object.fromEntries(codes.map((code) => [
+        code,
+        item.sections.find((section) => section.subject_codes.includes(code))?.kind || null,
+      ]))
+      item.sections = item.sections.map((section) => ({
+        ...section,
+        subject_codes: section.subject_codes.filter((code) => !codes.includes(code)),
+      }))
+      let electiveSection = item.sections.find((section) => section.kind === sourceTable.section)
+      if (!electiveSection) {
+        electiveSection = { kind: sourceTable.section, subject_codes: [] }
+        item.sections.push(electiveSection)
+      }
+      electiveSection.subject_codes = [...new Set([...electiveSection.subject_codes, ...codes])]
+      item.extracted_courses = [
+        ...item.extracted_courses.filter((course) => !codes.includes(course.code)),
+        ...(sourceTable.extracted_courses || []),
+      ]
+      item._elective_assignments[tableId] = { codes, previous_sections: previousSections }
+      item.sections.sort((left, right) => SECTION_ORDER.indexOf(left.kind) - SECTION_ORDER.indexOf(right.kind))
+    }
+    plan.sort((left, right) => left.branch.localeCompare(right.branch) || left.semester - right.semester)
+  }
+
+  return {
+    ...current,
+    plan,
+    elective_tables: current.elective_tables.map((table) => (
+      table.id === tableId ? { ...table, target_semester: nextTarget } : table
+    )),
+    entry_count: plan.length,
+  }
+}
+
+function preparePdfPreview(preview, existingEntries) {
+  let prepared = {
+    ...preview,
+    plan: (preview.plan || []).map((item) => ({ ...item, _selected: true })),
+  }
+  for (const table of prepared.elective_tables || []) {
+    if (table.target_semester != null && table.target_semester !== '') {
+      prepared = assignElectiveTableToPreview(
+        prepared,
+        table.id,
+        table.target_semester,
+        existingEntries,
+      )
+    }
+  }
+  return prepared
+}
+
 async function loadSubjectCatalog() {
   const items = []
   const pageSize = 1000
@@ -137,6 +281,8 @@ export default function LibraryPage() {
   const [error, setError] = useState(null)
   const [notice, setNotice] = useState('')
   const [entryQuery, setEntryQuery] = useState('')
+  const [selectedSavedKeys, setSelectedSavedKeys] = useState(() => new Set())
+  const [bulkBusy, setBulkBusy] = useState(false)
 
   const [pdfFile, setPdfFile] = useState(null)
   const [pdfBranch, setPdfBranch] = useState('')
@@ -269,17 +415,38 @@ export default function LibraryPage() {
       subjectCount: items.reduce((sum, item) => sum + item.subject_count, 0),
     }))
   }, [branches, visibleEntries])
+  const selectedSavedEntries = useMemo(
+    () => entries.filter((item) => selectedSavedKeys.has(item.key)),
+    [entries, selectedSavedKeys],
+  )
+  const selectedPublishableEntries = useMemo(
+    () => selectedSavedEntries.filter((item) => item.status !== 'published' && item.subject_count > 0),
+    [selectedSavedEntries],
+  )
+  const selectedPublishedEntries = useMemo(
+    () => selectedSavedEntries.filter((item) => item.published),
+    [selectedSavedEntries],
+  )
+  const selectedPreviewPlan = useMemo(
+    () => (pdfPreview?.plan || []).filter((item) => item._selected !== false),
+    [pdfPreview],
+  )
   const previewCodes = useMemo(() => new Set(
-    (pdfPreview?.plan || []).flatMap((item) => (
+    selectedPreviewPlan.flatMap((item) => (
       item.sections || []
     ).flatMap((section) => section.subject_codes || [])),
-  ), [pdfPreview])
+  ), [selectedPreviewPlan])
   const previewMissingSubjects = useMemo(() => (
     pdfPreview?.missing_subjects || []
   ).filter((subject) => previewCodes.has(subject.code)), [pdfPreview, previewCodes])
   const activePreviewItem = useMemo(() => (
     pdfPreview?.plan?.find((item) => item.key === previewEditorKey) || null
   ), [pdfPreview, previewEditorKey])
+  const previewElectiveTables = pdfPreview?.elective_tables || []
+  const pendingElectiveAssignments = previewElectiveTables.filter(
+    (table) => table.target_semester == null || table.target_semester === '',
+  ).length
+  const importSemesterOptions = importSemestersForBranch(pdfBranch)
 
   function addSection(kind) {
     if (!kind || sections.some((section) => section.kind === kind)) return
@@ -288,10 +455,16 @@ export default function LibraryPage() {
     setDraftDirty(true)
   }
 
-  function removeSection(kind) {
+  async function removeSection(kind) {
     if (kind === 'core') return
     const section = sections.find((item) => item.kind === kind)
-    if (section?.subject_codes.length && !window.confirm(`Remove ${SECTION_META[kind].label} and its courses?`)) return
+    if (section?.subject_codes.length && !await adminConfirm({
+      title: `Remove ${SECTION_META[kind].label}?`,
+      message: `This removes the section and its ${section.subject_codes.length} course${section.subject_codes.length === 1 ? '' : 's'} from the current draft.`,
+      detail: 'The saved Library entry is unchanged until you save this draft.',
+      confirmLabel: 'Remove section',
+      tone: 'danger',
+    })) return
     setSections((current) => current.filter((item) => item.kind !== kind))
     setDraftDirty(true)
   }
@@ -323,6 +496,83 @@ export default function LibraryPage() {
       else next.add(code)
       return next
     })
+  }
+
+  function setSavedEntrySelected(key, selected) {
+    setSelectedSavedKeys((current) => {
+      const next = new Set(current)
+      if (selected) next.add(key)
+      else next.delete(key)
+      return next
+    })
+  }
+
+  function setSavedEntriesSelected(items, selected) {
+    setSelectedSavedKeys((current) => {
+      const next = new Set(current)
+      for (const item of items) {
+        if (selected) next.add(item.key)
+        else next.delete(item.key)
+      }
+      return next
+    })
+  }
+
+  async function runBulkLibraryAction(action, items) {
+    if (!items.length || bulkBusy) return
+    const confirmations = {
+      publish: {
+        title: `Publish ${items.length} Library entr${items.length === 1 ? 'y' : 'ies'}?`,
+        message: 'Student timetables will immediately use the selected Library rules.',
+        detail: 'Only the currently saved revisions are published.',
+        confirmLabel: `Publish ${items.length}`,
+        tone: 'primary',
+      },
+      unpublish: {
+        title: `Unpublish ${items.length} Library entr${items.length === 1 ? 'y' : 'ies'}?`,
+        message: 'Students will stop using these Library rules. The editable drafts remain saved.',
+        confirmLabel: `Unpublish ${items.length}`,
+        tone: 'warning',
+      },
+      delete: {
+        title: `Delete ${items.length} Library entr${items.length === 1 ? 'y' : 'ies'}?`,
+        message: 'This permanently removes the selected drafts and their published snapshots.',
+        detail: 'This action cannot be undone.',
+        confirmLabel: `Delete ${items.length}`,
+        tone: 'danger',
+      },
+    }
+    if (!await adminConfirm(confirmations[action])) return
+    setBulkBusy(true)
+    setError(null)
+    setNotice('')
+    try {
+      const result = await bulkLibraryEntries({
+        action,
+        entries: items.map((item) => ({
+          branch: item.branch,
+          semester: item.semester,
+          revision: item.revision,
+        })),
+      })
+      const completedKeys = new Set((result.completed || []).map((item) => item.key))
+      const failedKeys = new Set((result.errors || []).map((item) => item.key))
+      setSelectedSavedKeys(failedKeys)
+      if (action === 'delete' && completedKeys.has(configuredKey)) resetEntry()
+      await refresh()
+      if (action !== 'delete' && completedKeys.has(configuredKey) && branch && semester) {
+        await openEntry(branch, Number(semester))
+      }
+      const verb = action === 'delete' ? 'Deleted' : action === 'publish' ? 'Published' : 'Unpublished'
+      setNotice(`${verb} ${completedKeys.size} Library entr${completedKeys.size === 1 ? 'y' : 'ies'}.`)
+      if (result.errors?.length) {
+        setError(new Error(result.errors.map((item) => `${item.key}: ${item.error}`).join('; ')))
+      }
+    } catch (err) {
+      setError(err)
+    } finally {
+      setBulkBusy(false)
+    }
   }
 
   function updatePreviewItem(key, transform) {
@@ -366,6 +616,24 @@ export default function LibraryPage() {
     setPreviewAdd((current) => ({ ...current, code: '' }))
   }
 
+  function assignElectiveTable(tableId, rawTarget) {
+    setPdfPreview((current) => assignElectiveTableToPreview(current, tableId, rawTarget, entries))
+  }
+
+  function setPreviewEntrySelected(key, selected) {
+    setPdfPreview((current) => current ? {
+      ...current,
+      plan: current.plan.map((item) => item.key === key ? { ...item, _selected: selected } : item),
+    } : current)
+  }
+
+  function setAllPreviewEntriesSelected(selected) {
+    setPdfPreview((current) => current ? {
+      ...current,
+      plan: current.plan.map((item) => ({ ...item, _selected: selected })),
+    } : current)
+  }
+
   async function save() {
     if (!branch || !semester || saving || inheritedFrom) return
     setSaving(true)
@@ -390,7 +658,12 @@ export default function LibraryPage() {
   async function publish() {
     if (!branch || !semester || !revision || saving || inheritedFrom || draftDirty || selectedSubjectCount === 0) return
     const action = publication.published ? 'update the live curriculum' : 'activate Library rules for student timetables'
-    if (!window.confirm(`Publish ${configuredKey} and ${action}?`)) return
+    if (!await adminConfirm({
+      title: `Publish ${configuredKey}?`,
+      message: `This will ${action}.`,
+      detail: `Revision ${revision} becomes the active student-facing snapshot.`,
+      confirmLabel: publication.published ? 'Update published copy' : 'Publish curriculum',
+    })) return
     setSaving(true)
     setError(null)
     setNotice('')
@@ -407,7 +680,13 @@ export default function LibraryPage() {
   }
 
   async function removeEntry() {
-    if (!revision || !window.confirm(`Delete Library entry ${configuredKey}?`)) return
+    if (!revision || !await adminConfirm({
+      title: `Delete ${configuredKey}?`,
+      message: 'This permanently removes its editable draft and published snapshot.',
+      detail: 'This action cannot be undone.',
+      confirmLabel: 'Delete entry',
+      tone: 'danger',
+    })) return
     setSaving(true)
     setError(null)
     try {
@@ -429,7 +708,8 @@ export default function LibraryPage() {
     setError(null)
     setPdfPreview(null)
     try {
-      setPdfPreview(await previewLibraryScheme({ file: pdfFile, branch: pdfBranch }))
+      const preview = await previewLibraryScheme({ file: pdfFile, branch: pdfBranch })
+      setPdfPreview(preparePdfPreview(preview, entries))
     } catch (err) {
       setError(err)
     } finally {
@@ -462,15 +742,25 @@ export default function LibraryPage() {
   }
 
   async function applyPdf() {
-    if (!pdfPreview?.plan?.length || previewMissingSubjects.length || pdfBusy) return
-    const overwriteCount = pdfPreview.plan.filter((item) => item.would_overwrite).length
-    if (overwriteCount > 0 && !window.confirm(
-      `This import will replace ${overwriteCount} existing Library entr${overwriteCount === 1 ? 'y' : 'ies'}. Continue?`,
-    )) return
+    if (!selectedPreviewPlan.length || previewMissingSubjects.length || pendingElectiveAssignments || pdfBusy) return
+    const overwriteCount = selectedPreviewPlan.filter((item) => item.would_overwrite).length
+    if (overwriteCount > 0 && !await adminConfirm({
+      title: `Replace ${overwriteCount} existing entr${overwriteCount === 1 ? 'y' : 'ies'}?`,
+      message: 'The selected PDF semesters will replace those saved Library drafts.',
+      detail: 'Published snapshots remain active until you explicitly publish the imported drafts.',
+      confirmLabel: 'Replace drafts',
+      tone: 'warning',
+    })) return
     setPdfBusy(true)
     setError(null)
     try {
-      const result = await applyLibraryScheme({ plan: pdfPreview.plan, source: pdfPreview.source })
+      const cleanPlan = selectedPreviewPlan.map((item) => ({
+        key: item.key,
+        branch: item.branch,
+        semester: item.semester,
+        sections: item.sections,
+      }))
+      const result = await applyLibraryScheme({ plan: cleanPlan, source: pdfPreview.source })
       if (result.errors?.length) throw new Error(result.errors.map((row) => `${row.key || row.index}: ${row.error}`).join('; '))
       setNotice(`Imported ${result.written.length} Library draft${result.written.length === 1 ? '' : 's'}. Review and publish each entry when ready.`)
       setPdfPreview(null)
@@ -721,26 +1011,90 @@ export default function LibraryPage() {
         {pdfPreview && (
           <div className="library-import-preview">
             <div className="library-import-summary">
-              <strong>{pdfPreview.entry_count} Library entries</strong>
+              <strong>{selectedPreviewPlan.length} of {pdfPreview.plan.length} semesters selected</strong>
               <span>{pdfPreview.source}</span>
               <span>{previewMissingSubjects.length} missing catalog subjects</span>
+              {previewElectiveTables.length > 0 && (
+                <span>{previewElectiveTables.length} standalone elective table{previewElectiveTables.length === 1 ? '' : 's'}</span>
+              )}
+            </div>
+            {previewElectiveTables.length > 0 && (
+              <div className="library-elective-table-assignments">
+                <div className="library-elective-table-intro">
+                  <div>
+                    <strong>Assign standalone elective tables</strong>
+                    <span>These PDF tables have an elective heading but no semester heading.</span>
+                  </div>
+                  <small>{pendingElectiveAssignments} awaiting assignment</small>
+                </div>
+                <div className="library-elective-table-grid">
+                  {previewElectiveTables.map((table) => (
+                    <article key={table.id} data-pending={table.target_semester == null || undefined}>
+                      <div>
+                        <span className="library-elective-table-section">{SECTION_META[table.section]?.label || table.label}</span>
+                        <strong>{table.subject_count} courses</strong>
+                        <small>Page {table.page || '—'} · {(table.extracted_courses || []).slice(0, 3).map((course) => course.code).join(', ')}{table.subject_count > 3 ? '…' : ''}</small>
+                      </div>
+                      <label>
+                        <span>Add to</span>
+                        <select
+                          value={table.target_semester ?? ''}
+                          onChange={(event) => assignElectiveTable(table.id, event.target.value)}
+                          aria-label={`Choose semester for ${table.label}`}
+                        >
+                          <option value="">Choose semester…</option>
+                          {importSemesterOptions.map((value) => (
+                            <option value={value} key={value}>Semester {value}</option>
+                          ))}
+                          <option value="skip">Do not import this table</option>
+                        </select>
+                      </label>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="library-import-plan-head">
+              <div>
+                <strong>Choose semesters to import</strong>
+                <span>Only checked semesters will be saved as drafts.</span>
+              </div>
+              <div>
+                <button type="button" onClick={() => setAllPreviewEntriesSelected(true)}>Select all</button>
+                <button type="button" onClick={() => setAllPreviewEntriesSelected(false)}>Clear</button>
+              </div>
             </div>
             <div className="library-import-plan">
-              {pdfPreview.plan.map((item) => (
-                <button
-                  type="button"
-                  key={item.key}
-                  onClick={() => {
-                    setPreviewEditorKey(item.key)
-                    setPreviewAdd({ kind: 'core', code: '' })
-                  }}
-                >
-                  <code>{item.key}</code>
-                  <span>{item.sections.reduce((sum, section) => sum + section.subject_codes.length, 0)} subjects</span>
-                  {item.would_overwrite && <small className="library-overwrite">Replaces existing entry with {item.existing_subject_count} subjects</small>}
-                  <small>Review courses and edit sections →</small>
-                </button>
-              ))}
+              {pdfPreview.plan.map((item) => {
+                const selected = item._selected !== false
+                return (
+                  <article className="library-import-plan-item" data-selected={selected || undefined} key={item.key}>
+                    <header>
+                      <code>{item.key}</code>
+                      <label className="library-import-plan-toggle">
+                        <input
+                          type="checkbox"
+                          checked={selected}
+                          onChange={(event) => setPreviewEntrySelected(item.key, event.target.checked)}
+                        />
+                        <span aria-hidden="true" />
+                        <em>{selected ? 'Included' : 'Excluded'}</em>
+                      </label>
+                    </header>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPreviewEditorKey(item.key)
+                        setPreviewAdd({ kind: 'core', code: '' })
+                      }}
+                    >
+                      <span>{item.sections.reduce((sum, section) => sum + section.subject_codes.length, 0)} subjects</span>
+                      {item.would_overwrite && <small className="library-overwrite">Replaces existing entry with {item.existing_subject_count} subjects</small>}
+                      <small>Review courses and edit sections →</small>
+                    </button>
+                  </article>
+                )
+              })}
             </div>
             {previewMissingSubjects.length > 0 && (
               <div className="library-missing">
@@ -751,7 +1105,7 @@ export default function LibraryPage() {
             )}
             <div className="library-import-actions">
               <button type="button" onClick={() => { setPdfPreview(null); setPreviewEditorKey(null) }} disabled={pdfBusy}>Cancel preview</button>
-              <button className="upload-btn" type="button" onClick={applyPdf} disabled={pdfBusy || previewMissingSubjects.length > 0}>Save as drafts</button>
+              <button className="upload-btn" type="button" onClick={applyPdf} disabled={pdfBusy || !selectedPreviewPlan.length || previewMissingSubjects.length > 0 || pendingElectiveAssignments > 0}>Save {selectedPreviewPlan.length || ''} as drafts</button>
             </div>
           </div>
         )}
@@ -769,20 +1123,34 @@ export default function LibraryPage() {
           <button type="button" className="admin-card-action" onClick={() => refresh().catch(setError)}>Refresh</button>
         </div>
         {entries.length > 0 && (
-          <label className="library-entry-search">
-            <svg className="library-search-icon" aria-hidden="true" viewBox="0 0 20 20" fill="none">
-              <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.5" />
-              <path d="m12.5 12.5 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-            <input
-              type="search"
-              value={entryQuery}
-              onChange={(event) => setEntryQuery(event.target.value)}
-              placeholder="Search key or branch…"
-              aria-label="Search saved Library entries"
-            />
-            <small>{visibleEntries.length} of {entries.length}</small>
-          </label>
+          <>
+            <label className="library-entry-search">
+              <svg className="library-search-icon" aria-hidden="true" viewBox="0 0 20 20" fill="none">
+                <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.5" />
+                <path d="m12.5 12.5 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              <input
+                type="search"
+                value={entryQuery}
+                onChange={(event) => setEntryQuery(event.target.value)}
+                placeholder="Search key or branch…"
+                aria-label="Search saved Library entries"
+              />
+              <small>{visibleEntries.length} of {entries.length}</small>
+            </label>
+            <div className="library-bulk-toolbar">
+              <div>
+                <strong>{selectedSavedEntries.length} selected</strong>
+                <button type="button" onClick={() => setSavedEntriesSelected(visibleEntries, true)} disabled={bulkBusy || !visibleEntries.length}>Select shown</button>
+                <button type="button" onClick={() => setSelectedSavedKeys(new Set())} disabled={bulkBusy || !selectedSavedEntries.length}>Clear</button>
+              </div>
+              <div>
+                <button type="button" onClick={() => runBulkLibraryAction('publish', selectedPublishableEntries)} disabled={bulkBusy || !selectedPublishableEntries.length}>Publish {selectedPublishableEntries.length || ''}</button>
+                <button type="button" onClick={() => runBulkLibraryAction('unpublish', selectedPublishedEntries)} disabled={bulkBusy || !selectedPublishedEntries.length}>Unpublish {selectedPublishedEntries.length || ''}</button>
+                <button type="button" className="is-danger" onClick={() => runBulkLibraryAction('delete', selectedSavedEntries)} disabled={bulkBusy || !selectedSavedEntries.length}>Delete {selectedSavedEntries.length || ''}</button>
+              </div>
+            </div>
+          </>
         )}
         {entries.length === 0 ? <div className="manager-empty">No Library entries configured yet.</div> : visibleEntries.length === 0 ? (
           <div className="manager-empty">No saved entries match “{entryQuery}”.</div>
@@ -790,40 +1158,65 @@ export default function LibraryPage() {
           <div className="library-entry-stacks">
             {savedEntryGroups.map((group) => {
               const isOpen = Boolean(entryQuery.trim()) || openSavedBranches.has(group.code) || group.code === branch
+              const selectedInGroup = group.items.filter((item) => selectedSavedKeys.has(item.key)).length
+              const groupSelected = selectedInGroup === group.items.length
               return (
                 <section className={`library-entry-stack${isOpen ? ' is-open' : ''}`} key={group.code}>
-                  <button
-                    type="button"
-                    className="library-entry-stack-head"
-                    onClick={() => toggleSavedBranch(group.code)}
-                    aria-expanded={isOpen}
-                  >
-                    <span className="library-entry-stack-caret">›</span>
-                    <span>
-                      <strong>{group.code}</strong>
-                      <small>{group.name}</small>
-                    </span>
-                    <span className="library-entry-stack-meta">
-                      {group.items.length} semester{group.items.length === 1 ? '' : 's'} · {group.subjectCount} subjects
-                    </span>
-                  </button>
+                  <header className="library-entry-stack-head">
+                    <label className="library-saved-select" title={`Select all ${group.code} entries`}>
+                      <input
+                        type="checkbox"
+                        checked={groupSelected}
+                        onChange={(event) => setSavedEntriesSelected(group.items, event.target.checked)}
+                      />
+                      <span aria-hidden="true" />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => toggleSavedBranch(group.code)}
+                      aria-expanded={isOpen}
+                    >
+                      <span className="library-entry-stack-caret">›</span>
+                      <span>
+                        <strong>{group.code}</strong>
+                        <small>{group.name}</small>
+                      </span>
+                      <span className="library-entry-stack-meta">
+                        {selectedInGroup ? `${selectedInGroup} selected · ` : ''}{group.items.length} semester{group.items.length === 1 ? '' : 's'} · {group.subjectCount} subjects
+                      </span>
+                    </button>
+                  </header>
                   {isOpen && (
                     <div className="library-entry-grid">
-                      {group.items.map((item) => (
-                        <button
-                          type="button"
-                          key={item.key}
-                          className={configuredKey === item.key ? 'is-active' : ''}
-                          onClick={() => { setBranch(item.branch); setSemester(String(item.semester)); openEntry(item.branch, item.semester); document.getElementById('library-editor')?.scrollIntoView({ behavior: 'smooth' }) }}
-                        >
-                          <code>Semester {item.semester}</code>
-                          <span>{item.subject_count} subjects</span>
-                          <small>{item.sections.length} sections · revision {item.revision}</small>
-                          <em className={`library-entry-status library-entry-status--${item.status || 'draft'}`}>
-                            {item.status === 'published' ? 'Published' : item.status === 'changes_pending' ? 'Unpublished changes' : 'Draft'}
-                          </em>
-                        </button>
-                      ))}
+                      {group.items.map((item) => {
+                        const isSelected = selectedSavedKeys.has(item.key)
+                        return (
+                          <article className={`library-entry-item${configuredKey === item.key ? ' is-active' : ''}`} data-selected={isSelected || undefined} key={item.key}>
+                            <header>
+                              <label className="library-saved-select">
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={(event) => setSavedEntrySelected(item.key, event.target.checked)}
+                                />
+                                <span aria-hidden="true" />
+                                <code>Semester {item.semester}</code>
+                              </label>
+                              <em className={`library-entry-status library-entry-status--${item.status || 'draft'}`}>
+                                {item.status === 'published' ? 'Published' : item.status === 'changes_pending' ? 'Unpublished changes' : 'Draft'}
+                              </em>
+                            </header>
+                            <button
+                              type="button"
+                              onClick={() => { setBranch(item.branch); setSemester(String(item.semester)); openEntry(item.branch, item.semester); document.getElementById('library-editor')?.scrollIntoView({ behavior: 'smooth' }) }}
+                            >
+                              <span>{item.subject_count} subjects</span>
+                              <small>{item.sections.length} sections · revision {item.revision}</small>
+                              <small>Open curriculum →</small>
+                            </button>
+                          </article>
+                        )
+                      })}
                     </div>
                   )}
                 </section>
@@ -871,6 +1264,11 @@ function PreviewEntryModal({
   )
   const extractedLabels = (item.extracted_courses || []).filter((course) => !course.code)
   const addOptions = catalogOptions.filter((option) => !usedCodes.has(option.value))
+  const previewSections = item.sections || []
+  const hasElectiveSection = previewSections.some(
+    (section) => section.kind !== 'core' && (section.subject_codes || []).length > 0,
+  )
+  const compactLayout = !hasElectiveSection
 
   return (
     <div className="library-preview-modal-backdrop" role="presentation" onMouseDown={onClose}>
@@ -879,6 +1277,7 @@ function PreviewEntryModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="library-preview-title"
+        data-layout={compactLayout ? 'compact' : 'expanded'}
         onMouseDown={(event) => event.stopPropagation()}
       >
         <header className="library-preview-modal-head">
@@ -890,63 +1289,65 @@ function PreviewEntryModal({
           <button type="button" onClick={onClose} aria-label="Close preview editor">×</button>
         </header>
 
-        <div className="library-preview-modal-summary">
-          <span><strong>{usedCodes.size}</strong> courses</span>
-          <span><strong>{(item.sections || []).length}</strong> sections</span>
-          {item.would_overwrite && <span className="is-warning">Will replace {item.existing_subject_count} saved courses</span>}
-        </div>
+        <div className="library-preview-modal-scroll">
+          <div className="library-preview-modal-summary">
+            <span><strong>{usedCodes.size}</strong> courses</span>
+            <span><strong>{previewSections.length}</strong> sections</span>
+            {item.would_overwrite && <span className="is-warning">Will replace {item.existing_subject_count} saved courses</span>}
+          </div>
 
-        <div className="library-preview-sections">
-          {(item.sections || []).map((section) => (
-            <article key={section.kind}>
-              <header>
-                <strong>{SECTION_META[section.kind]?.label || section.kind}</strong>
-                <span>{(section.subject_codes || []).length}</span>
-              </header>
-              {(section.subject_codes || []).length === 0 ? (
-                <p className="library-preview-empty">No extracted courses in this section.</p>
-              ) : (
-                <div className="library-preview-course-list">
-                  {section.subject_codes.map((code) => {
-                    const extracted = extractedByCode.get(code)
-                    const subject = subjectByCode.get(code)
-                    return (
-                      <div className="library-preview-course" key={code}>
-                        <div>
-                          <code>{code}</code>
-                          <span>{subject?.name || extracted?.title || 'Not found in Subject Catalog'}</span>
-                          {extracted?.category && <small>PDF category: {extracted.category}</small>}
-                          {extracted?.credits && <small>Credits: {extracted.credits}</small>}
+          <div className="library-preview-sections" data-layout={compactLayout ? 'single' : 'grid'}>
+            {previewSections.map((section) => (
+              <article key={section.kind}>
+                <header>
+                  <strong>{SECTION_META[section.kind]?.label || section.kind}</strong>
+                  <span>{(section.subject_codes || []).length}</span>
+                </header>
+                {(section.subject_codes || []).length === 0 ? (
+                  <p className="library-preview-empty">No extracted courses in this section.</p>
+                ) : (
+                  <div className="library-preview-course-list">
+                    {section.subject_codes.map((code) => {
+                      const extracted = extractedByCode.get(code)
+                      const subject = subjectByCode.get(code)
+                      return (
+                        <div className="library-preview-course" key={code}>
+                          <div>
+                            <code>{code}</code>
+                            <span>{subject?.name || extracted?.title || 'Not found in Subject Catalog'}</span>
+                            {extracted?.category && <small>PDF category: {extracted.category}</small>}
+                            {extracted?.credits && <small>Credits: {extracted.credits}</small>}
+                          </div>
+                          <select
+                            value={section.kind}
+                            onChange={(event) => onMove(code, event.target.value)}
+                            aria-label={`Move ${code} to another section`}
+                          >
+                            {SECTION_ORDER.map((kind) => (
+                              <option value={kind} key={kind}>{SECTION_META[kind].label}</option>
+                            ))}
+                          </select>
+                          <button type="button" onClick={() => onRemove(code)} aria-label={`Remove ${code}`}>×</button>
                         </div>
-                        <select
-                          value={section.kind}
-                          onChange={(event) => onMove(code, event.target.value)}
-                          aria-label={`Move ${code} to another section`}
-                        >
-                          {SECTION_ORDER.map((kind) => (
-                            <option value={kind} key={kind}>{SECTION_META[kind].label}</option>
-                          ))}
-                        </select>
-                        <button type="button" onClick={() => onRemove(code)} aria-label={`Remove ${code}`}>×</button>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </article>
-          ))}
-        </div>
-
-        {extractedLabels.length > 0 && (
-          <div className="library-preview-labels">
-            <strong>Detected section labels</strong>
-            {extractedLabels.map((course, index) => (
-              <span key={`${course.title}:${index}`}>
-                {course.title} → {SECTION_META[course.section]?.label || course.section}
-              </span>
+                      )
+                    })}
+                  </div>
+                )}
+              </article>
             ))}
           </div>
-        )}
+
+          {extractedLabels.length > 0 && (
+            <div className="library-preview-labels">
+              <strong>Detected section labels</strong>
+              {extractedLabels.map((course, index) => (
+                <span key={`${course.title}:${index}`}>
+                  {course.title} → {SECTION_META[course.section]?.label || course.section}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="library-preview-add">
           <div>

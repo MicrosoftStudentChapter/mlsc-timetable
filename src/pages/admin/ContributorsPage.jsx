@@ -2,6 +2,7 @@
 // The backend stores only the username; avatars are fetched live.
 
 import { useCallback, useEffect, useState } from 'react'
+import { adminConfirm } from '../../lib/adminConfirm'
 import {
   listContributors,
   addContributor,
@@ -106,7 +107,12 @@ export default function ContributorsPage() {
   }
 
   async function onRemove(login) {
-    if (!window.confirm(`Remove ${login} from the contributors list?`)) return
+    if (!await adminConfirm({
+      title: `Remove ${login}?`,
+      message: 'This contributor will no longer appear on the public site.',
+      confirmLabel: 'Remove contributor',
+      tone: 'danger',
+    })) return
     setRemoving(login)
     try {
       await deleteContributor(login)

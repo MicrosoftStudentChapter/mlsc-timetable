@@ -1294,6 +1294,7 @@
       contains the whole week — not the mobile scroll viewport. The grid
       expands in place for a frame; the user may see a brief flash. */
 .tt-export-target.tt-exporting .tt-add-btn { visibility: hidden; }
+.tt-export-target.tt-exporting .tt-class-card[data-elective-unresolved='true'] { display: none !important; }
 .tt-export-target.tt-exporting .tt-edit-btn,
 .tt-export-target.tt-exporting .tt-drag-btn { display: none !important; }
 .tt-export-target.tt-exporting .tt-tip-wrap::after,

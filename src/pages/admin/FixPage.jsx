@@ -4,6 +4,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { adminConfirm } from '../../lib/adminConfirm'
 import {
   listErrors,
   getErrorsSummary,
@@ -306,9 +307,13 @@ export default function FixPage() {
   }
 
   async function runRollback() {
-    if (!confirm('Roll back the most recent ingest? This will replace the live batches + timetables with the snapshot taken before the last ingest. Single-use — the snapshot will be deleted after.')) {
-      return
-    }
+    if (!await adminConfirm({
+      title: 'Roll back the latest ingest?',
+      message: 'This replaces the live batches and timetables with the snapshot captured before the latest ingest.',
+      detail: 'The rollback snapshot is single-use and will be deleted afterward.',
+      confirmLabel: 'Roll back ingest',
+      tone: 'danger',
+    })) return
     setBusy(true)
     try {
       const res = await performRollback()

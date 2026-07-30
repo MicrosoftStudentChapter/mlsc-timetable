@@ -1,6 +1,7 @@
 // Admin allowlist — list of emails granted admin access (env + DB).
 
 import { useCallback, useEffect, useState } from 'react'
+import { adminConfirm } from '../../lib/adminConfirm'
 import {
   listAdminUsers,
   addAdminUser,
@@ -59,7 +60,12 @@ export default function AdminUsersPage() {
   }
 
   async function onRemove(email) {
-    if (!window.confirm(`Remove admin access for ${email}?`)) return
+    if (!await adminConfirm({
+      title: 'Remove administrator access?',
+      message: `${email} will no longer be able to access or modify the admin panel.`,
+      confirmLabel: 'Remove access',
+      tone: 'danger',
+    })) return
     setRemoving(email)
     try {
       await deleteAdminUser(email)

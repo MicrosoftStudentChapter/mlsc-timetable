@@ -660,6 +660,13 @@ export function deleteLibraryEntry(branch, semester) {
   })
 }
 
+export function bulkLibraryEntries({ action, entries }) {
+  return adminFetch('/admin/library/bulk', {
+    method: 'POST',
+    body: JSON.stringify({ action, entries }),
+  })
+}
+
 export function previewLibraryScheme({ file, branch }) {
   const body = new FormData()
   body.append('file', file)

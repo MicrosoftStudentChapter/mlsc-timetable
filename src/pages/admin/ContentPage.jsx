@@ -9,6 +9,7 @@
 // and an `.manager-add` form using shared `.upload-input` styling.
 
 import { useCallback, useEffect, useState } from 'react'
+import { adminConfirm } from '../../lib/adminConfirm'
 import {
   listAnnouncements,
   addAnnouncement,
@@ -116,7 +117,12 @@ function AnnouncementsCard() {
   }
 
   async function onRemove(id) {
-    if (!window.confirm('Delete this announcement?')) return
+    if (!await adminConfirm({
+      title: 'Delete this announcement?',
+      message: 'It will be removed from the public timetable immediately.',
+      confirmLabel: 'Delete announcement',
+      tone: 'danger',
+    })) return
     setRemoving(id)
     try {
       await deleteAnnouncement(id)
@@ -129,7 +135,13 @@ function AnnouncementsCard() {
   }
 
   async function onReset() {
-    if (!window.confirm('Clear all announcements? This cannot be undone.')) return
+    if (!await adminConfirm({
+      title: 'Clear all announcements?',
+      message: 'Every current announcement will be removed from the public timetable.',
+      detail: 'This action cannot be undone.',
+      confirmLabel: 'Clear announcements',
+      tone: 'danger',
+    })) return
     setLoading(true)
     setError(null)
     try {
@@ -295,7 +307,12 @@ function ExamDatesCard() {
   }
 
   async function onRemove(id) {
-    if (!window.confirm('Delete this exam date?')) return
+    if (!await adminConfirm({
+      title: 'Delete this exam date?',
+      message: 'The date will no longer appear in the public timetable sidebar.',
+      confirmLabel: 'Delete exam date',
+      tone: 'danger',
+    })) return
     setRemoving(id)
     try {
       await deleteExamDate(id)
@@ -308,7 +325,13 @@ function ExamDatesCard() {
   }
 
   async function onReset() {
-    if (!window.confirm('Clear all exam dates? This cannot be undone.')) return
+    if (!await adminConfirm({
+      title: 'Clear all exam dates?',
+      message: 'Every configured exam date will be removed.',
+      detail: 'This action cannot be undone.',
+      confirmLabel: 'Clear exam dates',
+      tone: 'danger',
+    })) return
     setLoading(true)
     setError(null)
     try {
@@ -744,7 +767,12 @@ function CalendarOverridesCard() {
   }
 
   async function onRemove(id) {
-    if (!window.confirm('Delete this calendar override?')) return
+    if (!await adminConfirm({
+      title: 'Delete this calendar override?',
+      message: 'The affected date will return to the default academic-calendar behavior.',
+      confirmLabel: 'Delete override',
+      tone: 'danger',
+    })) return
     setRemoving(id)
     try {
       await deleteCalendarOverride(id)
@@ -757,7 +785,13 @@ function CalendarOverridesCard() {
   }
 
   async function onReset() {
-    if (!window.confirm('Reset calendar overrides to defaults? This will delete all current overrides and restore the bundled ones.')) return
+    if (!await adminConfirm({
+      title: 'Restore default calendar overrides?',
+      message: 'All current overrides will be deleted and replaced with the bundled defaults.',
+      detail: 'Any manual calendar customizations will be lost.',
+      confirmLabel: 'Restore defaults',
+      tone: 'warning',
+    })) return
     setLoading(true)
     setError(null)
     try {

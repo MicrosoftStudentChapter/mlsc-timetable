@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { adminConfirm } from '../../lib/adminConfirm'
 import {
   listSubjects,
   addSubject,
@@ -184,7 +185,13 @@ export default function CatalogPage() {
   }
 
   async function removeSubject(subject) {
-    if (!window.confirm(`Delete ${subject.code} from the catalog?`)) return
+    if (!await adminConfirm({
+      title: `Delete ${subject.code}?`,
+      message: `${subject.name || 'This subject'} will be removed from the Subject Catalog.`,
+      detail: 'References from Library entries may prevent or be affected by this deletion.',
+      confirmLabel: 'Delete subject',
+      tone: 'danger',
+    })) return
     setBusy(subject.code)
     try { await deleteSubject(subject.code, { force: true }); await refresh() }
     catch (err) { setError(err) }
