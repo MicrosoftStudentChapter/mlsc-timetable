@@ -1248,29 +1248,19 @@ button.calendar-day:focus-visible {
 /* ═══════════════════════════════════════════════════════════════
    Sidebar Collapse (desktop / tablet)
 
-   Two-phase choreography (~0.4s total per direction):
-
-     COLLAPSE                              EXPAND
-   ─────────────────────────────────    ─────────────────────────────────
-   Ph1 (0–0.2s):  body content fades   Ph1 (0–0.2s):  container resizes
-                  out; cards shrink                    + title↔icon swap
-                  to "title-only"
-   Ph2 (0.2–0.4s): container resizes   Ph2 (0.2–0.4s): body content
-                  + title↔icon swap                    fades in
-
-   Implemented via asymmetric transition delays: each rule (base vs
-   --collapsed) describes the transition that plays when the element is
-   moving TO that state. So the base rule owns "expand" timing and the
-   --collapsed rule owns "collapse" timing.
+   Width, card geometry, and content height now move in one coordinated
+   transition. Content gets only a short reveal stagger while expanding so
+   text does not wrap visibly during the first part of the width animation.
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
   --sb-ease: cubic-bezier(0.4, 0, 0.2, 1);
-  --sb-phase: 0.2s;
+  --sb-phase: 0.32s;
+  --sb-fade: 0.18s;
+  --sb-reveal-delay: 0.08s;
 }
 
-/* ── Container resize (sidebar + card paddings) ──────────────
-   COLLAPSE: Phase 2 (delayed). EXPAND: Phase 1 (immediate). */
+/* ── Container resize (sidebar + card paddings) ────────────── */
 .dashboard-sidebar {
   position: sticky;
   transition: width var(--sb-phase) var(--sb-ease),
@@ -1279,8 +1269,8 @@ button.calendar-day:focus-visible {
 .dashboard-sidebar--collapsed {
   width: 72px;
   padding: 24px 10px;
-  transition: width var(--sb-phase) var(--sb-ease) var(--sb-phase),
-              padding var(--sb-phase) var(--sb-ease) var(--sb-phase);
+  transition: width var(--sb-phase) var(--sb-ease),
+              padding var(--sb-phase) var(--sb-ease);
 }
 
 /* Event details need more reading width than the month grid. Expand only
@@ -1305,33 +1295,31 @@ button.calendar-day:focus-visible {
 .dashboard-sidebar--collapsed .sidebar-logo-container,
 .dashboard-sidebar--collapsed .logo-img-wrapper,
 .dashboard-sidebar--collapsed .dashboard-card {
-  transition: padding var(--sb-phase) var(--sb-ease) var(--sb-phase),
-              margin var(--sb-phase) var(--sb-ease) var(--sb-phase),
-              border-radius var(--sb-phase) var(--sb-ease) var(--sb-phase),
-              width var(--sb-phase) var(--sb-ease) var(--sb-phase),
-              height var(--sb-phase) var(--sb-ease) var(--sb-phase),
-              gap var(--sb-phase) var(--sb-ease) var(--sb-phase);
+  transition: padding var(--sb-phase) var(--sb-ease),
+              margin var(--sb-phase) var(--sb-ease),
+              border-radius var(--sb-phase) var(--sb-ease),
+              width var(--sb-phase) var(--sb-ease),
+              height var(--sb-phase) var(--sb-ease),
+              gap var(--sb-phase) var(--sb-ease);
 }
 
-/* ── Body content: MLSC TIMETABLE logo + card body fillings ──
-   COLLAPSE: Phase 1 (immediate fade out).
-   EXPAND:   Phase 2 (fade in after container finishes resizing). */
+/* ── Body content: fade with the resize; reveal slightly after it starts. */
 .sidebar-logo-text,
 .card-placeholder-text,
 .profile-info {
   opacity: 1;
   max-height: 300px;
   overflow: hidden;
-  transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase),
-              max-height var(--sb-phase) var(--sb-ease) var(--sb-phase);
+  transition: opacity var(--sb-fade) ease var(--sb-reveal-delay),
+              max-height var(--sb-phase) var(--sb-ease);
 }
 
 .mini-calendar {
   opacity: 1;
   max-height: 720px;
   overflow: hidden;
-  transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase),
-              max-height var(--sb-phase) var(--sb-ease) var(--sb-phase);
+  transition: opacity var(--sb-fade) ease var(--sb-reveal-delay),
+              max-height var(--sb-phase) var(--sb-ease);
 }
 .dashboard-sidebar--collapsed .sidebar-logo-text,
 .dashboard-sidebar--collapsed .card-placeholder-text,
@@ -1342,36 +1330,29 @@ button.calendar-day:focus-visible {
   margin-top: 0;
   margin-bottom: 0;
   pointer-events: none;
-  transition: opacity var(--sb-phase) var(--sb-ease),
+  transition: opacity var(--sb-fade) ease,
               max-height var(--sb-phase) var(--sb-ease),
               margin var(--sb-phase) var(--sb-ease);
 }
 
-/* ── Profile avatar: cross-fades with the profile icon at the
-   same position. Kept at fixed 36×36 throughout so the profile
-   card never "shrinks to min-height" during expand.
-   COLLAPSE: Phase 2 (delayed fade out). EXPAND: Phase 1 (immediate fade in). */
+/* ── Profile avatar: cross-fades with the profile icon in place. */
 .profile-avatar {
   opacity: 1;
-  transition: opacity var(--sb-phase) var(--sb-ease);
+  transition: opacity var(--sb-fade) ease var(--sb-reveal-delay);
 }
 .dashboard-sidebar--collapsed .profile-avatar {
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase);
+  transition: opacity var(--sb-fade) ease;
 }
 
-/* ── Card titles + calendar heading: fade in/out alongside
-   container resize. Kept in their natural top-left position throughout.
-   The month controls live inside `.mini-calendar`, so they follow the
-   calendar grid during the collapsed-sidebar transition.
-   COLLAPSE: Phase 2 (delayed fade out). EXPAND: Phase 1 (immediate fade in). */
+/* ── Card titles + calendar heading: follow the same fade rhythm. */
 .card-title,
 .calendar-header {
   opacity: 1;
   max-height: 40px;
   overflow: hidden;
-  transition: opacity var(--sb-phase) var(--sb-ease),
+  transition: opacity var(--sb-fade) ease var(--sb-reveal-delay),
               max-height var(--sb-phase) var(--sb-ease),
               margin var(--sb-phase) var(--sb-ease);
 }
@@ -1382,9 +1363,9 @@ button.calendar-day:focus-visible {
   margin-top: 0;
   margin-bottom: 0;
   pointer-events: none;
-  transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase),
-              max-height var(--sb-phase) var(--sb-ease) var(--sb-phase),
-              margin var(--sb-phase) var(--sb-ease) var(--sb-phase);
+  transition: opacity var(--sb-fade) ease,
+              max-height var(--sb-phase) var(--sb-ease),
+              margin var(--sb-phase) var(--sb-ease);
 }
 
 /* Edge collapse trigger — invisible full-height strip on the right edge.
@@ -1468,10 +1449,7 @@ button.calendar-day:focus-visible {
   transform: rotate(180deg);
 }
 
-/* ── Card icons: cross-fade with titles WITHOUT pushing them.
-   Absolutely positioned to fill the card and self-center, so the
-   title remains anchored to its natural top-left position throughout.
-   COLLAPSE: Phase 2 (delayed fade in). EXPAND: Phase 1 (immediate fade out). */
+/* ── Card icons: cross-fade with titles without affecting layout. */
 .card-icon {
   position: absolute;
   inset: 0;
@@ -1482,7 +1460,7 @@ button.calendar-day:focus-visible {
   opacity: 0;
   pointer-events: none;
   overflow: hidden;
-  transition: opacity var(--sb-phase) var(--sb-ease);
+  transition: opacity var(--sb-fade) ease;
 }
 
 /* ── Collapsed-only layout overrides ─────────────────────────
@@ -1510,7 +1488,7 @@ button.calendar-day:focus-visible {
 .dashboard-sidebar--collapsed .card-icon {
   opacity: 1;
   pointer-events: auto;
-  transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase);
+  transition: opacity var(--sb-fade) ease var(--sb-reveal-delay);
 }
 
 /* Collapsed cards should not show the expand chevron (nothing to expand
@@ -1549,16 +1527,16 @@ button.calendar-day:focus-visible {
   width: 36px;
   height: 36px;
   transform: translateY(-50%);
-  transition: opacity var(--sb-phase) var(--sb-ease),
+  transition: opacity var(--sb-fade) ease,
               left var(--sb-phase) var(--sb-ease),
               transform var(--sb-phase) var(--sb-ease);
 }
 .dashboard-sidebar--collapsed .profile-card .card-icon {
   left: 50%;
   transform: translate(-50%, -50%);
-  transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase),
-              left var(--sb-phase) var(--sb-ease) var(--sb-phase),
-              transform var(--sb-phase) var(--sb-ease) var(--sb-phase);
+  transition: opacity var(--sb-fade) ease var(--sb-reveal-delay),
+              left var(--sb-phase) var(--sb-ease),
+              transform var(--sb-phase) var(--sb-ease);
 }
 
 /* Dark-mode pairing */

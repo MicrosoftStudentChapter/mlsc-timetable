@@ -206,7 +206,7 @@ export default function AnalyticsPage() {
             </svg>
             Analytics & Insights
           </h1>
-          <p>Signed-in audience activity, product adoption, exports, and batch usage</p>
+          <p>User activity, product adoption, exports, and batch usage</p>
         </div>
 
         <div className="analytics-header-actions">
@@ -229,19 +229,19 @@ export default function AnalyticsPage() {
         </div>
       </header>
 
-      <section className="analytics-section" aria-labelledby="signed-in-users-title">
+      <section className="analytics-section" aria-labelledby="users-title">
         <div className="analytics-section-head">
           <div>
             <span className="analytics-section-kicker">Audience</span>
-            <h2 id="signed-in-users-title">Signed-in users</h2>
-            <p>Unique Clerk accounts that opened a timetable. Guest browser profiles are excluded.</p>
+            <h2 id="users-title">Users</h2>
+            <p>Unique users that opened a timetable.</p>
           </div>
           <span className="analytics-data-note">Rolling windows · UTC</span>
         </div>
 
         <div className="analytics-kpi-grid analytics-kpi-grid--users">
           <UserKpiCard
-            label="Total signed-in"
+            label="Total users"
             value={userTotal}
             detail={`${(users.new_30d || 0).toLocaleString()} new in 30 days`}
             meter={userTotal ? 100 : 0}
@@ -266,7 +266,7 @@ export default function AnalyticsPage() {
           <UserKpiCard
             label="Active 7 days"
             value={active7d}
-            detail="Weekly active accounts"
+            detail="Weekly active users"
             meter={percentage(active7d, userTotal)}
             icon={(
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -277,7 +277,7 @@ export default function AnalyticsPage() {
           <UserKpiCard
             label="Active 30 days"
             value={active30d}
-            detail="Monthly active accounts"
+            detail="Monthly active users"
             meter={percentage(active30d, userTotal)}
             icon={(
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -292,7 +292,7 @@ export default function AnalyticsPage() {
             <div className="analytics-card-head">
               <div>
                 <h3 className="analytics-card-title">Feature adoption</h3>
-                <p>Distinct signed-in accounts using each capability</p>
+                <p>Distinct users using each capability</p>
               </div>
             </div>
             <ul className="analytics-adoption-list">
@@ -306,13 +306,13 @@ export default function AnalyticsPage() {
           <div className="analytics-card analytics-user-batches">
             <div className="analytics-card-head">
               <div>
-                <h3 className="analytics-card-title">Signed-in users by batch</h3>
-                <p>Based on each account&apos;s saved default batch</p>
+                <h3 className="analytics-card-title">Users by batch</h3>
+                <p>Based on each user&apos;s saved default batch</p>
               </div>
             </div>
             <ul className="analytics-mini-bars">
               {userTopBatches.length === 0 ? (
-                <li className="analytics-empty-state">No signed-in batch data yet.</li>
+                <li className="analytics-empty-state">No batch data yet.</li>
               ) : userTopBatches.map((item) => (
                 <li key={item.batch}>
                   <span className="analytics-mini-bar-fill" style={{ width: `${Math.round((item.count / maxUserBatchCount) * 100)}%` }} />

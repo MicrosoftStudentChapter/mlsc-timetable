@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, memo } from 'react';
 import { Link } from 'react-router-dom';
 import './side_columns.css';
 import { loadAnnouncements, loadExamDates, loadCalendarOverrides } from '../lib/sidebar_feeds';
@@ -255,7 +255,7 @@ function useCachedFeed(key, loader) {
   return state
 }
 
-export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch, showLogo = false }) {
+export const SidebarContent = memo(function SidebarContent({ onActiveWeekdayChange, batch, showLogo = false }) {
   // ─── Mini calendar ──────────────────────────────────────
   const today = useMemo(() => new Date(), []);
   const [visibleMonth, setVisibleMonth] = useState(
@@ -422,7 +422,7 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
   for (let d = 1; d <= daysInMonth; d++) cells.push({ key: `d-${d}`, day: d });
 
   return (
-    <div className={`sidebar-inner ${collapsed ? 'sidebar-inner--collapsed' : ''}`}>
+    <div className="sidebar-inner">
       {showLogo && (
         <div className="sidebar-header">
           <Link to="/" className="sidebar-logo-container" aria-label="Go to home">
@@ -797,7 +797,7 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
       </div>
     </div>
   );
-}
+});
 
 // Bottom-of-sidebar card that pulls from Clerk when signed in, or falls back
 // to the placeholder student card so the layout still works without auth.
@@ -862,7 +862,7 @@ export function DashboardLayout({ children, footer, onActiveWeekdayChange, heade
     <div className="dashboard-layout">
       {/* Desktop & Tablet Sidebar (fixed/static) */}
       <aside className={`dashboard-sidebar ${collapsed ? 'dashboard-sidebar--collapsed' : ''}`}>
-        <SidebarContent collapsed={collapsed} onActiveWeekdayChange={onActiveWeekdayChange} batch={batch} />
+        <SidebarContent onActiveWeekdayChange={onActiveWeekdayChange} batch={batch} />
         <button
           type="button"
           className="sidebar-edge-toggle"
