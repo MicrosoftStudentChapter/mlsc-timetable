@@ -169,6 +169,8 @@ body:has(.dashboard-layout) {
 
 /* Mini Calendar */
 .calendar-card {
+  --calendar-campus-accent: #0078D4;
+  --calendar-campus-accent-soft: rgba(0, 120, 212, 0.11);
   display: flex;
   flex-direction: column;
   flex: 0 0 auto;
@@ -400,7 +402,7 @@ button.calendar-day:focus-visible {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #10B981;
+  background: var(--calendar-campus-accent);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.92);
 }
 
@@ -409,7 +411,7 @@ button.calendar-day:focus-visible {
 }
 
 .calendar-day.today.calendar-day--campus-event::after {
-  background: #D1FAE5;
+  background: #BAE6FD;
   box-shadow: 0 0 0 1px rgba(30, 64, 175, 0.35);
 }
 
@@ -434,7 +436,7 @@ button.calendar-day:focus-visible {
 .calendar-date-detail--est { --calendar-detail-accent: #A855F7; }
 .calendar-date-detail--assessment { --calendar-detail-accent: #14B8A6; }
 .calendar-date-detail--frosh { --calendar-detail-accent: #EC4899; }
-.calendar-date-detail--campus { --calendar-detail-accent: #10B981; }
+.calendar-date-detail--campus { --calendar-detail-accent: var(--calendar-campus-accent); }
 
 .calendar-date-detail-head {
   display: flex;
@@ -695,8 +697,8 @@ button.calendar-day:focus-visible {
 
 .calendar-legend-swatch--campus {
   position: relative;
-  border: 1px solid rgba(16, 185, 129, 0.4);
-  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(0, 120, 212, 0.42);
+  background: var(--calendar-campus-accent-soft);
 }
 
 .calendar-legend-swatch--campus::after {
@@ -704,7 +706,7 @@ button.calendar-day:focus-visible {
   position: absolute;
   inset: 3px;
   border-radius: 50%;
-  background: #10B981;
+  background: var(--calendar-campus-accent);
 }
 
 /* ─── MST / EST / Assessment cells + swatches ─────────────────────────
@@ -1783,6 +1785,11 @@ button.calendar-day:focus-visible {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
 }
 
+[data-theme="dark"] .calendar-card {
+  --calendar-campus-accent: #38BDF8;
+  --calendar-campus-accent-soft: rgba(56, 189, 248, 0.13);
+}
+
 [data-theme="dark"] .dashboard-card:hover {
   background: #1A1A1A;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
@@ -1872,7 +1879,7 @@ button.calendar-day:focus-visible {
 }
 
 [data-theme="dark"] .calendar-day--campus-event::after {
-  background: #34D399;
+  background: var(--calendar-campus-accent);
   box-shadow: 0 0 0 1px rgba(17, 17, 17, 0.9);
 }
 
@@ -1881,7 +1888,7 @@ button.calendar-day:focus-visible {
 }
 
 [data-theme="dark"] .calendar-day.today.calendar-day--campus-event::after {
-  background: #D1FAE5;
+  background: #E0F2FE;
   box-shadow: 0 0 0 1px rgba(30, 64, 175, 0.4);
 }
 

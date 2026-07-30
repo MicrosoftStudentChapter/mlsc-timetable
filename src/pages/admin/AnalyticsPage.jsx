@@ -1,7 +1,47 @@
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { getAnalytics } from '../../lib/admin'
 import './admin.css'
 import './AnalyticsPage.css'
+
+function percentage(value, total) {
+  if (!total) return 0
+  return Math.min(100, Math.round((value / total) * 100))
+}
+
+function UserKpiCard({ label, value, detail, meter, icon }) {
+  return (
+    <div className="analytics-kpi-card analytics-user-kpi">
+      <div className="kpi-card-header">
+        <span className="kpi-label">{label}</span>
+        <div className="kpi-icon-wrap user" aria-hidden="true">{icon}</div>
+      </div>
+      <div className="kpi-value">{value.toLocaleString()}</div>
+      <div className="kpi-meter-bg">
+        <div className="kpi-meter-fill analytics-user-meter" style={{ width: `${meter}%` }} />
+      </div>
+      <div className="kpi-subtext"><span>{detail}</span><span>{meter}%</span></div>
+    </div>
+  )
+}
+
+function AdoptionRow({ label, value, total, hint }) {
+  const pct = percentage(value, total)
+  return (
+    <li className="analytics-adoption-row">
+      <div className="analytics-adoption-copy">
+        <span>{label}</span>
+        <small>{hint}</small>
+      </div>
+      <div className="analytics-adoption-value">
+        <strong>{value.toLocaleString()}</strong>
+        <span>{pct}%</span>
+      </div>
+      <div className="analytics-adoption-track" aria-hidden="true">
+        <span style={{ width: `${pct}%` }} />
+      </div>
+    </li>
+  )
+}
 
 export default function AnalyticsPage() {
   const [data, setData] = useState(null)
@@ -24,14 +64,15 @@ export default function AnalyticsPage() {
   }, [])
 
   useEffect(() => {
+    // Initial remote data load; refresh owns the loading/error state transitions.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refresh()
   }, [refresh])
 
-  const filteredRecentDownloads = useMemo(() => {
-    if (!data?.recent_downloads) return []
-    if (formatFilter === 'all') return data.recent_downloads
-    return data.recent_downloads.filter((item) => item.format === formatFilter)
-  }, [data?.recent_downloads, formatFilter])
+  const recentDownloads = data?.recent_downloads || []
+  const filteredRecentDownloads = formatFilter === 'all'
+    ? recentDownloads
+    : recentDownloads.filter((item) => item.format === formatFilter)
 
   if (loading && !data) {
     return (
@@ -66,7 +107,13 @@ export default function AnalyticsPage() {
     )
   }
 
-  const { total_downloads = 0, format_breakdown = { png: 0, pdf: 0 }, top_batches = [], daily_trend = [] } = data || {}
+  const { total_downloads = 0, format_breakdown = { png: 0, pdf: 0 }, top_batches = [], daily_trend = [], users = {} } = data || {}
+  const userTotal = users.total || 0
+  const active24h = users.active_24h || 0
+  const active7d = users.active_7d || 0
+  const active30d = users.active_30d || 0
+  const userTopBatches = users.top_batches || []
+  const maxUserBatchCount = userTopBatches.length > 0 ? Math.max(...userTopBatches.map((item) => item.count), 1) : 1
   const totalFormat = (format_breakdown.png || 0) + (format_breakdown.pdf || 0)
   const pngPct = totalFormat > 0 ? Math.round(((format_breakdown.png || 0) / totalFormat) * 100) : 0
   const pdfPct = totalFormat > 0 ? 100 - pngPct : 0
@@ -159,13 +206,13 @@ export default function AnalyticsPage() {
             </svg>
             Analytics & Insights
           </h1>
-          <p>Real-time telemetry, download format statistics, and batch usage trends</p>
+          <p>Signed-in audience activity, product adoption, exports, and batch usage</p>
         </div>
 
         <div className="analytics-header-actions">
           <span className="analytics-time-tag">
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#3b82f6', display: 'inline-block' }} />
-            Last 30 Days
+            Rolling activity
           </span>
           <button 
             type="button" 
@@ -181,6 +228,110 @@ export default function AnalyticsPage() {
           </button>
         </div>
       </header>
+
+      <section className="analytics-section" aria-labelledby="signed-in-users-title">
+        <div className="analytics-section-head">
+          <div>
+            <span className="analytics-section-kicker">Audience</span>
+            <h2 id="signed-in-users-title">Signed-in users</h2>
+            <p>Unique Clerk accounts that opened a timetable. Guest browser profiles are excluded.</p>
+          </div>
+          <span className="analytics-data-note">Rolling windows · UTC</span>
+        </div>
+
+        <div className="analytics-kpi-grid analytics-kpi-grid--users">
+          <UserKpiCard
+            label="Total signed-in"
+            value={userTotal}
+            detail={`${(users.new_30d || 0).toLocaleString()} new in 30 days`}
+            meter={userTotal ? 100 : 0}
+            icon={(
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            )}
+          />
+          <UserKpiCard
+            label="Active 24 hours"
+            value={active24h}
+            detail="Seen in the last day"
+            meter={percentage(active24h, userTotal)}
+            icon={(
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" />
+              </svg>
+            )}
+          />
+          <UserKpiCard
+            label="Active 7 days"
+            value={active7d}
+            detail="Weekly active accounts"
+            meter={percentage(active7d, userTotal)}
+            icon={(
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 11h18" />
+              </svg>
+            )}
+          />
+          <UserKpiCard
+            label="Active 30 days"
+            value={active30d}
+            detail="Monthly active accounts"
+            meter={percentage(active30d, userTotal)}
+            icon={(
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 3v18h18" /><path d="m7 15 4-4 3 3 5-6" />
+              </svg>
+            )}
+          />
+        </div>
+
+        <div className="analytics-user-grid">
+          <div className="analytics-card analytics-adoption-card">
+            <div className="analytics-card-head">
+              <div>
+                <h3 className="analytics-card-title">Feature adoption</h3>
+                <p>Distinct signed-in accounts using each capability</p>
+              </div>
+            </div>
+            <ul className="analytics-adoption-list">
+              <AdoptionRow label="Batch selected" value={users.with_default_batch || 0} total={userTotal} hint="Saved a default timetable" />
+              <AdoptionRow label="Personalised timetable" value={users.with_personalization || 0} total={userTotal} hint="Has at least one saved customisation" />
+              <AdoptionRow label="Calendar connected" value={users.calendar_connected || 0} total={userTotal} hint="Linked a Google Calendar account" />
+              <AdoptionRow label="Calendar sync enabled" value={users.calendar_enabled || 0} total={userTotal} hint="Automatic timetable sync is on" />
+            </ul>
+          </div>
+
+          <div className="analytics-card analytics-user-batches">
+            <div className="analytics-card-head">
+              <div>
+                <h3 className="analytics-card-title">Signed-in users by batch</h3>
+                <p>Based on each account&apos;s saved default batch</p>
+              </div>
+            </div>
+            <ul className="analytics-mini-bars">
+              {userTopBatches.length === 0 ? (
+                <li className="analytics-empty-state">No signed-in batch data yet.</li>
+              ) : userTopBatches.map((item) => (
+                <li key={item.batch}>
+                  <span className="analytics-mini-bar-fill" style={{ width: `${Math.round((item.count / maxUserBatchCount) * 100)}%` }} />
+                  <strong>{item.batch}</strong>
+                  <span>{item.count.toLocaleString()} user{item.count === 1 ? '' : 's'}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div className="analytics-section-head analytics-section-head--compact">
+        <div>
+          <span className="analytics-section-kicker">Exports</span>
+          <h2>Download activity</h2>
+          <p>All-time format totals with a daily view of the last 30 days.</p>
+        </div>
+      </div>
 
       {/* ── Overview KPI Cards ── */}
       <div className="analytics-kpi-grid">
