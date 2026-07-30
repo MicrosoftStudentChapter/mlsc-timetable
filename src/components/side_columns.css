@@ -304,10 +304,24 @@ body:has(.dashboard-layout) {
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-button.calendar-day:focus-visible,
-.calendar-day--selected {
+button.calendar-day:focus-visible {
   outline: 2px solid rgba(99, 102, 241, 0.72);
-  outline-offset: 1px;
+  outline-offset: -2px;
+}
+
+.calendar-day--selected {
+  position: relative;
+  outline: none;
+}
+
+.calendar-day--selected::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 5px;
+  background: rgba(59, 130, 246, 0.12);
+  box-shadow: inset 0 -2px 0 rgba(37, 99, 235, 0.9);
+  pointer-events: none;
 }
 
 .calendar-day--blank {
@@ -372,6 +386,33 @@ button.calendar-day:focus-visible,
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.55);
 }
 
+/* Campus events are additive: the dot sits on top of any academic state
+   instead of replacing holiday/follow-day/assessment colours. */
+.calendar-day--campus-event {
+  position: relative;
+}
+
+.calendar-day--campus-event::after {
+  content: '';
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.92);
+}
+
+.calendar-day--campus-conflict::after {
+  background: #F97316;
+}
+
+.calendar-day.today.calendar-day--campus-event::after {
+  background: #D1FAE5;
+  box-shadow: 0 0 0 1px rgba(30, 64, 175, 0.35);
+}
+
 /* Tapping a marked date opens a compact, persistent explanation. Hover
    titles remain useful on desktop, while this panel gives touch users the
    same information without relying on a hover state. */
@@ -393,6 +434,7 @@ button.calendar-day:focus-visible,
 .calendar-date-detail--est { --calendar-detail-accent: #A855F7; }
 .calendar-date-detail--assessment { --calendar-detail-accent: #14B8A6; }
 .calendar-date-detail--frosh { --calendar-detail-accent: #EC4899; }
+.calendar-date-detail--campus { --calendar-detail-accent: #10B981; }
 
 .calendar-date-detail-head {
   display: flex;
@@ -457,6 +499,141 @@ button.calendar-day:focus-visible,
   color: #111827;
 }
 
+.campus-event-details {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(16, 185, 129, 0.16);
+}
+
+.campus-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-height: 250px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.campus-event-item {
+  padding: 8px;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.campus-event-item-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.campus-event-item-head strong {
+  color: #111827;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.campus-event-status {
+  flex: 0 0 auto;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.11);
+  color: #047857;
+  font-size: 7.5px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.campus-event-society {
+  display: block;
+  margin-top: 2px;
+  color: #6B7280;
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.campus-event-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 7px;
+  margin-top: 6px;
+  color: #4B5563;
+  font-size: 8.5px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.campus-event-meta > span:not(:last-child)::after {
+  content: '·';
+  margin-left: 7px;
+  color: #9CA3AF;
+}
+
+.campus-event-conflict {
+  color: #C2410C;
+}
+
+.calendar-date-detail .campus-event-description {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 6px 0 0;
+  color: #6B7280;
+  font-size: 9px;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.campus-event-loading,
+.campus-event-error,
+.campus-event-empty {
+  color: #6B7280;
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+
+.campus-event-loading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.campus-event-loading > span {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid rgba(16, 185, 129, 0.22);
+  border-top-color: #10B981;
+  border-radius: 50%;
+  animation: campus-event-spin 0.7s linear infinite;
+}
+
+@keyframes campus-event-spin {
+  to { transform: rotate(360deg); }
+}
+
+.campus-event-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.campus-event-error button {
+  padding: 4px 7px;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 6px;
+  background: rgba(16, 185, 129, 0.08);
+  color: #047857;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
 /* ─── Dim Sat/Sun without any override ─────────────────────────────────────
    Weekends normally have no classes. Muting them makes it visually
    obvious that they're not class days without stealing attention from
@@ -514,6 +691,20 @@ button.calendar-day:focus-visible,
 .calendar-legend-swatch--follow {
   background: transparent;
   box-shadow: inset 0 0 0 1.5px #6366F1;
+}
+
+.calendar-legend-swatch--campus {
+  position: relative;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.calendar-legend-swatch--campus::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: #10B981;
 }
 
 /* ─── MST / EST / Assessment cells + swatches ─────────────────────────
@@ -1022,6 +1213,15 @@ button.calendar-day:focus-visible,
               padding var(--sb-phase) var(--sb-ease) var(--sb-phase);
 }
 
+/* Event details need more reading width than the month grid. Expand only
+   while a date is open so the timetable keeps its normal width otherwise. */
+@media (min-width: 769px) {
+  .dashboard-sidebar:not(.dashboard-sidebar--collapsed):has(.calendar-date-detail) {
+    width: clamp(320px, 25vw, 360px);
+    padding-inline: 20px;
+  }
+}
+
 .sidebar-logo-container,
 .logo-img-wrapper,
 .dashboard-card {
@@ -1048,10 +1248,17 @@ button.calendar-day:focus-visible,
    EXPAND:   Phase 2 (fade in after container finishes resizing). */
 .sidebar-logo-text,
 .card-placeholder-text,
-.mini-calendar,
 .profile-info {
   opacity: 1;
   max-height: 300px;
+  overflow: hidden;
+  transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase),
+              max-height var(--sb-phase) var(--sb-ease) var(--sb-phase);
+}
+
+.mini-calendar {
+  opacity: 1;
+  max-height: 720px;
   overflow: hidden;
   transition: opacity var(--sb-phase) var(--sb-ease) var(--sb-phase),
               max-height var(--sb-phase) var(--sb-ease) var(--sb-phase);
@@ -1396,6 +1603,12 @@ button.calendar-day:focus-visible,
     display: none;
   }
 
+  .mobile-drawer {
+    left: -100vw;
+    width: 100vw;
+    padding: 20px 16px;
+  }
+
   /* Let the document own vertical scrolling; these flex descendants must be
      allowed to grow to the timetable's natural height. */
   .dashboard-main,
@@ -1658,9 +1871,27 @@ button.calendar-day:focus-visible,
   box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.55);
 }
 
-[data-theme="dark"] button.calendar-day:focus-visible,
-[data-theme="dark"] .calendar-day--selected {
+[data-theme="dark"] .calendar-day--campus-event::after {
+  background: #34D399;
+  box-shadow: 0 0 0 1px rgba(17, 17, 17, 0.9);
+}
+
+[data-theme="dark"] .calendar-day--campus-conflict::after {
+  background: #FB923C;
+}
+
+[data-theme="dark"] .calendar-day.today.calendar-day--campus-event::after {
+  background: #D1FAE5;
+  box-shadow: 0 0 0 1px rgba(30, 64, 175, 0.4);
+}
+
+[data-theme="dark"] button.calendar-day:focus-visible {
   outline-color: rgba(147, 197, 253, 0.9);
+}
+
+[data-theme="dark"] .calendar-day--selected::before {
+  background: rgba(96, 165, 250, 0.14);
+  box-shadow: inset 0 -2px 0 rgba(96, 165, 250, 0.95);
 }
 
 [data-theme="dark"] .calendar-date-detail {
@@ -1686,6 +1917,43 @@ button.calendar-day:focus-visible,
 [data-theme="dark"] .calendar-date-detail-close:focus-visible {
   background: rgba(255, 255, 255, 0.09);
   color: rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .campus-event-details {
+  border-top-color: rgba(52, 211, 153, 0.16);
+}
+
+[data-theme="dark"] .campus-event-item {
+  border-color: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+[data-theme="dark"] .campus-event-item-head strong {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .campus-event-status {
+  background: rgba(52, 211, 153, 0.12);
+  color: #6EE7B7;
+}
+
+[data-theme="dark"] .campus-event-society,
+[data-theme="dark"] .campus-event-meta,
+[data-theme="dark"] .calendar-date-detail .campus-event-description,
+[data-theme="dark"] .campus-event-loading,
+[data-theme="dark"] .campus-event-error,
+[data-theme="dark"] .campus-event-empty {
+  color: rgba(255, 255, 255, 0.56);
+}
+
+[data-theme="dark"] .campus-event-conflict {
+  color: #FDBA74;
+}
+
+[data-theme="dark"] .campus-event-error button {
+  border-color: rgba(52, 211, 153, 0.22);
+  background: rgba(52, 211, 153, 0.1);
+  color: #6EE7B7;
 }
 
 /* Dark dim + legend */

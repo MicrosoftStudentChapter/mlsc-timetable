@@ -2,11 +2,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import './ElectiveOnboarding.css'
 
-function optionLabel(option) {
+function optionName(option) {
   const name = String(option?.subject_name || '').trim()
   const code = String(option?.subject_code || '').trim()
-  if (name && code) return `${name} (${code})`
   return name || code || 'Unnamed course'
+}
+
+function optionCode(option) {
+  return String(option?.subject_code || option?.baseCode || '').trim()
 }
 
 function IslandIcon({ status }) {
@@ -49,11 +52,17 @@ export default function ElectiveOnboarding({
   const [selections, setSelections] = useState({})
   const [status, setStatus] = useState('idle')
   const [message, setMessage] = useState('')
+  const [activeStep, setActiveStep] = useState(0)
+  const [query, setQuery] = useState('')
 
   useEffect(() => {
     if (!open) return undefined
     const onKey = (event) => {
-      if (event.key === 'Escape' && status !== 'saving') onOpenChange(false)
+      if (event.key === 'Escape' && status !== 'saving') {
+        setActiveStep(0)
+        setQuery('')
+        onOpenChange(false)
+      }
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
@@ -73,6 +82,17 @@ export default function ElectiveOnboarding({
   const activeGroups = formGroups.length > 0 ? formGroups : unresolved
   const ready = activeGroups.length > 0 && activeGroups.every((group) => selections[group.key])
   const visible = unresolved.length > 0 || status !== 'idle'
+  const currentStep = Math.min(activeStep, Math.max(0, activeGroups.length - 1))
+  const currentGroup = activeGroups[currentStep]
+  const currentSelection = currentGroup ? selections[currentGroup.key] : ''
+  const filteredOptions = useMemo(() => {
+    if (!currentGroup) return []
+    const needle = query.trim().toLocaleLowerCase()
+    if (!needle) return currentGroup.options
+    return currentGroup.options.filter((option) => (
+      `${optionName(option)} ${optionCode(option)}`.toLocaleLowerCase().includes(needle)
+    ))
+  }, [currentGroup, query])
 
   if (!visible) return null
 
@@ -82,6 +102,8 @@ export default function ElectiveOnboarding({
       setFormGroups(unresolved)
       setSelections(Object.fromEntries(unresolved.map((group) => [group.key, group.selectedBase || ''])))
     }
+    setActiveStep(0)
+    setQuery('')
     onOpenChange(true)
   }
 
@@ -93,11 +115,23 @@ export default function ElectiveOnboarding({
       await onApply(selections, activeGroups)
       setStatus('success')
       setMessage(isSignedIn ? 'Saved to your timetable' : 'Saved on this device')
+      setActiveStep(0)
+      setQuery('')
       onOpenChange(false)
     } catch (error) {
       setStatus('error')
       setMessage(error?.message || 'Saved on this device, but sync failed')
     }
+  }
+
+  const continueSelection = () => {
+    if (!currentSelection || status === 'saving') return
+    if (currentStep < activeGroups.length - 1) {
+      setActiveStep(currentStep + 1)
+      setQuery('')
+      return
+    }
+    submit()
   }
 
   const islandLabel = status === 'saving'
@@ -132,7 +166,11 @@ export default function ElectiveOnboarding({
           className="tt-elective-onboarding-backdrop"
           role="presentation"
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget && status !== 'saving') onOpenChange(false)
+            if (event.target === event.currentTarget && status !== 'saving') {
+              setActiveStep(0)
+              setQuery('')
+              onOpenChange(false)
+            }
           }}
         >
           <section
@@ -142,15 +180,25 @@ export default function ElectiveOnboarding({
             aria-labelledby="tt-elective-onboarding-title"
           >
             <header className="tt-elective-onboarding-head">
-              <div>
-                <span className="tt-elective-onboarding-kicker">Personalise {batch}</span>
+              <div className="tt-elective-onboarding-head-copy">
+                <span className="tt-elective-onboarding-mark" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H20v16H7.5A2.5 2.5 0 0 0 5 21.5v-16Z" />
+                    <path d="M5 5.5v16M9 7h7M9 11h5" />
+                  </svg>
+                </span>
+                <span className="tt-elective-onboarding-kicker">{batch} curriculum</span>
                 <h2 id="tt-elective-onboarding-title">Choose your electives</h2>
-                <p>We will show only the courses you select across every matching class.</p>
+                <p>Pick one course from each group. Your timetable updates everywhere automatically.</p>
               </div>
               <button
                 type="button"
                 className="tt-elective-onboarding-close"
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  setActiveStep(0)
+                  setQuery('')
+                  onOpenChange(false)
+                }}
                 disabled={status === 'saving'}
                 aria-label="Close elective selection"
               >
@@ -158,36 +206,79 @@ export default function ElectiveOnboarding({
               </button>
             </header>
 
-            <div className="tt-elective-onboarding-fields">
+            <div className="tt-elective-onboarding-progress" aria-label={`Step ${currentStep + 1} of ${activeGroups.length}`}>
               {activeGroups.map((group, index) => (
-                <label className="tt-elective-onboarding-field" key={group.key}>
-                  <span className="tt-elective-onboarding-field-number">{String(index + 1).padStart(2, '0')}</span>
-                  <span className="tt-elective-onboarding-field-copy">
-                    <strong>{group.label}</strong>
-                    <small>{group.options.length} course{group.options.length === 1 ? '' : 's'} available</small>
-                  </span>
-                  <select
-                    value={selections[group.key] || ''}
-                    onChange={(event) => {
-                      if (formGroups.length === 0) setFormGroups(unresolved)
-                      setSelections((current) => ({
-                        ...current,
-                        [group.key]: event.target.value,
-                      }))
-                    }}
-                    disabled={status === 'saving'}
-                    aria-label={group.label}
-                  >
-                    <option value="">Select a course</option>
-                    {group.options.map((option) => (
-                      <option key={option.baseCode} value={option.baseCode}>
-                        {optionLabel(option)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <span
+                  key={group.key}
+                  className={`${index === currentStep ? 'is-current' : ''}${selections[group.key] ? ' is-complete' : ''}`}
+                />
               ))}
             </div>
+
+            {currentGroup && (
+              <div className="tt-elective-onboarding-step" key={currentGroup.key}>
+                <div className="tt-elective-onboarding-step-head">
+                  <div>
+                    <span>Step {currentStep + 1} of {activeGroups.length}</span>
+                    <h3>{currentGroup.label}</h3>
+                  </div>
+                  <span className="tt-elective-onboarding-count">
+                    {currentGroup.options.length} course{currentGroup.options.length === 1 ? '' : 's'}
+                  </span>
+                </div>
+
+                {currentGroup.options.length > 5 && (
+                  <label className="tt-elective-onboarding-search">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="11" cy="11" r="7" />
+                      <path d="m20 20-3.5-3.5" />
+                    </svg>
+                    <input
+                      value={query}
+                      onChange={(event) => setQuery(event.target.value)}
+                      placeholder="Search by course or code"
+                      aria-label={`Search ${currentGroup.label} courses`}
+                    />
+                    {query && (
+                      <button type="button" onClick={() => setQuery('')} aria-label="Clear course search">×</button>
+                    )}
+                  </label>
+                )}
+
+                <div className="tt-elective-onboarding-options" role="radiogroup" aria-label={currentGroup.label}>
+                  {filteredOptions.map((option) => {
+                    const selected = currentSelection === option.baseCode
+                    return (
+                      <button
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        className={`tt-elective-onboarding-option${selected ? ' is-selected' : ''}`}
+                        key={option.baseCode}
+                        onClick={() => {
+                          if (formGroups.length === 0) setFormGroups(unresolved)
+                          setSelections((current) => ({ ...current, [currentGroup.key]: option.baseCode }))
+                        }}
+                        disabled={status === 'saving'}
+                      >
+                        <span className="tt-elective-onboarding-option-radio" aria-hidden="true">
+                          {selected && (
+                            <svg viewBox="0 0 24 24"><path d="m6 12 4 4 8-9" /></svg>
+                          )}
+                        </span>
+                        <span className="tt-elective-onboarding-option-copy">
+                          <strong>{optionName(option)}</strong>
+                          <small>{optionCode(option)}</small>
+                        </span>
+                      </button>
+                    )
+                  })}
+                  {filteredOptions.length === 0 && (
+                    <div className="tt-elective-onboarding-empty">No matching courses</div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {status === 'error' && (
               <p className="tt-elective-onboarding-error" role="alert">
@@ -196,13 +287,41 @@ export default function ElectiveOnboarding({
             )}
 
             <footer className="tt-elective-onboarding-actions">
-              <span>{isSignedIn ? 'Synced with your account' : 'Stored for 90 days on this device'}</span>
-              <div>
-                <button type="button" className="tt-elective-onboarding-later" onClick={() => onOpenChange(false)} disabled={status === 'saving'}>
-                  Later
+              <span className="tt-elective-onboarding-storage">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2M6 10h12v10H6z" /></svg>
+                {isSignedIn ? 'Saved to your account' : 'Stored on this device'}
+              </span>
+              <div className="tt-elective-onboarding-action-buttons">
+                <button
+                  type="button"
+                  className="tt-elective-onboarding-later"
+                  onClick={() => {
+                    if (currentStep > 0) {
+                      setActiveStep(currentStep - 1)
+                      setQuery('')
+                    } else {
+                      setQuery('')
+                      onOpenChange(false)
+                    }
+                  }}
+                  disabled={status === 'saving'}
+                >
+                  {currentStep > 0 ? 'Back' : 'Not now'}
                 </button>
-                <button type="button" className="tt-elective-onboarding-save" onClick={submit} disabled={!ready || status === 'saving'}>
-                  {status === 'saving' ? 'Saving…' : status === 'error' ? 'Retry sync' : 'Apply choices'}
+                <button
+                  type="button"
+                  className="tt-elective-onboarding-save"
+                  onClick={continueSelection}
+                  disabled={!currentSelection || (currentStep === activeGroups.length - 1 && !ready) || status === 'saving'}
+                >
+                  {status === 'saving'
+                    ? 'Saving…'
+                    : status === 'error'
+                      ? 'Retry sync'
+                      : currentStep < activeGroups.length - 1
+                        ? 'Continue'
+                        : `Apply ${activeGroups.length === 1 ? 'choice' : 'choices'}`}
+                  {status !== 'saving' && status !== 'error' && currentStep < activeGroups.length - 1 && <span aria-hidden="true">→</span>}
                 </button>
               </div>
             </footer>
