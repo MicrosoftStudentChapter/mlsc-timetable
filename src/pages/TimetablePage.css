@@ -165,13 +165,37 @@
     margin: -2px 0 12px;
     padding-top: 0;
     justify-content: center;
+    flex-wrap: nowrap;
+    gap: clamp(5px, 1.5vw, 8px);
+    width: 100%;
   }
 
-  .tt-toolbar-actions {
+  .tt-toolbar-row--mobile .tt-toolbar-actions {
     justify-content: center;
+    flex: 0 0 auto;
+    gap: 5px;
   }
-  .tt-card-theme-picker {
+
+  .tt-toolbar-row--mobile .tt-quick-export-btn {
+    height: 32px;
+    gap: 4px;
+    padding-inline: clamp(7px, 2vw, 10px);
+    font-size: 0.76rem;
+  }
+
+  .tt-toolbar-row--mobile .tt-card-theme-picker {
     justify-content: center;
+    min-width: 0;
+    column-gap: 5px;
+    font-size: 0.78rem;
+  }
+
+  .tt-toolbar-row--mobile .tt-card-theme-select {
+    min-width: 0;
+    width: clamp(92px, 26vw, 112px);
+    padding: 5px 24px 5px 9px;
+    font-size: 0.78rem;
+    background-position: right 8px center;
   }
 }
 
