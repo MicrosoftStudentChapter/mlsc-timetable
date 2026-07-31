@@ -20,14 +20,14 @@
   /* Breathing room between the grid and the footer below it. */
   margin-bottom: 24px;
   overflow: hidden;
-  border-radius: 22px;
+  border-radius: 0;
   border: none;
   background: #ffffff;
 
   /* ─── Responsive Design Tokens (Desktop default) ─── */
   --col-width: 140px;
   --row-height: 48px;          /* Reduced by 25% from 64px */
-  --time-col-width: 96px;
+  --time-col-width: 100px;
   --card-padding: 0 8px 3px; /* Cards begin just above their row line */
   --card-border-radius: 12px;
   --card-font-size: 10px;      /* Slightly reduced from 11px */
@@ -35,32 +35,29 @@
   --badge-font-size: 8px;      /* Maintained safety limit */
   --header-padding: 11px 10px;  /* Roomier so day/batch labels breathe */
   --header-font-size: 13px;
-  --time-font-size: 15px;
+  --time-font-size: 14px;
   --grid-line-top: 9px;        /* Proportional to row height */
   --active-dot-size: 5px;
 }
 
-/* Corner-only accent: a full ring drawn by ::before, then masked so only the
-   four rounded corners are visible. Straight edges stay clean. */
+/* Square corner-only accent. Straight edges stay open, matching the original
+   corner treatment without rounding the frame. */
 .tt-grid-frame::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: inherit;
-  border: 1.5px solid rgba(120, 120, 130, 0.45);
   pointer-events: none;
   z-index: 10;
-  --corner-reveal: 32px;
-  -webkit-mask:
-    radial-gradient(circle var(--corner-reveal) at top left,    #000 99%, transparent 100%),
-    radial-gradient(circle var(--corner-reveal) at top right,   #000 99%, transparent 100%),
-    radial-gradient(circle var(--corner-reveal) at bottom left, #000 99%, transparent 100%),
-    radial-gradient(circle var(--corner-reveal) at bottom right,#000 99%, transparent 100%);
-  mask:
-    radial-gradient(circle var(--corner-reveal) at top left,    #000 99%, transparent 100%),
-    radial-gradient(circle var(--corner-reveal) at top right,   #000 99%, transparent 100%),
-    radial-gradient(circle var(--corner-reveal) at bottom left, #000 99%, transparent 100%),
-    radial-gradient(circle var(--corner-reveal) at bottom right,#000 99%, transparent 100%);
+  color: rgba(120, 120, 130, 0.45);
+  background:
+    linear-gradient(currentColor, currentColor) top left / 32px 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) top left / 1.5px 32px no-repeat,
+    linear-gradient(currentColor, currentColor) top right / 32px 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) top right / 1.5px 32px no-repeat,
+    linear-gradient(currentColor, currentColor) bottom left / 32px 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) bottom left / 1.5px 32px no-repeat,
+    linear-gradient(currentColor, currentColor) bottom right / 32px 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) bottom right / 1.5px 32px no-repeat;
 }
 
 /* ─── Scroll Wrapper ─────────────────────────────────────────────────────── */
@@ -1016,16 +1013,16 @@ select.tt-editor-input {
     max-height: none;
     min-height: 0;
     overflow: visible;
-    --time-col-width: 68px;
-    --col-width: 108px;
+    --time-col-width: 72px;
+    --col-width: 120px;
     --row-height: 70px;
-    --card-padding: 0 7px 4px;
+    --card-padding: 0 2px 4px;
     --card-font-size: 13px;
     --card-meta-size: 10.5px;
     --badge-font-size: 9px;
     --header-padding: 11px 6px;
     --header-font-size: 12px;
-    --time-font-size: 14px;
+    --time-font-size: 13px;
   }
 
   .tt-grid-frame .tt-class-card {
@@ -1105,7 +1102,7 @@ select.tt-editor-input {
    definition to remain readable against the white page.
    ═══════════════════════════════════════════════════════════════ */
 [data-theme="light"] .tt-grid-frame::before {
-  border-color: rgba(71, 85, 105, 0.58);
+  color: rgba(71, 85, 105, 0.58);
 }
 
 [data-theme="light"] .tt-time-header-cell,
@@ -1188,7 +1185,7 @@ select.tt-editor-input {
 }
 
 [data-theme="dark"] .tt-grid-frame::before {
-  border-color: rgba(180, 180, 190, 0.35);
+  color: rgba(180, 180, 190, 0.35);
 }
 
 /* Radial depth glow behind the timetable — adds premium depth */

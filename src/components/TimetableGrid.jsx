@@ -1269,13 +1269,13 @@ export default function TimetableGrid({
     const measure = () => {
       const frameW = frame.clientWidth
       // Prefer the table's intrinsic min-width (respects breakpoint
-      // overrides on `--col-width` / `--time-col-width`), but bump the
-      // effective target by ~14% so zoom starts trimming a little before
-      // the grid would otherwise start scrolling. This makes narrower
-      // viewports feel roomier without triggering horizontal scroll.
+      // overrides on `--col-width` / `--time-col-width`). Narrow frames use
+      // the full available width so their weekday cells remain visibly wider,
+      // while larger layouts retain the established desktop spacing buffer.
       const cs = window.getComputedStyle(table)
       const intrinsic = parseFloat(cs.minWidth) || table.scrollWidth || frameW
-      const designW = intrinsic * 1.14
+      const fitBuffer = frameW <= 768 ? 1 : 1.14
+      const designW = intrinsic * fitBuffer
       if (!designW) return
       const k = Math.min(1, frameW / designW)
       // Round to 3 decimals to avoid tiny reflows on every 1px resize.
