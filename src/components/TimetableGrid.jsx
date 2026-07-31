@@ -125,21 +125,23 @@ const LIGHT_TYPE_META = {
   Lecture: {
     color: '#195484cb',
     bg: 'rgba(76, 149, 222, 0.26)',
-    badgeBg: 'rgba(75, 121, 166, 0.2)',
+    badgeBg: 'rgba(37, 99, 235, 0.24)',
+    badgeColor: '#1E40AF',
     label: 'Lecture',
   },
   Tutorial: {
     color: '#7B61FF',
     bg: 'rgba(160, 141, 253, 0.18)',
-    badgeBg: 'rgba(123, 97, 255, 0.24)',
-    badgeColor: '#6B46FF',
+    badgeBg: 'rgba(124, 58, 237, 0.22)',
+    badgeColor: '#5B21B6',
     borderLeft: '4px solid #8871faff',
     label: 'Tutorial',
   },
   Practical: {
     color: '#000f0fd9',
     bg: 'rgba(127, 142, 149, 0.32)',
-    badgeBg: 'rgba(232, 240, 244, 0.59)',
+    badgeBg: 'rgba(71, 85, 105, 0.18)',
+    badgeColor: '#334155',
     label: 'Practical',
   },
 }
@@ -148,8 +150,8 @@ const DARK_TYPE_META = {
   Lecture: {
     color: '#3B82F6',
     bg: 'rgba(59, 131, 246, 0.47)',
-    badgeBg: 'rgba(59, 131, 246, 0.52)',
-    badgeColor: '#b3c9e5ff',
+    badgeBg: 'rgba(59, 130, 246, 0.70)',
+    badgeColor: '#DBEAFE',
     borderLeft: '3px solid #3B82F6',
     editHoverBg: 'rgba(59, 130, 246, 0.3)',
     editHoverColor: '#60A5FA',
@@ -158,8 +160,8 @@ const DARK_TYPE_META = {
   Tutorial: {
     color: '#8B5CF6',
     bg: 'rgba(69, 53, 109, 0.93)',
-    badgeBg: 'rgba(144, 131, 173, 1)',
-    badgeColor: '#322a48ff',
+    badgeBg: 'rgba(139, 92, 246, 0.55)',
+    badgeColor: '#EDE9FE',
     borderLeft: '3px solid #b6aad3ff',
     editHoverBg: 'rgba(139, 92, 246, 0.3)',
     editHoverColor: '#a78bfa',
@@ -168,8 +170,8 @@ const DARK_TYPE_META = {
   Practical: {
     color: '#54849cff',
     bg: 'rgba(126, 148, 159, 0.96)',
-    badgeBg: 'rgba(88, 99, 104, 0.97)',
-    badgeColor: '#eaf3f5ff',
+    badgeBg: 'rgba(71, 85, 105, 0.72)',
+    badgeColor: '#F8FAFC',
     borderLeft: '3px solid #6395a1ff',
     editHoverBg: 'rgba(6, 182, 212, 0.3)',
     editHoverColor: '#22D3EE',
@@ -814,6 +816,9 @@ function ClassCard({
   termStartDate,
   alternateNow,
 }) {
+  const subjectRef = useRef(null)
+  const [subjectExpanded, setSubjectExpanded] = useState(false)
+  const [subjectCanExpand, setSubjectCanExpand] = useState(false)
   const TYPE_META = isDarkMode ? DARK_TYPE_META : LIGHT_TYPE_META
   const meta      = TYPE_META[entry.type] || TYPE_META.Lecture
   const cardStyle = {
@@ -830,6 +835,42 @@ function ClassCard({
   const alternateStatus = isElectiveGroup
     ? null
     : alternateClassStatus(entry, termStartDate, alternateNow)
+
+  useLayoutEffect(() => {
+    const subjectEl = subjectRef.current
+    if (!subjectEl || isElectiveGroup) {
+      setSubjectExpanded(false)
+      setSubjectCanExpand(false)
+      return undefined
+    }
+
+    const mobileQuery = window.matchMedia('(max-width: 768px)')
+    const measureOverflow = () => {
+      if (!mobileQuery.matches) {
+        setSubjectExpanded(false)
+        setSubjectCanExpand(false)
+        return
+      }
+      if (!subjectExpanded) {
+        setSubjectCanExpand(subjectEl.scrollHeight > subjectEl.clientHeight + 1)
+      }
+    }
+
+    measureOverflow()
+    const resizeObserver = new ResizeObserver(measureOverflow)
+    resizeObserver.observe(subjectEl)
+    mobileQuery.addEventListener('change', measureOverflow)
+    return () => {
+      resizeObserver.disconnect()
+      mobileQuery.removeEventListener('change', measureOverflow)
+    }
+  }, [entry.subject, isElectiveGroup, subjectExpanded])
+
+  const toggleSubjectExpansion = (event) => {
+    if (!subjectCanExpand || isElectiveGroup) return
+    event.stopPropagation()
+    setSubjectExpanded((expanded) => !expanded)
+  }
 
   const handleEditClick = (e) => {
     e.stopPropagation()
@@ -910,7 +951,25 @@ function ClassCard({
       </button>
       {!isElectiveGroup && <span className="tt-type-badge">{meta.label}</span>}
       <div className={`tt-card-text${isElectiveGroup ? ' tt-card-text--elective' : ''}`}>
-        <p className="tt-card-subject">{isElectiveGroup ? 'Choose elective' : entry.subject}</p>
+        <p
+          ref={subjectRef}
+          className="tt-card-subject"
+          data-expandable={subjectCanExpand || undefined}
+          data-expanded={subjectExpanded || undefined}
+          role={subjectCanExpand ? 'button' : undefined}
+          tabIndex={subjectCanExpand ? 0 : undefined}
+          aria-expanded={subjectCanExpand ? subjectExpanded : undefined}
+          title={subjectCanExpand && !subjectExpanded ? `${entry.subject} — tap to expand` : undefined}
+          onClick={toggleSubjectExpansion}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              toggleSubjectExpansion(event)
+            }
+          }}
+        >
+          {isElectiveGroup ? 'Choose elective' : entry.subject}
+        </p>
         {!isElectiveGroup && <p className="tt-card-code">{entry.code}</p>}
       </div>
       {isElectiveGroup && (

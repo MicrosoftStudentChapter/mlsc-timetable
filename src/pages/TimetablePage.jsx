@@ -23,7 +23,6 @@ const CARD_THEME_KEY = 'mlsc-card-theme'
 const CARD_THEMES = [
   { value: 'default', label: 'Default' },
   { value: 'spiderman', label: 'Spider-Man 🕷️' },
-  { value: 'batman', label: 'Batman 🦇' },
 ]
 
 function getInitialCardTheme() {

@@ -20,7 +20,7 @@
   /* Breathing room between the grid and the footer below it. */
   margin-bottom: 24px;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: 22px;
   border: none;
   background: #ffffff;
 
@@ -28,7 +28,7 @@
   --col-width: 140px;
   --row-height: 48px;          /* Reduced by 25% from 64px */
   --time-col-width: 96px;
-  --card-padding: 3px 8px 3px; /* Reduced vertical padding */
+  --card-padding: 0 8px 3px; /* Cards begin just above their row line */
   --card-border-radius: 12px;
   --card-font-size: 10px;      /* Slightly reduced from 11px */
   --card-meta-size: 8.5px;     /* Slightly reduced from 9px */
@@ -50,7 +50,7 @@
   border: 1.5px solid rgba(120, 120, 130, 0.45);
   pointer-events: none;
   z-index: 10;
-  --corner-reveal: 26px;
+  --corner-reveal: 32px;
   -webkit-mask:
     radial-gradient(circle var(--corner-reveal) at top left,    #000 99%, transparent 100%),
     radial-gradient(circle var(--corner-reveal) at top right,   #000 99%, transparent 100%),
@@ -122,11 +122,7 @@
 }
 
 .tt-grid-table::after {
-  content: '';
-  display: block;
-  height: 12px;
-  width: 100%;
-  pointer-events: none;
+  display: none;
 }
 
 /* Header and body use the same column tracks so every split class cell stays
@@ -321,7 +317,7 @@
 }
 
 .tt-slot-cell[data-first-row="true"] {
-  padding-top: calc(var(--row-height) * 0.4);
+  padding-top: calc(var(--row-height) * 0.16);
   min-height: calc(var(--row-height) * 1.3);
 }
 
@@ -1020,21 +1016,78 @@ select.tt-editor-input {
     max-height: none;
     min-height: 0;
     overflow: visible;
-    --row-height: 64px;
-    --card-padding: 4px 8px 4px;
-    --card-font-size: 12px;
-    --card-meta-size: 10px;
+    --time-col-width: 68px;
+    --col-width: 108px;
+    --row-height: 70px;
+    --card-padding: 0 7px 4px;
+    --card-font-size: 13px;
+    --card-meta-size: 10.5px;
     --badge-font-size: 9px;
-    --header-padding: 12px 10px;
-    --header-font-size: 14px;
-    --time-font-size: 16px;
+    --header-padding: 11px 6px;
+    --header-font-size: 12px;
+    --time-font-size: 14px;
   }
 
-  /* The 60px spacer only exists so the inner scroller can clear the last row
-     on desktop; with the frame uncapped it would just render as dead space
-     inside the rounded frame. */
-  .tt-grid-table::after {
-    height: 12px;
+  .tt-grid-frame .tt-class-card {
+    padding-right: 18px;
+  }
+
+  .tt-grid-frame .tt-card-text {
+    width: 100%;
+    min-width: 0;
+    margin-block: 5px;
+  }
+
+  .tt-grid-frame .tt-card-subject {
+    display: -webkit-box;
+    width: 100%;
+    max-width: 100%;
+    max-height: 3.9em;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-break: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  .tt-grid-frame .tt-card-subject[data-expandable='true'] {
+    cursor: zoom-in;
+    touch-action: manipulation;
+    outline: none;
+  }
+
+  .tt-grid-frame .tt-card-subject[data-expandable='true']:focus-visible {
+    border-radius: 3px;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.55);
+  }
+
+  .tt-grid-frame .tt-card-subject[data-expanded='true'] {
+    display: block;
+    max-height: none;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    cursor: zoom-out;
+  }
+
+  .tt-grid-frame .tt-card-code,
+  .tt-grid-frame .tt-card-teacher,
+  .tt-grid-frame .tt-card-room {
+    max-width: 100%;
+  }
+
+  .tt-grid-frame .tt-card-code,
+  .tt-grid-frame .tt-card-room {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tt-grid-frame .tt-edit-btn,
+  .tt-grid-frame .tt-drag-btn {
+    width: 15px;
+    height: 15px;
   }
 
   .tt-grid-scroll-wrapper {
