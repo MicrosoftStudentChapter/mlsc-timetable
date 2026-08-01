@@ -80,6 +80,10 @@ export async function syncOverridesToBackend(records, batch, { expectedRevision 
   })
   const body = await responseBody(res)
   if (!res.ok) throw requestError(res, body, 'Could not save personal timetable')
+  console.log(
+    `[calendar] personal edit saved (batch ${batch}, rev ${body?.revision}, ` +
+    `${body?.saved_operations} ops) → calendar sync: ${body?.calendar_sync ?? 'unknown'}`,
+  )
   return body
 }
 
