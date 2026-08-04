@@ -844,13 +844,7 @@ function ClassCard({
       return undefined
     }
 
-    const mobileQuery = window.matchMedia('(max-width: 768px)')
     const measureOverflow = () => {
-      if (!mobileQuery.matches) {
-        setSubjectExpanded(false)
-        setSubjectCanExpand(false)
-        return
-      }
       if (!subjectExpanded) {
         setSubjectCanExpand(subjectEl.scrollHeight > subjectEl.clientHeight + 1)
       }
@@ -859,10 +853,8 @@ function ClassCard({
     measureOverflow()
     const resizeObserver = new ResizeObserver(measureOverflow)
     resizeObserver.observe(subjectEl)
-    mobileQuery.addEventListener('change', measureOverflow)
     return () => {
       resizeObserver.disconnect()
-      mobileQuery.removeEventListener('change', measureOverflow)
     }
   }, [entry.subject, isElectiveGroup, subjectExpanded])
 

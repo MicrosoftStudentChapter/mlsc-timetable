@@ -28,11 +28,11 @@
   --col-width: 140px;
   --row-height: 48px;          /* Reduced by 25% from 64px */
   --time-col-width: 100px;
-  --card-padding: 0 8px 3px; /* Cards begin just above their row line */
+  --card-padding: 0 2px 4px; /* Equal 4px horizontal and vertical card gaps */
   --card-border-radius: 12px;
-  --card-font-size: 10px;      /* Slightly reduced from 11px */
-  --card-meta-size: 8.5px;     /* Slightly reduced from 9px */
-  --badge-font-size: 8px;      /* Maintained safety limit */
+  --card-font-size: 13px;
+  --card-meta-size: 10.5px;
+  --badge-font-size: 9px;
   --header-padding: 11px 10px;  /* Roomier so day/batch labels breathe */
   --header-font-size: 13px;
   --time-font-size: 14px;
@@ -309,6 +309,18 @@
   position: relative;
 }
 
+/* Keep the outer card edges visually balanced. Monday needs a little extra
+   clearance from the time-line dot, while Friday mirrors that gutter against
+   the right edge of the grid. Interior day gaps continue to use the compact
+   shared card padding above. */
+.tt-slot-cell[data-day="Monday"] {
+  padding-left: 6px;
+}
+
+.tt-slot-cell[data-day="Friday"] {
+  padding-right: 6px;
+}
+
 .tt-slot-cell.tt-col-active {
   background: rgba(0, 79, 158, 0.03);
 }
@@ -451,18 +463,66 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin: 8px 0 8px 0;
+  /* The card keeps 22px on the right for its edit control, but this block
+     begins below that control. Reclaim the otherwise empty 14px so long
+     subject names can use the card's full visual width. */
+  width: calc(100% + 14px);
+  min-width: 0;
+  margin: 5px 0;
   padding-left: calc(var(--badge-font-size) * 0.375);
 }
 
 /* ─── Card text ───────────────────────────────────────────────────────────── */
 .tt-card-subject {
+  display: -webkit-box;
+  width: 100%;
+  max-width: 100%;
+  max-height: 3.9em;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  word-break: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   font-family: 'Montserrat', sans-serif;
   font-size: var(--card-font-size);
   font-weight: 700;
   color: #1a1a2e;
   margin: 0 0 calc(var(--row-height) * 0.03);
   line-height: 1.3;
+}
+
+.tt-card-subject[data-expandable='true'] {
+  cursor: zoom-in;
+  touch-action: manipulation;
+  outline: none;
+}
+
+.tt-card-subject[data-expandable='true']:focus-visible {
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.55);
+}
+
+.tt-card-subject[data-expanded='true'] {
+  display: block;
+  max-height: none;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  cursor: zoom-out;
+}
+
+.tt-card-code,
+.tt-card-teacher,
+.tt-card-room {
+  max-width: 100%;
+}
+
+.tt-card-code,
+.tt-card-room {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tt-card-meta {
@@ -998,9 +1058,9 @@ select.tt-editor-input {
 }
 
 /* ── Mobile (hamburger breakpoint) grid sizing ─────────────────────────────
-   Bumps row height + font sizes so the grid fills more vertical space and
-   the class cards are easier to read/tap on phones. The width-based JS
-   zoom-to-fit still handles horizontal scaling, so nothing overflows. */
+   Bumps row height so the grid fills more vertical space and the class cards
+   are easier to read/tap on phones. Shared card typography, gaps, and subject
+   clamping live in the base rules above. */
 @media (max-width: 768px) {
   .tt-grid-frame {
     /* Phones: size the frame to the grid's natural (zoomed) height instead of
@@ -1016,10 +1076,6 @@ select.tt-editor-input {
     --time-col-width: 72px;
     --col-width: 120px;
     --row-height: 70px;
-    --card-padding: 0 2px 4px;
-    --card-font-size: 13px;
-    --card-meta-size: 10.5px;
-    --badge-font-size: 9px;
     --header-padding: 11px 6px;
     --header-font-size: 12px;
     --time-font-size: 13px;
@@ -1027,58 +1083,6 @@ select.tt-editor-input {
 
   .tt-grid-frame .tt-class-card {
     padding-right: 18px;
-  }
-
-  .tt-grid-frame .tt-card-text {
-    width: 100%;
-    min-width: 0;
-    margin-block: 5px;
-  }
-
-  .tt-grid-frame .tt-card-subject {
-    display: -webkit-box;
-    width: 100%;
-    max-width: 100%;
-    max-height: 3.9em;
-    overflow: hidden;
-    overflow-wrap: break-word;
-    word-break: normal;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-  }
-
-  .tt-grid-frame .tt-card-subject[data-expandable='true'] {
-    cursor: zoom-in;
-    touch-action: manipulation;
-    outline: none;
-  }
-
-  .tt-grid-frame .tt-card-subject[data-expandable='true']:focus-visible {
-    border-radius: 3px;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.55);
-  }
-
-  .tt-grid-frame .tt-card-subject[data-expanded='true'] {
-    display: block;
-    max-height: none;
-    overflow: visible;
-    -webkit-line-clamp: unset;
-    line-clamp: unset;
-    cursor: zoom-out;
-  }
-
-  .tt-grid-frame .tt-card-code,
-  .tt-grid-frame .tt-card-teacher,
-  .tt-grid-frame .tt-card-room {
-    max-width: 100%;
-  }
-
-  .tt-grid-frame .tt-card-code,
-  .tt-grid-frame .tt-card-room {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .tt-grid-frame .tt-edit-btn,
