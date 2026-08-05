@@ -173,5 +173,12 @@ async function fetchTimetable(url, init = {}) {
     personalRevision: typeof body?.personal_revision === 'number' ? body.personal_revision : 0,
     customizationSource: body?.customization_source || 'none',
     staleOverrideIds: Array.isArray(body?.stale_override_ids) ? body.stale_override_ids : [],
+    scheduleUpdate: body?.schedule_update && typeof body.schedule_update === 'object'
+      ? {
+          changedAt: body.schedule_update.changed_at || null,
+          sourceFile: body.schedule_update.source_file || null,
+          changedCount: Number(body.schedule_update.changed_count || 0),
+        }
+      : null,
   }
 }

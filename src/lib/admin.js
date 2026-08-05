@@ -111,6 +111,28 @@ export function getUpload(id) {
   return adminFetch(`/admin/uploads/${encodeURIComponent(id)}`)
 }
 
+export function getUploadChanges(id, { batch } = {}) {
+  const qs = new URLSearchParams()
+  if (batch) qs.set('batch', batch)
+  const suffix = qs.toString() ? `?${qs.toString()}` : ''
+  return adminFetch(`/admin/uploads/${encodeURIComponent(id)}/changes${suffix}`)
+}
+
+export function saveUploadDecisions(id, decisions) {
+  return adminFetch(`/admin/uploads/${encodeURIComponent(id)}/decisions`, {
+    method: 'PATCH',
+    body: JSON.stringify({ decisions }),
+  })
+}
+
+export function applyUploadReview(id) {
+  return adminFetch(`/admin/uploads/${encodeURIComponent(id)}/apply`, { method: 'POST' })
+}
+
+export function discardUploadReview(id) {
+  return adminFetch(`/admin/uploads/${encodeURIComponent(id)}/discard`, { method: 'POST' })
+}
+
 export function listAdminUsers() {
   return adminFetch('/admin/users')
 }

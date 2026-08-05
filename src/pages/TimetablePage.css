@@ -80,8 +80,19 @@
   display: none;
 }
 
-/* Desktop controls live inside the welcome header, making the header and
-   notice the only two rows above the timetable. The mirrored mobile row is
+/* The persistent source disclaimer belongs after the timetable so the first
+   viewport is reserved for the controls and grid. It stays outside the export
+   target, so it is not included in PNG/PDF captures. */
+.tt-doaa-banner-row {
+  flex: 0 0 auto;
+  margin-top: 0;
+}
+
+.tt-doaa-banner-row .tt-warning-banner {
+  margin-bottom: 0;
+}
+
+/* Desktop controls live inside the welcome header. The mirrored mobile row is
    revealed only when DashboardLayout hides header actions. */
 .tt-toolbar-row {
   display: flex;
@@ -1739,6 +1750,51 @@
 .tt-warning-text {
   flex: 1;
 }
+
+.tt-schedule-update {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 38px;
+  margin: -2px 0 12px;
+  padding: 8px 12px;
+  border: 1px solid rgba(37, 99, 235, .18);
+  border-radius: 10px;
+  background: rgba(37, 99, 235, .055);
+  color: #475569;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.tt-schedule-update-mark {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 6px;
+  background: rgba(37, 99, 235, .1);
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.tt-schedule-update strong { color: #1e3a8a; }
+.tt-schedule-update code {
+  color: #1d4ed8;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 650;
+}
+
+[data-theme="dark"] .tt-schedule-update {
+  border-color: rgba(96, 165, 250, .2);
+  background: rgba(59, 130, 246, .075);
+  color: rgba(226, 232, 240, .7);
+}
+[data-theme="dark"] .tt-schedule-update-mark { background: rgba(59, 130, 246, .15); color: #93c5fd; }
+[data-theme="dark"] .tt-schedule-update strong { color: #dbeafe; }
+[data-theme="dark"] .tt-schedule-update code { color: #93c5fd; }
 
 @media (max-width: 768px) {
   .tt-warning-banner {

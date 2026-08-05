@@ -123,7 +123,13 @@ export default function UploadsPage() {
                   <div className="upload-card-title" title={row.filename || ''}>
                     {row.filename || 'Untitled upload'}
                   </div>
-                  <span className={`status-pill ${row.status}`}>{row.status}</span>
+                  <span className={`status-pill ${row.ingest_state === 'pending_review' ? 'partial' : row.status}`}>
+                    {row.ingest_state === 'pending_review'
+                      ? `${row.changes_unresolved || 0} to review`
+                      : row.ingest_state === 'discarded'
+                        ? 'discarded'
+                        : row.status}
+                  </span>
                 </div>
 
                 <div className="upload-card-meta">
@@ -148,8 +154,8 @@ export default function UploadsPage() {
                     <span className="upload-stat-label">classes</span>
                   </div>
                   <div className="upload-stat">
-                    <span className="upload-stat-val">{total}</span>
-                    <span className="upload-stat-label">errors</span>
+                    <span className="upload-stat-val">{row.ingest_state !== 'legacy_applied' ? (row.changes_total || 0) : total}</span>
+                    <span className="upload-stat-label">{row.ingest_state !== 'legacy_applied' ? 'changes' : 'errors'}</span>
                   </div>
                 </div>
 
@@ -198,4 +204,3 @@ export default function UploadsPage() {
     </div>
   )
 }
-

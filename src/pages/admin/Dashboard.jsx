@@ -346,7 +346,7 @@ function UploadCard({ onUploaded }) {
               <>Upload failed: {result.message}</>
             ) : (
               <>
-                Status: <strong>{result.kind}</strong>
+                Status: <strong>{result.data?.ingest_state === 'pending_review' ? 'parsed — awaiting review' : result.kind}</strong>
                 {result.data?.batches != null && (
                   <> · {result.data.batches} batches · {result.data.classes} classes</>
                 )}
@@ -366,7 +366,7 @@ function UploadCard({ onUploaded }) {
           onClose={() => setIngestModal(null)}
           onReview={() => {
             setIngestModal(null)
-            navigate('/admin/fix')
+            navigate(ingestModal.data?.attempt_id ? `/admin/uploads/${ingestModal.data.attempt_id}` : '/admin/uploads')
           }}
         />
       )}
@@ -392,10 +392,13 @@ function IngestResultModal({ data, summary, onClose, onReview }) {
     .slice(0, 5)
 
   const hasIssues = openCount > 0 || (doctor && doctor.mismatched_groups > 0)
+  const awaitingReview = data?.ingest_state === 'pending_review'
   const tone = status === 'failed' ? 'failed' : hasIssues ? 'partial' : 'ok'
   const icon = tone === 'ok' ? '✓' : tone === 'partial' ? '!' : '×'
   const title =
-    tone === 'ok'
+    awaitingReview
+      ? 'Upload parsed — review changes'
+      : tone === 'ok'
       ? 'Ingest successful'
       : tone === 'partial'
         ? 'Ingest complete — review needed'
@@ -479,14 +482,16 @@ function IngestResultModal({ data, summary, onClose, onReview }) {
           >
             {hasIssues ? 'Dismiss' : 'Done'}
           </button>
-          {hasIssues && (
+          {(awaitingReview || hasIssues) && (
             <button
               type="button"
               className="ingest-btn ingest-btn--primary"
               onClick={onReview}
               autoFocus
             >
-              Review {openCount > 0 ? `${openCount} issue${openCount === 1 ? '' : 's'}` : 'ingest'} →
+              {awaitingReview
+                ? `Review ${data?.changes_total || 0} timetable change${data?.changes_total === 1 ? '' : 's'} →`
+                : `Review ${openCount > 0 ? `${openCount} issue${openCount === 1 ? '' : 's'}` : 'ingest'} →`}
             </button>
           )}
         </div>

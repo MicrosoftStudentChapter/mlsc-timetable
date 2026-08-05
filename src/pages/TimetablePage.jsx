@@ -430,20 +430,11 @@ export default function TimetablePage() {
             the current batch has an override in the next 7 days. Component
             returns null when there's nothing to surface. */}
         {!firstYearUnavailable && <div className="tt-follow-day-row">
-          <div className="tt-warning-banner" role="alert">
-            <span className="tt-warning-icon" aria-hidden="true">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-            </span>
-            <span className="tt-warning-text">
-              Note: This timetable is parsed from the official timetable released by DOAA and is maintained as a community-driven open-source project
-            </span>
-          </div>
           <FollowDayBanner batch={batch} />
         </div>}
+        {!firstYearUnavailable && timetableState.status === 'ok' && timetableState.scheduleUpdate && (
+          <ScheduleUpdateBanner update={timetableState.scheduleUpdate} />
+        )}
         <div className="tt-export-target" ref={exportRef}>
         <TimetableContent
           state={authLoaded ? timetableState : { status: 'loading' }}
@@ -458,6 +449,22 @@ export default function TimetablePage() {
           }}
         />
         </div>
+        {!firstYearUnavailable && (
+          <div className="tt-doaa-banner-row">
+            <div className="tt-warning-banner" role="note">
+              <span className="tt-warning-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+              </span>
+              <span className="tt-warning-text">
+                Note: This timetable is parsed from the official timetable released by DOAA and is maintained as a community-driven open-source project
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Timetable Navbar */}
@@ -658,6 +665,27 @@ function TimetableToolbar({ variant, exportRef, batch, disabled, cardTheme, onCa
           ))}
         </select>
       </label>
+    </div>
+  )
+}
+
+function ScheduleUpdateBanner({ update }) {
+  let date = 'recently'
+  if (update?.changedAt) {
+    const parsed = new Date(update.changedAt)
+    if (!Number.isNaN(parsed.getTime())) {
+      date = parsed.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })
+    }
+  }
+  const count = Number(update?.changedCount || 0)
+  return (
+    <div className="tt-schedule-update" role="status">
+      <span className="tt-schedule-update-mark" aria-hidden="true">↻</span>
+      <span>
+        <strong>Schedule revised {date}</strong>
+        {update?.sourceFile && <> from <code>{update.sourceFile}</code></>}
+        {count > 0 && <> · {count} class change{count === 1 ? '' : 's'} reviewed</>}
+      </span>
     </div>
   )
 }
