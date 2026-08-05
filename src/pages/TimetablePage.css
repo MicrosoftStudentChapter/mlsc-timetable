@@ -1610,11 +1610,17 @@
 }
 .tt-export-target.tt-exporting .tt-card-meta {
   width: 100% !important;
-  flex-flow: row wrap !important;
-  align-items: center !important;
   column-gap: 8px !important;
   row-gap: 3px !important;
   margin: auto 0 0 !important;
+}
+.tt-export-target.tt-exporting .tt-card-meta[data-layout='inline'] {
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+}
+.tt-export-target.tt-exporting .tt-card-meta[data-layout='stacked'] {
+  flex-flow: column nowrap !important;
+  align-items: flex-start !important;
 }
 .tt-export-target.tt-exporting .tt-card-room {
   font-size: var(--card-meta-size) !important;

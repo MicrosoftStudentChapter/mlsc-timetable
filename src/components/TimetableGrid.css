@@ -527,9 +527,9 @@
 
 .tt-card-meta {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
   column-gap: 8px;
   row-gap: 3px;
   /* Shared card geometry: the right side reserves extra room for edit/drag
@@ -537,6 +537,27 @@
      the divider colour; its balanced 14px edge spacing stays consistent. */
   width: calc(100% + 9px);
   margin: auto 0 2px;
+}
+
+.tt-card-meta[data-layout='inline'] {
+  flex-direction: row;
+  align-items: center;
+}
+
+.tt-card-meta[data-layout='inline'] .tt-card-room {
+  order: 1;
+}
+
+.tt-card-meta[data-layout='inline'] .tt-card-teacher {
+  order: 2;
+}
+
+.tt-card-meta[data-layout='stacked'] .tt-card-teacher {
+  order: 1;
+}
+
+.tt-card-meta[data-layout='stacked'] .tt-card-room {
+  order: 2;
 }
 
 .tt-card-teacher {

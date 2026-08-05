@@ -817,6 +817,7 @@ function ClassCard({
   alternateNow,
 }) {
   const subjectRef = useRef(null)
+  const metaRef = useRef(null)
   const [subjectExpanded, setSubjectExpanded] = useState(false)
   const [subjectCanExpand, setSubjectCanExpand] = useState(false)
   const TYPE_META = isDarkMode ? DARK_TYPE_META : LIGHT_TYPE_META
@@ -857,6 +858,41 @@ function ClassCard({
       resizeObserver.disconnect()
     }
   }, [entry.subject, isElectiveGroup, subjectExpanded])
+
+  useLayoutEffect(() => {
+    const metaEl = metaRef.current
+    if (!metaEl) return undefined
+
+    const measureMetaLayout = () => {
+      const teacherEl = metaEl.querySelector('.tt-card-teacher')
+      const roomEl = metaEl.querySelector('.tt-card-room')
+
+      if (!teacherEl || !roomEl || metaEl.clientWidth <= 0) {
+        metaEl.dataset.layout = 'stacked'
+        return
+      }
+
+      const columnGap = Number.parseFloat(getComputedStyle(metaEl).columnGap) || 0
+      const teacherWidth = Math.max(teacherEl.scrollWidth, teacherEl.getBoundingClientRect().width)
+      const roomWidth = Math.max(roomEl.scrollWidth, roomEl.getBoundingClientRect().width)
+      const nextLayout = teacherWidth + roomWidth + columnGap <= metaEl.clientWidth + 0.5
+        ? 'inline'
+        : 'stacked'
+
+      if (metaEl.dataset.layout !== nextLayout) {
+        metaEl.dataset.layout = nextLayout
+      }
+    }
+
+    measureMetaLayout()
+    const resizeObserver = new ResizeObserver(measureMetaLayout)
+    resizeObserver.observe(metaEl)
+    const teacherEl = metaEl.querySelector('.tt-card-teacher')
+    const roomEl = metaEl.querySelector('.tt-card-room')
+    if (teacherEl) resizeObserver.observe(teacherEl)
+    if (roomEl) resizeObserver.observe(roomEl)
+    return () => resizeObserver.disconnect()
+  }, [entry.teacher, entry.room])
 
   const toggleSubjectExpansion = (event) => {
     if (!subjectCanExpand || isElectiveGroup) return
@@ -978,7 +1014,7 @@ function ClassCard({
         </span>
       )}
       {!isElectiveGroup && ((entry.teacher && String(entry.teacher).trim()) || (entry.room && String(entry.room).trim())) && (
-        <div className="tt-card-meta">
+        <div ref={metaRef} className="tt-card-meta" data-layout="stacked">
           {entry.teacher && String(entry.teacher).trim() && (
             <span className="tt-card-teacher" title={`Teacher ${entry.teacher}`}>
               <svg viewBox="0 0 24 24" aria-hidden="true">
