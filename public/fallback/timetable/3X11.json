@@ -304,16 +304,6 @@
     },
     {
       "day": "Wednesday",
-      "start_time": "13:00",
-      "end_time": "13:50",
-      "subject": "Introduction to Corporate Finance",
-      "code": "UHU018L",
-      "type": "Lecture",
-      "room": "LT101",
-      "options": []
-    },
-    {
-      "day": "Wednesday",
       "start_time": "13:50",
       "end_time": "14:40",
       "subject": "Software Engineering",
@@ -350,16 +340,6 @@
       "code": "UMA069L",
       "type": "Lecture",
       "room": "LT101/LT102/B303/F201",
-      "options": []
-    },
-    {
-      "day": "Thursday",
-      "start_time": "08:50",
-      "end_time": "09:40",
-      "subject": "Introduction to Corporate Finance",
-      "code": "UHU018L",
-      "type": "Lecture",
-      "room": "LT101",
       "options": []
     },
     {
