@@ -1,6 +1,7 @@
 // Admin allowlist — list of emails granted admin access (env + DB).
 
 import { useCallback, useEffect, useState } from 'react'
+import { adminConfirm } from '../../lib/adminConfirm'
 import {
   listAdminUsers,
   addAdminUser,
@@ -59,7 +60,12 @@ export default function AdminUsersPage() {
   }
 
   async function onRemove(email) {
-    if (!window.confirm(`Remove admin access for ${email}?`)) return
+    if (!await adminConfirm({
+      title: 'Remove administrator access?',
+      message: `${email} will no longer be able to access or modify the admin panel.`,
+      confirmLabel: 'Remove access',
+      tone: 'danger',
+    })) return
     setRemoving(email)
     try {
       await deleteAdminUser(email)
@@ -72,7 +78,13 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <>
+    <div className="admin-page admin-users-page">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Administrators</h1>
+          <p className="admin-page-sub">Control who can access and manage the timetable administration workspace.</p>
+        </div>
+      </div>
       <div className="admin-card" style={{ marginBottom: 16 }}>
         <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Add an admin</h2>
         <p className="admin-card-sub" style={{ textAlign: 'left' }}>
@@ -173,6 +185,6 @@ export default function AdminUsersPage() {
           </table>
         )}
       </div>
-    </>
+    </div>
   )
 }

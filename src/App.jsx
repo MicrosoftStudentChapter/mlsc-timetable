@@ -20,6 +20,7 @@ import CatalogPage from './pages/admin/CatalogPage'
 import AnalyticsPage from './pages/admin/AnalyticsPage'
 import TimetablesPage from './pages/admin/TimetablesPage'
 import TeacherVisibilityPage from './pages/admin/TeacherVisibilityPage'
+import LibraryPage from './pages/admin/LibraryPage'
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="uploads/:id" element={<UploadDetailPage />} />
         <Route path="change-requests" element={<ChangeRequestsPage />} />
         <Route path="catalog" element={<CatalogPage />} />
+        <Route path="library" element={<LibraryPage />} />
         <Route path="baselines" element={<BaselinesPage />} />
         <Route path="content" element={<ContentPage />} />
         <Route path="contributors" element={<ContributorsPage />} />

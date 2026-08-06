@@ -20,47 +20,44 @@
   /* Breathing room between the grid and the footer below it. */
   margin-bottom: 24px;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: 0;
   border: none;
   background: #ffffff;
 
   /* ─── Responsive Design Tokens (Desktop default) ─── */
   --col-width: 140px;
   --row-height: 48px;          /* Reduced by 25% from 64px */
-  --time-col-width: 96px;
-  --card-padding: 3px 8px 3px; /* Reduced vertical padding */
+  --time-col-width: 100px;
+  --card-padding: 0 2px 4px; /* Equal 4px horizontal and vertical card gaps */
   --card-border-radius: 12px;
-  --card-font-size: 10px;      /* Slightly reduced from 11px */
-  --card-meta-size: 8.5px;     /* Slightly reduced from 9px */
-  --badge-font-size: 8px;      /* Maintained safety limit */
+  --card-font-size: 13px;
+  --card-meta-size: 10.5px;
+  --badge-font-size: 9px;
   --header-padding: 11px 10px;  /* Roomier so day/batch labels breathe */
   --header-font-size: 13px;
-  --time-font-size: 15px;
+  --time-font-size: 14px;
   --grid-line-top: 9px;        /* Proportional to row height */
   --active-dot-size: 5px;
 }
 
-/* Corner-only accent: a full ring drawn by ::before, then masked so only the
-   four rounded corners are visible. Straight edges stay clean. */
+/* Square corner-only accent. Straight edges stay open, matching the original
+   corner treatment without rounding the frame. */
 .tt-grid-frame::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: inherit;
-  border: 1.5px solid rgba(120, 120, 130, 0.45);
   pointer-events: none;
   z-index: 10;
-  --corner-reveal: 26px;
-  -webkit-mask:
-    radial-gradient(circle var(--corner-reveal) at top left,    #000 99%, transparent 100%),
-    radial-gradient(circle var(--corner-reveal) at top right,   #000 99%, transparent 100%),
-    radial-gradient(circle var(--corner-reveal) at bottom left, #000 99%, transparent 100%),
-    radial-gradient(circle var(--corner-reveal) at bottom right,#000 99%, transparent 100%);
-  mask:
-    radial-gradient(circle var(--corner-reveal) at top left,    #000 99%, transparent 100%),
-    radial-gradient(circle var(--corner-reveal) at top right,   #000 99%, transparent 100%),
-    radial-gradient(circle var(--corner-reveal) at bottom left, #000 99%, transparent 100%),
-    radial-gradient(circle var(--corner-reveal) at bottom right,#000 99%, transparent 100%);
+  color: rgba(120, 120, 130, 0.45);
+  background:
+    linear-gradient(currentColor, currentColor) top left / 32px 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) top left / 1.5px 32px no-repeat,
+    linear-gradient(currentColor, currentColor) top right / 32px 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) top right / 1.5px 32px no-repeat,
+    linear-gradient(currentColor, currentColor) bottom left / 32px 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) bottom left / 1.5px 32px no-repeat,
+    linear-gradient(currentColor, currentColor) bottom right / 32px 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) bottom right / 1.5px 32px no-repeat;
 }
 
 /* ─── Scroll Wrapper ─────────────────────────────────────────────────────── */
@@ -122,20 +119,21 @@
 }
 
 .tt-grid-table::after {
-  content: '';
-  display: block;
-  height: 60px;
-  width: 100%;
-  pointer-events: none;
+  display: none;
 }
 
-/* Shared row template — every row uses the same column tracks, so the
-   header and every body row stay perfectly aligned. */
+/* Header and body use the same column tracks so every split class cell stays
+   aligned with its weekday and time slot. */
 .tt-grid-header-row,
-.tt-grid-body-row {
+.tt-grid-body {
   display: grid;
   grid-template-columns: var(--time-col-width) repeat(5, minmax(var(--col-width), 1fr));
   min-width: calc(var(--time-col-width) + 5 * var(--col-width));
+}
+
+.tt-grid-body {
+  position: relative;
+  grid-auto-rows: minmax(var(--row-height), auto);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -311,12 +309,24 @@
   position: relative;
 }
 
+/* Keep the outer card edges visually balanced. Monday needs a little extra
+   clearance from the time-line dot, while Friday mirrors that gutter against
+   the right edge of the grid. Interior day gaps continue to use the compact
+   shared card padding above. */
+.tt-slot-cell[data-day="Monday"] {
+  padding-left: 6px;
+}
+
+.tt-slot-cell[data-day="Friday"] {
+  padding-right: 6px;
+}
+
 .tt-slot-cell.tt-col-active {
   background: rgba(0, 79, 158, 0.03);
 }
 
-.tt-grid-header-row + .tt-grid-body-row .tt-slot-cell {
-  padding-top: calc(var(--row-height) * 0.4);
+.tt-slot-cell[data-first-row="true"] {
+  padding-top: calc(var(--row-height) * 0.16);
   min-height: calc(var(--row-height) * 1.3);
 }
 
@@ -336,12 +346,12 @@
 }
 
 /* Adjust line positions for the first row */
-.tt-grid-header-row + .tt-grid-body-row .tt-slot-cell::before {
+.tt-slot-cell[data-first-row="true"]::before {
   top: calc(var(--grid-line-top) + var(--row-height) * 0.3);
 }
 
 /* Push the first-row time label down so it aligns with the lowered grid line */
-.tt-grid-header-row + .tt-grid-body-row .tt-time-label {
+.tt-time-cell[data-first-row="true"] .tt-time-label {
   top: calc(var(--grid-line-top) + var(--row-height) * 0.3);
 }
 
@@ -364,7 +374,7 @@
 }
 
 /* Adjust circle position for the first row */
-.tt-grid-header-row + .tt-grid-body-row .tt-time-cell::after {
+.tt-time-cell[data-first-row="true"]::after {
   top: calc(var(--grid-line-top) + var(--row-height) * 0.3 - 4px);
 }
 
@@ -436,6 +446,8 @@
 .tt-type-badge {
   font-family: 'Montserrat', sans-serif;
   display: inline-block;
+  color: var(--type-badge-color, #195484);
+  background: var(--type-badge-bg, rgba(75, 121, 166, 0.2));
   font-size: var(--badge-font-size);
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -451,12 +463,27 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin: 8px 0 8px 0;
+  /* The card keeps 22px on the right for its edit control, but this block
+     begins below that control. Reclaim the otherwise empty 14px so long
+     subject names can use the card's full visual width. */
+  width: calc(100% + 14px);
+  min-width: 0;
+  margin: 5px 0;
   padding-left: calc(var(--badge-font-size) * 0.375);
 }
 
 /* ─── Card text ───────────────────────────────────────────────────────────── */
 .tt-card-subject {
+  display: -webkit-box;
+  width: 100%;
+  max-width: 100%;
+  max-height: 3.9em;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  word-break: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   font-family: 'Montserrat', sans-serif;
   font-size: var(--card-font-size);
   font-weight: 700;
@@ -465,20 +492,81 @@
   line-height: 1.3;
 }
 
+.tt-card-subject[data-expandable='true'] {
+  cursor: zoom-in;
+  touch-action: manipulation;
+  outline: none;
+}
+
+.tt-card-subject[data-expandable='true']:focus-visible {
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.55);
+}
+
+.tt-card-subject[data-expanded='true'] {
+  display: block;
+  max-height: none;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  cursor: zoom-out;
+}
+
+.tt-card-code,
+.tt-card-teacher,
+.tt-card-room {
+  max-width: 100%;
+}
+
+.tt-card-code,
+.tt-card-room {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .tt-card-meta {
   display: flex;
   flex-direction: column;
+  flex-wrap: nowrap;
   align-items: flex-start;
-  gap: 3px;
+  column-gap: 8px;
+  row-gap: 3px;
+  /* Shared card geometry: the right side reserves extra room for edit/drag
+     controls, so extend metadata dividers into that space. Themes only own
+     the divider colour; its balanced 14px edge spacing stays consistent. */
+  width: calc(100% + 9px);
   margin: auto 0 2px;
+}
+
+.tt-card-meta[data-layout='inline'] {
+  flex-direction: row;
+  align-items: center;
+}
+
+.tt-card-meta[data-layout='inline'] .tt-card-room {
+  order: 1;
+}
+
+.tt-card-meta[data-layout='inline'] .tt-card-teacher {
+  order: 2;
+}
+
+.tt-card-meta[data-layout='stacked'] .tt-card-teacher {
+  order: 1;
+}
+
+.tt-card-meta[data-layout='stacked'] .tt-card-room {
+  order: 2;
 }
 
 .tt-card-teacher {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: 3px;
   padding-left: 2px;
-  color: rgba(30, 64, 92, 0.76);
+  color: #9f1239;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: var(--card-meta-size);
   font-weight: 700;
@@ -500,6 +588,8 @@
 .tt-card-room {
   font-family: 'Montserrat', sans-serif;
   display: inline-block;
+  flex: 0 0 auto;
+  box-sizing: border-box;
   font-size: var(--card-meta-size);
   font-weight: 600;
   color: rgba(51, 51, 51, 0.68);
@@ -690,6 +780,8 @@
 .tt-editor-overlay {
   position: fixed;
   z-index: 9999;
+  display: flex;
+  flex-direction: column;
   background: #ffffff;
   border-radius: 18px;
   box-shadow:
@@ -699,6 +791,7 @@
   overflow: hidden;
   animation: tt-editor-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
   pointer-events: auto;
+  overscroll-behavior: contain;
 }
 
 @keyframes tt-editor-in {
@@ -712,6 +805,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 16px 0;
+  flex: 0 0 auto;
 }
 
 .tt-editor-title {
@@ -748,6 +842,7 @@
   display: flex;
   gap: 6px;
   padding: 12px 16px 0;
+  flex: 0 0 auto;
 }
 
 .tt-editor-type-tab {
@@ -799,10 +894,13 @@
 .tt-editor-fields {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
   gap: 10px;
   padding: 14px 16px 6px;
-  max-height: calc(100vh - 180px);
   overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .tt-editor-row {
@@ -880,8 +978,11 @@ select.tt-editor-input {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex: 0 0 auto;
   padding: 10px 16px 16px;
   gap: 8px;
+  background: #ffffff;
+  border-top: 1px solid rgba(0, 0, 0, 0.055);
 }
 
 .tt-editor-actions-right {
@@ -983,9 +1084,9 @@ select.tt-editor-input {
 }
 
 /* ── Mobile (hamburger breakpoint) grid sizing ─────────────────────────────
-   Bumps row height + font sizes so the grid fills more vertical space and
-   the class cards are easier to read/tap on phones. The width-based JS
-   zoom-to-fit still handles horizontal scaling, so nothing overflows. */
+   Bumps row height so the grid fills more vertical space and the class cards
+   are easier to read/tap on phones. Shared card typography, gaps, and subject
+   clamping live in the base rules above. */
 @media (max-width: 768px) {
   .tt-grid-frame {
     /* Phones: size the frame to the grid's natural (zoomed) height instead of
@@ -994,23 +1095,111 @@ select.tt-editor-input {
        the zoomed table taller than in desktop emulation, and nested touch
        scrolling fights the page scroll). With no cap the whole timetable is
        laid out and plain page scrolling reveals all of it. */
+    height: auto;
     max-height: none;
-    --row-height: 64px;
-    --card-padding: 4px 8px 4px;
-    --card-font-size: 12px;
-    --card-meta-size: 10px;
-    --badge-font-size: 9px;
-    --header-padding: 12px 10px;
-    --header-font-size: 14px;
-    --time-font-size: 16px;
+    min-height: 0;
+    overflow: visible;
+    --time-col-width: 72px;
+    --col-width: 120px;
+    --row-height: 70px;
+    --header-padding: 11px 6px;
+    --header-font-size: 12px;
+    --time-font-size: 13px;
   }
 
-  /* The 60px spacer only exists so the inner scroller can clear the last row
-     on desktop; with the frame uncapped it would just render as dead space
-     inside the rounded frame. */
-  .tt-grid-table::after {
-    height: 12px;
+  .tt-grid-frame .tt-class-card {
+    padding-right: 18px;
   }
+
+  .tt-grid-frame .tt-edit-btn,
+  .tt-grid-frame .tt-drag-btn {
+    width: 15px;
+    height: 15px;
+  }
+
+  .tt-grid-scroll-wrapper {
+    height: auto;
+    overflow: visible;
+    touch-action: auto;
+    overscroll-behavior: auto;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT MODE CONTRAST
+   Keep card fills theme-owned while giving the timetable scaffold enough
+   definition to remain readable against the white page.
+   ═══════════════════════════════════════════════════════════════ */
+[data-theme="light"] .tt-grid-frame::before {
+  color: rgba(71, 85, 105, 0.58);
+}
+
+[data-theme="light"] .tt-time-header-cell,
+[data-theme="light"] .tt-day-header-cell {
+  background: #F8FAFC;
+  border-bottom-color: rgba(71, 85, 105, 0.18);
+}
+
+[data-theme="light"] .tt-time-header-cell {
+  border-right-color: rgba(71, 85, 105, 0.15);
+}
+
+[data-theme="light"] .tt-day-header-cell.tt-day-active {
+  background-color: #F8FAFC;
+  background-image: linear-gradient(rgba(37, 99, 235, 0.07), rgba(37, 99, 235, 0.07));
+}
+
+[data-theme="light"] .tt-batch-header-label {
+  color: #475569;
+}
+
+[data-theme="light"] .tt-day-header-label {
+  color: #64748B;
+}
+
+[data-theme="light"] .tt-day-header-cell.tt-day-active .tt-day-header-label {
+  color: #005EA8;
+}
+
+[data-theme="light"] .tt-time-cell {
+  background: #F8FAFC;
+  border-right-color: rgba(71, 85, 105, 0.15);
+}
+
+[data-theme="light"] .tt-time-label {
+  color: #1F2937;
+}
+
+[data-theme="light"] .tt-slot-cell::before {
+  background: rgba(71, 85, 105, 0.14);
+}
+
+[data-theme="light"] .tt-slot-cell.tt-col-active {
+  background: rgba(37, 99, 235, 0.045);
+}
+
+[data-theme="light"] .tt-add-btn,
+[data-theme="light"] .tt-add-btn--mini {
+  color: #64748B;
+  opacity: 0.46;
+}
+
+[data-theme="light"] .tt-slot-cell:hover .tt-add-btn,
+[data-theme="light"] .tt-slot-cell:hover .tt-add-btn--mini {
+  opacity: 0.78;
+}
+
+[data-theme="light"] .tt-edit-btn,
+[data-theme="light"] .tt-drag-btn {
+  color: #475569;
+  background: rgba(248, 250, 252, 0.78);
+  opacity: 0.76;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.14);
+}
+
+[data-theme="light"] .tt-watermark-logo {
+  opacity: 0.36;
 }
 
 
@@ -1026,7 +1215,7 @@ select.tt-editor-input {
 }
 
 [data-theme="dark"] .tt-grid-frame::before {
-  border-color: rgba(180, 180, 190, 0.35);
+  color: rgba(180, 180, 190, 0.35);
 }
 
 /* Radial depth glow behind the timetable — adds premium depth */
@@ -1134,7 +1323,7 @@ select.tt-editor-input {
 }
 
 [data-theme="dark"] .tt-card-teacher {
-  color: rgba(219, 234, 254, 0.82);
+  color: #fda4af;
 }
 
 [data-theme="dark"] .tt-edit-btn {
@@ -1183,6 +1372,11 @@ select.tt-editor-input {
     0 32px 80px rgba(0, 0, 0, 0.65),
     0 8px 24px rgba(0, 0, 0, 0.35),
     0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .tt-editor-actions {
+  background: #111111;
+  border-top-color: rgba(255, 255, 255, 0.07);
 }
 
 [data-theme="dark"] .tt-editor-title {
@@ -1744,18 +1938,93 @@ select.tt-editor-input {
     height: 14px;
   }
 }
-.tt-class-card[data-alternate-inactive='true'] {
-  opacity: 0.42;
-  filter: grayscale(0.7);
-}
-
 .tt-alternate-label {
-  display: block;
-  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  font-size: var(--card-meta-size);
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #f59e0b;
-  margin-top: 2px;
+  line-height: 1.3;
+  color: #4338ca;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  border-radius: 5px;
+  padding: 2px 6px;
+  margin: 0 0 5px;
+}
+
+.tt-alternate-label-export {
+  display: none;
+}
+
+/* The status adds a full metadata row. Let the affected timetable row grow
+   instead of squeezing its teacher/location details against the lower edge. */
+.tt-class-card[data-alternate-state] {
+  min-height: calc(var(--row-height) + 10px);
+  padding-bottom: 7px;
+}
+
+/* Alternate classes stay visible so the user understands that the slot is
+   intentionally periodic. Inactive weeks and completed occurrences use
+   different treatments; the active occurrence remains visually normal. */
+.tt-class-card[data-alternate-state='next-week'],
+.tt-class-card[data-alternate-state='future'] {
+  opacity: 1;
+  filter: none;
+}
+
+.tt-class-card[data-alternate-state='next-week'] .tt-alternate-label,
+.tt-class-card[data-alternate-state='future'] .tt-alternate-label {
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.tt-class-card[data-alternate-state='this-week'] .tt-alternate-label {
+  color: #166534;
+  background: rgba(34, 197, 94, 0.14);
+  border-color: rgba(34, 197, 94, 0.24);
+}
+
+.tt-class-card[data-alternate-state='in-progress'] .tt-alternate-label {
+  color: #92400e;
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.34);
+}
+
+.tt-class-card[data-alternate-state='completed'] {
+  opacity: 0.56;
+  filter: grayscale(0.55) saturate(0.45);
+}
+
+.tt-class-card[data-alternate-state='completed'] .tt-alternate-label {
+  color: #475569;
+  background: rgba(100, 116, 139, 0.15);
+  border-color: rgba(100, 116, 139, 0.24);
+}
+
+[data-theme='dark'] .tt-class-card[data-alternate-state='next-week'] .tt-alternate-label,
+[data-theme='dark'] .tt-class-card[data-alternate-state='future'] .tt-alternate-label {
+  color: #bfdbfe;
+}
+
+[data-theme='dark'] .tt-class-card[data-alternate-state='this-week'] .tt-alternate-label {
+  color: #bbf7d0;
+}
+
+[data-theme='dark'] .tt-class-card[data-alternate-state='in-progress'] .tt-alternate-label {
+  color: #fde68a;
+}
+
+[data-theme='dark'] .tt-class-card[data-alternate-state='completed'] .tt-alternate-label {
+  color: #cbd5e1;
+}
+
+[data-theme='dark'] .tt-class-card[data-alternate-state='schedule'] .tt-alternate-label {
+  color: #ddd6fe;
+  background: rgba(139, 92, 246, 0.16);
+  border-color: rgba(167, 139, 250, 0.3);
 }
 .tt-editor-alternate {
   display: flex;
@@ -2100,21 +2369,4 @@ select.tt-editor-input {
 .tt-editor-elective-help {
   display: block;
   margin-top: 6px;
-}
-
-@media (max-width: 768px) {
-  .tt-grid-frame {
-    height: calc(100vh - 180px) !important;
-    max-height: 75vh !important;
-    min-height: 380px !important;
-    overflow: hidden !important;
-    margin-bottom: 24px !important;
-  }
-  .tt-grid-scroll-wrapper {
-    height: 100% !important;
-    overflow: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    touch-action: pan-x pan-y !important;
-    overscroll-behavior: contain !important;
-  }
 }

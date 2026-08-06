@@ -2,6 +2,7 @@
 // The backend stores only the username; avatars are fetched live.
 
 import { useCallback, useEffect, useState } from 'react'
+import { adminConfirm } from '../../lib/adminConfirm'
 import {
   listContributors,
   addContributor,
@@ -106,7 +107,12 @@ export default function ContributorsPage() {
   }
 
   async function onRemove(login) {
-    if (!window.confirm(`Remove ${login} from the contributors list?`)) return
+    if (!await adminConfirm({
+      title: `Remove ${login}?`,
+      message: 'This contributor will no longer appear on the public site.',
+      confirmLabel: 'Remove contributor',
+      tone: 'danger',
+    })) return
     setRemoving(login)
     try {
       await deleteContributor(login)
@@ -119,7 +125,13 @@ export default function ContributorsPage() {
   }
 
   return (
-    <>
+    <div className="admin-page contributors-page">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Contributors</h1>
+          <p className="admin-page-sub">Manage the verified GitHub contributors shown on the public timetable site.</p>
+        </div>
+      </div>
       <div className="admin-card" style={{ marginBottom: 16 }}>
         <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Add a contributor</h2>
         <p className="admin-card-sub" style={{ textAlign: 'left' }}>
@@ -256,6 +268,6 @@ export default function ContributorsPage() {
           </table>
         )}
       </div>
-    </>
+    </div>
   )
 }

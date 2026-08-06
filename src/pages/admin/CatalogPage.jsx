@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { adminConfirm } from '../../lib/adminConfirm'
 import {
   listSubjects,
   addSubject,
@@ -32,6 +33,71 @@ function paginationItems(page, pageCount) {
   if (page < pageCount - 3) items.push('ellipsis-right')
   items.push(pageCount)
   return items
+}
+
+function CatalogRequestCard({ request, busy, onDecide }) {
+  const before = request.before
+  const after = request.after || { code: request.code, name: request.name }
+  const matchPercent = typeof request.name_match_score === 'number'
+    ? Math.round(request.name_match_score * 100)
+    : null
+  return (
+    <article className="catalog-request-card">
+      <header>
+        <div>
+          <span className="catalog-request-kind">{before ? 'Name correction' : 'New subject'}</span>
+          <h3><code>{request.code}</code></h3>
+          <p>Batch {request.requester_batch} · {dateText(request.created_at)}</p>
+        </div>
+        {matchPercent != null && <span className="catalog-request-match">{matchPercent}% name match</span>}
+      </header>
+
+      <div className="cr-diff-container catalog-request-diff">
+        <div className="cr-diff-side cr-diff-before">
+          <div className="cr-diff-header"><span className="cr-diff-badge before">BEFORE (Catalog)</span></div>
+          <div className="cr-diff-body">
+            {before ? (
+              <span><code>{before.code}</code> · {before.name}</span>
+            ) : (
+              <span className="cr-diff-empty">Code is not currently in the catalog</span>
+            )}
+          </div>
+        </div>
+        <div className="cr-diff-arrow" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </div>
+        <div className="cr-diff-side cr-diff-after">
+          <div className="cr-diff-header"><span className="cr-diff-badge after edit">AFTER (Proposed)</span></div>
+          <div className="cr-diff-body"><span><code>{after.code}</code> · {after.name}</span></div>
+        </div>
+      </div>
+
+      <footer>
+        <span>{request.requester_email || request.requester_id || 'Anonymous requester'}</span>
+        <div>
+          <button
+            type="button"
+            className="upload-btn"
+            onClick={() => onDecide(request, 'approve')}
+            disabled={busy === request.id}
+          >
+            {busy === request.id ? 'Working…' : before ? 'Approve rename' : 'Approve addition'}
+          </button>
+          <button
+            type="button"
+            className="admin-card-action catalog-request-reject"
+            onClick={() => onDecide(request, 'reject')}
+            disabled={busy === request.id}
+          >
+            Reject
+          </button>
+        </div>
+      </footer>
+    </article>
+  )
 }
 
 export default function CatalogPage() {
@@ -119,7 +185,13 @@ export default function CatalogPage() {
   }
 
   async function removeSubject(subject) {
-    if (!window.confirm(`Delete ${subject.code} from the catalog?`)) return
+    if (!await adminConfirm({
+      title: `Delete ${subject.code}?`,
+      message: `${subject.name || 'This subject'} will be removed from the Subject Catalog.`,
+      detail: 'References from Library entries may prevent or be affected by this deletion.',
+      confirmLabel: 'Delete subject',
+      tone: 'danger',
+    })) return
     setBusy(subject.code)
     try { await deleteSubject(subject.code, { force: true }); await refresh() }
     catch (err) { setError(err) }
@@ -170,11 +242,17 @@ export default function CatalogPage() {
   }
 
   return (
-    <div>
+    <div className="admin-page catalog-page">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Subject catalog</h1>
+          <p className="admin-page-sub">Maintain the canonical course-code and course-name mappings used across the timetable.</p>
+        </div>
+      </div>
       <div className="admin-card" style={{ marginBottom: 16 }}>
         <div className="admin-card-header" style={{ alignItems: 'center' }}>
           <div>
-            <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Subject catalog</h2>
+            <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Add or import subjects</h2>
             <p className="admin-card-sub" style={{ textAlign: 'left', margin: 0 }}>
               Course-code to course-name mappings used by timetables and Google Calendar.
             </p>
@@ -256,44 +334,27 @@ export default function CatalogPage() {
 
       <div className="admin-card" style={{ marginBottom: 16 }}>
         <div className="admin-card-header" style={{ alignItems: 'center' }}>
-          <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Pending catalog requests</h2>
+          <div>
+            <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Pending catalog requests</h2>
+            <p className="admin-card-sub" style={{ textAlign: 'left', margin: 0 }}>
+              New codes and proposed names below the 95% catalog match threshold require review.
+            </p>
+          </div>
           <span className="status-pill partial">{requests.length}</span>
         </div>
         {requests.length === 0 ? (
           <div className="manager-empty">No pending subject requests.</div>
         ) : (
-          <ul className="manager-list">
+          <div className="catalog-request-list">
             {requests.map((request) => (
-              <li className="manager-row" key={request.id}>
-                <div className="manager-row-body">
-                  <div className="manager-row-title">
-                    <code>{request.code}</code> · {request.name}
-                  </div>
-                  <div className="manager-row-sub">
-                    Batch {request.requester_batch} · {dateText(request.created_at)}
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="upload-btn"
-                  onClick={() => decide(request, 'approve')}
-                  disabled={busy === request.id}
-                  style={{ background: '#16a34a', marginRight: 8 }}
-                >
-                  {busy === request.id ? 'Working…' : 'Approve'}
-                </button>
-                <button
-                  type="button"
-                  className="upload-btn"
-                  onClick={() => decide(request, 'reject')}
-                  disabled={busy === request.id}
-                  style={{ background: '#dc2626' }}
-                >
-                  Reject
-                </button>
-              </li>
+              <CatalogRequestCard
+                key={request.id}
+                request={request}
+                busy={busy}
+                onDecide={decide}
+              />
             ))}
-          </ul>
+          </div>
         )}
       </div>
 

@@ -3,6 +3,8 @@
     "1": {
       "A": "Pool A",
       "B": "Pool B",
+      "C": "Pool C",
+      "D": "Pool D",
       "X": "Data Science and Artificial Intelligence",
       "G": "Biotechnology Engineering",
       "J": "Biomedical Engineering",
@@ -70,6 +72,16 @@
             "1B81", "1B82", "1B83", "1B84", "1B85",
             "1B91", "1B92", "1B93", "1B94", "1B95"
           ]
+        },
+        {
+          "code": "C",
+          "name": "Pool C",
+          "batches": ["1C11", "1C12", "1C13", "1C14", "1C15"]
+        },
+        {
+          "code": "D",
+          "name": "Pool D",
+          "batches": ["1D11", "1D12", "1D13", "1D14", "1D15"]
         },
         {
           "code": "G",

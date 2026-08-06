@@ -4,7 +4,15 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { getUpload, getErrorsSummary, listErrors } from '../../lib/admin'
+import {
+  applyUploadReview,
+  discardUploadReview,
+  getUpload,
+  getUploadChanges,
+  getErrorsSummary,
+  listErrors,
+  saveUploadDecisions,
+} from '../../lib/admin'
 import './admin.css'
 
 function fmtDate(iso) {
@@ -14,6 +22,252 @@ function fmtDate(iso) {
 
 const SEV_RANK = { error: 3, warn: 2, warning: 2, info: 1 }
 const ORPHAN_TYPES = new Set(['BASELINE_MISSING', 'BASELINE_MISMATCH', 'doctor_mismatch'])
+const CHANGE_LABELS = {
+  modified: 'Details changed',
+  moved: 'Class moved',
+  replaced: 'Class replaced',
+  added: 'New class',
+  removed: 'Class removed',
+}
+
+function entrySearch(entry) {
+  if (!entry) return ''
+  return [entry.subject, entry.code, entry.teacher, entry.room, entry.day, entry.start_time, entry.type]
+    .filter(Boolean).join(' ').toLowerCase()
+}
+
+function ChangeSnapshot({ entry, emptyLabel, changedFields = [] }) {
+  if (!entry) return <div className="ir-empty-snapshot">{emptyLabel}</div>
+  const changed = new Set(changedFields)
+  return (
+    <div className="ir-snapshot">
+      <div className="ir-snapshot-top">
+        <span className="ir-session-type">{entry.type || 'Class'}</span>
+        <span className={changed.has('day') || changed.has('start_time') ? 'is-changed' : ''}>
+          {entry.day || '—'} · {entry.start_time || '—'}{entry.end_time ? `–${entry.end_time}` : ''}
+        </span>
+      </div>
+      <strong className={changed.has('subject') ? 'is-changed' : ''}>{entry.subject || entry.code || 'Untitled class'}</strong>
+      <code className={changed.has('code') ? 'is-changed' : ''}>{entry.code || 'No course code'}</code>
+      <div className="ir-snapshot-meta">
+        <span className={changed.has('teacher') ? 'is-changed' : ''}>Teacher {entry.teacher || '—'}</span>
+        <span className={changed.has('room') ? 'is-changed' : ''}>Room {entry.room || '—'}</span>
+        {entry.alternate_week_start != null && (
+          <span className={changed.has('alternate_week_start') ? 'is-changed' : ''}>Week {entry.alternate_week_start}</span>
+        )}
+      </div>
+      {Array.isArray(entry.options) && entry.options.length > 0 && (
+        <details className={changed.has('options') ? 'ir-options is-changed' : 'ir-options'}>
+          <summary>{entry.options.length} elective option{entry.options.length === 1 ? '' : 's'}</summary>
+          <div>
+            {entry.options.map((option, index) => (
+              <span key={`${option.subject_code || 'option'}-${index}`}>
+                <code>{option.subject_code || 'No code'}</code>
+                {option.subject_name && <b>{option.subject_name}</b>}
+                <small>{[option.type, option.place, option.teacher].filter(Boolean).join(' · ')}</small>
+              </span>
+            ))}
+          </div>
+        </details>
+      )}
+    </div>
+  )
+}
+
+function ReviewConfirm({ mode, count, onCancel, onConfirm, busy }) {
+  const apply = mode === 'apply'
+  return (
+    <div className="fix-modal-backdrop" onClick={busy ? undefined : onCancel}>
+      <div className="ir-confirm" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+        <span className={`ir-confirm-icon ${apply ? 'is-apply' : 'is-discard'}`}>{apply ? '✓' : '×'}</span>
+        <h2>{apply ? 'Publish reviewed timetable changes?' : 'Discard this upload?'}</h2>
+        <p>
+          {apply
+            ? `${count} uploaded change${count === 1 ? '' : 's'} will be applied. Current choices marked “Keep current” remain untouched.`
+            : 'The staged comparison will be closed. Live timetables will not change.'}
+        </p>
+        <div className="ir-confirm-actions">
+          <button type="button" className="uploads-refresh" onClick={onCancel} disabled={busy}>Cancel</button>
+          <button type="button" className={apply ? 'ir-primary-btn' : 'ir-danger-btn'} onClick={onConfirm} disabled={busy}>
+            {busy ? 'Working…' : apply ? 'Publish changes' : 'Discard upload'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function IngestReviewPanel({ uploadId, upload, onChanged }) {
+  const [review, setReview] = useState(null)
+  const [query, setQuery] = useState('')
+  const [kind, setKind] = useState('all')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState(null)
+  const [confirmMode, setConfirmMode] = useState(null)
+
+  const loadReview = useCallback(async () => {
+    try {
+      const data = await getUploadChanges(uploadId)
+      setReview(data)
+      setError(null)
+    } catch (err) {
+      setError(err)
+    }
+  }, [uploadId])
+
+  useEffect(() => { loadReview() }, [loadReview])
+
+  const batches = review?.batches || []
+  const allChanges = batches.flatMap((batch) =>
+    (batch.changes || []).map((change) => ({ ...change, batch_code: batch.batch_code })))
+  const unresolved = allChanges.filter((change) => !change.decision).length
+  const accepted = allChanges.filter((change) => change.decision === 'use_uploaded').length
+  const state = review?.upload?.ingest_state || upload.ingest_state
+  const normalizedQuery = query.trim().toLowerCase()
+
+  const visibleBatches = batches.map((batch) => ({
+    ...batch,
+    visibleChanges: (batch.changes || []).filter((change) => {
+      if (kind !== 'all' && change.kind !== kind) return false
+      if (!normalizedQuery) return true
+      return `${entrySearch(change.before)} ${entrySearch(change.after)} ${batch.batch_code.toLowerCase()}`.includes(normalizedQuery)
+    }),
+  })).filter((batch) => batch.visibleChanges.length > 0)
+
+  async function decide(decisions) {
+    setBusy(true)
+    try {
+      await saveUploadDecisions(uploadId, decisions)
+      setReview((current) => ({
+        ...current,
+        batches: (current?.batches || []).map((batch) => ({
+          ...batch,
+          changes: (batch.changes || []).map((change) => (
+            decisions[change.change_id]
+              ? { ...change, decision: decisions[change.change_id] }
+              : change
+          )),
+        })),
+      }))
+      setError(null)
+    } catch (err) {
+      setError(err)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function confirmAction() {
+    setBusy(true)
+    try {
+      if (confirmMode === 'apply') await applyUploadReview(uploadId)
+      else await discardUploadReview(uploadId)
+      setConfirmMode(null)
+      await Promise.all([loadReview(), onChanged?.()])
+    } catch (err) {
+      setError(err)
+      setConfirmMode(null)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  if (!review && !error) return <div className="admin-card ir-panel"><div className="admin-loading">Loading timetable comparison…</div></div>
+  if (!review && error) return null
+  if (!batches.length && !['pending_review', 'applied', 'discarded'].includes(state)) return null
+
+  return (
+    <div className="admin-card ir-panel">
+      <div className="ir-header">
+        <div>
+          <div className="ir-eyebrow">Spreadsheet review</div>
+          <h2 className="admin-card-title">Choose the timetable changes to publish</h2>
+          <p className="admin-card-sub">
+            Nothing below reaches students until you resolve every row and publish it.
+          </p>
+        </div>
+        <span className={`ir-state ir-state-${state}`}>{String(state || '').replaceAll('_', ' ')}</span>
+      </div>
+
+      <div className="ir-summary">
+        <div><strong>{allChanges.length}</strong><span>differences</span></div>
+        <div><strong>{batches.filter((batch) => batch.changes?.length).length}</strong><span>batches affected</span></div>
+        <div><strong>{unresolved}</strong><span>awaiting choice</span></div>
+        <div><strong>{accepted}</strong><span>using uploaded</span></div>
+      </div>
+
+      {error && <div className="upload-result failed">{error.detail?.error || error.message || 'Review action failed'}</div>}
+
+      {state === 'pending_review' && (
+        <>
+          <div className="ir-toolbar">
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search batch, course, teacher or room…" />
+            <select value={kind} onChange={(e) => setKind(e.target.value)}>
+              <option value="all">All change types</option>
+              {Object.entries(CHANGE_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            </select>
+            <button type="button" onClick={() => decide(Object.fromEntries(allChanges.map((c) => [c.change_id, 'keep_current'])))} disabled={busy || !allChanges.length}>Keep all current</button>
+            <button type="button" onClick={() => decide(Object.fromEntries(allChanges.map((c) => [c.change_id, 'use_uploaded'])))} disabled={busy || !allChanges.length}>Use all uploaded</button>
+          </div>
+
+          {allChanges.length === 0 ? (
+            <div className="ir-no-changes">The spreadsheet matches the live timetable. You can close or publish this review without changing any class.</div>
+          ) : visibleBatches.length === 0 ? (
+            <div className="ir-no-changes">No timetable changes match these filters.</div>
+          ) : (
+            <div className="ir-batches">
+              {visibleBatches.map((batch, index) => (
+                <details key={batch.batch_code} className="ir-batch" open={index === 0 || visibleBatches.length <= 4}>
+                  <summary>
+                    <span><code>{batch.batch_code}</code>{batch.source_sheet && <small>{batch.source_sheet}</small>}</span>
+                    <span>{batch.visibleChanges.length} shown · {(batch.changes || []).filter((c) => !c.decision).length} unresolved</span>
+                  </summary>
+                  <div className="ir-change-list">
+                    {batch.visibleChanges.map((change) => (
+                      <article key={change.change_id} className={`ir-change is-${change.decision || 'unresolved'}`}>
+                        <header>
+                          <span className={`ir-kind ir-kind-${change.kind}`}>{CHANGE_LABELS[change.kind] || change.kind}</span>
+                          <span className="ir-fields">{(change.changed_fields || []).join(' · ')}</span>
+                        </header>
+                        <div className="ir-compare">
+                          <div><span className="ir-side-label">Current</span><ChangeSnapshot entry={change.before} emptyLabel="No current class" changedFields={change.changed_fields} /></div>
+                          <span className="ir-arrow" aria-hidden="true">→</span>
+                          <div><span className="ir-side-label">Uploaded</span><ChangeSnapshot entry={change.after} emptyLabel="Class absent from upload" changedFields={change.changed_fields} /></div>
+                        </div>
+                        <footer>
+                          <button type="button" className={change.decision === 'keep_current' ? 'is-selected' : ''} onClick={() => decide({ [change.change_id]: 'keep_current' })} disabled={busy}>Keep current</button>
+                          <button type="button" className={change.decision === 'use_uploaded' ? 'is-selected is-uploaded' : ''} onClick={() => decide({ [change.change_id]: 'use_uploaded' })} disabled={busy}>Use uploaded</button>
+                        </footer>
+                      </article>
+                    ))}
+                  </div>
+                </details>
+              ))}
+            </div>
+          )}
+
+          <div className="ir-publish-bar">
+            <div><strong>{unresolved ? `${unresolved} choices remaining` : 'Ready to publish'}</strong><span>{accepted} uploaded changes selected</span></div>
+            <button type="button" className="ir-discard-btn" onClick={() => setConfirmMode('discard')} disabled={busy}>Discard upload</button>
+            <button type="button" className="ir-primary-btn" onClick={() => setConfirmMode('apply')} disabled={busy || unresolved > 0}>Publish reviewed changes</button>
+          </div>
+        </>
+      )}
+
+      {state !== 'pending_review' && (
+        <div className="ir-closed-state">
+          {state === 'applied'
+            ? 'This reviewed upload has been published.'
+            : state === 'discarded'
+              ? 'This upload was discarded; the live timetable was not changed.'
+              : 'This upload review is closed.'}
+        </div>
+      )}
+
+      {confirmMode && <ReviewConfirm mode={confirmMode} count={accepted} onCancel={() => setConfirmMode(null)} onConfirm={confirmAction} busy={busy} />}
+    </div>
+  )
+}
 
 function TypeGroupRow({ group, uploadId, samples, onLoadSamples, expanded, onToggle }) {
   const total = group.total || (group.open + group.resolved + group.ignored)
@@ -226,6 +480,8 @@ export default function UploadDetailPage() {
         )}
       </div>
 
+      <IngestReviewPanel uploadId={id} upload={doc} onChanged={load} />
+
       <div className="admin-card">
         <div className="ud-panel-head">
           <div>
@@ -295,4 +551,3 @@ export default function UploadDetailPage() {
     </>
   )
 }
-

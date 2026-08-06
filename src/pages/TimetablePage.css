@@ -80,10 +80,20 @@
   display: none;
 }
 
-/* Mobile-only card-style picker row — the picker in the header is hidden
-   on mobile via .header-actions display:none, so mirror it here below the
-   header. Hidden on desktop where the header still shows the picker. */
-/* ── Top Control Toolbar Row — permanent across desktop and mobile ── */
+/* The persistent source disclaimer belongs after the timetable so the first
+   viewport is reserved for the controls and grid. It stays outside the export
+   target, so it is not included in PNG/PDF captures. */
+.tt-doaa-banner-row {
+  flex: 0 0 auto;
+  margin-top: 0;
+}
+
+.tt-doaa-banner-row .tt-warning-banner {
+  margin-bottom: 0;
+}
+
+/* Desktop controls live inside the welcome header. The mirrored mobile row is
+   revealed only when DashboardLayout hides header actions. */
 .tt-toolbar-row {
   display: flex;
   align-items: center;
@@ -94,6 +104,18 @@
   margin: -6px 0 14px;
   position: relative;
   z-index: 50;
+}
+
+.tt-toolbar-row--header {
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  padding: 0;
+  margin: 0;
+  gap: 14px;
+}
+
+.tt-toolbar-row--mobile {
+  display: none;
 }
 
 .tt-toolbar-actions {
@@ -148,15 +170,43 @@
   box-shadow: 0 3px 12px rgba(59, 130, 246, 0.3);
 }
 
-@media (max-width: 480px) {
-  .tt-toolbar-row {
+@media (max-width: 768px) {
+  .tt-toolbar-row--mobile {
+    display: flex;
+    margin: -2px 0 12px;
+    padding-top: 0;
     justify-content: center;
+    flex-wrap: nowrap;
+    gap: clamp(5px, 1.5vw, 8px);
+    width: 100%;
   }
-  .tt-toolbar-actions {
+
+  .tt-toolbar-row--mobile .tt-toolbar-actions {
     justify-content: center;
+    flex: 0 0 auto;
+    gap: 5px;
   }
-  .tt-card-theme-picker {
+
+  .tt-toolbar-row--mobile .tt-quick-export-btn {
+    height: 32px;
+    gap: 4px;
+    padding-inline: clamp(7px, 2vw, 10px);
+    font-size: 0.76rem;
+  }
+
+  .tt-toolbar-row--mobile .tt-card-theme-picker {
     justify-content: center;
+    min-width: 0;
+    column-gap: 5px;
+    font-size: 0.78rem;
+  }
+
+  .tt-toolbar-row--mobile .tt-card-theme-select {
+    min-width: 0;
+    width: clamp(92px, 26vw, 112px);
+    padding: 5px 24px 5px 9px;
+    font-size: 0.78rem;
+    background-position: right 8px center;
   }
 }
 
@@ -200,6 +250,7 @@
   position: fixed;
   top: auto;
   right: auto;
+  box-sizing: border-box;
   min-width: 175px;
   padding: 6px;
   background: #ffffff;
@@ -1034,6 +1085,79 @@
 [data-theme="dark"] .tt-status--warning { color: #ffd07b; }
 [data-theme="dark"] .tt-status--error   { color: #ff8e8e; }
 
+.tt-coming-soon {
+  width: min(560px, calc(100% - 32px));
+  margin: clamp(3rem, 10vh, 7rem) auto;
+  padding: clamp(2rem, 5vw, 3rem);
+  box-sizing: border-box;
+  border: 1px solid rgba(37, 99, 235, 0.16);
+  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(239, 246, 255, 0.92), rgba(255, 255, 255, 0.96));
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+  text-align: center;
+}
+
+.tt-coming-soon-mark {
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  border-radius: 14px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.tt-coming-soon-kicker {
+  margin: 0 0 8px;
+  color: #2563eb;
+  font-size: 0.76rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tt-coming-soon h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  line-height: 1.1;
+}
+
+.tt-coming-soon > p:last-child {
+  max-width: 430px;
+  margin: 14px auto 0;
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+[data-theme="dark"] .tt-coming-soon {
+  border-color: rgba(96, 165, 250, 0.18);
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(10, 16, 28, 0.98));
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.36);
+}
+
+[data-theme="dark"] .tt-coming-soon-mark {
+  background: #3b82f6;
+}
+
+[data-theme="dark"] .tt-coming-soon-kicker {
+  color: #93c5fd;
+}
+
+[data-theme="dark"] .tt-coming-soon h2 {
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .tt-coming-soon > p:last-child {
+  color: #94a3b8;
+}
+
 /* ── Save menu (PNG / PDF export popover) ─────────────────────────────────── */
 .tt-save-wrap {
   position: relative;
@@ -1221,6 +1345,7 @@
       contains the whole week — not the mobile scroll viewport. The grid
       expands in place for a frame; the user may see a brief flash. */
 .tt-export-target.tt-exporting .tt-add-btn { visibility: hidden; }
+.tt-export-target.tt-exporting .tt-class-card[data-elective-unresolved='true'] { display: none !important; }
 .tt-export-target.tt-exporting .tt-edit-btn,
 .tt-export-target.tt-exporting .tt-drag-btn { display: none !important; }
 .tt-export-target.tt-exporting .tt-tip-wrap::after,
@@ -1318,7 +1443,7 @@ body.tt-exporting .tt-save-fab-group { display: none !important; }
   --col-width: 200px !important;
   --time-col-width: 100px !important;
   --row-height: 58px !important;
-  --card-padding: 6px 10px !important;
+  --card-padding: 6px 4px !important;
   --card-border-radius: 12px !important;
   --card-font-size: 13px !important;
   --card-meta-size: 11px !important;
@@ -1338,13 +1463,32 @@ body.tt-exporting .tt-save-fab-group { display: none !important; }
 }
 
 .tt-export-target.tt-exporting .tt-grid-table {
-  width: max-content !important;
-  min-width: 0 !important;
+  width: calc(var(--time-col-width) + 5 * var(--col-width)) !important;
+  min-width: calc(var(--time-col-width) + 5 * var(--col-width)) !important;
+  max-width: calc(var(--time-col-width) + 5 * var(--col-width)) !important;
   transform: none !important;
   /* JS applies an inline `zoom: <fraction>` to fit the grid to narrow
      viewports; if we don't override it here, exports on phones render at
      the shrunk (~0.6x) size and look microscopic. */
   zoom: 1 !important;
+}
+
+.tt-export-target.tt-exporting .tt-grid-table::after {
+  display: none !important;
+  height: 0 !important;
+}
+
+/* Export tracks must be exact-width columns. The on-screen grid uses `1fr`
+   so it can stretch across the viewport; under intrinsic `max-content`
+   export sizing those flexible tracks grew wider than their cards and
+   produced empty vertical gutters between weekdays. */
+.tt-export-target.tt-exporting .tt-grid-header-row,
+.tt-export-target.tt-exporting .tt-grid-body {
+  grid-template-columns: var(--time-col-width) repeat(5, var(--col-width)) !important;
+  width: calc(var(--time-col-width) + 5 * var(--col-width)) !important;
+  min-width: calc(var(--time-col-width) + 5 * var(--col-width)) !important;
+  max-width: calc(var(--time-col-width) + 5 * var(--col-width)) !important;
+  column-gap: 0 !important;
 }
 
 .tt-export-target.tt-exporting .tt-day-header-cell,
@@ -1421,10 +1565,38 @@ body.tt-exporting .tt-save-fab-group { display: none !important; }
 .tt-export-target.tt-exporting .tt-card-text,
 .tt-export-target.tt-exporting .tt-card-subject,
 .tt-export-target.tt-exporting .tt-card-code,
+.tt-export-target.tt-exporting .tt-card-teacher,
 .tt-export-target.tt-exporting .tt-card-room,
 .tt-export-target.tt-exporting .tt-type-badge,
 .tt-export-target.tt-exporting .tt-alternate-label {
   flex-shrink: 0 !important;
+}
+
+/* Exports are a reusable schedule, not a snapshot of the current week. Keep
+   alternate cards at full strength and print their fixed recurrence rule. */
+.tt-export-target.tt-exporting .tt-class-card[data-alternate-state] {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.tt-export-target.tt-exporting .tt-alternate-label-screen {
+  display: none !important;
+}
+
+.tt-export-target.tt-exporting .tt-alternate-label-export {
+  display: inline !important;
+}
+
+.tt-export-target.tt-exporting .tt-alternate-label {
+  color: #4338ca !important;
+  background: rgba(99, 102, 241, 0.12) !important;
+  border-color: rgba(99, 102, 241, 0.22) !important;
+}
+
+[data-theme='dark'] .tt-export-target.tt-exporting .tt-alternate-label {
+  color: #ddd6fe !important;
+  background: rgba(139, 92, 246, 0.16) !important;
+  border-color: rgba(167, 139, 250, 0.3) !important;
 }
 
 .tt-export-target.tt-exporting .tt-type-badge {
@@ -1454,15 +1626,32 @@ body.tt-exporting .tt-save-fab-group { display: none !important; }
   overflow-wrap: break-word !important;
   white-space: normal !important;
 }
+.tt-export-target.tt-exporting .tt-card-meta {
+  width: 100% !important;
+  column-gap: 8px !important;
+  row-gap: 3px !important;
+  margin: auto 0 0 !important;
+}
+.tt-export-target.tt-exporting .tt-card-meta[data-layout='inline'] {
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+}
+.tt-export-target.tt-exporting .tt-card-meta[data-layout='stacked'] {
+  flex-flow: column nowrap !important;
+  align-items: flex-start !important;
+}
 .tt-export-target.tt-exporting .tt-card-room {
   font-size: var(--card-meta-size) !important;
   font-weight: 600 !important;
   padding: 1px 5px !important;
   border-radius: 3px !important;
-  /* `margin-top: auto` pins the room badge to the bottom of the (now
-     stretched) card — same as on-screen. A plain `margin: 0` collapses
-     it onto the line right after the course code. */
-  margin: auto 0 0 0 !important;
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  margin: 0 !important;
   line-height: 1.25 !important;
 }
 
@@ -1569,6 +1758,51 @@ body.tt-exporting .tt-save-fab-group { display: none !important; }
   flex: 1;
 }
 
+.tt-schedule-update {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 38px;
+  margin: -2px 0 12px;
+  padding: 8px 12px;
+  border: 1px solid rgba(37, 99, 235, .18);
+  border-radius: 10px;
+  background: rgba(37, 99, 235, .055);
+  color: #475569;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.tt-schedule-update-mark {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 6px;
+  background: rgba(37, 99, 235, .1);
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.tt-schedule-update strong { color: #1e3a8a; }
+.tt-schedule-update code {
+  color: #1d4ed8;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 650;
+}
+
+[data-theme="dark"] .tt-schedule-update {
+  border-color: rgba(96, 165, 250, .2);
+  background: rgba(59, 130, 246, .075);
+  color: rgba(226, 232, 240, .7);
+}
+[data-theme="dark"] .tt-schedule-update-mark { background: rgba(59, 130, 246, .15); color: #93c5fd; }
+[data-theme="dark"] .tt-schedule-update strong { color: #dbeafe; }
+[data-theme="dark"] .tt-schedule-update code { color: #93c5fd; }
+
 @media (max-width: 768px) {
   .tt-warning-banner {
     padding: 8px 12px;
@@ -1586,4 +1820,3 @@ body.tt-exporting .tt-save-fab-group { display: none !important; }
     max-width: 320px !important;
   }
 }
-

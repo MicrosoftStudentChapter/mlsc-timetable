@@ -1,122 +1,98 @@
-// Per-user override sync against the backend.
-//
-// The backend stores one `OverrideDoc` per (user, semester) with entries
-// keyed by `${day}|${start_time}`. This module is the thin client wrapper:
-// PUT/DELETE the user's personal overrides as they edit, so the next device
-// they open the timetable on sees the same view.
-//
-// All calls are best-effort. If the backend is down, offline, or the user
-// is anonymous (no VITE_BACKEND_URL), we silently no-op; localStorage is
-// the source of truth for rendering.
+// Atomic per-user timetable customization API.
 
 import { authHeaders } from './identity'
 import { getBackendUrl } from './backend_url'
 
 const BASE = getBackendUrl()
 
-export async function setDefaultBatch(batch) {
-  if (!BASE || !batch) return false
-  try {
-    const res = await fetch(`${BASE}/me/batch`, {
-      method: 'POST', headers: await authHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ batch }),
-    })
-    if (!res.ok) return false
-    return await res.json()
-  } catch { return false }
-}
-
 function backendDisabled() {
   return !BASE
 }
 
-function entryToBackend(entry) {
+async function responseBody(res) {
+  try { return await res.json() } catch { return null }
+}
+
+function requestError(res, body, fallback) {
+  const detail = body?.detail ?? body
+  return Object.assign(
+    new Error(detail?.error || detail?.message || fallback || `Request failed (${res.status})`),
+    {
+      code: detail?.code || `http_${res.status}`,
+      status: res.status,
+      detail,
+    },
+  )
+}
+
+function entryToBackend(entry, targetId) {
   if (!entry) return null
-  // Backend ClassEntry is snake_case; the grid uses camelCase.
-  const out = { ...entry }
+  const out = { ...entry, class_id: targetId }
   if ('startTime' in out) { out.start_time = out.startTime; delete out.startTime }
-  if ('endTime' in out)   { out.end_time   = out.endTime;   delete out.endTime }
-  // Drop fields the backend schema doesn't accept.
+  if ('endTime' in out) { out.end_time = out.endTime; delete out.endTime }
+  if ('alternateWeekStart' in out) {
+    out.alternate_week_start = out.alternateWeekStart
+    delete out.alternateWeekStart
+  }
   delete out.id
   delete out.pairId
+  // Live Curriculum Library projection fields are response metadata, not
+  // personal data. The backend recalculates them on every timetable read.
+  delete out.curriculumSection
+  delete out.requiresSelection
+  delete out.electiveGroupId
   return out
 }
 
-/**
- * PUT /me/overrides/{day}/{slot}
- *   body = { kind: 'add'|'edit'|'delete'|'elective_pick', entry: ClassEntry|null }
- * Resolves true on 2xx, false otherwise (including network failures).
- */
-export async function putMyOverride({ day, startTime, kind, entry, batch }) {
-  if (backendDisabled()) return false
-  try {
-    const suffix = batch ? `?batch=${encodeURIComponent(batch)}` : ''
-    const url = `${BASE}/me/overrides/${encodeURIComponent(day)}/${encodeURIComponent(startTime)}${suffix}`
-    const res = await fetch(url, {
-      method: 'PUT',
-      headers: await authHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({
-        kind,
-        entry: kind === 'delete' ? null : entryToBackend(entry),
-      }),
-    })
-    return res.ok
-  } catch {
-    return false
+function recordToOperation(record) {
+  const targetId = String(record?.targetId || record?.addId || record?.entry?.id || '')
+  if (!targetId) throw Object.assign(new Error('A timetable change has no stable class id'), { code: 'missing_target_id' })
+  return {
+    kind: record.kind,
+    target_id: targetId,
+    entry: record.kind === 'delete' ? null : entryToBackend(record.entry, targetId),
   }
 }
 
-/** DELETE /me/overrides/{day}/{slot} — removes the user's override at that slot. */
-export async function deleteMyOverride({ day, startTime, batch }) {
-  if (backendDisabled()) return false
-  try {
-    const suffix = batch ? `?batch=${encodeURIComponent(batch)}` : ''
-    const url = `${BASE}/me/overrides/${encodeURIComponent(day)}/${encodeURIComponent(startTime)}${suffix}`
-    const res = await fetch(url, {
-      method: 'DELETE',
-      headers: await authHeaders(),
-    })
-    return res.ok
-  } catch {
-    return false
-  }
+export async function setDefaultBatch(batch) {
+  if (backendDisabled() || !batch) throw Object.assign(new Error('Backend is not configured'), { code: 'no_backend' })
+  const res = await fetch(`${BASE}/me/batch`, {
+    method: 'POST', headers: await authHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify({ batch }),
+  })
+  const body = await responseBody(res)
+  if (!res.ok) throw requestError(res, body, 'Could not save the default batch')
+  return body
 }
 
-/** DELETE /me/overrides?batch=... — removes every personal override for a batch. */
-export async function clearMyOverrides(batch) {
-  if (backendDisabled() || !batch) return false
-  try {
-    const url = `${BASE}/me/overrides?batch=${encodeURIComponent(batch)}`
-    const res = await fetch(url, {
-      method: 'DELETE',
-      headers: await authHeaders(),
-    })
-    return res.ok
-  } catch {
-    return false
-  }
+/** Save one complete local draft in a single revision-checked request. */
+export async function syncOverridesToBackend(records, batch, { expectedRevision = 0 } = {}) {
+  if (backendDisabled()) throw Object.assign(new Error('Backend is not configured'), { code: 'no_backend' })
+  if (!batch) throw Object.assign(new Error('No batch supplied'), { code: 'no_batch' })
+  if (!records?.length) return { ok: true, batch, revision: expectedRevision, saved_operations: 0 }
+  const res = await fetch(`${BASE}/me/customizations/${encodeURIComponent(batch)}`, {
+    method: 'PUT',
+    headers: await authHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify({
+      expected_revision: expectedRevision,
+      operations: records.map(recordToOperation),
+    }),
+  })
+  const body = await responseBody(res)
+  if (!res.ok) throw requestError(res, body, 'Could not save personal timetable')
+  console.log(
+    `[calendar] personal edit saved (batch ${batch}, rev ${body?.revision}, ` +
+    `${body?.saved_operations} ops) → calendar sync: ${body?.calendar_sync ?? 'unknown'}`,
+  )
+  return body
 }
 
-/**
- * Push a list of frontend override records to the backend.
- * Maps each record to the appropriate PUT or DELETE call.
- *
- *   record shape: { kind, day, startTime, entry?, targetId? }
- */
-export async function syncOverridesToBackend(records, batch) {
-  if (!records || records.length === 0 || backendDisabled()) return
-  await Promise.all(records.map(async (rec) => {
-    if (!rec || !rec.kind) return
-    if (rec.kind === 'delete') {
-      await deleteMyOverride({ day: rec.day, startTime: rec.startTime, batch })
-      return
-    }
-    await putMyOverride({
-      day: rec.day,
-      startTime: rec.startTime,
-      kind: rec.kind,
-      entry: rec.entry,
-      batch,
-    })
-  }))
+/** Restore the official timetable for one batch, atomically. */
+export async function clearMyOverrides(batch, { expectedRevision = 0 } = {}) {
+  if (backendDisabled() || !batch) throw Object.assign(new Error('Backend is not configured'), { code: 'no_backend' })
+  const url = `${BASE}/me/customizations/${encodeURIComponent(batch)}?expected_revision=${encodeURIComponent(expectedRevision)}`
+  const res = await fetch(url, { method: 'DELETE', headers: await authHeaders() })
+  const body = await responseBody(res)
+  if (!res.ok) throw requestError(res, body, 'Could not restore official timetable')
+  return body
 }

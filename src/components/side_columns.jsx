@@ -1,7 +1,9 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useMemo, useCallback, useRef, memo } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import './side_columns.css';
 import { loadAnnouncements, loadExamDates, loadCalendarOverrides } from '../lib/sidebar_feeds';
+import { loadTentativeCalendarDate, loadTentativeCalendarMonth } from '../lib/tentative_calendar';
 import { useAuthUser } from '../lib/auth';
 
 const IconBell = () => (
@@ -46,6 +48,12 @@ const IconChevron = () => (
   </svg>
 );
 
+const IconCalendarArrow = ({ direction }) => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points={direction === 'next' ? '9 6 15 12 9 18' : '15 6 9 12 15 18'} />
+  </svg>
+);
+
 // ─── Calendar weekday-mapping ─────────────────────────────────────────
 // Header order is Mon-Sun. Indices: 0=M 1=T 2=W 3=T 4=F 5=S 6=S.
 // A date can "follow" any weekday's timetable (e.g. a Saturday running
@@ -54,6 +62,15 @@ const IconChevron = () => (
 // Per-date overrides are now loaded from the backend
 // (`/calendar-overrides?batch=<code>`) — see `loadCalendarOverrides`.
 const MON_SUN = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const WEEKDAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const CALENDAR_KIND_LABELS = {
+  holiday: 'Holiday',
+  follow_day: 'Different timetable',
+  mst: 'MST week',
+  est: 'EST week',
+  assessment: 'Assessment',
+  frosh: 'Frosh',
+};
 
 const pad2 = (n) => String(n).padStart(2, '0');
 const ymdKey = (y, m, d) => `${y}-${pad2(m + 1)}-${pad2(d)}`;
@@ -97,6 +114,61 @@ function weekdayIdxFor(year, month, day, overrideMap) {
   }
   const jsDay = new Date(year, month, day).getDay();
   return defaultWeekdayIdx(toMonSunIdx(jsDay));
+}
+
+function calendarOverridePresentation(override) {
+  if (!override) return null;
+  if (override.kind === 'follow_day') {
+    const followedDay = WEEKDAY_NAMES[override.follows_day] || 'another day';
+    return {
+      label: `Follows ${followedDay}`,
+      detail: override.reason || `Classes follow ${followedDay}'s timetable.`,
+    };
+  }
+  const label = CALENDAR_KIND_LABELS[override.kind] || 'Schedule update';
+  return {
+    label,
+    detail: override.reason || (override.kind === 'holiday' ? 'No classes scheduled.' : label),
+  };
+}
+
+function formatCampusClock(value) {
+  const match = /^(\d{1,2}):(\d{2})$/.exec(String(value || '').trim());
+  if (!match) return '';
+  const date = new Date(2000, 0, 1, Number(match[1]), Number(match[2]));
+  return date.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
+}
+
+function formatCampusDate(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || '').trim());
+  if (!match) return '';
+  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])).toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+  });
+}
+
+function formatCampusEventRange(event) {
+  const startTime = formatCampusClock(event.startTime);
+  const endTime = formatCampusClock(event.endTime);
+  if (event.startDate && event.endDate && event.startDate !== event.endDate) {
+    return `${formatCampusDate(event.startDate)}${startTime ? `, ${startTime}` : ''} – ${formatCampusDate(event.endDate)}${endTime ? `, ${endTime}` : ''}`;
+  }
+  if (startTime && endTime) return `${startTime}–${endTime}`;
+  return startTime || endTime || 'Time not specified';
+}
+
+function isMlscCampusEvent(event) {
+  return [event?.event, event?.society, event?.description]
+    .some((value) => String(value || '').toLocaleLowerCase().includes('mlsc'));
+}
+
+function prioritizeMlscCampusEvents(items) {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((event, index) => ({ event, index, isMlsc: isMlscCampusEvent(event) }))
+    .sort((a, b) => Number(b.isMlsc) - Number(a.isMlsc) || a.index - b.index)
+    .map(({ event }) => event);
 }
 
 const MONTH_NAMES = [
@@ -184,17 +256,66 @@ function useCachedFeed(key, loader) {
   return state
 }
 
-export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch }) {
-  // ─── Mini calendar: real current month, real today ─────
+export const SidebarContent = memo(function SidebarContent({ onActiveWeekdayChange, batch, showLogo = false }) {
+  // ─── Mini calendar ──────────────────────────────────────
   const today = useMemo(() => new Date(), []);
-  const year = today.getFullYear();
-  const month = today.getMonth();              // 0-indexed
+  const [visibleMonth, setVisibleMonth] = useState(
+    () => new Date(today.getFullYear(), today.getMonth(), 1),
+  );
+  const year = visibleMonth.getFullYear();
+  const month = visibleMonth.getMonth();        // 0-indexed
   const todayDate = today.getDate();
+  const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstWeekdayIdx = toMonSunIdx(new Date(year, month, 1).getDay());
 
   // hovered day → number (1..daysInMonth) or null
   const [hoveredDay, setHoveredDay] = useState(null);
+  const [dayTooltip, setDayTooltip] = useState(null);
+  const dayTooltipRef = useRef(null);
+  const [selectedDay, setSelectedDay] = useState(() => today.getDate());
+
+  const showDayTooltip = useCallback((day, text, element) => {
+    setHoveredDay(day);
+    if (!text || !element) {
+      setDayTooltip(null);
+      return;
+    }
+    const rect = element.getBoundingClientRect();
+    setDayTooltip({
+      day,
+      text,
+      anchorX: rect.left + rect.width / 2,
+      left: rect.left + rect.width / 2,
+      arrowOffset: 0,
+      top: Math.max(8, rect.top - 8),
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    const tooltip = dayTooltipRef.current;
+    if (!dayTooltip || !tooltip) return;
+    const halfWidth = tooltip.offsetWidth / 2;
+    const edgeGap = 8;
+    const left = Math.min(
+      window.innerWidth - halfWidth - edgeGap,
+      Math.max(halfWidth + edgeGap, dayTooltip.anchorX),
+    );
+    const arrowOffset = dayTooltip.anchorX - left;
+    if (Math.abs(left - dayTooltip.left) < 0.5 && Math.abs(arrowOffset - dayTooltip.arrowOffset) < 0.5) return;
+    setDayTooltip((current) => current && ({ ...current, left, arrowOffset }));
+  }, [dayTooltip]);
+
+  useEffect(() => {
+    if (!dayTooltip) return undefined;
+    const hideTooltip = () => setDayTooltip(null);
+    window.addEventListener('resize', hideTooltip);
+    window.addEventListener('scroll', hideTooltip, true);
+    return () => {
+      window.removeEventListener('resize', hideTooltip);
+      window.removeEventListener('scroll', hideTooltip, true);
+    };
+  }, [dayTooltip]);
 
   // Sidebar feeds — backend with bundled fallback. Exam dates + calendar
   // overrides are filtered server-side by the currently-viewed batch
@@ -205,6 +326,60 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
   const overridesLoader = useCallback(() => loadCalendarOverrides(batch), [batch]);
   const calendarOverrides = useCachedFeed(`calendar-overrides:${batch || ''}`, overridesLoader);
 
+  // Campus events are a separate public feed from the academic overrides.
+  // Only the compact month summary is loaded here; full records are deferred
+  // until the user opens a date.
+  const campusMonthKey = `${year}-${month + 1}`;
+  const todayKey = useMemo(
+    () => ymdKey(today.getFullYear(), today.getMonth(), today.getDate()),
+    [today],
+  );
+  const [campusMonthState, setCampusMonthState] = useState({
+    key: '',
+    status: 'loading',
+    days: {},
+  });
+  const [campusDateStates, setCampusDateStates] = useState(() => ({
+    [todayKey]: { status: 'loading', items: [] },
+  }));
+  const preserveSelectionForNextMonth = useRef(false);
+  useEffect(() => {
+    let alive = true;
+    loadTentativeCalendarDate(todayKey).then((result) => {
+      if (alive) {
+        setCampusDateStates((current) => ({ ...current, [todayKey]: result }));
+      }
+    });
+    return () => { alive = false; };
+  }, [todayKey]);
+  useEffect(() => {
+    let alive = true;
+    loadTentativeCalendarMonth(year, month + 1).then((result) => {
+      if (!alive) return;
+      setCampusMonthState({ key: campusMonthKey, ...result });
+
+      if (!preserveSelectionForNextMonth.current) return;
+      preserveSelectionForNextMonth.current = false;
+      const firstEventDate = Object.keys(result.days || {}).sort()[0];
+      if (!firstEventDate) return;
+
+      setSelectedDay(Number(firstEventDate.slice(-2)));
+      setCampusDateStates((current) => ({
+        ...current,
+        [firstEventDate]: { status: 'loading', items: current[firstEventDate]?.items || [] },
+      }));
+      loadTentativeCalendarDate(firstEventDate).then((dateResult) => {
+        if (alive) {
+          setCampusDateStates((current) => ({ ...current, [firstEventDate]: dateResult }));
+        }
+      });
+    });
+    return () => { alive = false; };
+  }, [campusMonthKey, month, year]);
+  const campusEventDays = campusMonthState.key === campusMonthKey
+    ? campusMonthState.days
+    : {};
+
   // Build a fast { 'YYYY-MM-DD' → override } lookup from the loaded rows;
   // more-specific scopes (branch > year > global) shadow less-specific ones
   // on the same date.
@@ -213,10 +388,70 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
     [calendarOverrides.items],
   );
 
-  // weekday header column to highlight: hovered day's mapping if any,
-  // else today's mapping
-  const activeDay = hoveredDay ?? todayDate;
-  const activeWeekdayIdx = weekdayIdxFor(year, month, activeDay, overrideMap);
+  // Weekday header column to highlight: hovered day's mapping if any,
+  // otherwise today's mapping only while the current month is visible.
+  const activeDay = hoveredDay ?? selectedDay ?? (isCurrentMonth ? todayDate : null);
+  const activeWeekdayIdx = activeDay == null
+    ? null
+    : weekdayIdxFor(year, month, activeDay, overrideMap);
+
+  const changeMonth = (offset) => {
+    setHoveredDay(null);
+    setDayTooltip(null);
+    preserveSelectionForNextMonth.current = selectedDay != null;
+    setSelectedDay(null);
+    setVisibleMonth((current) => (
+      new Date(current.getFullYear(), current.getMonth() + offset, 1)
+    ));
+  };
+
+  const showCurrentMonth = () => {
+    setHoveredDay(null);
+    setDayTooltip(null);
+    if (isCurrentMonth) return;
+    preserveSelectionForNextMonth.current = selectedDay != null;
+    setSelectedDay(null);
+    setVisibleMonth(new Date(today.getFullYear(), today.getMonth(), 1));
+  };
+
+  const selectedDateKey = selectedDay == null ? '' : ymdKey(year, month, selectedDay);
+  const selectedOverride = selectedDateKey ? overrideMap.get(selectedDateKey) : null;
+  const selectedCampusSummary = selectedDateKey ? campusEventDays[selectedDateKey] : null;
+  const selectedCampusState = selectedDateKey
+    ? (campusDateStates[selectedDateKey] || { status: 'loading', items: [] })
+    : { status: 'idle', items: [] };
+  const selectedCampusEvents = useMemo(
+    () => prioritizeMlscCampusEvents(selectedCampusState.items),
+    [selectedCampusState.items],
+  );
+  const selectedPresentation = calendarOverridePresentation(selectedOverride);
+  const selectedDateLabel = selectedDay == null
+    ? ''
+    : new Date(year, month, selectedDay).toLocaleDateString('en-IN', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+
+  const requestCampusDate = useCallback((dateKey) => {
+    setCampusDateStates((current) => ({
+      ...current,
+      [dateKey]: { status: 'loading', items: current[dateKey]?.items || [] },
+    }));
+    loadTentativeCalendarDate(dateKey).then((result) => {
+      setCampusDateStates((current) => ({ ...current, [dateKey]: result }));
+    });
+  }, []);
+
+  const selectCalendarDay = (day, hasCampusEvents) => {
+    setHoveredDay(null);
+    setDayTooltip(null);
+    preserveSelectionForNextMonth.current = false;
+    setSelectedDay(day);
+    const dateKey = ymdKey(year, month, day);
+    if (hasCampusEvents && !campusDateStates[dateKey]) requestCampusDate(dateKey);
+  };
 
   // Whole-section dropdowns: collapsed by default so the sidebar feels calm
   // on arrival; users opt in by clicking the section header.
@@ -235,15 +470,16 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
   for (let d = 1; d <= daysInMonth; d++) cells.push({ key: `d-${d}`, day: d });
 
   return (
-    <div className={`sidebar-inner ${collapsed ? 'sidebar-inner--collapsed' : ''}`}>
-      {/* Fixed header */}
-      <div className="sidebar-header">
-        <Link to="/" className="sidebar-logo-container" aria-label="Go to home">
-          <div className="logo-img-wrapper">
-            <img src="/MLSC-logo.png" alt="MLSC Logo" className="sidebar-logo-img" />
-          </div>
-        </Link>
-      </div>
+    <div className="sidebar-inner">
+      {showLogo && (
+        <div className="sidebar-header">
+          <Link to="/" className="sidebar-logo-container" aria-label="Go to home">
+            <div className="logo-img-wrapper">
+              <img src="/MLSC-logo.png" alt="MLSC Logo" className="sidebar-logo-img" />
+            </div>
+          </Link>
+        </div>
+      )}
 
       {/* Scrollable middle */}
       <div className="sidebar-scroll">
@@ -369,9 +605,37 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
           <span className="card-icon"><IconCalendar /></span>
           <div className="calendar-header">
             <h3 className="card-title">Calendar</h3>
-            <span className="calendar-month-year">{`${MONTH_NAMES[month]} ${year}`}</span>
           </div>
           <div className="mini-calendar">
+            <div className="calendar-month-controls" aria-label="Calendar month navigation">
+              <button
+                type="button"
+                className="calendar-month-arrow"
+                onClick={() => changeMonth(-1)}
+                aria-label="Previous month"
+                title="Previous month"
+              >
+                <IconCalendarArrow direction="previous" />
+              </button>
+              <button
+                type="button"
+                className={`calendar-month-year ${isCurrentMonth ? 'is-current' : ''}`}
+                onClick={showCurrentMonth}
+                aria-label={`${MONTH_NAMES[month]} ${year}. Go to current month`}
+                title={isCurrentMonth ? 'Current month' : 'Go to current month'}
+              >
+                {`${MONTH_NAMES[month]} ${year}`}
+              </button>
+              <button
+                type="button"
+                className="calendar-month-arrow"
+                onClick={() => changeMonth(1)}
+                aria-label="Next month"
+                title="Next month"
+              >
+                <IconCalendarArrow direction="next" />
+              </button>
+            </div>
             <div className="calendar-weekdays">
               {MON_SUN.map((label, idx) => (
                 <span
@@ -384,15 +648,22 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
             </div>
             <div
               className="calendar-grid"
-              onMouseLeave={() => setHoveredDay(null)}
+              onMouseLeave={() => {
+                setHoveredDay(null);
+                setDayTooltip(null);
+              }}
             >
               {cells.map((cell) => {
                 if (cell.blank) {
                   return <span key={cell.key} className="calendar-day calendar-day--blank" />;
                 }
-                const isToday = cell.day === todayDate;
+                const isToday = isCurrentMonth && cell.day === todayDate;
                 const isHovered = cell.day === hoveredDay;
-                const override = overrideMap.get(ymdKey(year, month, cell.day));
+                const dateKey = ymdKey(year, month, cell.day);
+                const override = overrideMap.get(dateKey);
+                const campusSummary = campusEventDays[dateKey];
+                const hasCampusEvents = Boolean(campusSummary?.hasEvent && campusSummary.count > 0);
+                const hasMlscEvent = Boolean(campusSummary?.hasMlscEvent);
                 const KIND_CLASS = {
                   holiday: 'calendar-day--holiday',
                   follow_day: 'calendar-day--follow',
@@ -408,41 +679,143 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                 const jsDay = new Date(year, month, cell.day).getDay();
                 const isWeekend = jsDay === 0 || jsDay === 6;
                 const dimClass = (isWeekend && !override) ? 'calendar-day--dim' : '';
-                // Human-readable tooltip.
-                let title;
-                if (override) {
-                  if (override.kind === 'holiday') {
-                    title = override.reason ? `Holiday · ${override.reason}` : 'Holiday';
-                  } else if (override.kind === 'follow_day') {
-                    const label = MON_SUN[override.follows_day] || '?';
-                    const long = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'][override.follows_day] || label;
-                    title = override.reason
-                      ? `Follows ${long} · ${override.reason}`
-                      : `Follows ${long}`;
-                  } else if (override.kind === 'mst') {
-                    title = override.reason || 'MST week';
-                  } else if (override.kind === 'est') {
-                    title = override.reason || 'EST week';
-                  } else if (override.kind === 'assessment') {
-                    title = override.reason || 'Assessment / Evaluation week';
-                  } else if (override.kind === 'frosh') {
-                    title = override.reason || 'Frosh';
-                  }
-                } else if (isWeekend) {
-                  title = 'No classes';
-                }
+                const presentation = calendarOverridePresentation(override);
+                const cellDateLabel = new Date(year, month, cell.day).toLocaleDateString('en-IN', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                });
+                const academicTitle = presentation
+                  ? `${presentation.label}${presentation.detail !== presentation.label ? ` · ${presentation.detail}` : ''}`
+                  : (isWeekend ? 'No classes' : undefined);
+                const campusTitle = hasCampusEvents
+                  ? `${campusSummary.count} campus event${campusSummary.count === 1 ? '' : 's'}${hasMlscEvent ? ' · includes MLSC' : ''}${campusSummary.hasConflict ? ' · scheduling conflict' : ''}`
+                  : '';
+                const title = [academicTitle, campusTitle].filter(Boolean).join(' · ') || undefined;
+                const className = `calendar-day ${isToday ? 'today' : ''} ${isHovered ? 'hovered' : ''} ${selectedDay === cell.day ? 'calendar-day--selected' : ''} ${overrideClass} ${dimClass} ${hasCampusEvents ? 'calendar-day--campus-event' : ''} ${hasMlscEvent ? 'calendar-day--mlsc-event' : ''} ${campusSummary?.hasConflict ? 'calendar-day--campus-conflict' : ''}`;
                 return (
-                  <span
+                  <button
+                    type="button"
                     key={cell.key}
-                    className={`calendar-day ${isToday ? 'today' : ''} ${isHovered ? 'hovered' : ''} ${overrideClass} ${dimClass}`}
-                    onMouseEnter={() => setHoveredDay(cell.day)}
-                    title={title}
+                    className={className}
+                    data-campus-event-count={hasCampusEvents ? campusSummary.count : undefined}
+                    onMouseEnter={(event) => showDayTooltip(cell.day, title, event.currentTarget)}
+                    onFocus={(event) => {
+                      if (event.currentTarget.matches(':focus-visible')) {
+                        showDayTooltip(cell.day, title, event.currentTarget);
+                      } else {
+                        setHoveredDay(cell.day);
+                      }
+                    }}
+                    onBlur={() => {
+                      setHoveredDay(null);
+                      setDayTooltip(null);
+                    }}
+                    onClick={() => selectCalendarDay(cell.day, hasCampusEvents)}
+                    aria-describedby={title && dayTooltip?.day === cell.day ? 'calendar-day-tooltip' : undefined}
+                    aria-label={title ? `${cellDateLabel}. ${title}` : cellDateLabel}
+                    aria-pressed={selectedDay === cell.day}
                   >
                     {cell.day}
-                  </span>
+                  </button>
                 );
               })}
             </div>
+            {dayTooltip && typeof document !== 'undefined' && createPortal(
+              <div
+                id="calendar-day-tooltip"
+                className="calendar-day-tooltip"
+                role="tooltip"
+                ref={dayTooltipRef}
+                style={{
+                  left: dayTooltip.left,
+                  top: dayTooltip.top,
+                  '--calendar-tooltip-arrow-offset': `${dayTooltip.arrowOffset}px`,
+                }}
+              >
+                {dayTooltip.text}
+              </div>,
+              document.body,
+            )}
+            {selectedDay != null && (
+              <div
+                className={`calendar-date-detail calendar-date-detail--${selectedOverride?.kind || 'campus'}`}
+                role="status"
+                aria-live="polite"
+              >
+                <div className="calendar-date-detail-head">
+                  <span
+                    className={`calendar-legend-swatch calendar-legend-swatch--${selectedOverride ? (selectedOverride.kind === 'follow_day' ? 'follow' : selectedOverride.kind) : 'campus'}`}
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <strong>{selectedDateLabel}</strong>
+                    <span>
+                      {[
+                        selectedPresentation?.label,
+                        selectedCampusSummary
+                          ? `${selectedCampusSummary.count} campus event${selectedCampusSummary.count === 1 ? '' : 's'}${selectedCampusSummary.hasMlscEvent ? ' · MLSC' : ''}`
+                          : (campusMonthState.key !== campusMonthKey ? 'Checking campus events…' : 'No campus events'),
+                      ].filter(Boolean).join(' · ')}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className="calendar-date-detail-close"
+                    onClick={() => setSelectedDay(null)}
+                    aria-label="Close calendar date details"
+                  >
+                    ×
+                  </button>
+                </div>
+                {selectedPresentation && selectedPresentation.detail !== selectedPresentation.label && (
+                  <p>{selectedPresentation.detail}</p>
+                )}
+                {selectedCampusSummary && (
+                  <div className="campus-event-details">
+                    {selectedCampusState.status === 'loading' ? (
+                      <div className="campus-event-loading" aria-label="Loading campus events">
+                        <span aria-hidden="true" />
+                        Loading event details…
+                      </div>
+                    ) : selectedCampusState.status === 'error' ? (
+                      <div className="campus-event-error">
+                        <span>Event details are temporarily unavailable.</span>
+                        <button type="button" onClick={() => requestCampusDate(selectedDateKey)}>Retry</button>
+                      </div>
+                    ) : selectedCampusEvents.length === 0 ? (
+                      <span className="campus-event-empty">No event details available.</span>
+                    ) : (
+                      <div className="campus-event-list">
+                        {selectedCampusEvents.map((event) => (
+                          <article key={event.id} className="campus-event-item">
+                            <div className="campus-event-item-head">
+                              <strong>{event.event}</strong>
+                              {event.status && <span className="campus-event-status">{event.status}</span>}
+                            </div>
+                            {event.society && <span className="campus-event-society">{event.society}</span>}
+                            <div className="campus-event-meta">
+                              <span>{formatCampusEventRange(event)}</span>
+                              {event.venue && <span>{event.venue}</span>}
+                              {event.conflict && <span className="campus-event-conflict">Scheduling conflict</span>}
+                            </div>
+                            {event.description && event.description.toLocaleLowerCase() !== event.event.toLocaleLowerCase() && (
+                              <p className="campus-event-description">{event.description}</p>
+                            )}
+                          </article>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                {!selectedCampusSummary && campusMonthState.key === campusMonthKey && (
+                  <div className="campus-event-details">
+                    <span className="campus-event-empty">No campus events on this date.</span>
+                  </div>
+                )}
+              </div>
+            )}
             {/* Legend — only shows swatches for kinds actually visible
                 this month. "Today" is always shown. */}
             <div className="calendar-legend" aria-label="Calendar legend">
@@ -450,6 +823,18 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
                 <span className="calendar-legend-swatch calendar-legend-swatch--today" aria-hidden="true" />
                 Today
               </span>
+              {Object.values(campusEventDays).some((summary) => !summary.hasMlscEvent) && (
+                <span className="calendar-legend-item">
+                  <span className="calendar-legend-swatch calendar-legend-swatch--campus" aria-hidden="true" />
+                  Campus event
+                </span>
+              )}
+              {Object.values(campusEventDays).some((summary) => summary.hasMlscEvent) && (
+                <span className="calendar-legend-item">
+                  <span className="calendar-legend-swatch calendar-legend-swatch--mlsc" aria-hidden="true" />
+                  MLSC event
+                </span>
+              )}
               {(() => {
                 const kindsPresent = new Set();
                 for (const cell of cells) {
@@ -488,7 +873,7 @@ export function SidebarContent({ collapsed = false, onActiveWeekdayChange, batch
       </div>
     </div>
   );
-}
+});
 
 // Bottom-of-sidebar card that pulls from Clerk when signed in, or falls back
 // to the placeholder student card so the layout still works without auth.
@@ -553,7 +938,7 @@ export function DashboardLayout({ children, footer, onActiveWeekdayChange, heade
     <div className="dashboard-layout">
       {/* Desktop & Tablet Sidebar (fixed/static) */}
       <aside className={`dashboard-sidebar ${collapsed ? 'dashboard-sidebar--collapsed' : ''}`}>
-        <SidebarContent collapsed={collapsed} onActiveWeekdayChange={onActiveWeekdayChange} batch={batch} />
+        <SidebarContent onActiveWeekdayChange={onActiveWeekdayChange} batch={batch} />
         <button
           type="button"
           className="sidebar-edge-toggle"
@@ -578,7 +963,7 @@ export function DashboardLayout({ children, footer, onActiveWeekdayChange, heade
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
-          <SidebarContent batch={batch} />
+          <SidebarContent batch={batch} showLogo />
         </div>
       </div>
 

@@ -11,6 +11,7 @@
 
 import { authHeaders } from './identity'
 import { getBackendUrl } from './backend_url'
+import { isFirstYearBatch } from './batches'
 
 const TIME_SLOTS = [
   '08:00', '08:50', '09:40', '10:30', '11:20', '12:10',
@@ -24,12 +25,13 @@ const nextId = () => `entry-${++_idCounter}`
 const nextPairId = () => `pair-${++_idCounter}`
 
 function adaptEntry(raw, teacherCodesVisible = false) {
+  const requiresSelection = raw.requires_selection === true
   return {
-    id: nextId(),
+    id: raw.class_id || nextId(),
     day: raw.day,
     startTime: raw.start_time,
     endTime: raw.end_time,
-    subject: raw.subject ?? (Array.isArray(raw.options) && raw.options.length > 1 ? '' : ''),
+    subject: raw.subject ?? (requiresSelection ? '' : ''),
     code: raw.code ?? '',
     teacher: teacherCodesVisible ? (raw.teacher ?? '') : '',
     room: raw.room ?? '',
@@ -38,6 +40,11 @@ function adaptEntry(raw, teacherCodesVisible = false) {
       ? raw.options.map((option) => (teacherCodesVisible ? option : { ...option, teacher: null }))
       : [],
     alternateWeekStart: raw.alternate_week_start ?? null,
+    electiveChoice: raw.electiveChoice ?? raw.elective_choice ?? null,
+    electiveDismissed: raw.electiveDismissed === true || raw.elective_dismissed === true,
+    curriculumSection: raw.curriculum_section ?? null,
+    requiresSelection,
+    electiveGroupId: raw.elective_group_id ?? null,
   }
 }
 
@@ -83,8 +90,11 @@ const FALLBACK_BASE = `${import.meta.env.BASE_URL || '/'}fallback`.replace(/\/+$
 const fallbackTimetableUrl = (batch) =>
   `${FALLBACK_BASE}/timetable/${encodeURIComponent(batch)}.json`
 
-// status: 'ok' | 'not_found' | 'error' | 'no_backend'
+// status: 'ok' | 'not_found' | 'coming_soon' | 'error' | 'no_backend'
 export async function loadTimetable(batch) {
+  if (isFirstYearBatch(batch)) {
+    return { status: 'coming_soon', batch: String(batch || '').toUpperCase() }
+  }
   const baseUrl = getBackendUrl()
   if (baseUrl) {
     const url = `${baseUrl.replace(/\/$/, '')}/timetable/${encodeURIComponent(batch)}`
@@ -99,6 +109,9 @@ export async function loadTimetable(batch) {
 // server-side. Signed-in users must not fall back to canonical data because
 // that would briefly show a timetable without their personal changes.
 export async function loadMyTimetable(batch) {
+  if (isFirstYearBatch(batch)) {
+    return { status: 'coming_soon', batch: String(batch || '').toUpperCase() }
+  }
   const baseUrl = getBackendUrl()
   if (!baseUrl) return { status: 'error', message: 'Backend is not configured' }
   if (!batch) return { status: 'error', message: 'No batch supplied' }
@@ -122,6 +135,17 @@ async function fetchTimetable(url, init = {}) {
   if (res.status === 404) {
     return { status: 'not_found' }
   }
+  if (res.status === 503) {
+    try {
+      const body = await res.clone().json()
+      const code = body?.code ?? body?.detail?.code
+      if (code === 'first_year_timetable_unavailable') {
+        return { status: 'coming_soon', batch: body?.batch ?? body?.detail?.batch ?? '' }
+      }
+    } catch {
+      // Fall through to the normal HTTP error below.
+    }
+  }
   if (!res.ok) {
     return { status: 'error', message: `Backend returned ${res.status}` }
   }
@@ -134,6 +158,9 @@ async function fetchTimetable(url, init = {}) {
   const classes = Array.isArray(body?.classes) ? body.classes : []
   const teacherCodesVisible = body?.teacher_codes_visible === true
   const entries = assignPairIds(classes.map((entry) => adaptEntry(entry, teacherCodesVisible)))
+  const canonicalClasses = Array.isArray(body?.canonical_classes)
+    ? assignPairIds(body.canonical_classes.map((entry) => adaptEntry(entry, teacherCodesVisible)))
+    : entries
   return {
     status: 'ok',
     batch: body?.batch ?? '',
@@ -141,6 +168,17 @@ async function fetchTimetable(url, init = {}) {
     termStartDate: body?.term_start_date ?? null,
     teacherCodesVisible,
     classes: entries,
+    canonicalClasses,
     overridesApplied: typeof body?.overrides_applied === 'number' ? body.overrides_applied : 0,
+    personalRevision: typeof body?.personal_revision === 'number' ? body.personal_revision : 0,
+    customizationSource: body?.customization_source || 'none',
+    staleOverrideIds: Array.isArray(body?.stale_override_ids) ? body.stale_override_ids : [],
+    scheduleUpdate: body?.schedule_update && typeof body.schedule_update === 'object'
+      ? {
+          changedAt: body.schedule_update.changed_at || null,
+          sourceFile: body.schedule_update.source_file || null,
+          changedCount: Number(body.schedule_update.changed_count || 0),
+        }
+      : null,
   }
 }

@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { useParams, useNavigate } from 'react-router-dom'
 import Combobox from '../components/Combobox'
 import TimetableGrid from '../components/TimetableGrid'
 import Footer from '../components/Footer'
 import FollowDayBanner from '../components/FollowDayBanner'
-import { loadBatches } from '../lib/batches'
+import { isFirstYearBatch, loadBatches } from '../lib/batches'
 import { loadMyTimetable } from '../lib/timetable'
 import { exportGridAsPng, exportGridAsPdf } from '../lib/export_timetable'
 import { DashboardLayout } from '../components/side_columns'
@@ -229,6 +230,7 @@ export default function TimetablePage() {
   )
   const [calendarStatus, setCalendarStatus] = useState(null)
   const [calendarModalOpen, setCalendarModalOpen] = useState(false)
+  const firstYearUnavailable = isFirstYearBatch(batch)
 
   useEffect(() => {
     getCalendarConfigured().then((d) => {
@@ -332,6 +334,10 @@ export default function TimetablePage() {
       setTimetableState({ status: 'idle' })
       return
     }
+    if (firstYearUnavailable) {
+      setTimetableState({ status: 'coming_soon', batch })
+      return
+    }
     let cancelled = false
     setTimetableState({ status: 'loading' })
     loadMyTimetable(batch).then((result) => {
@@ -341,14 +347,17 @@ export default function TimetablePage() {
     return () => {
       cancelled = true
     }
-  }, [batch, authLoaded, isSignedIn])
+  }, [batch, authLoaded, isSignedIn, firstYearUnavailable])
 
   const batchOptions = useMemo(() => {
     const out = []
     for (const { label, streams } of years) {
       for (const { name, batches } of streams) {
         for (const code of batches) {
-          out.push({ value: code, hint: `${label} \u2014 ${name}` })
+          out.push({
+            value: code,
+            hint: `${label} \u2014 ${name}${isFirstYearBatch(code) ? ' · Coming soon' : ''}`,
+          })
         }
       }
     }
@@ -395,87 +404,67 @@ export default function TimetablePage() {
       batch={batch}
       onActiveWeekdayChange={setActiveWeekdayIdx}
       footer={<Footer />}
+      headerActions={(
+        <TimetableToolbar
+          variant="header"
+          exportRef={exportRef}
+          batch={batch}
+          disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
+          cardTheme={cardTheme}
+          onCardThemeChange={setCardTheme}
+        />
+      )}
     >
       <div className="tt-content">
-        {/* Top Control Toolbar Row — permanent across desktop and mobile */}
-        <div className="tt-toolbar-row">
-          <div className="tt-toolbar-actions">
-            <ExportDropdownButton
-              format="png"
-              label="PNG"
-              icon={
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <polyline points="21 15 16 10 5 21"/>
-                </svg>
-              }
-              exportRef={exportRef}
-              batch={batch}
-              disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
-            />
-            <ExportDropdownButton
-              format="pdf"
-              label="PDF"
-              icon={
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13"/>
-                  <line x1="16" y1="17" x2="8" y2="17"/>
-                  <polyline points="10 9 9 9 8 9"/>
-                </svg>
-              }
-              exportRef={exportRef}
-              batch={batch}
-              disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
-            />
-          </div>
-          <label className="tt-card-theme-picker">
-            <span className="tt-card-theme-label">Card style</span>
-            <select
-              className="tt-card-theme-select"
-              value={cardTheme}
-              onChange={(e) => setCardTheme(e.target.value)}
-              aria-label="Card style"
-            >
-              {CARD_THEMES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
-          </label>
-        </div>
+        {/* DashboardLayout hides its header actions on mobile, so this compact
+            mirror keeps exports and card selection available below it. */}
+        <TimetableToolbar
+          variant="mobile"
+          exportRef={exportRef}
+          batch={batch}
+          disabled={timetableState.status !== 'ok' && timetableState.status !== 'no_backend'}
+          cardTheme={cardTheme}
+          onCardThemeChange={setCardTheme}
+        />
         {/* Follow-day alert — shown on desktop AND mobile, but only when
             the current batch has an override in the next 7 days. Component
             returns null when there's nothing to surface. */}
-        <div className="tt-follow-day-row">
-          <div className="tt-warning-banner" role="alert">
-            <span className="tt-warning-icon" aria-hidden="true">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-            </span>
-            <span className="tt-warning-text">
-              Note: This timetable is parsed from the official timetable released by DOAA and is maintained as a community-driven open-source project
-            </span>
-          </div>
+        {!firstYearUnavailable && <div className="tt-follow-day-row">
           <FollowDayBanner batch={batch} />
-        </div>
+        </div>}
+        {!firstYearUnavailable && timetableState.status === 'ok' && timetableState.scheduleUpdate && (
+          <ScheduleUpdateBanner update={timetableState.scheduleUpdate} />
+        )}
         <div className="tt-export-target" ref={exportRef}>
         <TimetableContent
           state={authLoaded ? timetableState : { status: 'loading' }}
           batch={batch}
           isDark={isDark}
           cardTheme={cardTheme}
+          isSignedIn={isSignedIn}
           activeWeekdayIdx={activeWeekdayIdx}
           onReloadTimetable={() => {
-            if (!batch) return
-            loadMyTimetable(batch).then((result) => setTimetableState(result))
+            if (!batch) return Promise.resolve()
+            return loadMyTimetable(batch).then((result) => setTimetableState(result))
           }}
         />
         </div>
+        {!firstYearUnavailable && (
+          <div className="tt-doaa-banner-row">
+            <div className="tt-warning-banner" role="note">
+              <span className="tt-warning-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+              </span>
+              <span className="tt-warning-text">
+                Note: This timetable is parsed from the official timetable released by DOAA and is maintained as a community-driven open-source project
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Timetable Navbar */}
@@ -526,7 +515,7 @@ export default function TimetablePage() {
             {/* Group 1: timetable-focused */}
             <div className="tt-action-group">
               {/* Google Calendar — hidden when not configured */}
-              {calendarConfigured && (
+              {calendarConfigured && !firstYearUnavailable && (
                 <div className="tt-tip-wrap" data-tip={
                   calendarStatus?.connected && calendarStatus?.enabled
                     ? 'Calendar sync active'
@@ -628,9 +617,82 @@ export default function TimetablePage() {
   )
 }
 
+function TimetableToolbar({ variant, exportRef, batch, disabled, cardTheme, onCardThemeChange }) {
+  return (
+    <div className={`tt-toolbar-row tt-toolbar-row--${variant}`}>
+      <div className="tt-toolbar-actions">
+        <ExportDropdownButton
+          format="png"
+          label="PNG"
+          icon={(
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+          )}
+          exportRef={exportRef}
+          batch={batch}
+          disabled={disabled}
+        />
+        <ExportDropdownButton
+          format="pdf"
+          label="PDF"
+          icon={(
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+          )}
+          exportRef={exportRef}
+          batch={batch}
+          disabled={disabled}
+        />
+      </div>
+      <label className="tt-card-theme-picker">
+        <span className="tt-card-theme-label">Card</span>
+        <select
+          className="tt-card-theme-select"
+          value={cardTheme}
+          onChange={(event) => onCardThemeChange(event.target.value)}
+          aria-label="Card"
+        >
+          {CARD_THEMES.map((theme) => (
+            <option key={theme.value} value={theme.value}>{theme.label}</option>
+          ))}
+        </select>
+      </label>
+    </div>
+  )
+}
+
+function ScheduleUpdateBanner({ update }) {
+  let date = 'recently'
+  if (update?.changedAt) {
+    const parsed = new Date(update.changedAt)
+    if (!Number.isNaN(parsed.getTime())) {
+      date = parsed.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })
+    }
+  }
+  const count = Number(update?.changedCount || 0)
+  return (
+    <div className="tt-schedule-update" role="status">
+      <span className="tt-schedule-update-mark" aria-hidden="true">↻</span>
+      <span>
+        <strong>Schedule revised {date}</strong>
+        {update?.sourceFile && <> from <code>{update.sourceFile}</code></>}
+        {count > 0 && <> · {count} class change{count === 1 ? '' : 's'} reviewed</>}
+      </span>
+    </div>
+  )
+}
+
 // Renders the right thing for each fetch state. Falls back to the grid's
 // hard-coded fixture when no backend is configured (dev convenience).
-function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx, onReloadTimetable }) {
+function TimetableContent({ state, batch, isDark, cardTheme, isSignedIn, activeWeekdayIdx, onReloadTimetable }) {
   if (state.status === 'loading' || state.status === 'idle') {
     return (
       <div className="tt-grid-skeleton" aria-label={`Loading ${batch ?? 'timetable'}`}>
@@ -639,6 +701,18 @@ function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx, o
           {Array.from({ length: 10 }, (_, index) => <span key={index} />)}
         </div>
       </div>
+    )
+  }
+  if (state.status === 'coming_soon') {
+    return (
+      <section className="tt-coming-soon" role="status" aria-live="polite">
+        <span className="tt-coming-soon-mark" aria-hidden="true">01</span>
+        <p className="tt-coming-soon-kicker">First-year timetable</p>
+        <h2>Coming soon</h2>
+        <p>
+          The timetable for Batch <strong>{batch}</strong> is being prepared and will be available here shortly.
+        </p>
+      </section>
     )
   }
   if (state.status === 'no_backend') {
@@ -672,7 +746,7 @@ function TimetableContent({ state, batch, isDark, cardTheme, activeWeekdayIdx, o
       </div>
     )
   }
-  return <TimetableGrid isDarkMode={isDark} classes={state.classes} termStartDate={state.termStartDate} teacherCodesVisible={state.teacherCodesVisible === true} isSignedIn={!!window.Clerk?.user} hasDefaultBatch={!!window.Clerk?.user?.unsafeMetadata?.batch} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} onReloadTimetable={onReloadTimetable} />
+  return <TimetableGrid isDarkMode={isDark} classes={state.classes} officialClasses={state.canonicalClasses} personalRevision={state.personalRevision} personalOverrideCount={state.overridesApplied} termStartDate={state.termStartDate} teacherCodesVisible={state.teacherCodesVisible === true} isSignedIn={isSignedIn} cardTheme={cardTheme} batch={batch} activeWeekdayIdx={activeWeekdayIdx} onReloadTimetable={onReloadTimetable} />
 }
 
 // ─── ExportDropdownButton ───────────────────────────────────────────────────
@@ -682,6 +756,7 @@ function ExportDropdownButton({ format, label, icon, exportRef, batch, disabled 
   const [busy, setBusy] = useState(null)
   const [error, setError] = useState(null)
   const wrapRef = useRef(null)
+  const menuRef = useRef(null)
   const [menuStyle, setMenuStyle] = useState(null)
 
   useEffect(() => {
@@ -716,7 +791,11 @@ function ExportDropdownButton({ format, label, icon, exportRef, batch, disabled 
   useEffect(() => {
     if (!open) return
     const onDown = (e) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false)
+      if (
+        wrapRef.current
+        && !wrapRef.current.contains(e.target)
+        && !menuRef.current?.contains(e.target)
+      ) setOpen(false)
     }
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
     document.addEventListener('pointerdown', onDown)
@@ -769,8 +848,8 @@ function ExportDropdownButton({ format, label, icon, exportRef, batch, disabled 
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </button>
-      {open && (
-        <div className="tt-export-menu" role="menu" style={menuStyle || undefined}>
+      {open && menuStyle && createPortal(
+        <div ref={menuRef} className="tt-export-menu" role="menu" style={menuStyle}>
           <div className="tt-export-menu-header">{label} Ratio</div>
           {options.map((opt) => (
             <button
@@ -785,7 +864,8 @@ function ExportDropdownButton({ format, label, icon, exportRef, batch, disabled 
             </button>
           ))}
           {error && <p className="tt-export-menu-error">{error}</p>}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   )

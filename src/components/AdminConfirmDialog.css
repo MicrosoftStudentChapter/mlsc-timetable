@@ -1,0 +1,107 @@
+.admin-confirm-backdrop {
+  position: fixed;
+  z-index: 3000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, .72);
+  backdrop-filter: blur(6px);
+  animation: admin-confirm-fade 120ms ease-out;
+}
+
+.admin-confirm-dialog {
+  display: grid;
+  width: min(440px, calc(100vw - 32px));
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 13px;
+  border: 1px solid var(--border, rgba(255,255,255,.11));
+  border-radius: 14px;
+  padding: 18px;
+  background: var(--bg-card, #151515);
+  box-shadow: 0 28px 80px rgba(0,0,0,.58);
+  animation: admin-confirm-rise 150ms ease-out;
+}
+
+.admin-confirm-icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid rgba(96,165,250,.25);
+  border-radius: 10px;
+  background: rgba(59,130,246,.09);
+  color: #93c5fd;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.admin-confirm-dialog[data-tone='warning'] .admin-confirm-icon {
+  border-color: rgba(245,158,11,.3);
+  background: rgba(245,158,11,.09);
+  color: #fbbf24;
+}
+
+.admin-confirm-dialog[data-tone='danger'] .admin-confirm-icon {
+  border-color: rgba(248,113,113,.3);
+  background: rgba(248,113,113,.09);
+  color: #f87171;
+}
+
+.admin-confirm-copy { min-width: 0; }
+.admin-confirm-copy > span { color: #60a5fa; font-size: 9px; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
+.admin-confirm-dialog[data-tone='warning'] .admin-confirm-copy > span { color: #fbbf24; }
+.admin-confirm-dialog[data-tone='danger'] .admin-confirm-copy > span { color: #f87171; }
+.admin-confirm-copy h2 { margin: 4px 0 0; color: var(--text-h, #fff); font-size: 17px; font-weight: 680; letter-spacing: -.015em; }
+.admin-confirm-copy p { margin: 7px 0 0; color: var(--text, rgba(255,255,255,.72)); font-size: 11px; line-height: 1.55; }
+.admin-confirm-copy small { display: block; margin-top: 7px; color: var(--text-muted, rgba(255,255,255,.46)); font-size: 9px; line-height: 1.45; }
+
+.admin-confirm-actions {
+  display: flex;
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+  gap: 7px;
+  margin-top: 4px;
+  border-top: 1px solid var(--border, rgba(255,255,255,.08));
+  padding-top: 13px;
+}
+
+.admin-confirm-actions button {
+  min-width: 88px;
+  min-height: 36px;
+  border: 1px solid var(--border, rgba(255,255,255,.11));
+  border-radius: 8px;
+  padding: 0 13px;
+  background: rgba(255,255,255,.025);
+  color: var(--text, rgba(255,255,255,.72));
+  font: inherit;
+  font-size: 10px;
+  font-weight: 680;
+  cursor: pointer;
+}
+
+.admin-confirm-actions button:hover { background: rgba(255,255,255,.055); color: var(--text-h, #fff); }
+.admin-confirm-actions .admin-confirm-submit { border-color: #2563eb; background: #2563eb; color: #fff; }
+.admin-confirm-actions .admin-confirm-submit:hover { background: #1d4ed8; }
+.admin-confirm-dialog[data-tone='warning'] .admin-confirm-submit { border-color: #b45309; background: #b45309; }
+.admin-confirm-dialog[data-tone='warning'] .admin-confirm-submit:hover { background: #92400e; }
+.admin-confirm-dialog[data-tone='danger'] .admin-confirm-submit { border-color: #b91c1c; background: #b91c1c; }
+.admin-confirm-dialog[data-tone='danger'] .admin-confirm-submit:hover { background: #991b1b; }
+
+[data-theme='light'] .admin-confirm-dialog { background: #fff; box-shadow: 0 28px 80px rgba(15,23,42,.24); }
+[data-theme='light'] .admin-confirm-actions button:not(.admin-confirm-submit) { background: #f8fafc; color: #475569; }
+
+@keyframes admin-confirm-fade { from { opacity: 0; } }
+@keyframes admin-confirm-rise { from { opacity: 0; transform: translateY(8px) scale(.985); } }
+
+@media (max-width: 520px) {
+  .admin-confirm-backdrop { align-items: end; padding: 10px; }
+  .admin-confirm-dialog { width: 100%; border-radius: 14px; }
+  .admin-confirm-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .admin-confirm-actions button { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-confirm-backdrop,
+  .admin-confirm-dialog { animation: none; }
+}

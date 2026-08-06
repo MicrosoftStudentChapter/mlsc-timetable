@@ -2,9 +2,11 @@
 // Guards access via useAdminSession; renders the AccessDenied screen when
 // the caller isn't on the allowlist.
 
+import { useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTheme } from '../../hooks/useTheme'
 import { useAdminSession } from '../../hooks/useAdminSession'
+import { AdminConfirmHost } from '../../components/AdminConfirmDialog'
 import AccessDenied from './AccessDenied'
 import './admin.css'
 
@@ -32,25 +34,49 @@ function MoonIcon() {
   )
 }
 
-const NAV_ITEMS = [
-  { to: '/admin', label: 'Dashboard', end: true },
-  { to: '/admin/analytics', label: 'Analytics' },
-  { to: '/admin/fix', label: 'Fix' },
-  { to: '/admin/timetables', label: 'Timetables' },
-  { to: '/admin/teacher-codes', label: 'Teacher codes' },
-  { to: '/admin/uploads', label: 'Uploads' },
-  { to: '/admin/change-requests', label: 'Change requests' },
-  { to: '/admin/catalog', label: 'Catalog' },
-  { to: '/admin/baselines', label: 'Baselines' },
-  { to: '/admin/content', label: 'Content' },
-  { to: '/admin/contributors', label: 'Contributors' },
-  { to: '/admin/users', label: 'Admins' },
+const NAV_GROUPS = [
+  {
+    label: 'Overview',
+    items: [
+      { to: '/admin', label: 'Dashboard', end: true },
+      { to: '/admin/analytics', label: 'Analytics' },
+    ],
+  },
+  {
+    label: 'Operations',
+    items: [
+      { to: '/admin/fix', label: 'Fix issues' },
+      { to: '/admin/timetables', label: 'Timetables' },
+      { to: '/admin/uploads', label: 'Uploads' },
+      { to: '/admin/change-requests', label: 'Change requests' },
+    ],
+  },
+  {
+    label: 'Academic data',
+    items: [
+      { to: '/admin/catalog', label: 'Subject catalog' },
+      { to: '/admin/library', label: 'Curriculum library' },
+      { to: '/admin/baselines', label: 'Baselines' },
+      { to: '/admin/teacher-codes', label: 'Teacher codes' },
+    ],
+  },
+  {
+    label: 'Settings',
+    items: [
+      { to: '/admin/content', label: 'Site content' },
+      { to: '/admin/contributors', label: 'Contributors' },
+      { to: '/admin/users', label: 'Administrators' },
+    ],
+  },
 ]
+
+const NAV_ITEMS = NAV_GROUPS.flatMap((group) => group.items)
 
 export default function AdminLayout() {
   const { theme, toggleTheme } = useTheme()
   const { status, error } = useAdminSession()
   const location = useLocation()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   if (status === 'loading') {
     return (
@@ -82,44 +108,70 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="admin-app">
-      <div className="admin-topbar">
-        <div className="admin-brand">
-          <img src="/MLSC-logo.png" alt="MLSC" className="admin-brand-logo" />
-          <div className="admin-brand-text">
-            <span className="admin-brand-title">MLSC Timetable</span>
-            <span className="admin-brand-sub">ADMIN</span>
-          </div>
+    <div className="admin-app admin-app--shell">
+      <aside className={`admin-sidebar ${menuOpen ? 'is-open' : ''}`}>
+        <div className="admin-sidebar-head">
+          <Link to="/admin" className="admin-brand" aria-label="MLSC Timetable admin dashboard" onClick={() => setMenuOpen(false)}>
+            <img src="/MLSC-logo.png" alt="" className="admin-brand-logo" />
+            <div className="admin-brand-text">
+              <span className="admin-brand-title">MLSC Timetable</span>
+              <span className="admin-brand-sub">Administration</span>
+            </div>
+          </Link>
+          <button type="button" className="admin-sidebar-close" onClick={() => setMenuOpen(false)} aria-label="Close navigation">×</button>
         </div>
-        <div className="admin-top-actions">
-          <Link to="/" className="admin-back-link">← Back to site</Link>
-          <button
-            type="button"
-            className="admin-icon-btn"
-            aria-label="Toggle theme"
-            onClick={toggleTheme}
-          >
-            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+
+        <nav className="admin-sidebar-nav" aria-label="Admin sections">
+          {NAV_GROUPS.map((group) => (
+            <div className="admin-nav-group" key={group.label}>
+              <span className="admin-nav-label">{group.label}</span>
+              {group.items.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  onClick={() => setMenuOpen(false)}
+                  className={({ isActive }) => (isActive ? 'active' : undefined)}
+                >
+                  <span className="admin-nav-indicator" aria-hidden="true" />
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
+          ))}
+        </nav>
+
+      </aside>
+
+      {menuOpen && <button type="button" className="admin-sidebar-overlay" onClick={() => setMenuOpen(false)} aria-label="Close navigation" />}
+
+      <div className="admin-shell">
+        <header className="admin-topbar">
+          <button type="button" className="admin-menu-btn" onClick={() => setMenuOpen(true)} aria-label="Open navigation">
+            <span /><span /><span />
           </button>
-        </div>
+          <div className="admin-breadcrumb">
+            <span>Admin</span>
+            <strong>{NAV_ITEMS.find((item) => item.end ? location.pathname === item.to : location.pathname.startsWith(item.to))?.label || 'Workspace'}</strong>
+          </div>
+          <div className="admin-top-actions">
+            <Link to="/" className="admin-back-link">View timetable ↗</Link>
+            <button
+              type="button"
+              className="admin-icon-btn"
+              aria-label="Toggle theme"
+              onClick={toggleTheme}
+            >
+              {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+            </button>
+          </div>
+        </header>
+
+        <main className="admin-main" key={location.pathname}>
+          <Outlet />
+        </main>
       </div>
-
-      <nav className="admin-subnav" aria-label="Admin sections">
-        {NAV_ITEMS.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            className={({ isActive }) => (isActive ? 'active' : undefined)}
-          >
-            {item.label}
-          </NavLink>
-        ))}
-      </nav>
-
-      <main className="admin-main" key={location.pathname}>
-        <Outlet />
-      </main>
+      <AdminConfirmHost />
     </div>
   )
 }

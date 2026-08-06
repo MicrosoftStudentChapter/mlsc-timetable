@@ -3,6 +3,7 @@
 // these to flag drifted batches.
 
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { adminConfirm } from '../../lib/adminConfirm'
 import {
   listBaselines,
   setBaseline,
@@ -294,7 +295,13 @@ export default function BaselinesPage() {
   }
 
   async function onRemove(key) {
-    if (!window.confirm(`Delete baseline ${key}?`)) return
+    if (!await adminConfirm({
+      title: `Delete baseline ${key}?`,
+      message: 'Future ingests will no longer validate this curriculum group against the saved class counts.',
+      detail: 'This action cannot be undone.',
+      confirmLabel: 'Delete baseline',
+      tone: 'danger',
+    })) return
     setRemoving(key)
     try {
       await deleteBaseline(key)
@@ -443,7 +450,13 @@ export default function BaselinesPage() {
   }
 
   return (
-    <>
+    <div className="admin-page baselines-page">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Baselines</h1>
+          <p className="admin-page-sub">Define expected class counts and course rosters used by timetable consistency checks.</p>
+        </div>
+      </div>
       <div className="admin-card" style={{ marginBottom: 16 }}>
         <div className="admin-card-header" style={{ alignItems: 'center' }}>
           <h2 className="admin-card-title" style={{ textAlign: 'left' }}>Course scheme (PDF)</h2>
@@ -933,6 +946,6 @@ export default function BaselinesPage() {
         onSave={onEditSave}
         onClose={() => setEditingRow(null)}
       />
-    </>
+    </div>
   )
 }
