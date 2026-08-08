@@ -3,6 +3,8 @@ import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
 import TimetablePage from './pages/TimetablePage'
+import AvailabilityPage from './pages/AvailabilityPage'
+import ImprovementPage from './pages/ImprovementPage'
 import PrivacyPage from './pages/PrivacyPage'
 import TermsPage from './pages/TermsPage'
 import AdminLayout from './pages/admin/AdminLayout'
@@ -31,6 +33,8 @@ export default function App() {
       <Route path="/login/*" element={<LoginPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/timetable/:batch" element={<TimetablePage />} />
+      <Route path="/availability" element={<AvailabilityPage />} />
+      <Route path="/improvement" element={<ImprovementPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/admin" element={<AdminLayout />}>

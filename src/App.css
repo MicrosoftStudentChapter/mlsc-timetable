@@ -112,6 +112,47 @@
   justify-content: center;
 }
 
+/* ── Other tools ── */
+.landing-tools {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  width: 100%;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.landing-tool {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  text-decoration: none;
+  padding: 0.7rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, var(--bg));
+  min-width: 240px;
+  flex: 0 1 300px;
+}
+
+.landing-tool:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.landing-tool-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.landing-tool-sub {
+  font-size: 0.74rem;
+  color: var(--text);
+  line-height: 1.35;
+}
+
 /* ── Contributors ── */
 .contributors-section {
   display: flex;

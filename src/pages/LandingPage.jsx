@@ -82,6 +82,17 @@ export default function LandingPage() {
           </div>
         </div>
 
+        <nav className="landing-tools" aria-label="Other tools">
+          <Link to="/availability" className="landing-tool">
+            <span className="landing-tool-title">Room &amp; teacher availability</span>
+            <span className="landing-tool-sub">Find a free room, or see what a teacher has on</span>
+          </Link>
+          <Link to="/improvement" className="landing-tool">
+            <span className="landing-tool-title">Improvement courses</span>
+            <span className="landing-tool-sub">Find a junior batch you can sit a repeat course with</span>
+          </Link>
+        </nav>
+
         <section className="contributors-section">
           <p className="short-tagline">Built by the community</p>
           <ContributorsScroller contributors={contributors} />

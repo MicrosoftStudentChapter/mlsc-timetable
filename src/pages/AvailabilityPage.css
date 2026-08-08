@@ -1,0 +1,428 @@
+/* Room / teacher availability.
+   Uses the same surface + border tokens as the rest of the site so it reads
+   as one product rather than a bolted-on tool. */
+
+.av-page {
+  text-align: left;
+  padding: 24px 28px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.av-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.av-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.av-header h1 {
+  font-size: 32px;
+  letter-spacing: -0.8px;
+  margin: 0;
+}
+
+.av-sub {
+  color: var(--text);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.av-back,
+.av-theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, var(--bg));
+  color: var(--text-h);
+  font-size: 18px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.av-back:hover,
+.av-theme:hover {
+  background: var(--bg-hover, var(--accent-bg));
+}
+
+/* ── Kind tabs ───────────────────────────────────────────────────────── */
+.av-kinds {
+  display: flex;
+  gap: 8px;
+}
+
+.av-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.av-kind.is-active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.av-count {
+  font-size: 12px;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Panels ──────────────────────────────────────────────────────────── */
+.av-panel {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  background: var(--bg-surface, var(--bg));
+}
+
+.av-panel h2 {
+  font-size: 19px;
+  margin-bottom: 14px;
+}
+
+.av-panel h3 {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.av-notice {
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 14px;
+}
+
+.av-notice p {
+  margin-top: 6px;
+}
+
+.av-notice code {
+  font-size: 13px;
+}
+
+/* ── Controls ────────────────────────────────────────────────────────── */
+.av-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.av-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+
+.av-field-grow {
+  flex: 1 1 180px;
+}
+
+.av-field select,
+.av-field input {
+  font: inherit;
+  font-size: 15px;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 9px 11px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, var(--bg));
+  color: var(--text-h);
+  min-width: 128px;
+}
+
+.av-now {
+  font: inherit;
+  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: 9px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.av-now:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ── Free / busy split ───────────────────────────────────────────────── */
+.av-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .av-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+.av-badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+
+.av-badge-free {
+  background: rgba(22, 163, 74, 0.14);
+  color: #16a34a;
+}
+
+.av-badge-busy {
+  background: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+}
+
+.av-chiplist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.av-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font: inherit;
+  font-size: 14px;
+  padding: 6px 11px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, var(--bg));
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.av-chip:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.av-until {
+  font-size: 11px;
+  color: var(--text);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.av-until-all {
+  color: #16a34a;
+  opacity: 1;
+}
+
+.av-busylist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.av-busy-name {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-h);
+  background: none;
+  border: none;
+  padding: 0 0 4px;
+  cursor: pointer;
+}
+
+.av-busy-name:hover {
+  color: var(--accent);
+}
+
+/* ── Class rows ──────────────────────────────────────────────────────── */
+.av-classlist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.av-class {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle, var(--border));
+  background: var(--bg-card, var(--bg));
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .av-class {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
+.av-class-time {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.av-class-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.av-class-main strong {
+  color: var(--text-h);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.av-class-code {
+  font-family: var(--mono);
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.av-class-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.av-type {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--code-bg);
+  color: var(--text-h);
+}
+
+.av-type-practical {
+  background: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+}
+
+.av-type-tutorial {
+  background: rgba(217, 119, 6, 0.14);
+  color: #d97706;
+}
+
+.av-room,
+.av-teacher {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--code-bg);
+  color: var(--text-h);
+}
+
+.av-batches {
+  font-size: 11px;
+  color: var(--text);
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+/* ── Weekly browse ───────────────────────────────────────────────────── */
+.av-picker {
+  max-width: 420px;
+  margin-bottom: 18px;
+}
+
+.av-week {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.av-weekhead {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 16px;
+  color: var(--text-h);
+}
+
+.av-day h4 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text);
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.av-free-day {
+  font-style: italic;
+}
+
+.av-muted {
+  color: var(--text);
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+.av-error {
+  color: #dc2626;
+  font-size: 14px;
+}

@@ -1,0 +1,564 @@
+/* Improvement course picker.
+   A three-step flow: batch -> courses -> options. Steps appear as they are
+   answered so the page is never a wall of empty controls. */
+
+.im-page {
+  text-align: left;
+  padding: 24px 28px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.im-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.im-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.im-header h1 {
+  font-size: 32px;
+  letter-spacing: -0.8px;
+  margin: 0;
+}
+
+.im-sub {
+  color: var(--text);
+  font-size: 14px;
+  margin-top: 4px;
+  max-width: 60ch;
+}
+
+.im-back,
+.im-theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, var(--bg));
+  color: var(--text-h);
+  font-size: 18px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.im-back:hover,
+.im-theme:hover {
+  background: var(--bg-hover, var(--accent-bg));
+}
+
+/* ── Steps ───────────────────────────────────────────────────────────── */
+.im-step {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  background: var(--bg-surface, var(--bg));
+}
+
+.im-step h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 19px;
+  margin-bottom: 14px;
+}
+
+.im-stepno {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  color: var(--text-h);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.im-step h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--text-h);
+  margin: 22px 0 10px;
+  font-weight: 600;
+}
+
+.im-batchrow {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.im-batchpicker {
+  flex: 1 1 260px;
+  max-width: 340px;
+}
+
+.im-confirmed {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 17px;
+  color: var(--text-h);
+}
+
+.im-primary {
+  font: inherit;
+  font-size: 15px;
+  padding: 10px 20px;
+  border-radius: 9px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.im-primary:hover:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+}
+
+.im-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.im-link {
+  font: inherit;
+  font-size: 13px;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.im-hint,
+.im-limits {
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 12px;
+  max-width: 78ch;
+}
+
+.im-search {
+  font: inherit;
+  font-size: 15px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, var(--bg));
+  color: var(--text-h);
+  width: min(100%, 340px);
+  margin-bottom: 14px;
+}
+
+/* ── Course picker ───────────────────────────────────────────────────── */
+.im-courselist {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.im-course {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: 'code name' 'code meta';
+  gap: 1px 10px;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, var(--bg));
+  cursor: pointer;
+}
+
+.im-course:hover {
+  border-color: var(--accent-border);
+}
+
+.im-course.is-picked {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.im-course-code {
+  grid-area: code;
+  align-self: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.im-course-name {
+  grid-area: name;
+  font-size: 13px;
+  color: var(--text-h);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.im-course-meta {
+  grid-area: meta;
+  font-size: 11px;
+  color: var(--text);
+  opacity: 0.75;
+}
+
+.im-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+/* ── Notices ─────────────────────────────────────────────────────────── */
+.im-notice {
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  max-width: 80ch;
+}
+
+.im-notice-warn {
+  border-color: rgba(217, 119, 6, 0.4);
+  background: rgba(217, 119, 6, 0.1);
+}
+
+/* ── Combined plans ──────────────────────────────────────────────────── */
+.im-plans-sub {
+  margin-top: -4px;
+  margin-bottom: 10px;
+}
+
+.im-planlist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.im-plan {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, var(--bg));
+}
+
+.im-plan-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--code-bg);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.im-plan-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.im-plan-pick {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.im-plan-pick strong {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-h);
+}
+
+.im-plan-clash {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.im-plan-total {
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--text-h);
+}
+
+/* ── Per-course options ──────────────────────────────────────────────── */
+.im-result-count {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text);
+  opacity: 0.8;
+  margin-left: auto;
+}
+
+.im-options {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+}
+
+.im-option {
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 12px 14px;
+  background: var(--bg-card, var(--bg));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.im-option.is-blocked {
+  opacity: 0.62;
+  border-style: dashed;
+}
+
+.im-option-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.im-option-batches {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.im-option-batches strong {
+  font-size: 14px;
+  color: var(--text-h);
+  overflow-wrap: anywhere;
+}
+
+.im-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.im-tag-clean {
+  background: rgba(22, 163, 74, 0.15);
+  color: #16a34a;
+}
+
+.im-tag-ok {
+  background: rgba(217, 119, 6, 0.15);
+  color: #d97706;
+}
+
+.im-tag-blocked {
+  background: rgba(220, 38, 38, 0.13);
+  color: #dc2626;
+}
+
+.im-sessions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.im-session {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.im-session-day {
+  font-weight: 700;
+  color: var(--text-h);
+  width: 30px;
+  flex: 0 0 auto;
+}
+
+.im-session-time {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.im-type {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: var(--code-bg);
+  color: var(--text-h);
+}
+
+.im-type-practical {
+  background: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+}
+
+.im-type-tutorial {
+  background: rgba(217, 119, 6, 0.14);
+  color: #d97706;
+}
+
+.im-room {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  margin-left: auto;
+}
+
+.im-toggle {
+  font: inherit;
+  font-size: 12px;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  cursor: pointer;
+  text-align: left;
+  text-decoration: underline;
+}
+
+.im-clashes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.im-clash {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  border-left: 3px solid var(--border);
+  background: var(--bg-hover, var(--code-bg));
+  flex-wrap: wrap;
+}
+
+.im-clash-blocking {
+  border-left-color: #dc2626;
+}
+
+.im-clash-warn {
+  border-left-color: #d97706;
+}
+
+.im-clash-mild {
+  border-left-color: var(--accent);
+}
+
+.im-clash-when {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  flex: 0 0 auto;
+}
+
+.im-clash-body {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.im-clash-body strong {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-h);
+}
+
+.im-clash-vs,
+.im-clash-type {
+  opacity: 0.72;
+}
+
+.im-clash-note {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--text-h);
+  margin-left: auto;
+}
+
+.im-course-result {
+  margin-top: 6px;
+}
+
+.im-muted {
+  color: var(--text);
+  opacity: 0.75;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.im-error {
+  color: #dc2626;
+  font-size: 14px;
+}
