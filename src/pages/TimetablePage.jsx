@@ -6,7 +6,7 @@ import TimetableGrid from '../components/TimetableGrid'
 import Footer from '../components/Footer'
 import FollowDayBanner from '../components/FollowDayBanner'
 import { isFirstYearBatch, loadBatches } from '../lib/batches'
-import { loadMyTimetable } from '../lib/timetable'
+import { loadPersonalizedTimetable, loadTimetable } from '../lib/timetable'
 import { exportGridAsPng, exportGridAsPdf } from '../lib/export_timetable'
 import { DashboardLayout } from '../components/side_columns'
 import { useTheme } from '../hooks/useTheme'
@@ -339,13 +339,38 @@ export default function TimetablePage() {
       return
     }
     let cancelled = false
+    let hasLoaded = false
+    let inFlight = false
     setTimetableState({ status: 'loading' })
-    loadMyTimetable(batch).then((result) => {
-      if (cancelled) return
-      setTimetableState(result)
-    })
+    const load = () => {
+      if (inFlight) return
+      inFlight = true
+      const request = isSignedIn ? loadPersonalizedTimetable(batch) : loadTimetable(batch)
+      request.then((result) => {
+        inFlight = false
+        if (cancelled) return
+        hasLoaded = true
+        setTimetableState(result)
+      }).catch((err) => {
+        inFlight = false
+        if (!cancelled) {
+          hasLoaded = true
+          setTimetableState({ status: 'error', message: err?.message || 'Unable to load timetable' })
+        }
+      })
+    }
+    const refreshVisible = () => {
+      if (document.visibilityState === 'visible' && hasLoaded) load()
+    }
+    load()
+    const interval = window.setInterval(refreshVisible, 60_000)
+    window.addEventListener('focus', refreshVisible)
+    document.addEventListener('visibilitychange', refreshVisible)
     return () => {
       cancelled = true
+      window.clearInterval(interval)
+      window.removeEventListener('focus', refreshVisible)
+      document.removeEventListener('visibilitychange', refreshVisible)
     }
   }, [batch, authLoaded, isSignedIn, firstYearUnavailable])
 
@@ -445,7 +470,8 @@ export default function TimetablePage() {
           activeWeekdayIdx={activeWeekdayIdx}
           onReloadTimetable={() => {
             if (!batch) return Promise.resolve()
-            return loadMyTimetable(batch).then((result) => setTimetableState(result))
+            const request = isSignedIn ? loadPersonalizedTimetable(batch) : loadTimetable(batch)
+            return request.then((result) => setTimetableState(result))
           }}
         />
         </div>

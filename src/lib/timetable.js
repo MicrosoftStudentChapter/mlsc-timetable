@@ -45,6 +45,7 @@ function adaptEntry(raw, teacherCodesVisible = false) {
     curriculumSection: raw.curriculum_section ?? null,
     requiresSelection,
     electiveGroupId: raw.elective_group_id ?? null,
+    baseFingerprint: raw.base_fingerprint ?? null,
   }
 }
 
@@ -96,6 +97,8 @@ export async function loadTimetable(batch) {
     return { status: 'coming_soon', batch: String(batch || '').toUpperCase() }
   }
   const baseUrl = getBackendUrl()
+  const published = await fetchPublishedTimetable(batch, baseUrl)
+  if (published.status === 'ok') return published
   if (baseUrl) {
     const url = `${baseUrl.replace(/\/$/, '')}/timetable/${encodeURIComponent(batch)}`
     const result = await fetchTimetable(url)
@@ -103,6 +106,122 @@ export async function loadTimetable(batch) {
     // Network/5xx → try the bundled snapshot before giving up.
   }
   return fetchTimetable(fallbackTimetableUrl(batch))
+}
+
+function publicDataBase(backendUrl) {
+  const explicit = String(import.meta.env.VITE_PUBLIC_DATA_URL || '').trim()
+  if (explicit) return explicit.replace(/\/+$/, '')
+  if (backendUrl) return `${backendUrl.replace(/\/+$/, '')}/public`
+  return ''
+}
+
+async function fetchPublishedTimetable(batch, backendUrl) {
+  const base = publicDataBase(backendUrl)
+  if (!base) return { status: 'no_backend' }
+  let response
+  try {
+    response = await fetch(`${base}/v1/manifest.json`, { cache: 'no-cache' })
+  } catch {
+    return { status: 'error', message: 'Public manifest unavailable' }
+  }
+  if (!response.ok) return { status: 'error', message: `Public manifest returned ${response.status}` }
+  let manifest
+  try {
+    manifest = await response.json()
+  } catch {
+    return { status: 'error', message: 'Invalid public manifest' }
+  }
+  const code = String(batch || '').trim().toUpperCase()
+  const entry = manifest?.batches?.[code]
+  if (!entry?.path && !entry?.url) return { status: 'not_published' }
+  const url = entry.url || `${base}/${String(entry.path).replace(/^\/+/, '')}`
+  const result = await fetchTimetable(url)
+  if (result.status === 'ok') {
+    result.publicRevision = entry.revision ?? null
+    result.publicEtag = entry.etag ?? null
+  }
+  return result
+}
+
+export async function loadPreferences(batch) {
+  const baseUrl = getBackendUrl()
+  if (!baseUrl) return { status: 'error', message: 'Backend is not configured' }
+  let response
+  try {
+    response = await fetch(
+      `${baseUrl.replace(/\/+$/, '')}/me/preferences/${encodeURIComponent(batch)}`,
+      { headers: await authHeaders(), cache: 'no-store' },
+    )
+  } catch (err) {
+    return { status: 'error', message: err?.message || 'Network error' }
+  }
+  if (!response.ok) return { status: 'error', message: `Preferences returned ${response.status}` }
+  try {
+    const body = await response.json()
+    return {
+      status: 'ok',
+      revision: Number(body?.revision || 0),
+      operations: body?.operations && typeof body.operations === 'object' ? body.operations : {},
+    }
+  } catch {
+    return { status: 'error', message: 'Invalid preferences response' }
+  }
+}
+
+function applyPreferenceDelta(canonical, preferences) {
+  const operations = preferences.operations || {}
+  const pending = new Map(Object.entries(operations))
+  const stale = []
+  const classes = []
+
+  for (const official of canonical.classes) {
+    const operation = pending.get(official.id)
+    if (!operation) {
+      classes.push(official)
+      continue
+    }
+    pending.delete(official.id)
+    if (operation.base_fingerprint && official.baseFingerprint && operation.base_fingerprint !== official.baseFingerprint) {
+      stale.push(official.id)
+      classes.push(official)
+      continue
+    }
+    if (operation.kind === 'delete') continue
+    if ((operation.kind === 'edit' || operation.kind === 'elective_pick') && operation.entry) {
+      const personalized = adaptEntry(operation.entry, canonical.teacherCodesVisible)
+      classes.push({ ...official, ...personalized, id: official.id })
+      continue
+    }
+    classes.push(official)
+  }
+
+  for (const [targetId, operation] of pending) {
+    if (operation.kind !== 'add' || !operation.entry) {
+      stale.push(targetId)
+      continue
+    }
+    classes.push({ ...adaptEntry(operation.entry, canonical.teacherCodesVisible), id: targetId })
+  }
+
+  return {
+    ...canonical,
+    classes: assignPairIds(classes),
+    canonicalClasses: canonical.classes,
+    overridesApplied: Object.keys(operations).length,
+    personalRevision: preferences.revision,
+    customizationSource: 'v2',
+    staleOverrideIds: stale,
+  }
+}
+
+export async function loadPersonalizedTimetable(batch) {
+  const [canonical, preferences] = await Promise.all([
+    loadTimetable(batch),
+    loadPreferences(batch),
+  ])
+  if (canonical.status !== 'ok') return canonical
+  if (preferences.status !== 'ok') return preferences
+  return applyPreferenceDelta(canonical, preferences)
 }
 
 // Same shape as loadTimetable, but applies the current user's overrides
