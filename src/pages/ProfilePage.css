@@ -358,31 +358,86 @@
   display: flex;
   gap: 8px;
   justify-content: flex-end;
-  flex-wrap: wrap;
+  align-items: center;
 }
+
+/* Three whole-phrase labels cannot share a 360px row; wrapping them left the
+   rows ragged, so a third choice stacks instead. */
+.confirm-actions--stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+.confirm-actions--stacked .confirm-btn {
+  width: 100%;
+}
+
 .confirm-btn {
-  height: 38px;
+  height: 40px;
   padding: 0 18px;
   border-radius: 10px;
   font-size: 0.85rem;
   font-weight: 600;
   font-family: inherit;
+  line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: background 0.15s, opacity 0.15s;
-}
-.confirm-btn:hover { opacity: 0.85; }
-.confirm-btn--ghost {
   background: transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.confirm-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Neutral, and the recommended answer when there is a choice. */
+.confirm-btn--solid {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-h, #fff);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.confirm-btn--solid:hover { background: rgba(255, 255, 255, 0.14); }
+
+.confirm-btn--ghost {
   color: var(--text, #ccc);
-  border-color: rgba(255,255,255,0.15);
+  border-color: rgba(255, 255, 255, 0.15);
 }
+.confirm-btn--ghost:hover { background: rgba(255, 255, 255, 0.06); }
+
+.confirm-btn--primary {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+.confirm-btn--primary:hover { background: #2f74e0; border-color: #2f74e0; }
+
+/* Outlined rather than solid: the destructive option should read as a warning,
+   not as the primary call to action. It fills in on hover. */
+.confirm-btn--danger {
+  background: transparent;
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.45);
+}
+.confirm-btn--danger:hover {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+
+[data-theme="light"] .confirm-btn--solid {
+  background: rgba(0, 0, 0, 0.05);
+  color: #0f172a;
+  border-color: rgba(0, 0, 0, 0.14);
+}
+[data-theme="light"] .confirm-btn--solid:hover { background: rgba(0, 0, 0, 0.09); }
 [data-theme="light"] .confirm-btn--ghost {
-  border-color: rgba(0,0,0,0.15);
-  color: rgba(0,0,0,0.65);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: rgba(0, 0, 0, 0.65);
 }
-.confirm-btn--primary { background: #3b82f6; color: #fff; }
-.confirm-btn--danger { background: #ef4444; color: #fff; }
+[data-theme="light"] .confirm-btn--ghost:hover { background: rgba(0, 0, 0, 0.04); }
+[data-theme="light"] .confirm-btn--danger { color: #dc2626; border-color: rgba(220, 38, 38, 0.4); }
+[data-theme="light"] .confirm-btn--danger:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
 
 .profile-shell {
   width: 100%;

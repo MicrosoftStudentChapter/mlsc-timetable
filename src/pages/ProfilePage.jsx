@@ -58,15 +58,19 @@ function ConfirmModal({ open, title, message, confirmLabel = 'Confirm', secondar
   }, [open, onCancel])
 
   if (!open) return null
+  const hasChoice = Boolean(secondaryLabel && onSecondary)
   return (
     <div className="confirm-backdrop" onClick={onCancel}>
       <div className="confirm-modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
         <h3 className="confirm-title">{title}</h3>
         <p className="confirm-message">{message}</p>
-        <div className="confirm-actions">
-          <button className="confirm-btn confirm-btn--ghost" onClick={onCancel}>Cancel</button>
-          {secondaryLabel && onSecondary && (
-            <button className="confirm-btn confirm-btn--ghost" onClick={onSecondary}>
+        {/* Two actions fit on one row. A third cannot — the labels are whole
+            phrases and the dialog is 360px — so those stack full width, which
+            also puts the safer choice first and stops the destructive one
+            being the largest thing on screen. */}
+        <div className={`confirm-actions${hasChoice ? ' confirm-actions--stacked' : ''}`}>
+          {hasChoice && (
+            <button className="confirm-btn confirm-btn--solid" onClick={onSecondary}>
               {secondaryLabel}
             </button>
           )}
@@ -76,6 +80,7 @@ function ConfirmModal({ open, title, message, confirmLabel = 'Confirm', secondar
           >
             {confirmLabel}
           </button>
+          <button className="confirm-btn confirm-btn--ghost" onClick={onCancel}>Cancel</button>
         </div>
       </div>
     </div>
