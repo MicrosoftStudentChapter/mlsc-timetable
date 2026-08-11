@@ -166,6 +166,7 @@ export default function ImprovementPage() {
     setPicked((current) =>
       current.includes(code) ? current.filter((value) => value !== code) : [...current, code],
     )
+    // Leaving `loading` is what invalidates any search still in flight.
     setPlan({ status: 'idle' })
   }
 
@@ -176,10 +177,19 @@ export default function ImprovementPage() {
     setConfirmedBatch(value)
   }
 
+  // A reply is only accepted while the search that asked for it is still the
+  // one running. Changing the selection moves the state off `loading`, so a
+  // slow answer for a selection the student has abandoned is discarded rather
+  // than shown against the courses now ticked.
   function runPlan() {
     if (!confirmedBatch || picked.length === 0) return
-    setPlan({ status: 'loading' })
-    planImprovements(confirmedBatch, picked).then(setPlan)
+    const key = `${confirmedBatch}|${picked.join(',')}`
+    setPlan({ status: 'loading', key })
+    planImprovements(confirmedBatch, picked).then((response) => {
+      setPlan((current) =>
+        current.status === 'loading' && current.key === key ? { ...response, key } : current,
+      )
+    })
   }
 
   const data = plan.status === 'ok' ? plan.data : null
@@ -328,9 +338,12 @@ export default function ImprovementPage() {
             {data.personalized ? ' Your saved elective picks were applied.' : null}
           </p>
 
-          {data.has_unresolved_electives && !data.personalized ? (
+          {/* Signing in applies the picks that were saved — it does not mean
+              every elective has been chosen, so the caveat still stands
+              whenever the backend reports an unresolved slot. */}
+          {data.has_unresolved_electives ? (
             <div className="im-notice">
-              You have electives you have not chosen yet. Those slots are treated as their
+              You still have electives you have not chosen. Those slots are treated as their
               strictest option, so some batches may be rejected that would actually work. Pick your
               electives on your timetable for a more accurate answer.
             </div>
@@ -353,6 +366,10 @@ export default function ImprovementPage() {
               <p className="im-muted im-plans-sub">
                 One batch per course, checked against each other so two improvement courses never
                 land in the same slot.
+                {data.plans.length > 5 ? ` Best 5 of ${data.plans.length} shown.` : ''}
+                {data.plans_truncated
+                  ? ' There are more combinations than were ranked, so a better one may exist.'
+                  : ''}
               </p>
               <ol className="im-planlist">
                 {data.plans.slice(0, 5).map((entry, index) => (

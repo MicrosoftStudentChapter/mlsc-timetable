@@ -93,10 +93,19 @@ export default function AvailabilityPage() {
     }
   }, [])
 
+  // Changing day or time fires a new lookup before the previous one lands.
+  // A reply is only accepted while the lookup that asked for it is still the
+  // one running, otherwise the slower answer wins and the page reports
+  // availability for a time nobody is asking about.
   const runAvailability = useCallback(() => {
     if (!day || !time) return
-    setResult({ status: 'loading' })
-    loadAvailability(kind, { day, at: time }).then(setResult)
+    const key = `${kind}|${day}|${time}`
+    setResult({ status: 'loading', key })
+    loadAvailability(kind, { day, at: time }).then((response) => {
+      setResult((current) =>
+        current.status === 'loading' && current.key === key ? { ...response, key } : current,
+      )
+    })
   }, [kind, day, time])
 
   useEffect(() => {
