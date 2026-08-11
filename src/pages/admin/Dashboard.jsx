@@ -151,6 +151,7 @@ function UploadCard({ onUploaded }) {
   const [isOdd, setIsOdd] = useState(true)
   const [year, setYear] = useState('')
   const [sheet, setSheet] = useState('all')
+  const [years, setYears] = useState([])   // [] = every year
   const [force, setForce] = useState(false)
   const [progress, setProgress] = useState(0)
   const [uploading, setUploading] = useState(false)
@@ -197,6 +198,7 @@ function UploadCard({ onUploaded }) {
         file,
         semester: semester.trim(),
         sheet: sheet.trim() || 'all',
+        years: years.join(','),
         force,
         onProgress: setProgress,
       })
@@ -306,6 +308,43 @@ function UploadCard({ onUploaded }) {
             value={sheet}
             onChange={(e) => setSheet(e.target.value)}
           />
+        </div>
+
+        <div>
+          <label>Years in this file</label>
+          <div className="upload-years" role="group" aria-label="Years in this file">
+            {[1, 2, 3, 4].map((y) => {
+              const on = years.includes(y)
+              return (
+                <button
+                  key={y}
+                  type="button"
+                  className={`upload-year${on ? ' is-on' : ''}`}
+                  aria-pressed={on}
+                  onClick={() => setYears((current) =>
+                    current.includes(y)
+                      ? current.filter((v) => v !== y)
+                      : [...current, y].sort(),
+                  )}
+                >
+                  Year {y}
+                </button>
+              )
+            })}
+            {years.length > 0 && (
+              <button type="button" className="upload-year-clear" onClick={() => setYears([])}>
+                Clear
+              </button>
+            )}
+          </div>
+          {/* The prune is the reason this exists: anything absent from an
+              upload is treated as removed, so an unscoped first-year file
+              would delete years 2-4. */}
+          <p className="upload-years-note">
+            {years.length === 0
+              ? 'Every year — batches missing from this file will be removed.'
+              : `Only year ${years.join(', ')} will be read or changed. Other years stay exactly as they are.`}
+          </p>
         </div>
 
         <button

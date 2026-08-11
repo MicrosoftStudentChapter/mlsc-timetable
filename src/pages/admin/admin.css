@@ -732,6 +732,74 @@
   color: #1d1c24;
 }
 
+/* ── Ingest year scope ─────────────────────────────────────────────────
+   A workbook covering only the new intake must not prune the years it does
+   not mention, so the admin says which years the file is for. */
+.upload-years {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.upload-year {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));
+  background: transparent;
+  color: var(--text, #b9b8c2);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.upload-year:hover { background: rgba(255, 255, 255, 0.06); }
+
+.upload-year.is-on {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: rgba(59, 130, 246, 0.55);
+  color: var(--text-h, #fff);
+}
+
+.upload-year:focus-visible,
+.upload-year-clear:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.upload-year-clear {
+  padding: 7px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text, #b9b8c2);
+  font: inherit;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.upload-years-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text, #9b9aa6);
+}
+
+[data-theme='light'] .upload-year {
+  border-color: rgba(0, 0, 0, 0.14);
+  color: #43424d;
+}
+[data-theme='light'] .upload-year:hover { background: rgba(0, 0, 0, 0.04); }
+[data-theme='light'] .upload-year.is-on {
+  background: rgba(37, 99, 235, 0.12);
+  border-color: rgba(37, 99, 235, 0.5);
+  color: #10101a;
+}
+[data-theme='light'] .upload-year-clear { color: #5c5b66; }
+[data-theme='light'] .upload-years-note { color: #5c5b66; }
+
 .upload-input:focus {
   outline: none;
   border-color: #3b82f6;

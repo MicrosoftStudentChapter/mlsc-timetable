@@ -478,7 +478,7 @@ export function rejectChangeRequest(id, note) {
   })
 }
 
-export async function uploadTimetable({ file, semester, sheet = 'all', force = false, onProgress } = {}) {
+export async function uploadTimetable({ file, semester, sheet = 'all', years = '', force = false, onProgress } = {}) {
   if (!file) throw new Error('file required')
   if (!semester) throw new Error('semester required')
   if (!BACKEND_URL) {
@@ -494,6 +494,10 @@ export async function uploadTimetable({ file, semester, sheet = 'all', force = f
     fd.append('file', file)
     fd.append('semester', semester)
     fd.append('sheet', sheet)
+    // Empty means the whole institute. Naming years confines both the parse
+    // and the prune to them, so a first-year-only workbook cannot delete the
+    // years it does not mention.
+    if (years) fd.append('years', years)
     if (force) fd.append('force', 'true')
     xhr.open('POST', `${BACKEND_URL}/admin/ingest`)
     Object.entries(auth).forEach(([k, v]) => xhr.setRequestHeader(k, v))
