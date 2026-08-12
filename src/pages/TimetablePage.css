@@ -85,7 +85,9 @@
    target, so it is not included in PNG/PDF captures. */
 .tt-doaa-banner-row {
   flex: 0 0 auto;
-  margin-top: 0;
+  /* Sat flush against the last row of cards, reading as part of the grid.
+     Give it room to be its own thing. */
+  margin-top: 14px;
 }
 
 .tt-doaa-banner-row .tt-warning-banner {
@@ -1436,9 +1438,9 @@
   /* Cell grows with the type below so the layout keeps its proportions —
      bigger text in the same box would just mean more wrapping and more
      truncation. */
-  --col-width: 270px !important;
-  --time-col-width: 135px !important;
-  --row-height: 98px !important;
+  --col-width: 300px !important;
+  --time-col-width: 150px !important;
+  --row-height: 112px !important;
   --card-padding: 6px 4px !important;
   --card-border-radius: 12px !important;
   /* The export renders 200px columns against 140px on screen, so type at the
@@ -1451,7 +1453,7 @@
      three lines and cropped — see the clamps further down — rather than
      allowed to push a card over its neighbours. This is the one number to
      turn if the export wants to be bigger or smaller again. */
-  --type-scale: 2.4 !important;
+  --type-scale: 2.7 !important;
   --header-padding: 10px 14px !important;
   --grid-line-top: 10px !important;
   --active-dot-size: 5px !important;
@@ -1646,10 +1648,17 @@
   row-gap: 3px !important;
   margin: auto 0 0 !important;
 }
-.tt-export-target.tt-exporting .tt-card-meta[data-layout='inline'] {
-  flex-flow: row nowrap !important;
-  align-items: center !important;
-}
+/* Always stack teacher and room in an export, whatever `data-layout` says.
+   That attribute is chosen by a ResizeObserver in TimetableGrid.jsx which
+   measures whether the two fit side by side — but the observer fires
+   asynchronously and the export rasterises immediately after adding
+   `.tt-exporting`, so the value in the DOM is the one measured at the
+   on-screen type size. Rendered at export size it is simply wrong: `inline`
+   puts them in one `nowrap` row that cannot hold them, and the room is cut
+   off — `SS-1(L201)` came out as `SS-`. Stacking gives each a full line, so
+   there is nothing to measure and nothing to get wrong. */
+.tt-export-target.tt-exporting .tt-card-meta,
+.tt-export-target.tt-exporting .tt-card-meta[data-layout='inline'],
 .tt-export-target.tt-exporting .tt-card-meta[data-layout='stacked'] {
   flex-flow: column nowrap !important;
   align-items: flex-start !important;
@@ -1661,6 +1670,9 @@
   border-radius: 3px !important;
   box-sizing: border-box !important;
   max-width: 100% !important;
+  /* Stacked, so it owns the line and can wrap into it instead of being cut. */
+  align-self: stretch !important;
+  width: fit-content !important;
   /* Three lines then crop, rather than growing without limit. */
   overflow: hidden !important;
   max-height: 3.75em !important;  /* three lines at the line-height below */
