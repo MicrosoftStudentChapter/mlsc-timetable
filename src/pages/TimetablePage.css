@@ -1435,15 +1435,19 @@
      clipping, and so the export captures at a higher resolution. */
   --col-width: 200px !important;
   --time-col-width: 100px !important;
-  --row-height: 58px !important;
+  --row-height: 72px !important;
   --card-padding: 6px 4px !important;
   --card-border-radius: 12px !important;
   /* The export renders 200px columns against 140px on screen, so type at the
      on-screen size reads proportionally smaller in the image. Scale it by the
      same factor the cell grew rather than restating each size — the sizes
      themselves live in TimetableGrid.css and follow whatever they are set to
-     there. */
-  --type-scale: 1.4 !important;
+     there.
+     1.4 was merely proportional; an export is read at a distance or printed,
+     so it is set larger on purpose. The row grew with it (58px -> 72px) so
+     the taller text still has somewhere to sit. This is the one number to
+     turn if the export wants to be bigger or smaller again. */
+  --type-scale: 1.75 !important;
   --header-padding: 10px 14px !important;
   --grid-line-top: 10px !important;
   --active-dot-size: 5px !important;
