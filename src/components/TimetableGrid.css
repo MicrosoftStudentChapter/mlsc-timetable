@@ -30,12 +30,18 @@
   --time-col-width: 100px;
   --card-padding: 0 2px 4px; /* Equal 4px horizontal and vertical card gaps */
   --card-border-radius: 12px;
-  --card-font-size: 13px;
-  --card-meta-size: 10.5px;
-  --badge-font-size: 9px;
+  /* Multiplier on every type size below. Export sets it above 1 because it
+     renders the grid at larger cells, where on-screen type reads small.
+     Sizes are declared once here and scaled, rather than restated in the
+     export stylesheet — restating them is how the export came to be stuck at
+     the pre-2935019 sizes while the grid on screen had moved on. */
+  --type-scale: 1;
+  --card-font-size: calc(13px * var(--type-scale));
+  --card-meta-size: calc(10.5px * var(--type-scale));
+  --badge-font-size: calc(9px * var(--type-scale));
   --header-padding: 11px 10px;  /* Roomier so day/batch labels breathe */
-  --header-font-size: 13px;
-  --time-font-size: 14px;
+  --header-font-size: calc(13px * var(--type-scale));
+  --time-font-size: calc(14px * var(--type-scale));
   --grid-line-top: 9px;        /* Proportional to row height */
   --active-dot-size: 5px;
 }
@@ -196,11 +202,14 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(51, 51, 51, 0.55);
-  line-height: 1;
+  line-height: 1.15;
   text-align: center;
-  white-space: nowrap;
+  /* Same treatment as the card text: wrap to three lines before cropping,
+     so a long batch label is readable instead of ending in an ellipsis. */
   overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-height: 3.45em;   /* three lines at the line-height above */
   max-width: 100%;
   min-width: 0;
 }
@@ -518,11 +527,21 @@
   max-width: 100%;
 }
 
+/* Wrap rather than cut at the first line. A long room label like
+   "HIGH VOLTAGE-C101" or a multi-teacher cell lost everything past the first
+   few characters to an ellipsis; three lines shows it, and still crops
+   anything genuinely too long to fit the card. */
 .tt-card-code,
 .tt-card-room {
+  /* Clamped by height rather than `-webkit-line-clamp`, which needs
+     `display: -webkit-box` — and these two are given `inline-block` and
+     `inline-flex` further down for layout. Height works whatever the display,
+     which is the same reason `.tt-card-subject` above is clamped this way. */
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: break-word;
+  white-space: normal;
+  line-height: 1.25;
+  max-height: 3.75em;   /* three lines at the line-height above */
 }
 
 .tt-card-meta {
@@ -1103,8 +1122,9 @@ select.tt-editor-input {
     --col-width: 120px;
     --row-height: 70px;
     --header-padding: 11px 6px;
-    --header-font-size: 12px;
-    --time-font-size: 13px;
+    /* Kept on the scale so an export taken from a phone still enlarges. */
+    --header-font-size: calc(12px * var(--type-scale));
+    --time-font-size: calc(13px * var(--type-scale));
   }
 
   .tt-grid-frame .tt-class-card {
