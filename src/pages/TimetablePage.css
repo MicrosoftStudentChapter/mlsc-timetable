@@ -1438,12 +1438,13 @@
   --row-height: 58px !important;
   --card-padding: 6px 4px !important;
   --card-border-radius: 12px !important;
-  --card-font-size: 13px !important;
-  --card-meta-size: 11px !important;
-  --badge-font-size: 9.5px !important;
+  /* The export renders 200px columns against 140px on screen, so type at the
+     on-screen size reads proportionally smaller in the image. Scale it by the
+     same factor the cell grew rather than restating each size — the sizes
+     themselves live in TimetableGrid.css and follow whatever they are set to
+     there. */
+  --type-scale: 1.4 !important;
   --header-padding: 10px 14px !important;
-  --header-font-size: 13px !important;
-  --time-font-size: 14px !important;
   --grid-line-top: 10px !important;
   --active-dot-size: 5px !important;
 }
