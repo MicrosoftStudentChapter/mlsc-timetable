@@ -1589,11 +1589,30 @@
 .tt-export-target.tt-exporting .tt-card-text,
 .tt-export-target.tt-exporting .tt-card-subject,
 .tt-export-target.tt-exporting .tt-card-code,
-.tt-export-target.tt-exporting .tt-card-teacher,
-.tt-export-target.tt-exporting .tt-card-room,
 .tt-export-target.tt-exporting .tt-type-badge,
 .tt-export-target.tt-exporting .tt-alternate-label {
   flex-shrink: 0 !important;
+}
+
+/* Room and teacher are the exception: they share a row, so refusing to shrink
+   is what cut `LT101/LT102` down to `LT101/` and `LT301` to `LT30`. They may
+   shrink and wrap; `min-width: 0` is required or a flex item still refuses to
+   go below its content width. */
+.tt-export-target.tt-exporting .tt-card-teacher,
+.tt-export-target.tt-exporting .tt-card-room {
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
+}
+
+/* The teacher is an icon plus a text span. Let the text end in an ellipsis
+   rather than being sliced mid-glyph when the row is tight — the layout rule
+   should have stacked them before it gets this far, but a name is never worth
+   cutting silently. */
+.tt-export-target.tt-exporting .tt-card-teacher > span {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 /* Exports are a reusable schedule, not a snapshot of the current week. Keep
@@ -1663,17 +1682,16 @@
   row-gap: 3px !important;
   margin: auto 0 0 !important;
 }
-/* Always stack teacher and room in an export, whatever `data-layout` says.
-   That attribute is chosen by a ResizeObserver in TimetableGrid.jsx which
-   measures whether the two fit side by side — but the observer fires
-   asynchronously and the export rasterises immediately after adding
-   `.tt-exporting`, so the value in the DOM is the one measured at the
-   on-screen type size. Rendered at export size it is simply wrong: `inline`
-   puts them in one `nowrap` row that cannot hold them, and the room is cut
-   off — `SS-1(L201)` came out as `SS-`. Stacking gives each a full line, so
-   there is nothing to measure and nothing to get wrong. */
-.tt-export-target.tt-exporting .tt-card-meta,
-.tt-export-target.tt-exporting .tt-card-meta[data-layout='inline'],
+/* Same rule as on screen: room and teacher share one line when they fit, and
+   stack (teacher above location) when they do not. The `data-layout` attribute
+   is chosen by a ResizeObserver in TimetableGrid.jsx, and the exporter already
+   waits four animation frames after adding `.tt-exporting`, so by capture time
+   it has been re-measured at export sizes. Forcing a layout here overrode a
+   decision that was already correct. */
+.tt-export-target.tt-exporting .tt-card-meta[data-layout='inline'] {
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+}
 .tt-export-target.tt-exporting .tt-card-meta[data-layout='stacked'] {
   flex-flow: column nowrap !important;
   align-items: flex-start !important;
@@ -1685,12 +1703,14 @@
   border-radius: 3px !important;
   box-sizing: border-box !important;
   max-width: 100% !important;
-  /* Stacked, so it owns the line and can wrap into it instead of being cut. */
-  align-self: stretch !important;
-  width: fit-content !important;
-  /* Three lines then crop, rather than growing without limit. */
+  /* Two lines then an ellipsis. `-webkit-line-clamp` needs `-webkit-box` to
+     take effect, and it is what draws the "…" — a plain max-height crop just
+     slices the glyphs. */
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
   overflow: hidden !important;
-  max-height: 3.75em !important;  /* three lines at the line-height below */
   white-space: normal !important;
   overflow-wrap: anywhere !important;
   margin: 0 !important;
