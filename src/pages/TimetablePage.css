@@ -1353,6 +1353,21 @@
 .tt-export-target.tt-exporting .tt-tip-wrap::after,
 .tt-export-target.tt-exporting [data-tip]::after { display: none !important; }
 .tt-export-target.tt-exporting .tt-day-active-pill { display: none !important; }
+/* The floating Reset / Save / Hold-for-official controls sit inside the export
+   target, so they were being rasterised into the image — a stray Reset pill
+   turned up floating over Friday afternoon. Hide the whole group rather than
+   the one button that was spotted: they are all editing chrome and none of
+   them belong in a saved timetable. */
+.tt-export-target.tt-exporting .tt-save-fab-group,
+.tt-export-target.tt-exporting .tt-reset-fab,
+.tt-export-target.tt-exporting .tt-save-fab,
+.tt-export-target.tt-exporting .tt-peek-fab { display: none !important; }
+/* The elective dismiss "x" rides on the card itself. The rule above that drops
+   unresolved elective cards does not cover it: that keys on
+   `data-elective-unresolved`, which is set for a Library-classified elective,
+   while the button renders for any unresolved elective group — so a card can
+   keep its "x" and still be exported. */
+.tt-export-target.tt-exporting .tt-elective-dismiss-btn { display: none !important; }
 
 /* Drop any "today/active-day" highlight from the export — the header pill,
    the column tint, the label colour, and the dot. The captured snapshot
