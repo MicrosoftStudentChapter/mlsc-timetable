@@ -486,13 +486,16 @@
   display: -webkit-box;
   width: 100%;
   max-width: 100%;
-  max-height: 3.9em;
+  /* Two lines, then an ellipsis. The cap and the clamp must agree: a taller
+     `max-height` lets a sliver of a third line show under the clamp, and a
+     shorter one crops before the clamp can draw the "…". */
+  max-height: 2.6em;
   overflow: hidden;
   overflow-wrap: break-word;
   word-break: normal;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   font-family: 'Montserrat', sans-serif;
   font-size: var(--card-font-size);
   font-weight: 700;
@@ -527,21 +530,31 @@
   max-width: 100%;
 }
 
-/* Wrap rather than cut at the first line. A long room label like
-   "HIGH VOLTAGE-C101" or a multi-teacher cell lost everything past the first
-   few characters to an ellipsis; three lines shows it, and still crops
-   anything genuinely too long to fit the card. */
-.tt-card-code,
-.tt-card-room {
-  /* Clamped by height rather than `-webkit-line-clamp`, which needs
-     `display: -webkit-box` — and these two are given `inline-block` and
-     `inline-flex` further down for layout. Height works whatever the display,
-     which is the same reason `.tt-card-subject` above is clamped this way. */
+/* The code may wrap — an elective group can list several at once. Clamped by
+   height rather than `-webkit-line-clamp`, which needs `display: -webkit-box`,
+   and this is given `inline-block` further down for layout. */
+.tt-card-code {
   overflow: hidden;
   overflow-wrap: break-word;
   white-space: normal;
   line-height: 1.25;
   max-height: 3.75em;   /* three lines at the line-height above */
+}
+
+/* The location stays on ONE line, always.
+   When it does not fit beside the teacher the fallback is to stack the two
+   (see `[data-layout]` below), which hands the location the card's full
+   width — not to wrap it across two lines inside a shared row.
+   `nowrap` is also what makes that stacking decision correct: the observer in
+   TimetableGrid.jsx compares `scrollWidth` against the row, and a wrapped
+   element reports its *wrapped* width, which always appears to fit. Wrapping
+   here silently suppressed the very fallback meant to prevent it. */
+.tt-card-room {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-wrap: normal;
+  line-height: 1.25;
 }
 
 .tt-card-meta {
