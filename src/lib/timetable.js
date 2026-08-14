@@ -112,7 +112,10 @@ export async function loadMyTimetable(batch) {
   const url = `${root}/me/timetable?batch=${encodeURIComponent(batch)}`
   const key = url
   if (myTimetableRequests.has(key)) return myTimetableRequests.get(key)
-  const request = authHeaders().then((headers) => fetchTimetable(url, { headers }))
+  const request = authHeaders().then((headers) => fetchTimetable(url, { headers })).then((result) => {
+    if (result.status === 'ok' || result.status === 'not_found') return result
+    return loadTimetable(batch)
+  })
   myTimetableRequests.set(key, request)
   request.finally(() => myTimetableRequests.delete(key))
   return request
@@ -127,17 +130,6 @@ async function fetchTimetable(url, init = {}) {
   }
   if (res.status === 404) {
     return { status: 'not_found' }
-  }
-  if (res.status === 503) {
-    try {
-      const body = await res.clone().json()
-      const code = body?.code ?? body?.detail?.code
-      if (code === 'first_year_timetable_unavailable') {
-        return { status: 'coming_soon', batch: body?.batch ?? body?.detail?.batch ?? '' }
-      }
-    } catch {
-      // Fall through to the normal HTTP error below.
-    }
   }
   if (!res.ok) {
     return { status: 'error', message: `Backend returned ${res.status}` }
