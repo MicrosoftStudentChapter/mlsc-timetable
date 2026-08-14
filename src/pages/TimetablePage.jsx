@@ -5,7 +5,7 @@ import Combobox from '../components/Combobox'
 import TimetableGrid from '../components/TimetableGrid'
 import Footer from '../components/Footer'
 import FollowDayBanner from '../components/FollowDayBanner'
-import { isFirstYearBatch, loadBatches } from '../lib/batches'
+import { loadBatches } from '../lib/batches'
 import { loadMyTimetable } from '../lib/timetable'
 import { exportGridAsPng, exportGridAsPdf } from '../lib/export_timetable'
 import { DashboardLayout } from '../components/side_columns'
@@ -230,7 +230,7 @@ export default function TimetablePage() {
   )
   const [calendarStatus, setCalendarStatus] = useState(null)
   const [calendarModalOpen, setCalendarModalOpen] = useState(false)
-  const firstYearUnavailable = isFirstYearBatch(batch)
+  const firstYearUnavailable = false
 
   useEffect(() => {
     getCalendarConfigured().then((d) => {
@@ -356,7 +356,7 @@ export default function TimetablePage() {
         for (const code of batches) {
           out.push({
             value: code,
-            hint: `${label} \u2014 ${name}${isFirstYearBatch(code) ? ' · Coming soon' : ''}`,
+            hint: `${label} \u2014 ${name}`,
           })
         }
       }
