@@ -11,6 +11,7 @@ import {
 } from '../lib/local_overrides'
 import { syncOverridesToBackend, clearMyOverrides } from '../lib/me_overrides'
 import ElectiveOnboarding from './ElectiveOnboarding'
+import { isFirstYearBatch } from '../lib/batches'
 import './TimetableGrid.css'
 
 // ─── Initial timetable data (IDs injected for stable React keys) ──────────────
@@ -815,6 +816,7 @@ function ClassCard({
   isDragging,
   termStartDate,
   alternateNow,
+  isOptional,
 }) {
   const subjectRef = useRef(null)
   const metaRef = useRef(null)
@@ -977,7 +979,12 @@ function ClassCard({
           <circle cx="9" cy="19" r="1.7" /><circle cx="15" cy="19" r="1.7" />
         </svg>
       </button>
-      {!isElectiveGroup && <span className="tt-type-badge">{meta.label}</span>}
+      {!isElectiveGroup && (
+        <div className="tt-badge-row">
+          <span className="tt-type-badge">{meta.label}</span>
+          {isOptional && <span className="tt-type-badge tt-type-badge--optional">OPTIONAL</span>}
+        </div>
+      )}
       <div className={`tt-card-text${isElectiveGroup ? ' tt-card-text--elective' : ''}`}>
         <p
           ref={subjectRef}
@@ -1055,6 +1062,7 @@ export default function TimetableGrid({
   onReloadTimetable,
 }) {
   const resolvedIsDark = isDarkMode ?? (typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark')
+  const isFirstYear = useMemo(() => isFirstYearBatch(batch), [batch])
   // The canonical schedule from the backend (or the bundled fallback). We
   // never mutate this — user changes live in `overrides` below.
   // Only admin/fallback mode may use the fixture. A user timetable must stay
@@ -1832,6 +1840,7 @@ export default function TimetableGrid({
                           key={entry.id}
                           entry={entry}
                           isDarkMode={resolvedIsDark}
+                          isOptional={isFirstYear && (entry.startTime === '17:10' || entry.startTime === '18:00')}
                           onEdit={(rect, element) => setEditTarget(prev => (prev && prev.entry.id === entry.id) ? null : { entry, rect, element })}
                           onChooseElective={(target, rect, element) => {
                             if (target.electiveGroupId && target.curriculumSection) {

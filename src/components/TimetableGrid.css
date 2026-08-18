@@ -452,6 +452,14 @@
 }
 
 /* ─── Type badge ──────────────────────────────────────────────────────────── */
+.tt-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
 .tt-type-badge {
   font-family: 'Montserrat', sans-serif;
   display: inline-block;
@@ -463,8 +471,19 @@
   text-transform: uppercase;
   border-radius: calc(var(--badge-font-size) * 0.6);
   padding: 1px calc(var(--badge-font-size) * 0.75);
-  margin-top: 2px;
   line-height: 1.4;
+}
+
+.tt-type-badge--optional {
+  color: #b45309;
+  background: rgba(245, 158, 11, 0.22);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+[data-theme="dark"] .tt-type-badge--optional {
+  color: #fde68a;
+  background: rgba(245, 158, 11, 0.28);
+  border: 1px solid rgba(245, 158, 11, 0.5);
 }
 
 /* ─── Card text group (subject + code stay together) ─────────────────────── */
