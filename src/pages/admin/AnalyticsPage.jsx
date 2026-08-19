@@ -48,20 +48,24 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [formatFilter, setFormatFilter] = useState('all')
+  const [userBreakdown, setUserBreakdown] = useState('batch')
+  // null = whole institute. Any other value re-fetches the entire page scoped
+  // to that year group, so every panel below agrees with the header.
+  const [yearFilter, setYearFilter] = useState(null)
   const [hoveredIndex, setHoveredIndex] = useState(null)
 
   const refresh = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const stats = await getAnalytics()
+      const stats = await getAnalytics(yearFilter)
       setData(stats)
     } catch (err) {
       setError(err?.message || 'Failed to load analytics')
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [yearFilter])
 
   useEffect(() => {
     // Initial remote data load; refresh owns the loading/error state transitions.
@@ -114,6 +118,14 @@ export default function AnalyticsPage() {
   const active30d = users.active_30d || 0
   const userTopBatches = users.top_batches || []
   const maxUserBatchCount = userTopBatches.length > 0 ? Math.max(...userTopBatches.map((item) => item.count), 1) : 1
+  const byYear = users.by_year || []
+  const maxYearUsers = byYear.length > 0 ? Math.max(...byYear.map((row) => row.users), 1) : 1
+  const usersWithBatch = byYear.reduce((sum, row) => sum + row.users, 0)
+  // `by_year` stays institute-wide even under a filter, so these buttons don't
+  // vanish once you've picked one. The null bucket (unreadable batch codes)
+  // isn't something you can filter to.
+  const availableYears = byYear.map((row) => row.year).filter((y) => y !== null)
+  const showYearBreakdown = !yearFilter && userBreakdown === 'year'
   const totalFormat = (format_breakdown.png || 0) + (format_breakdown.pdf || 0)
   const pngPct = totalFormat > 0 ? Math.round(((format_breakdown.png || 0) / totalFormat) * 100) : 0
   const pdfPct = totalFormat > 0 ? 100 - pngPct : 0
@@ -206,10 +218,37 @@ export default function AnalyticsPage() {
             </svg>
             Analytics & Insights
           </h1>
-          <p>User activity, product adoption, exports, and batch usage</p>
+          <p>
+            {yearFilter
+              ? `Year ${yearFilter} only — every figure on this page is limited to year ${yearFilter} batches`
+              : 'User activity, product adoption, exports, and batch usage'}
+          </p>
         </div>
 
         <div className="analytics-header-actions">
+          <div className="analytics-seg analytics-year-filter" role="group" aria-label="Limit this page to one year">
+            <button
+              type="button"
+              className={yearFilter === null ? 'is-active' : ''}
+              aria-pressed={yearFilter === null}
+              onClick={() => setYearFilter(null)}
+              disabled={loading}
+            >
+              All years
+            </button>
+            {availableYears.map((y) => (
+              <button
+                key={y}
+                type="button"
+                className={yearFilter === y ? 'is-active' : ''}
+                aria-pressed={yearFilter === y}
+                onClick={() => setYearFilter(y)}
+                disabled={loading}
+              >
+                Year {y}
+              </button>
+            ))}
+          </div>
           <span className="analytics-time-tag">
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#3b82f6', display: 'inline-block' }} />
             Rolling activity
@@ -306,21 +345,70 @@ export default function AnalyticsPage() {
           <div className="analytics-card analytics-user-batches">
             <div className="analytics-card-head">
               <div>
-                <h3 className="analytics-card-title">Users by batch</h3>
-                <p>Based on each user&apos;s saved default batch</p>
+                <h3 className="analytics-card-title">
+                  Users by {showYearBreakdown ? 'year' : 'batch'}
+                </h3>
+                <p>
+                  {yearFilter
+                    ? `Top year ${yearFilter} batches`
+                    : showYearBreakdown
+                      ? `${usersWithBatch.toLocaleString()} with a saved batch · ${(users.without_batch || 0).toLocaleString()} haven't picked one`
+                      : 'Based on each user’s saved default batch'}
+                </p>
               </div>
+              {/* Pointless once the page is already scoped — the year view
+                  would be a single row. */}
+              {!yearFilter && (
+                <div className="analytics-seg" role="group" aria-label="Break users down by">
+                  {['batch', 'year'].map((mode) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      className={userBreakdown === mode ? 'is-active' : ''}
+                      aria-pressed={userBreakdown === mode}
+                      onClick={() => setUserBreakdown(mode)}
+                    >
+                      {mode === 'batch' ? 'Batch' : 'Year'}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            <ul className="analytics-mini-bars">
-              {userTopBatches.length === 0 ? (
-                <li className="analytics-empty-state">No batch data yet.</li>
-              ) : userTopBatches.map((item) => (
-                <li key={item.batch}>
-                  <span className="analytics-mini-bar-fill" style={{ width: `${Math.round((item.count / maxUserBatchCount) * 100)}%` }} />
-                  <strong>{item.batch}</strong>
-                  <span>{item.count.toLocaleString()} user{item.count === 1 ? '' : 's'}</span>
-                </li>
-              ))}
-            </ul>
+
+            {showYearBreakdown ? (
+              <ul className="analytics-mini-bars analytics-year-bars">
+                {byYear.length === 0 ? (
+                  <li className="analytics-empty-state">No batch data yet.</li>
+                ) : byYear.map((row) => (
+                  <li key={row.year ?? 'unknown'}>
+                    <span
+                      className="analytics-mini-bar-fill"
+                      style={{ width: `${Math.round((row.users / maxYearUsers) * 100)}%` }}
+                    />
+                    <strong>{row.year === null ? 'Unrecognised' : `Year ${row.year}`}</strong>
+                    <span>
+                      {row.users.toLocaleString()} user{row.users === 1 ? '' : 's'}
+                      <small>
+                        {row.active_7d.toLocaleString()} active this week ·{' '}
+                        {row.batches.toLocaleString()} batch{row.batches === 1 ? '' : 'es'}
+                      </small>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <ul className="analytics-mini-bars">
+                {userTopBatches.length === 0 ? (
+                  <li className="analytics-empty-state">No batch data yet.</li>
+                ) : userTopBatches.map((item) => (
+                  <li key={item.batch}>
+                    <span className="analytics-mini-bar-fill" style={{ width: `${Math.round((item.count / maxUserBatchCount) * 100)}%` }} />
+                    <strong>{item.batch}</strong>
+                    <span>{item.count.toLocaleString()} user{item.count === 1 ? '' : 's'}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </section>

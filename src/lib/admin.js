@@ -707,8 +707,11 @@ export function applyLibraryScheme({ plan, source }) {
   })
 }
 
-export function getAnalytics() {
-  return adminFetch('/admin/analytics')
+// `year` (1-4) narrows every figure — users, adoption and exports — to batches
+// in that year group. Omit it for the whole institute.
+export function getAnalytics(year = null) {
+  const suffix = year ? `?year=${encodeURIComponent(year)}` : ''
+  return adminFetch(`/admin/analytics${suffix}`)
 }
 
 // ── Site Takedown / Maintenance Mode ────────────────────────────────────

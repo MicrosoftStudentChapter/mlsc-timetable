@@ -339,6 +339,66 @@
   background: rgba(59,130,246,.08);
 }
 
+/* Batch / Year switch in the card head. */
+.analytics-seg {
+  display: flex;
+  flex-shrink: 0;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--bg-hover, rgba(255,255,255,.05));
+}
+
+.analytics-seg button {
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-muted, #94a3b8);
+  padding: 4px 11px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+
+.analytics-seg button:hover:not(.is-active) { color: var(--text-h, #fff); }
+.analytics-seg button.is-active { background: #3b82f6; color: #fff; }
+
+/* Year rows carry a second line, so the value column stacks instead of
+   sitting on one baseline like the batch rows do. */
+.analytics-year-bars li > span:not(.analytics-mini-bar-fill) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  color: var(--text-h, #fff);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.analytics-year-bars li > span small {
+  color: var(--text-muted, #94a3b8);
+  font-size: 9px;
+}
+
+.analytics-year-bars strong { font-family: inherit; font-size: 11px; font-weight: 700; }
+
+/* Page-level year switch sits in the header next to Refresh. */
+.analytics-year-filter button { padding: 5px 10px; font-size: 11px; }
+.analytics-year-filter button:disabled { opacity: .55; cursor: not-allowed; }
+
+@media (max-width: 900px) {
+  .analytics-header-actions { flex-wrap: wrap; }
+  .analytics-year-filter { order: -1; width: 100%; }
+  .analytics-year-filter button { flex: 1; }
+}
+
+[data-theme='light'] .analytics-seg { background: rgba(15,23,42,.05); }
+[data-theme='light'] .analytics-seg button { color: #64748b; }
+[data-theme='light'] .analytics-seg button:hover:not(.is-active) { color: #1e293b; }
+[data-theme='light'] .analytics-seg button.is-active { background: #2563eb; color: #fff; }
+
 .analytics-mini-bars .analytics-empty-state {
   justify-content: center;
   min-height: 84px;
