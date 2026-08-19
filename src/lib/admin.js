@@ -710,3 +710,7 @@ export function applyLibraryScheme({ plan, source }) {
 export function getAnalytics() {
   return adminFetch('/admin/analytics')
 }
+
+// ── Site Takedown / Maintenance Mode ────────────────────────────────────
+export { fetchSiteStatus as getSiteStatus, saveSiteStatus as setSiteStatus } from './siteStatus'
+

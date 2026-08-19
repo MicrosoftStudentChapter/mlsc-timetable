@@ -15,6 +15,7 @@ import {
   getErrorsSummary,
   AdminAuthError,
 } from '../../lib/admin'
+import SiteTakedownCard from '../../components/admin/SiteTakedownCard'
 import './admin.css'
 
 function fmtCooldown(seconds) {
@@ -805,10 +806,12 @@ export default function Dashboard() {
       </section>
 
       <section id="dash-semester" className="dash-section">
-        <div className="admin-grid-2">
+        <div className="admin-grid-2" style={{ marginBottom: '24px' }}>
           <SemesterLabelCard />
           <AccuracyDonut pct={pct} />
         </div>
+
+        <SiteTakedownCard />
       </section>
     </div>
   )

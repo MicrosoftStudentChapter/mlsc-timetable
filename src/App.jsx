@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Routes, Route, Outlet } from 'react-router-dom'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
@@ -21,18 +22,42 @@ import AnalyticsPage from './pages/admin/AnalyticsPage'
 import TimetablesPage from './pages/admin/TimetablesPage'
 import TeacherVisibilityPage from './pages/admin/TeacherVisibilityPage'
 import LibraryPage from './pages/admin/LibraryPage'
+import SiteMaintenancePage from './components/SiteMaintenancePage'
+import { getSiteStatusSync, fetchSiteStatus, subscribeSiteStatus } from './lib/siteStatus'
+
+function PublicLayout() {
+  const [siteStatus, setSiteStatusState] = useState(() => getSiteStatusSync())
+
+  useEffect(() => {
+    fetchSiteStatus().then(setSiteStatusState).catch(() => {})
+    const unsubscribe = subscribeSiteStatus(setSiteStatusState)
+    return () => unsubscribe()
+  }, [])
+
+  if (siteStatus.maintenance) {
+    return <SiteMaintenancePage message={siteStatus.message} />
+  }
+
+  return <Outlet />
+}
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      {/* Public routes wrapped in site maintenance guard */}
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/timetable/:batch" element={<TimetablePage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+      </Route>
+
       {/* Clerk's <SignIn routing="path" /> needs the route to capture sub-paths
           like /login/factor-one, /login/sso-callback, etc. */}
       <Route path="/login/*" element={<LoginPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/timetable/:batch" element={<TimetablePage />} />
-      <Route path="/privacy" element={<PrivacyPage />} />
-      <Route path="/terms" element={<TermsPage />} />
+
+      {/* Admin routes remain accessible during maintenance */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="analytics" element={<AnalyticsPage />} />
@@ -54,3 +79,4 @@ export default function App() {
     </Routes>
   )
 }
+

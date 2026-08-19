@@ -4986,3 +4986,30 @@
   .admin-app--shell .fix-header { align-items: flex-start; }
   .admin-app--shell .admin-page-header { flex-direction: column; }
 }
+
+/* ── Site Takedown / Maintenance Mode Styles ────────────────────────────── */
+.takedown-active-card {
+  border-color: rgba(239, 68, 68, 0.4) !important;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.15) !important;
+}
+
+.status-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  letter-spacing: 0.04em;
+}
+
+.status-pill--live {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-pill--down {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+

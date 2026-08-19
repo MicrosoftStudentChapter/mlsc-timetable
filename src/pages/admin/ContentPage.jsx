@@ -32,6 +32,7 @@ import {
   AdminAuthError,
 } from '../../lib/admin'
 import CalendarPreviewDialog from '../../components/CalendarPreviewDialog'
+import SiteTakedownCard from '../../components/admin/SiteTakedownCard'
 import './admin.css'
 
 const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
@@ -1181,6 +1182,9 @@ export default function ContentPage() {
       <div className="admin-grid-2" style={{ marginTop: 16 }}>
         <CalendarPdfCard onApplied={() => setRefreshTick((t) => t + 1)} />
         <CalendarOverridesCard key={refreshTick} />
+      </div>
+      <div style={{ marginTop: 16 }}>
+        <SiteTakedownCard />
       </div>
     </div>
   )

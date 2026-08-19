@@ -1,0 +1,185 @@
+.maintenance-container {
+  min-height: 100vh;
+  width: 100%;
+  background: #090a0f;
+  color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.maintenance-ambient-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, rgba(59, 130, 246, 0.08) 45%, rgba(0, 0, 0, 0) 70%);
+  pointer-events: none;
+  filter: blur(40px);
+}
+
+.maintenance-card {
+  position: relative;
+  z-index: 1;
+  max-width: 540px;
+  width: 100%;
+  background: rgba(17, 24, 39, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 36px 32px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(239, 68, 68, 0.1);
+  text-align: center;
+  animation: maintenanceFadeIn 0.5s ease-out;
+}
+
+@keyframes maintenanceFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.maintenance-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.maintenance-logo {
+  height: 38px;
+  width: auto;
+}
+
+.maintenance-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 4px 10px;
+  border-radius: 9999px;
+}
+
+.maintenance-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  margin-bottom: 20px;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+.maintenance-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.maintenance-title {
+  font-size: 1.65rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.maintenance-subtitle {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.maintenance-notice-box {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 4px solid #f59e0b;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 28px;
+  text-align: left;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.maintenance-notice-text {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #fbbf24;
+  margin: 0;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.maintenance-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.maintenance-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+.maintenance-primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+}
+
+.maintenance-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.maintenance-footer-text {
+  margin: 0;
+}
+
+.maintenance-admin-link {
+  color: #94a3b8;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.maintenance-admin-link:hover {
+  color: #38bdf8;
+  text-decoration: underline;
+}
