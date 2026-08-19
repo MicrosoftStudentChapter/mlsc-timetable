@@ -24,8 +24,14 @@ export default function SiteTakedownCard({ onStatusChange }) {
         setStatus(data)
         setMessageInput(data.message || DEFAULT_MAINTENANCE_MESSAGE)
       }
-    } catch {
-      // ignore error, keep defaults
+      setResult(null)
+    } catch (err) {
+      // Surface it — a silent failure here used to make the card show a
+      // confident "LIVE"/"TAKEN DOWN" pill that no other visitor agreed with.
+      setResult({
+        kind: 'failed',
+        message: `Could not read the live site status, so the state below may be wrong. ${err?.message || ''}`.trim(),
+      })
     } finally {
       setLoading(false)
     }

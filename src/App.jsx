@@ -25,18 +25,54 @@ import LibraryPage from './pages/admin/LibraryPage'
 import SiteMaintenancePage from './components/SiteMaintenancePage'
 import { getSiteStatusSync, fetchSiteStatus, subscribeSiteStatus } from './lib/siteStatus'
 
+// How often an open tab re-checks the takedown state, so a visitor who already
+// has the page loaded still gets pulled onto the maintenance screen.
+const SITE_STATUS_POLL_MS = 60_000
+
 function PublicLayout() {
   const [siteStatus, setSiteStatusState] = useState(() => getSiteStatusSync())
+  // Until the server answers once we only have a possibly-stale cache, so hold
+  // the render back rather than flashing the live site during a takedown.
+  const [resolved, setResolved] = useState(false)
 
   useEffect(() => {
-    fetchSiteStatus().then(setSiteStatusState).catch(() => {})
+    let cancelled = false
+
+    const refresh = () => {
+      fetchSiteStatus()
+        .then((status) => {
+          if (!cancelled) setSiteStatusState(status)
+        })
+        .catch(() => {
+          // Fail open: a backend blip should not black out the whole site.
+          // The cached value seeded into state stays in effect.
+        })
+        .finally(() => {
+          if (!cancelled) setResolved(true)
+        })
+    }
+
+    refresh()
     const unsubscribe = subscribeSiteStatus(setSiteStatusState)
-    return () => unsubscribe()
+    const timer = setInterval(refresh, SITE_STATUS_POLL_MS)
+    const onFocus = () => {
+      if (document.visibilityState === 'visible') refresh()
+    }
+    document.addEventListener('visibilitychange', onFocus)
+
+    return () => {
+      cancelled = true
+      unsubscribe()
+      clearInterval(timer)
+      document.removeEventListener('visibilitychange', onFocus)
+    }
   }, [])
 
   if (siteStatus.maintenance) {
     return <SiteMaintenancePage message={siteStatus.message} />
   }
+
+  if (!resolved) return null
 
   return <Outlet />
 }

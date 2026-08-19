@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import './SiteMaintenancePage.css'
 
 export default function SiteMaintenancePage({ message }) {
@@ -57,14 +56,11 @@ export default function SiteMaintenancePage({ message }) {
           </div>
         </div>
 
-        {/* Footer info & admin shortcut */}
+        {/* Footer info */}
         <div className="maintenance-footer">
           <p className="maintenance-footer-text">
             Microsoft Student Chapter (MLSC) Timetable
           </p>
-          <Link to="/admin" className="maintenance-admin-link">
-            Admin Access
-          </Link>
         </div>
       </div>
     </div>
